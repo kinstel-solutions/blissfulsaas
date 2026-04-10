@@ -23,31 +23,28 @@
 
 ## 1. Architecture Overview
 
-```
 ┌─────────────────────────────────────────────────────────────────┐
 │                      Supabase (Cloud BaaS)                      │
 │  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
 │  │  Auth Service │  │  PostgreSQL  │  │  Row Level Security    │ │
-│  │  (JWT-based)  │  │  (Database)  │  │  (RLS Policies)        │ │
+│  │  (ES256 JWKS) │  │ (Prisma 7 DB) │  │  (RLS Policies)        │ │
 │  └──────┬───────┘  └──────┬───────┘  └────────────────────────┘ │
 └─────────┼──────────────────┼────────────────────────────────────┘
           │                  │
-          │    Supabase SSR   │
-          │    (@supabase/ssr)│
           ▼                  ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    Backend (NestJS) — Port :5000                 │
+│  Passport (ES256) • RolesGuard (RBAC) • Prisma 7 Service        │
+│  (Centralized API relay for high-privileged operations)          │
+└─────────┬──────────────────┬──────────────────┬──────────────────┘
+          │                  │                  │
+          ▼                  ▼                  ▼
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
 │ Patient App  │  │ Therapist App│  │ Admin Panel  │
 │  :3000       │  │  :3001       │  │  :3002       │
-│  Next.js 15  │  │  Next.js 15  │  │  Next.js 15  │
+│  Next.js 16  │  │  Next.js 16  │  │  Next.js 16  │
 │  (App Router)│  │  (App Router)│  │  (App Router)│
 └──────────────┘  └──────────────┘  └──────────────┘
-
-┌──────────────────────────────────────────────────────────────────┐
-│                    Backend (NestJS) — Scaffolded                  │
-│  Passport JWT Strategy  •  Role Guards  •  Prisma ORM            │
-│  (Future API layer for business logic)                           │
-└──────────────────────────────────────────────────────────────────┘
-```
 
 The platform is a **multi-portal monorepo** with three independent Next.js 15 applications sharing a single Supabase project as the backend. Each app targets a specific user role:
 
@@ -129,17 +126,20 @@ blissfulsaas/
 │   │       └── supabase/server.ts          # Server + Admin client
 │   └── .env.local
 │
-├── backend/                  # NestJS API (scaffolded)
+├── backend/                  # NestJS API (Primary Business Logic)
 │   ├── prisma/
-│   │   └── schema.prisma                   # Database schema (source of truth)
+│   │   └── schema.prisma           # Database schema (source of truth)
 │   └── src/
-│       └── auth/
-│           ├── auth.module.ts              # Passport module
-│           ├── jwt.strategy.ts             # Supabase JWT validation
-│           └── roles.guard.ts              # RBAC guard decorator
+│       ├── auth/
+│       │   ├── jwt.strategy.ts     # ES256 JWKS validation (Asymmetric)
+│       │   └── roles.guard.ts      # RBAC guard for Admin/Therapist
+│       ├── prisma/
+│       │   └── prisma.service.ts   # Prisma 7 high-perf connection
+│       └── therapists/
+│           ├── therapists.service.ts  # Registry management
+│           └── therapists.controller.ts # Admin verification endpoints
 │
 ├── promote_admin.sql         # SQL script to promote user to admin
-├── .gitignore                # Excludes secrets, node_modules, .next
 └── README.md
 ```
 
@@ -221,7 +221,7 @@ erDiagram
 
 ### 5.1 Auth Provider
 
-All authentication is handled by **Supabase Auth** using email/password credentials. The Supabase client library (`@supabase/ssr`) manages JWT tokens via HTTP-only cookies.
+All authentication is handled by **Supabase Auth**. For high security, the platform uses **ES256 Asymmetric Signing**. Frontend portals communicate with the **NestJS Backend** using JWTs, which the backend verifies using Supabase's public **JWKS endpoint** (`/.well-known/jwks.json`).
 
 ### 5.2 Auth Flow Diagram
 
@@ -368,8 +368,7 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Overview | `/dashboard` | Platform stats: total users, patients, therapists, pending |
 | Provider Network | `/dashboard/therapists` | Table of all therapist applications |
 | Therapist Detail | `/dashboard/therapists/[id]` | Deep-dive into individual practitioner |
-| Approve API | `POST /api/therapists/[id]/approve` | Set `isVerified = true` |
-| Reject API | `DELETE /api/therapists/[id]/reject` | Delete Therapist record |
+| **Backend Integration** | `PATCH http://localhost:5000/therapists/:id/verify` | Master endpoint for verification |
 
 ---
 
@@ -390,18 +389,19 @@ flowchart TD
     style F fill:#fef2f2,stroke:#dc2626
 ```
 
-### API Endpoints
+### Backend API Integration
 
-**Approve** — `PATCH /api/therapists/[id]/approve`
-```typescript
-// Uses createAdminClient() (Service Role — bypasses RLS)
-await supabase.from("Therapist").update({ isVerified: true }).eq("id", id);
-```
+The Admin Panel no longer performs direct database writes. It communicates with the **NestJS Backend** (:5000) using a centralized `fetchWithAuth` wrapper:
 
-**Reject** — `DELETE /api/therapists/[id]/reject`
+**Approve** — `PATCH /therapists/[id]/verify`
 ```typescript
-// Deletes the Therapist profile (keeps the auth user intact)
-await supabase.from("Therapist").delete().eq("id", id);
+// Backend logic (therapists.service.ts)
+async verify(id: string) {
+  return this.prisma.therapist.update({
+    where: { id },
+    data: { isVerified: true }
+  });
+}
 ```
 
 ---
@@ -546,24 +546,19 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 | Area | Issue | Workaround |
 |------|-------|-----------|
-| **RLS Policies** | No comprehensive RLS policies on `Therapist`, `Patient`, or `User` tables | Admin Client (Service Role) bypasses RLS for all admin/signup operations |
-| **Patient role check** | Patient app doesn't verify the user's role is `PATIENT` | Any authenticated user can access the patient dashboard |
-| **Therapist role check** | Therapist app doesn't verify the user's role is `THERAPIST` | Any authenticated user can access the therapist dashboard |
-| **Static discover page** | Patient discovery page uses hardcoded therapist data | Needs to be connected to the live `Therapist` table |
+| **RLS Policies** | No comprehensive RLS policies on `Therapist`, `Patient`, or `User` tables | NestJS Backend uses **Prisma 7** for direct server-side secure operations |
+| **Patient role check** | Patient app doesn't verify the user's role is `PATIENT` | Layout guards need to be reinforced with backend role checks |
+| **Therapist role check** | Therapist app doesn't verify the user's role is `THERAPIST` | Layout guards need to be reinforced with backend role checks |
 | **Email verification** | Supabase email confirmation is not enforced | Users can sign up without verifying their email |
-| **NestJS backend** | Scaffolded but not integrated with the frontend | JWT strategy and role guards are ready but unused |
 
 ### Planned Features
 
+- [x] **NestJS API Integration**: Centralized business logic and role-based verification workflows
+- [x] **ES256 Verification**: Hardened asymmetric token validation
 - [ ] **Live Therapist Discovery**: Connect patient marketplace to verified therapists from the database
 - [ ] **Therapist Profile Editor**: Allow therapists to edit bio, specialties, and hourly rate
 - [ ] **Session Booking System**: Real-time calendar integration for appointment scheduling
-- [ ] **Messaging System**: Encrypted communication between patients and therapists
 - [ ] **Payment Integration**: Stripe for session billing
-- [ ] **Comprehensive RLS Policies**: Fine-grained database security for production
-- [ ] **NestJS API Integration**: Move business logic to the NestJS backend
-- [ ] **Email Verification Flow**: Enforce email confirmation before dashboard access
-- [ ] **Password Recovery**: Implement forgot password flow
 
 ---
 
