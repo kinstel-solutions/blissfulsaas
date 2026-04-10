@@ -18,6 +18,8 @@
 10. [Environment Variables](#10-environment-variables)
 11. [Running Locally](#11-running-locally)
 12. [Known Limitations & Future Work](#12-known-limitations--future-work)
+13. [Pre-Production Optimizations](#13-pre-production-optimizations)
+14. [Audit Findings](#14-audit-findings)
 
 ---
 
@@ -554,27 +556,91 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 | Area | Issue | Workaround |
 |------|-------|-----------|
-| **PostgreSQL RLS** | Granular row-level policies are not yet fully defined in SQL | High-privilege tasks are mediated by the **NestJS Backend** using the Service Role key. |
-| **Email Verification** | Supabase email confirmation is not yet strictly enforced | Users can sign up and access dashboards immediately. |
-| **Media Storage** | Therapist profile videos are currently stored as URLs | Needs transition to Supabase Storage with signed URL access. |
-| **Direct Messaging** | No real-time chat between patient and practitioner | Communication is limited to static session management. |
+| **PostgreSQL RLS** | Granular row-level policies are not yet defined | High-privilege tasks mediated by NestJS Backend (Service Role key) |
+| **Email Verification** | Supabase email confirmation not enforced | Users access dashboards immediately after signup |
+| **Password Recovery** | `/forgot` route linked in login pages but pages don't exist | No self-service password reset available |
+| **Auth Callback** | No `/auth/callback` route for Supabase email flows | Magic links and password reset emails won't work |
+| **Discover Page** | Patient marketplace uses hardcoded static data | Not connected to live `Therapist` table |
+| **Therapist Profile** | No self-service profile editing for therapists | Profile data set only at signup |
+| **Media Storage** | Therapist intro videos stored as plain URLs | Needs Supabase Storage / AWS S3 with signed URLs |
+| **Booking** | No booking or availability system exists | — |
+| **Video Sessions** | No in-platform video consultation | — |
+| **Chat** | No real-time messaging between patients and therapists | — |
+| **Payments** | No payment integration | — |
+| **Emails** | No transactional emails (confirmations, reminders) | — |
+| **Public Pages** | No institutional program pages (Schools, Corporate, Universities) | — |
 
 ### Planned Features (Roadmap)
 
-- [x] **Backend Infrastructure**: NestJS + Prisma 7 integration for business logic
-- [x] **Universal RBAC**: Dashboard guards implemented for Admin, Patient, and Therapist portals
-- [x] **ES256 Asymmetric Auth**: Modern security verification using Supabase JWKS
-- [ ] **Live Marketplace**: Connect patient discovery UI to real-time therapist availability
-- [ ] **Clinical Chat**: Real-time, encrypted messaging platform
-- [ ] **Media Vault**: Secure therapist credential and video storage
-- [ ] **Stripe Billing**: Session-based payment and therapist payouts
-- [ ] **Comprehensive SQL RLS**: Hardening the database layer for pure frontend access
+**✅ Completed**
+- [x] **Monorepo Scaffold**: Three Next.js 15 portals (Patient :3000, Therapist :3001, Admin :3002)
+- [x] **NestJS Backend**: REST API on :5000 with Prisma 7 ORM
+- [x] **Supabase Auth**: Email/password signup with DB trigger for profile creation
+- [x] **ES256 JWT Verification**: Backend validates tokens via Supabase JWKS endpoint
+- [x] **RBAC Guards**: Dashboard-level role checks on Patient & Admin portals + NestJS `RolesGuard`
+- [x] **Cookie Isolation**: Unique auth cookies per portal for localhost dev
+- [x] **Admin Verification Flow**: Approve/reject therapists via Backend API
+- [x] **Design System**: "Blissful Botanical" tokens, glassmorphism, micro-animations
+
+**🔲 Pending (by priority)**
+- [ ] **Password Recovery & Auth Callback**: `/forgot` + `/auth/callback` + `/update-password` routes
+- [ ] **Live Therapist Marketplace**: SSR directory with filters (specialization, type), featured slots
+- [ ] **Therapist Profile Editor**: Self-service bio, qualifications, pricing, YouTube video embed
+- [ ] **Booking System**: Slot-based availability (online + in-clinic), patient intake form
+- [ ] **Razorpay Payments**: Session-based payment, webhook-driven booking confirmation, invoices
+- [ ] **Video Consultations**: Agora SDK integration, session webhooks, post-session feedback
+- [ ] **Real-Time Chat**: NestJS WebSocket Gateway (Socket.io), no-read-pressure design, attachments
+- [ ] **Clinical Notes**: Private per-patient session notes (therapist-only)
+- [ ] **Email Notifications**: Transactional emails via Resend (booking, reminders, cancellations)
+- [ ] **Public/Institutional Pages**: Schools, Corporate, Universities program pages + B2B lead capture
+- [ ] **Storage**: Supabase Storage for profiles/docs, AWS S3 (encrypted) for session recordings
+- [ ] **Comprehensive RLS**: Fine-grained PostgreSQL policies for multi-tenant data isolation
+
+---
+
+## 13. Pre-Production Optimizations
+
+> These are **not blockers** for feature development. They should be addressed before going live with real patient data.
+
+| # | Optimization | Priority | Current State | Better Implementation |
+|---|-------------|----------|---------------|----------------------|
+| 1 | **JWT Custom Claims** | Performance | Portals query `public.User` table on every page load to check role | Inject `role` into `auth.users.raw_app_meta_data` at signup → read `user.app_metadata.role` from JWT directly, eliminating a DB round-trip (~50ms saving) |
+| 2 | **Therapist Role Check Client** | Security (quick fix) | Therapist App role check uses **anon client** — will silently fail when RLS policies are added | Switch to `createAdminClient()` for role check, matching the Admin Panel pattern |
+| 3 | **Prisma RLS Passthrough** | Security (defense-in-depth) | NestJS connects via direct Postgres URL, bypassing all Supabase RLS; relies on app-level `RolesGuard` only | Implement Prisma Client Extension to inject JWT claims into each transaction (`set_config('request.jwt.claims', ...)`) for true multi-tenant data isolation |
+| 4 | **PHI Audit Logging** | Compliance | Only basic `createdAt` timestamps exist | Create an immutable `AuditLog` table + PostgreSQL triggers on all Patient data operations to satisfy HIPAA audit requirements |
+
+---
+
+## 14. Audit Findings
+
+> Code audit performed April 10, 2026. These are bugs and quality issues found during a full review of all source files.
+
+### 🔴 Bugs
+
+| # | Bug | File | Impact | Fix |
+|---|-----|------|--------|-----|
+| 1 | **`getSession()` used instead of `getUser()`** | `admin-panel/src/lib/api.ts` | `getSession()` reads the JWT from local storage without server validation. An attacker could forge a localStorage JWT. Impact is limited since the NestJS backend re-validates via ES256, but Supabase docs explicitly warn against this pattern. | Replace with `getUser()` or validate session server-side first |
+| 2 | **Therapist role check via anon client** | `therapist-app/dashboard/layout.tsx` | Queries `public.User` using the anon client. When RLS policies are added, this will silently return `null` and **lock out all therapists**. Admin panel avoids this by using `createAdminClient()`. | Switch to `createAdminClient()` for the role query |
+| 3 | **Hardcoded `hourlyRate: 150`** | `therapist-app/signup/actions.ts` | Signup form doesn't collect hourly rate, specialties, or bio. All therapists get `$150/hr` silently. | Either add form fields or remove the hardcoded default |
+| 4 | **Fake growth metric "+12% this month"** | `admin-panel/dashboard/page.tsx` | The growth percentage is hardcoded and misleading on a live admin dashboard. | Compute real growth or remove the metric |
+
+### 🟡 Code Quality Issues
+
+| Issue | Location | Severity |
+|-------|----------|----------|
+| `(therapist.user as any)?.email` type casting | Admin therapist pages | Low — should use Supabase generated types |
+| `catch (err: any)` pattern | Multiple files | Low — TypeScript best practice is `unknown` |
+| No loading state on login submit button | Patient + Therapist login pages | Low — button doesn't disable during request |
+| **No `middleware.ts` for session refresh** | All 3 Next.js apps | **Medium** — Supabase SSR requires middleware to refresh auth cookies on every request |
+| No error boundaries | All 3 Next.js apps | Low — unhandled fetch errors crash the page |
+| Unused imports (`Filter`, `MoreHorizontal`) | Admin therapists list page | Trivial |
+| Patient + Therapist dashboards are fully hardcoded | Dashboard home pages | Low — expected at this stage, will be replaced with live data |
 
 ---
 
 ## Appendix: Backend (NestJS) — Reference
 
-The NestJS backend is scaffolded but not actively used by the frontend. It contains reusable patterns for future API development:
+The NestJS backend is the centralized API layer actively used by the Admin Panel for therapist verification. It contains:
 
 ### JWT Strategy (`jwt.strategy.ts`)
 Validates Supabase JWTs using the project's JWT secret. Extracts `userId`, `email`, and `role` from the token payload.
