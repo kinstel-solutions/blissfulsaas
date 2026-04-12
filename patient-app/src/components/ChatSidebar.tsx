@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase";
+// Force re-bundling to ensure hook stability across HMR
 import { api } from "@/lib/api";
 import { MessageSquare, Send, X } from "lucide-react";
 
@@ -44,10 +45,7 @@ export default function ChatSidebar({
 
   useEffect(() => {
     loadHistory();
-  }, [loadHistory]);
 
-  // Subscribe to real-time inserts
-  useEffect(() => {
     const channel = supabaseClient
       .channel(`room:${appointmentId}`)
       .on(

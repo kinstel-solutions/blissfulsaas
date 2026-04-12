@@ -2,24 +2,37 @@ import { ArrowLeft, Star, MapPin, Calendar, Clock, MessageSquare, Video, ArrowRi
 import Image from "next/image";
 import Link from "next/link";
 
-export default function TherapistProfilePage() {
-  // Mock data for Dr. Sarah Jenkins
+import { api } from "@/lib/api-server";
+
+export default async function TherapistProfilePage({ params }: { params: { id: string } }) {
+  const { id } = await params;
+  const dbTherapist = await api.therapists.getById(id);
+
+  if (!dbTherapist) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <h2 className="text-2xl font-heading text-foreground">Therapist Not Found</h2>
+        <Link href="/dashboard/discover" className="text-primary hover:underline">Return to Marketplace</Link>
+      </div>
+    );
+  }
+
+  // Map db data to UI
   const specialist = {
-    name: "Dr. Sarah Jenkins",
-    role: "Clinical Psychotherapist",
-    degree: "Ph.D. in Clinical Psychology, Yale University",
-    rating: 4.8,
-    reviews: 215,
-    bio: "With over 12 years of experience, Dr. Jenkins specializes in the architectural restoration of mental space. Her approach combines Cognitive Behavioral Therapy (CBT) with mindfulness-based stress reduction (MBSR), tailored for high-performance professionals and creative souls seeking peace in a complex world.",
-    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=600&h=600",
-    experience: "12+ Years",
-    rate: "$175 / session",
-    tags: ["Anxiety", "Trauma", "Family Dynamics", "CBT", "Mindfulness"],
-    availability: [
-      { day: "Tue", time: "3:00 PM" },
-      { day: "Wed", time: "11:00 AM" },
-      { day: "Thu", time: "5:00 PM" }
-    ]
+    id: dbTherapist.id,
+    name: `${dbTherapist.firstName} ${dbTherapist.lastName}`,
+    role: dbTherapist.specialities?.[0] || "Clinical Psychotherapist",
+    rating: 4.9, // Mock rating until review system is built
+    reviews: 128,
+    bio: dbTherapist.bio || "This therapist specializes in comprehensive mental health support but hasn't provided a full bio yet.",
+    image: dbTherapist.videoUrl || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=600&h=600",
+    experience: "Experienced",
+    rate: `$${dbTherapist.hourlyRate} / session`,
+    tags: dbTherapist.specialities?.length > 0 ? dbTherapist.specialities : ["Mental Health Support"],
+    availability: dbTherapist.slots?.slice(0, 3).map((s: any) => ({
+      day: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][s.dayOfWeek],
+      time: s.startTime
+    })) || []
   };
 
   return (
@@ -65,9 +78,9 @@ export default function TherapistProfilePage() {
              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 mt-4 mb-2">Private Practice Session</p>
              <h2 className="text-4xl font-heading text-primary font-medium tracking-tight mb-6">{specialist.rate}</h2>
              <div className="flex gap-2 w-full">
-                <button className="flex-1 bg-primary text-primary-foreground py-5 rounded-2xl font-bold uppercase tracking-[0.1em] text-xs shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all">
+                <Link href={`/dashboard/sessions/book/${specialist.id}`} className="flex-1 bg-primary text-primary-foreground py-5 rounded-2xl font-bold uppercase tracking-[0.1em] text-xs shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all text-center">
                   Book Instant Sanctuary
-                </button>
+                </Link>
              </div>
           </div>
         </div>
@@ -110,7 +123,7 @@ export default function TherapistProfilePage() {
            <div className="space-y-6">
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 pb-2 border-b border-outline-variant/10 w-fit">Specializations</h3>
               <div className="flex flex-wrap gap-3">
-                 {specialist.tags.map(tag => (
+                 {specialist.tags.map((tag: string) => (
                    <span key={tag} className="px-5 py-2.5 bg-surface-container-lowest text-primary text-xs font-bold tracking-tight rounded-2xl border border-outline-variant/20 hover:border-primary/40 transition-colors cursor-default">
                      {tag}
                    </span>
@@ -124,16 +137,19 @@ export default function TherapistProfilePage() {
               <div className="flex flex-col md:flex-row items-center justify-between gap-8 z-10 relative">
                  <h3 className="text-xl font-heading font-normal text-primary">Next Open Sessions</h3>
                  <div className="flex gap-4">
-                    {specialist.availability.map(slot => (
-                      <div key={slot.day} className="flex flex-col items-center bg-white/50 backdrop-blur-md px-6 py-3 rounded-2xl border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer">
+                    {specialist.availability.map((slot: any) => (
+                      <div key={`${slot.day}-${slot.time}`} className="flex flex-col items-center bg-white/50 backdrop-blur-md px-6 py-3 rounded-2xl border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer">
                          <span className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-1">{slot.day}</span>
                          <span className="text-sm font-bold tracking-tight">{slot.time}</span>
                       </div>
                     ))}
+                    {specialist.availability.length === 0 && (
+                      <div className="text-sm text-primary/60 italic">No available sessions this week.</div>
+                    )}
                  </div>
-                 <button className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground group-hover:translate-x-2 transition-transform">
+                 <Link href={`/dashboard/sessions/book/${specialist.id}`} className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground group-hover:translate-x-2 transition-transform">
                     <ArrowRight className="w-5 h-5" />
-                 </button>
+                 </Link>
               </div>
            </div>
         </div>

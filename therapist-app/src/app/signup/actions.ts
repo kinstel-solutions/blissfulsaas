@@ -32,7 +32,7 @@ export async function signUpTherapist(formData: any) {
       firstName,
       lastName,
       isVerified: false,
-      hourlyRate: 150
+      hourlyRate: 0 // Therapists will need to set this in their profile
     });
 
   if (profileError) {

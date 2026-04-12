@@ -23,7 +23,7 @@ export class SessionsService {
         where: {
           slotId: data.slotId,
           scheduledAt,
-          status: { notIn: [AppointmentStatus.CANCELLED] },
+          status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
         },
       });
 

@@ -30,7 +30,10 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
     const nextDate = getNextOccurrence(slot.dayOfWeek, slot.startTime);
     return slot.appointments?.some((appt: any) => {
       const apptDate = new Date(appt.scheduledAt);
-      return apptDate.getTime() === nextDate.getTime() && appt.status !== 'CANCELLED';
+      return (
+        apptDate.getTime() === nextDate.getTime() && 
+        ['PENDING', 'CONFIRMED'].includes(appt.status)
+      );
     });
   };
 

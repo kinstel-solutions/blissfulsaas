@@ -46,4 +46,8 @@ export const api = {
     history: (appointmentId: string) =>
       fetchWithAuth(`/messages/${appointmentId}`),
   },
+  therapists: {
+    getProfile: () => fetchWithAuth("/therapists/profile"),
+    updateProfile: (data: any) => fetchWithAuth("/therapists/profile", { method: "PATCH", body: JSON.stringify(data) }),
+  },
 };

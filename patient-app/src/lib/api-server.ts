@@ -27,3 +27,9 @@ export async function fetchWithAuthContent(path: string, options: RequestInit = 
 
   return response.json();
 }
+
+export const api = {
+  therapists: {
+    getById: (id: string) => fetchWithAuthContent(`/therapists/public/${id}`),
+  }
+};

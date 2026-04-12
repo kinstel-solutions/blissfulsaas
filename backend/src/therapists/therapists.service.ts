@@ -33,6 +33,47 @@ export class TherapistsService {
     });
   }
 
+  async getProfile(userId: string) {
+    const profile = await this.prisma.therapist.findUnique({
+      where: { userId },
+    });
+    if (!profile) throw new NotFoundException('Therapist profile not found');
+    return profile;
+  }
+
+  async updateProfile(userId: string, data: any) {
+    const profile = await this.getProfile(userId);
+    
+    return this.prisma.therapist.update({
+      where: { id: profile.id },
+      data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        bio: data.bio,
+        specialities: data.specialities,
+        hourlyRate: data.hourlyRate,
+        videoUrl: data.videoUrl, // if applicable
+      },
+    });
+  }
+
+  async getById(id: string) {
+    const therapist = await this.prisma.therapist.findUnique({
+      where: { id },
+      include: {
+        slots: {
+          where: { isActive: true },
+        }
+      }
+    });
+
+    if (!therapist || !therapist.isVerified) {
+      throw new NotFoundException('Therapist not found or not verified');
+    }
+
+    return therapist;
+  }
+
   async verify(id: string) {
     const therapist = await this.prisma.therapist.findUnique({
       where: { id },

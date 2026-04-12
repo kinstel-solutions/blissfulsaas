@@ -39,6 +39,10 @@ export default async function DashboardLayout({
     { label: "Availability", icon: Clock, href: "/dashboard/availability" },
   ];
 
+  const bottomNavItems = [
+    { label: "My Profile", icon: Activity, href: "/dashboard/profile" },
+  ];
+
   return (
     <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden">
       {/* Sidebar - Minimalist & Focused */}
@@ -70,6 +74,16 @@ export default async function DashboardLayout({
         </div>
 
         <div className="p-8 border-t border-outline-variant/20 space-y-3">
+          {bottomNavItems.map((item) => (
+            <Link 
+              key={item.href}
+              href={item.href} 
+              className="flex items-center px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-xl transition-colors group"
+            >
+              <item.icon className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform" />
+              {item.label}
+            </Link>
+          ))}
           <Link 
             href="/" 
             className="flex items-center px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-xl transition-colors group"

@@ -5,7 +5,9 @@ import {
   Delete, 
   Param, 
   UseGuards, 
-  ParseUUIDPipe 
+  ParseUUIDPipe,
+  Req,
+  Body
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
@@ -26,6 +28,24 @@ export class TherapistsController {
   @Roles('PATIENT', 'ADMIN')
   getVerified() {
     return this.therapistsService.getAllVerified();
+  }
+
+  @Get('profile')
+  @Roles('THERAPIST')
+  getProfile(@Req() req: any) {
+    return this.therapistsService.getProfile(req.user.userId);
+  }
+
+  @Patch('profile')
+  @Roles('THERAPIST')
+  updateProfile(@Req() req: any, @Body() body: any) {
+    return this.therapistsService.updateProfile(req.user.userId, body);
+  }
+
+  @Get('public/:id')
+  @Roles('PATIENT', 'ADMIN')
+  getById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.therapistsService.getById(id);
   }
 
   @Patch(':id/verify')

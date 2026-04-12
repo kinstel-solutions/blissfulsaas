@@ -39,9 +39,7 @@ export default function ChatSidebar({
 
   useEffect(() => {
     loadHistory();
-  }, [loadHistory]);
 
-  useEffect(() => {
     const channel = supabaseClient
       .channel(`room:${appointmentId}`)
       .on(
@@ -53,7 +51,6 @@ export default function ChatSidebar({
         },
         (payload: any) => {
           const msg = payload.new as Message;
-          // Manual filter since camelCase column filters can be picky
           if (msg.appointmentId !== appointmentId) return;
 
           setMessages((prev) => {

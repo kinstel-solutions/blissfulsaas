@@ -65,81 +65,47 @@ blissfulsaas/
 ├── patient-app/              # Patient-facing portal
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── auth/signout/route.ts       # Sign-out API route
-│   │   │   ├── dashboard/                  # Protected dashboard
-│   │   │   │   ├── layout.tsx              # Auth guard + sidebar
-│   │   │   │   ├── page.tsx                # Dashboard home
-│   │   │   │   ├── discover/page.tsx       # Therapist marketplace
-│   │   │   │   └── therapist/[id]/page.tsx # Therapist detail
-│   │   │   ├── login/page.tsx              # Login page
-│   │   │   ├── signup/page.tsx             # Patient registration
-│   │   │   ├── globals.css                 # Design tokens
-│   │   │   └── page.tsx                    # Landing page
+│   │   │   ├── dashboard/
+│   │   │   │   ├── sessions/
+│   │   │   │   │   ├── [id]/call/page.tsx  # Video consultation room
+│   │   │   │   │   ├── book/[id]/page.tsx  # Slot selection flow
+│   │   │   │   │   └── page.tsx            # Appointment history
+│   │   │   │   ├── discover/page.tsx       # Live therapist marketplace
+│   │   │   │   └── page.tsx                # Dashboard summary
+│   │   │   ├── middleware.ts               # Auth session refresh
 │   │   ├── components/
-│   │   │   └── SignOutButton.tsx            # Client-side logout
+│   │   │   ├── ChatSidebar.tsx              # Real-time chat UI
+│   │   │   ├── VideoRoom.tsx                # Agora conference logic
+│   │   │   └── VideoRoomWrapper.tsx         # SSR safety wrapper
 │   │   └── lib/
-│   │       ├── supabase.ts                 # Browser client
-│   │       └── supabase/server.ts          # Server client
-│   └── .env.local                          # Environment variables
+│   │       ├── api.ts                      # Backend API client (Browser)
+│   │       └── api-server.ts               # Backend API client (Server)
 │
 ├── therapist-app/            # Therapist-facing portal
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── auth/signout/route.ts       # Sign-out API route
-│   │   │   ├── dashboard/                  # Protected dashboard
-│   │   │   │   ├── layout.tsx              # Auth guard + sidebar
-│   │   │   │   ├── page.tsx                # Dashboard home
-│   │   │   │   └── session/[id]/page.tsx   # Session detail
-│   │   │   ├── login/page.tsx              # Login page
-│   │   │   ├── signup/
-│   │   │   │   ├── page.tsx                # Signup form (client)
-│   │   │   │   └── actions.ts              # Server action (profile creation)
-│   │   │   ├── globals.css                 # Design tokens
-│   │   │   └── page.tsx                    # Landing page
-│   │   ├── components/
-│   │   │   └── SignOutButton.tsx
-│   │   └── lib/
-│   │       ├── supabase.ts                 # Browser client
-│   │       └── supabase/server.ts          # Server client + Admin client
-│   └── .env.local
-│
-├── admin-panel/              # Internal admin portal
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── api/therapists/[id]/
-│   │   │   │   ├── approve/route.ts        # PATCH: verify therapist
-│   │   │   │   └── reject/route.ts         # DELETE: reject therapist
-│   │   │   ├── auth/signout/route.ts       # Sign-out API route
 │   │   │   ├── dashboard/
-│   │   │   │   ├── layout.tsx              # Admin auth guard + sidebar
-│   │   │   │   ├── page.tsx                # Stats overview
-│   │   │   │   └── therapists/
-│   │   │   │       ├── page.tsx            # Provider network list
-│   │   │   │       └── [id]/
-│   │   │   │           ├── page.tsx        # Therapist detail
-│   │   │   │           ├── ApproveButton.tsx
-│   │   │   │           └── RejectButton.tsx
-│   │   │   ├── login/page.tsx              # Admin login
-│   │   │   └── globals.css                 # Design tokens
+│   │   │   │   ├── appointments/page.tsx   # Schedule management
+│   │   │   │   ├── availability/page.tsx   # Slot management
+│   │   │   │   ├── sessions/[id]/call/page.tsx # Video room
+│   │   │   │   └── page.tsx                # Clinical overview
+│   │   │   ├── middleware.ts               # Auth session refresh
 │   │   ├── components/
-│   │   │   └── SignOutButton.tsx
+│   │   │   ├── AppointmentActions.tsx       # State management buttons
+│   │   │   ├── ChatSidebar.tsx
+│   │   │   └── VideoRoomWrapper.tsx
 │   │   └── lib/
-│   │       ├── supabase.ts                 # Browser client
-│   │       └── supabase/server.ts          # Server + Admin client
-│   └── .env.local
+│   │       └── api.ts                      # Unified API service
 │
 ├── backend/                  # NestJS API (Primary Business Logic)
 │   ├── prisma/
 │   │   └── schema.prisma           # Database schema (source of truth)
 │   └── src/
-│       ├── auth/
-│       │   ├── jwt.strategy.ts     # ES256 JWKS validation (Asymmetric)
-│       │   └── roles.guard.ts      # RBAC guard for Admin/Therapist
-│       ├── prisma/
-│       │   └── prisma.service.ts   # Prisma 7 high-perf connection
-│       └── therapists/
-│           ├── therapists.service.ts  # Registry management
-│           └── therapists.controller.ts # Admin verification endpoints
+│       ├── availability/           # Slot generation & management
+│       ├── messages/               # Chat persistence & history
+│       ├── sessions/               # Appointment lifecycle 
+│       ├── auth/                   # RBAC & JWT validation
+│       └── therapists/             # Registry management
 │
 ├── promote_admin.sql         # SQL script to promote user to admin
 └── README.md
@@ -158,7 +124,9 @@ blissfulsaas/
 | **Auth** | Supabase Auth | Email/password authentication |
 | **Database** | Supabase PostgreSQL | Managed Postgres with RLS |
 | **ORM** | Prisma | Schema definition and migrations |
-| **Backend API** | NestJS (scaffolded) | Future REST API with guards |
+| **Backend API** | NestJS | Multi-module REST API with guards |
+| **Video Platform** | Agora RTC | SDK for low-latency clinical video |
+| **Real-time Engine** | Supabase Realtime | WebSocket-driven chat delivery |
 | **Fonts** | Inter + Manrope | System sans-serif + display heading |
 
 ---
@@ -192,6 +160,36 @@ erDiagram
         DateTime dateOfBirth
     }
 
+    Therapist ||--o{ Slot : "manages"
+    Slot ||--o| Appointment : "fills"
+    Patient ||--o{ Appointment : "books"
+    Appointment ||--o{ Message : "contains"
+
+    Appointment {
+        UUID id PK
+        UUID patientId FK
+        UUID therapistId FK
+        UUID slotId FK UK
+        String status "UPCOMING | COMPLETED | CANCELLED"
+        DateTime createdAt
+    }
+
+    Slot {
+        UUID id PK
+        UUID therapistId FK
+        DateTime startTime
+        DateTime endTime
+        Boolean isBooked
+    }
+
+    Message {
+        UUID id PK
+        UUID appointmentId FK
+        UUID senderId FK
+        String content
+        DateTime createdAt
+    }
+
     Therapist {
         UUID id PK
         UUID userId FK UK
@@ -199,14 +197,8 @@ erDiagram
         String lastName
         String bio
         String[] specialities
-        String videoUrl
         Float hourlyRate
-        Boolean isVerified "false by default"
-    }
-
-    Admin {
-        UUID id PK
-        UUID userId FK UK
+        Boolean isVerified
     }
 ```
 
@@ -368,7 +360,9 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Login | `/login` | Professional login |
 | Signup | `/signup` | Application form → creates auth user + Therapist profile |
 | Dashboard | `/dashboard` | Protected provider workspace |
-| Session Detail | `/dashboard/session/[id]` | Individual session management |
+| Availability | `/dashboard/availability` | Drag-and-drop slot generation |
+| Appointments | `/dashboard/appointments` | Schedule management & session controls |
+| Session Room | `/dashboard/sessions/[id]/call` | Professional video & chat workspace |
 
 ### 6.3 Admin Panel (`:3002`)
 
@@ -556,15 +550,9 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 | Area | Issue | Workaround |
 |------|-------|-----------|
-| **PostgreSQL RLS** | Granular row-level policies are not yet defined | High-privilege tasks mediated by NestJS Backend (Service Role key) |
 | **Email Verification** | Supabase email confirmation not enforced | Users access dashboards immediately after signup |
 | **Password Recovery** | `/forgot` route linked in login pages but pages don't exist | No self-service password reset available |
 | **Auth Callback** | No `/auth/callback` route for Supabase email flows | Magic links and password reset emails won't work |
-| **Discover Page** | Patient marketplace uses hardcoded static data | Not connected to live `Therapist` table |
-| **Therapist Profile** | No self-service profile editing for therapists | Profile data set only at signup |
-| **Booking** | No booking or availability system exists | — |
-| **Video Sessions** | No in-platform video consultation | — |
-| **Chat** | No real-time messaging between patients and therapists | — |
 | **Payments** | No payment integration | — |
 | **Emails** | No transactional emails (confirmations, reminders) | — |
 | **Public Pages** | No institutional program pages (Schools, Corporate, Universities) | — |
@@ -572,28 +560,24 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 ### Planned Features (Roadmap)
 
 **✅ Completed**
-- [x] **Monorepo Scaffold**: Three Next.js 15 portals (Patient :3000, Therapist :3001, Admin :3002)
-- [x] **NestJS Backend**: REST API on :5000 with Prisma 7 ORM
-- [x] **Supabase Auth**: Email/password signup with DB trigger for profile creation
-- [x] **ES256 JWT Verification**: Backend validates tokens via Supabase JWKS endpoint
-- [x] **RBAC Guards**: Dashboard-level role checks on Patient & Admin portals + NestJS `RolesGuard`
-- [x] **Cookie Isolation**: Unique auth cookies per portal for localhost dev
-- [x] **Admin Verification Flow**: Approve/reject therapists via Backend API
-- [x] **Design System**: "Blissful Botanical" tokens, glassmorphism, micro-animations
+- [x] **Monorepo Scaffold**: Three Next.js portals
+- [x] **NestJS Backend**: REST API with Prisma ORM
+- [x] **Supabase Auth**: Email/password signup with DB triggers
+- [x] **Booking System**: Slot-based availability & patient flow
+- [x] **Video Consultations**: Agora SDK integration with token security
+- [x] **Real-Time Chat**: Full real-time support with polling fallbacks
+- [x] **Role Guards**: Layout-level CSR/SSR auth protection
+- [x] **Middleware**: Session refresh via `middleware.ts` in all portals
 
 **🔲 Pending (by priority)**
-- [ ] **Password Recovery & Auth Callback**: `/forgot` + `/auth/callback` + `/update-password` routes
-- [ ] **Live Therapist Marketplace**: SSR directory with filters (specialization, type), featured slots
-- [ ] **Therapist Profile Editor**: Self-service bio, qualifications, pricing, YouTube video embed
-- [ ] **Booking System**: Slot-based availability (online + in-clinic), patient intake form
-- [ ] **Razorpay Payments**: Session-based payment, webhook-driven booking confirmation, invoices
-- [ ] **Video Consultations**: Agora SDK integration, session webhooks, post-session feedback
-- [ ] **Real-Time Chat**: NestJS WebSocket Gateway (Socket.io), no-read-pressure design, attachments
+- [ ] **Admin Panel & Analytics**: Revenue tracking, platform stats, management
+- [ ] **Payments (Razorpay)**: Session-based payment & invoicing
 - [ ] **Clinical Notes**: Private per-patient session notes (therapist-only)
-- [ ] **Email Notifications**: Transactional emails via Resend (booking, reminders, cancellations)
-- [ ] **Public/Institutional Pages**: Schools, Corporate, Universities program pages + B2B lead capture
-- [ ] **Storage**: Supabase Storage for profiles/docs, AWS S3 (encrypted) for session recordings
-- [ ] **Comprehensive RLS**: Fine-grained PostgreSQL policies for multi-tenant data isolation
+- [ ] **Email Notifications**: Transactional emails via Resend
+- [ ] **Password Recovery**: `/forgot` + `/update-password` routes
+- [ ] **Public/Institutional Pages**: Schools, Corporate, Universities program pages
+- [ ] **Storage**: Supabase Storage for profiles/docs
+- [ ] **Comprehensive RLS**: Fine-grained PostgreSQL policies
 
 ---
 
@@ -603,10 +587,10 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 | # | Optimization | Priority | Current State | Better Implementation |
 |---|-------------|----------|---------------|----------------------|
-| 1 | **JWT Custom Claims** | Performance | Portals query `public.User` table on every page load to check role | Inject `role` into `auth.users.raw_app_meta_data` at signup → read `user.app_metadata.role` from JWT directly, eliminating a DB round-trip (~50ms saving) |
-| 2 | **Therapist Role Check Client** | Security (quick fix) | Therapist App role check uses **anon client** — will silently fail when RLS policies are added | Switch to `createAdminClient()` for role check, matching the Admin Panel pattern |
-| 3 | **Prisma RLS Passthrough** | Security (defense-in-depth) | NestJS connects via direct Postgres URL, bypassing all Supabase RLS; relies on app-level `RolesGuard` only | Implement Prisma Client Extension to inject JWT claims into each transaction (`set_config('request.jwt.claims', ...)`) for true multi-tenant data isolation |
-| 4 | **PHI Audit Logging** | Compliance | Only basic `createdAt` timestamps exist | Create an immutable `AuditLog` table + PostgreSQL triggers on all Patient data operations to satisfy HIPAA audit requirements |
+| 1 | **JWT Custom Claims** | Performance | Portals query `public.User` table on every page load | Inject `role` into `auth.users.raw_app_meta_data` at signup → read `user.app_metadata.role` directly |
+| 2 | **Therapist Role Check Client** | **RESOLVED** | Now uses `createAdminClient()` | Correctly implemented in `therapist-app/dashboard/layout.tsx` |
+| 3 | **Prisma RLS Passthrough** | Security | NestJS connects via direct Postgres URL | Implement Prisma Client Extension to inject JWT claims |
+| 4 | **PHI Audit Logging** | Compliance | Only basic timestamps exist | Create an immutable `AuditLog` table + triggers |
 
 ---
 
@@ -616,21 +600,21 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 ### 🔴 Bugs
 
-| # | Bug | File | Impact | Fix |
+| # | Bug | File | Impact | Status |
 |---|-----|------|--------|-----|
-| 1 | **`getSession()` used instead of `getUser()`** | `admin-panel/src/lib/api.ts` | `getSession()` reads the JWT from local storage without server validation. An attacker could forge a localStorage JWT. Impact is limited since the NestJS backend re-validates via ES256, but Supabase docs explicitly warn against this pattern. | Replace with `getUser()` or validate session server-side first |
-| 2 | **Therapist role check via anon client** | `therapist-app/dashboard/layout.tsx` | Queries `public.User` using the anon client. When RLS policies are added, this will silently return `null` and **lock out all therapists**. Admin panel avoids this by using `createAdminClient()`. | Switch to `createAdminClient()` for the role query |
-| 3 | **Hardcoded `hourlyRate: 150`** | `therapist-app/signup/actions.ts` | Signup form doesn't collect hourly rate, specialties, or bio. All therapists get `$150/hr` silently. | Either add form fields or remove the hardcoded default |
-| 4 | **Fake growth metric "+12% this month"** | `admin-panel/dashboard/page.tsx` | The growth percentage is hardcoded and misleading on a live admin dashboard. | Compute real growth or remove the metric |
+| 1 | **`getSession()` used instead of `getUser()`** | `admin-panel/src/lib/api.ts` | Security issue (JWT forgery) | 🔴 PENDING |
+| 2 | **Therapist role check via anon client** | `therapist-app/dashboard/layout.tsx` | Potential lockout when RLS added | ✅ **RESOLVED** |
+| 3 | **Hardcoded `hourlyRate: 150`** | `therapist-app/signup/actions.ts` | Silent default pricing | ✅ **RESOLVED** |
+| 4 | **Fake growth metric "+12% this month"** | `admin-panel/dashboard/page.tsx` | Misleading dashboard data | 🔴 PENDING |
 
 ### 🟡 Code Quality Issues
 
 | Issue | Location | Severity |
 |-------|----------|----------|
 | `(therapist.user as any)?.email` type casting | Admin therapist pages | Low — should use Supabase generated types |
-| `catch (err: any)` pattern | Multiple files | Low — TypeScript best practice is `unknown` |
-| No loading state on login submit button | Patient + Therapist login pages | Low — button doesn't disable during request |
-| **No `middleware.ts` for session refresh** | All 3 Next.js apps | **Medium** — Supabase SSR requires middleware to refresh auth cookies on every request |
+| `catch (err: any)` pattern | Multiple files | Low |
+| No loading state on login submit button | Patient + Therapist login pages | Low |
+| No error boundaries | All 3 Next.js apps | Low |
 | No error boundaries | All 3 Next.js apps | Low — unhandled fetch errors crash the page |
 | Unused imports (`Filter`, `MoreHorizontal`) | Admin therapists list page | Trivial |
 | Patient + Therapist dashboards are fully hardcoded | Dashboard home pages | Low — expected at this stage, will be replaced with live data |
