@@ -52,8 +52,8 @@ The platform is a **multi-portal monorepo** with three independent Next.js 15 ap
 
 | Portal | Port | Target User | Key Feature |
 |--------|------|-------------|-------------|
-| `patient-app` | 3000 | Patients | Browse therapists, book sessions |
-| `therapist-app` | 3001 | Therapists | Manage practice, view patients |
+| `patient-app` | 3000 | Patients | Browse therapists, book sessions, intake forms |
+| `therapist-app` | 3001 | Therapists | Manage practice, clinical notes, patient roster |
 | `admin-panel` | 3002 | Admins | Verify therapists, platform analytics |
 
 ---
@@ -70,13 +70,16 @@ blissfulsaas/
 │   │   │   │   │   ├── [id]/call/page.tsx  # Video consultation room
 │   │   │   │   │   ├── book/[id]/page.tsx  # Slot selection flow
 │   │   │   │   │   └── page.tsx            # Appointment history
+│   │   │   │   ├── messages/page.tsx       # Message History archive
+│   │   │   │   ├── intake/page.tsx         # Clinical Intake Form
 │   │   │   │   ├── discover/page.tsx       # Live therapist marketplace
 │   │   │   │   └── page.tsx                # Dashboard summary
 │   │   │   ├── middleware.ts               # Auth session refresh
 │   │   ├── components/
-│   │   │   ├── ChatSidebar.tsx              # Real-time chat UI
-│   │   │   ├── VideoRoom.tsx                # Agora conference logic
-│   │   │   └── VideoRoomWrapper.tsx         # SSR safety wrapper
+│   │   │   ├── ChatSidebar.tsx             # Real-time chat UI
+│   │   │   ├── IntakeFormClient.tsx        # Multi-step patient intake UI
+│   │   │   ├── VideoRoom.tsx               # Agora conference logic
+│   │   │   └── VideoRoomWrapper.tsx        # SSR safety wrapper
 │   │   └── lib/
 │   │       ├── api.ts                      # Backend API client (Browser)
 │   │       └── api-server.ts               # Backend API client (Server)
@@ -85,15 +88,18 @@ blissfulsaas/
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── dashboard/
-│   │   │   │   ├── appointments/page.tsx   # Schedule + Session History
+│   │   │   │   ├── appointments/page.tsx   # Schedule + Clinical Workstation
 │   │   │   │   ├── availability/page.tsx   # Slot management
-│   │   │   │   ├── sessions/[id]/call/page.tsx # Video room
+│   │   │   │   ├── patients/page.tsx       # Patient Roster (CRM)
+│   │   │   │   ├── messages/page.tsx       # Message History archive
+│   │   │   │   ├── sessions/[id]/call/page.tsx # Video room & chat
 │   │   │   │   └── page.tsx                # Clinical overview
 │   │   │   ├── middleware.ts               # Auth session refresh
 │   │   ├── components/
-│   │   │   ├── AppointmentActions.tsx       # State management buttons
-│   │   │   ├── ChatSidebar.tsx
-│   │   │   ├── NotesSidebar.tsx             # Private clinical notes
+│   │   │   ├── AppointmentActions.tsx      # State management buttons
+│   │   │   ├── EnhancedAppointmentsList.tsx# 3-Column Clinical Workstation
+│   │   │   ├── ChatSidebar.tsx             # In-call messaging UI
+│   │   │   ├── NotesSidebar.tsx            # Private clinical notes
 │   │   │   └── VideoRoomWrapper.tsx
 │   │   └── lib/
 │   │       └── api.ts                      # Unified API service
@@ -104,7 +110,8 @@ blissfulsaas/
 │   └── src/
 │       ├── availability/           # Slot generation & management
 │       ├── messages/               # Chat persistence & history
-│       ├── sessions/               # Appointment lifecycle 
+│       ├── sessions/               # Appointment lifecycle & notes
+│       ├── patients/               # Intake forms & roster logic
 │       ├── auth/                   # RBAC & JWT validation
 │       └── therapists/             # Registry management
 │
@@ -149,7 +156,6 @@ erDiagram
         String email UK
         Role role "PATIENT | THERAPIST | ADMIN"
         DateTime createdAt
-        DateTime updatedAt
     }
 
     Patient {
@@ -158,7 +164,15 @@ erDiagram
         String firstName
         String lastName
         String phone
-        DateTime dateOfBirth
+        Boolean intakeCompleted
+        String reasonForSeeking
+        String[] primaryConcerns
+        String mentalHealthHistory
+        String currentMedications
+        Boolean previousTherapy
+        String therapyGoals
+        String emergencyContactName
+        String emergencyContactPhone
     }
 
     Therapist ||--o{ Slot : "manages"
@@ -172,7 +186,9 @@ erDiagram
         UUID therapistId FK
         UUID slotId FK UK
         String status "UPCOMING | COMPLETED | CANCELLED"
-        DateTime createdAt
+        String patientNotes
+        String therapistNotes
+        DateTime scheduledAt
     }
 
     Slot {
@@ -181,6 +197,7 @@ erDiagram
         DateTime startTime
         DateTime endTime
         Boolean isBooked
+        Boolean isActive
     }
 
     Message {
@@ -207,8 +224,7 @@ erDiagram
 
 - **1:1 Role Profiles**: Each `User` has exactly one profile (`Patient`, `Therapist`, or `Admin`). This is enforced by unique constraints on `userId`.
 - **UUID Primary Keys**: All IDs use `gen_random_uuid()` and match Supabase's `auth.users.id` format.
-- **Cascade Deletes**: Deleting a `User` cascades to their profile.
-- **`isVerified` Flag**: Therapists start as unverified and must be approved by an admin.
+- **Clinical Documentation (Phase 5)**: Patient intake forms pre-fill `Patient` columns, while `Appointment` holds private `therapistNotes` per session. This ensures continuity of care across multiple appointments with different therapists if needed.
 
 ---
 
@@ -322,16 +338,12 @@ Since all three apps run on `localhost`, they would normally fight over the same
 | Therapist App | `sb-therapist-auth-token` |
 | Admin Panel | `sb-admin-auth-token` |
 
-This is configured in both the browser client (`lib/supabase.ts`) and server client (`lib/supabase/server.ts`) via the `cookieOptions.name` parameter.
-
 ### 5.8 Admin Promotion
 
 Admins cannot self-register. An existing user must be manually promoted via SQL:
 
 ```sql
 -- promote_admin.sql
--- Run in Supabase SQL Editor
-
 UPDATE public."User" SET role = 'ADMIN' WHERE id = '<user-uuid>';
 INSERT INTO public."Admin" ("userId") VALUES ('<user-uuid>') ON CONFLICT DO NOTHING;
 DELETE FROM public."Patient" WHERE "userId" = '<user-uuid>';
@@ -351,7 +363,10 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Signup | `/signup` | Patient registration with name fields |
 | Dashboard | `/dashboard` | Protected patient home |
 | Discover | `/dashboard/discover` | Browse therapist marketplace (currently static data) |
-| Therapist Detail | `/dashboard/therapist/[id]` | View individual therapist profile |
+| Book Session | `/dashboard/sessions/book` | Live therapist availability & slot booking |
+| My Sessions | `/dashboard/sessions` | Upcoming and past appointments |
+| My Messages | `/dashboard/messages` | Transcripts of past session chats |
+| Intake Form | `/dashboard/intake` | Multi-step clinical pre-session data |
 
 ### 6.2 Therapist App (`:3001`)
 
@@ -361,8 +376,10 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Login | `/login` | Professional login |
 | Signup | `/signup` | Application form → creates auth user + Therapist profile |
 | Dashboard | `/dashboard` | Protected provider workspace |
-| Availability | `/dashboard/availability` | Drag-and-drop slot generation |
-| Appointments | `/dashboard/appointments` | Schedule management & session controls |
+| Availability | `/dashboard/availability` | Drag-and-drop 3-week slot generation |
+| Appointments | `/dashboard/appointments` | Schedule management & Clinical Workstation (Intake + Notes) |
+| Patient Roster | `/dashboard/patients` | Deduped CRM viewer of past patients and interaction history |
+| Message Archive| `/dashboard/messages` | Secure transcripts of past session chats |
 | Session Room | `/dashboard/sessions/[id]/call` | Professional video & chat workspace |
 
 ### 6.3 Admin Panel (`:3002`)
@@ -373,7 +390,7 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Overview | `/dashboard` | Platform stats: total users, patients, therapists, pending |
 | Provider Network | `/dashboard/therapists` | Table of all therapist applications |
 | Therapist Detail | `/dashboard/therapists/[id]` | Deep-dive into individual practitioner |
-| **Backend Integration** | `PATCH http://localhost:5000/therapists/:id/verify` | Master endpoint for verification |
+| **Backend** | `PATCH /therapists/:id/verify` | Master endpoint for verification |
 
 ---
 
@@ -388,25 +405,6 @@ flowchart TD
     D -->|Reject| F[DELETE /api/therapists/id/reject<br/>Deletes Therapist record]
     E --> G[Therapist appears in<br/>Patient discovery marketplace]
     F --> H[Application permanently removed]
-
-    style A fill:#f0fdf4,stroke:#16a34a
-    style E fill:#f0fdf4,stroke:#16a34a
-    style F fill:#fef2f2,stroke:#dc2626
-```
-
-### Backend API Integration
-
-The Admin Panel no longer performs direct database writes. It communicates with the **NestJS Backend** (:5000) using a centralized `fetchWithAuth` wrapper:
-
-**Approve** — `PATCH /therapists/[id]/verify`
-```typescript
-// Backend logic (therapists.service.ts)
-async verify(id: string) {
-  return this.prisma.therapist.update({
-    where: { id },
-    data: { isVerified: true }
-  });
-}
 ```
 
 ---
@@ -426,26 +424,9 @@ Each app maintains **two server-side clients** and **one browser client**:
 - Respects RLS policies.
 
 ### Admin Client (`lib/supabase/server.ts` → `createAdminClient()`)
-- Used in Admin Panel and Therapist signup Server Action.
+- Used exclusively by Admins and backend jobs.
 - Uses the **Service Role key** (⚠️ NEVER exposed to the browser).
-- **Current RLS Strategy**: We utilize the Admin Client to bypass RLS for critical system operations (like verifying therapists or checking user roles) until granular RLS policies are fully moved into the PostgreSQL layer.
-- **Security Check**: The Admin Client is only invoked *after* a standard auth check has confirmed a valid session exists.
-
-```typescript
-// Admin Client pattern — bypasses RLS
-export async function createAdminClient() {
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,  // ⚠️ Server-only
-    {
-      cookies: {
-        getAll() { return [] },
-        setAll() { },
-      },
-    }
-  )
-}
-```
+- Used to bypass RLS for critical system operations until granular PostgREST policies are fully fleshed out.
 
 ---
 
@@ -466,13 +447,6 @@ The platform uses the **"Blissful Botanical"** design system — a muted dark-gr
 | `--destructive` | `#ba1a1a` | Error states, danger actions |
 | `--muted-foreground` | `#414944` | Secondary text |
 
-### Typography
-
-| Font | Variable | Usage |
-|------|----------|-------|
-| **Inter** | `--font-sans` | Body text, UI labels |
-| **Manrope** | `--font-heading` | Headings, display text |
-
 ### Design Principles
 
 1. **"No-Line" Architecture**: Minimal use of visible borders. Separation achieved through color contrast and subtle shadows.
@@ -480,6 +454,7 @@ The platform uses the **"Blissful Botanical"** design system — a muted dark-gr
 3. **Micro-Animations**: Hover states with `translate-y`, `scale`, and `rotate` transforms on interactive elements.
 4. **Editorial Typography**: Oversized headings (`text-4xl`+), ultra-wide tracking (`tracking-widest`), uppercase labels.
 5. **Super-rounding**: Cards use `rounded-[2.5rem]` to `rounded-[3rem]` for a premium organic feel.
+6. **Clinical Workstations**: The therapist portal treats data displays as full "workstations" (expandable table rows replacing older modal patterns).
 
 ---
 
@@ -491,6 +466,7 @@ Each app requires a `.env.local` file in its root:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxx
+NEXT_PUBLIC_AGORA_APP_ID=your_agora_app_id
 ```
 
 ### Therapist App (additional)
@@ -505,16 +481,19 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxx
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6...  # For admin operations
 ```
 
-> ⚠️ **Security**: The `SUPABASE_SERVICE_ROLE_KEY` is a master key that bypasses ALL security rules. It must **never** be prefixed with `NEXT_PUBLIC_` and should only be used in server-side code.
+### Backend (NestJS)
+```env
+DATABASE_URL="postgres://postgres.xxx:password@aws-0-xx.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgres://postgres.xxx:password@aws-0-xx.pooler.supabase.com:5432/postgres"
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_JWT_SECRET=your_jwt_secret
+AGORA_APP_ID=your_agora_app_id
+AGORA_APP_CERTIFICATE=your_agora_cert
+```
 
 ---
 
 ## 11. Running Locally
-
-### Prerequisites
-- Node.js 18+
-- npm
-- A Supabase project with the database schema and triggers applied
 
 ### Setup
 
@@ -523,25 +502,22 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6...  # For admin operation
 git clone https://github.com/dethrtrns/blissfulsaas.git
 cd blissfulsaas
 
-# 2. Install dependencies for each app
+# 2. Install dependencies for each app & backend
 cd patient-app && npm install && cd ..
 cd therapist-app && npm install && cd ..
 cd admin-panel && npm install && cd ..
+cd backend && npm install && cd ..
 
 # 3. Create .env.local files in each app (see §10)
 
-# 4. Run the Supabase trigger SQL (supabase_triggers.sql) in your SQL Editor
+# 4. Start the backend
+cd backend && npx prisma migrate deploy && npm run dev  # → http://localhost:5000
 
-# 5. Start all three apps (in separate terminals)
+# 5. Start all three portals (in separate terminals)
 cd patient-app && npm run dev        # → http://localhost:3000
 cd therapist-app && npm run dev      # → http://localhost:3001  
 cd admin-panel && npm run dev        # → http://localhost:3002
 ```
-
-### Creating the First Admin
-1. Sign up as a patient on `:3000` using your admin email.
-2. Run `promote_admin.sql` in the Supabase SQL Editor (update the email).
-3. Log in to Admin Panel on `:3002`.
 
 ---
 
@@ -553,10 +529,9 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 |------|-------|-----------|
 | **Email Verification** | Supabase email confirmation not enforced | Users access dashboards immediately after signup |
 | **Password Recovery** | `/forgot` route linked in login pages but pages don't exist | No self-service password reset available |
-| **Auth Callback** | No `/auth/callback` route for Supabase email flows | Magic links and password reset emails won't work |
 | **Payments** | No payment integration | — |
 | **Emails** | No transactional emails (confirmations, reminders) | — |
-| **Public Pages** | No institutional program pages (Schools, Corporate, Universities) | — |
+| **Dashboard Metrics** | Hardcoded "fake" growth metrics on main dashboards | Dashboards pending real data integration |
 
 ### Planned Features (Roadmap)
 
@@ -568,7 +543,6 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 - [x] **Video Consultations**: Agora SDK integration with token security
 - [x] **Real-Time Chat**: Full real-time support with polling fallbacks
 - [x] **Role Guards**: Layout-level CSR/SSR auth protection
-- [x] **Middleware**: Session refresh via `middleware.ts` in all portals
 - [x] **Message History**: Unified messaging archive for patients and therapists
 - [x] **Patient Roster**: Therapist dashboard view of unique patients and interaction history
 - [x] **Clinical Workstation**: Appointments view with Session Details, Patient Intake Form, and Private Clinical Notes
@@ -590,10 +564,9 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 | # | Optimization | Priority | Current State | Better Implementation |
 |---|-------------|----------|---------------|----------------------|
-| 1 | **JWT Custom Claims** | Performance | Portals query `public.User` table on every page load | Inject `role` into `auth.users.raw_app_meta_data` at signup → read `user.app_metadata.role` directly |
-| 2 | **Therapist Role Check Client** | **RESOLVED** | Now uses `createAdminClient()` | Correctly implemented in `therapist-app/dashboard/layout.tsx` |
-| 3 | **Prisma RLS Passthrough** | Security | NestJS connects via direct Postgres URL | Implement Prisma Client Extension to inject JWT claims |
-| 4 | **PHI Audit Logging** | Compliance | Only basic timestamps exist | Create an immutable `AuditLog` table + triggers |
+| 1 | **JWT Custom Claims** | Performance | Portals query `public.User` table on every page load | Inject `role` into `auth.users.raw_app_meta_data` at signup |
+| 2 | **Prisma RLS Passthrough** | Security | NestJS connects via direct Postgres URL | Implement Prisma Client Extension to inject JWT claims |
+| 3 | **PHI Audit Logging** | Compliance | Only basic timestamps exist | Create an immutable `AuditLog` table + triggers |
 
 ---
 
@@ -606,9 +579,8 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 | # | Bug | File | Impact | Status |
 |---|-----|------|--------|-----|
 | 1 | **`getSession()` used instead of `getUser()`** | `admin-panel/src/lib/api.ts` | Security issue (JWT forgery) | 🔴 PENDING |
-| 2 | **Therapist role check via anon client** | `therapist-app/dashboard/layout.tsx` | Potential lockout when RLS added | ✅ **RESOLVED** |
-| 3 | **Hardcoded `hourlyRate: 150`** | `therapist-app/signup/actions.ts` | Silent default pricing | ✅ **RESOLVED** |
-| 4 | **Fake growth metric "+12% this month"** | `admin-panel/dashboard/page.tsx` | Misleading dashboard data | 🔴 PENDING |
+| 2 | **Fake growth metric "+12% this month"** | `admin-panel/dashboard/page.tsx` | Misleading dashboard data | 🔴 PENDING |
+| 3 | **Discover page maps static therapist lists** | `patient-app/dashboard/discover/page.tsx` | UI doesn't match API data | 🔴 PENDING |
 
 ### 🟡 Code Quality Issues
 
@@ -617,32 +589,10 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 | `(therapist.user as any)?.email` type casting | Admin therapist pages | Low — should use Supabase generated types |
 | `catch (err: any)` pattern | Multiple files | Low |
 | No loading state on login submit button | Patient + Therapist login pages | Low |
-| No error boundaries | All 3 Next.js apps | Low |
 | No error boundaries | All 3 Next.js apps | Low — unhandled fetch errors crash the page |
 | Unused imports (`Filter`, `MoreHorizontal`) | Admin therapists list page | Trivial |
 | Patient + Therapist dashboards are fully hardcoded | Dashboard home pages | Low — expected at this stage, will be replaced with live data |
 
 ---
 
-## Appendix: Backend (NestJS) — Reference
-
-The NestJS backend is the centralized API layer actively used by the Admin Panel for therapist verification. It contains:
-
-### JWT Strategy (`jwt.strategy.ts`)
-Validates Supabase JWTs using the project's JWT secret. Extracts `userId`, `email`, and `role` from the token payload.
-
-### Roles Guard (`roles.guard.ts`)
-A decorator-based RBAC system:
-```typescript
-@Roles('ADMIN', 'THERAPIST')
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Get('patients')
-findAll() { ... }
-```
-
-### Prisma Schema
-The `schema.prisma` file is the **single source of truth** for the database structure. All table definitions and relationships are derived from it.
-
----
-
-*Documentation generated for The Blissful Station platform. Last updated: April 12, 2026 (Phase 7).*
+*Documentation generated for The Blissful Station platform. Last updated: April 12, 2026.*
