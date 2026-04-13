@@ -69,7 +69,7 @@ export default function DiscoverPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {therapists.map((t) => (
           <div key={t.id} className="group bg-surface-container-lowest border border-outline-variant/30 rounded-[2.5rem] overflow-hidden hover:shadow-2xl hover:border-primary/20 transition-all duration-700 flex flex-col relative">
-            <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-outline-variant/20 text-[10px] font-bold uppercase tracking-tighter text-primary flex items-center gap-1 shadow-sm">
+            <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-outline-variant/20 text-xs font-bold uppercase tracking-tighter text-primary flex items-center gap-1 shadow-sm">
               <Star className="w-3 h-3 fill-primary" /> 4.9
             </div>
             
@@ -84,12 +84,12 @@ export default function DiscoverPage() {
             </div>
 
             <div className="p-8 flex flex-col flex-1">
-               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60 mb-2">{t.specialities?.[0] || 'Psychotherapist'}</p>
+               <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary/60 mb-2">{t.specialities?.[0] || 'Psychotherapist'}</p>
                <h3 className="text-2xl font-heading font-medium text-foreground mb-4">{t.firstName} {t.lastName}</h3>
                
                <div className="flex flex-wrap gap-2 mb-6">
                  {t.specialities?.slice(0, 3).map((tag: string) => (
-                   <span key={tag} className="px-3 py-1 bg-surface-container-low text-muted-foreground text-[10px] font-bold uppercase tracking-widest rounded-lg border border-outline-variant/10">
+                   <span key={tag} className="px-3 py-1 bg-surface-container-low text-muted-foreground text-xs font-bold uppercase tracking-widest rounded-lg border border-outline-variant/10">
                      {tag}
                    </span>
                  ))}
@@ -97,7 +97,7 @@ export default function DiscoverPage() {
 
                <div className="mt-auto pt-6 border-t border-outline-variant/10 flex items-center justify-between">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Starts at</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Starts at</span>
                     <span className="text-xl font-heading text-primary">${t.hourlyRate}</span>
                   </div>
                   <Link href={`/dashboard/therapist/${t.id}`} className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300">
@@ -128,7 +128,7 @@ export default function DiscoverPage() {
             />
           </div>
           <div className="flex-1 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest rounded-full">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-widest rounded-full">
               <Sparkles className="w-3 h-3" /> AI Personalized Match
             </div>
             <h2 className="text-4xl font-heading font-normal text-foreground leading-tight">

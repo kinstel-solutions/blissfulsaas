@@ -53,7 +53,7 @@ export default function SignupPage() {
         </Link>
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-heading font-bold text-[10px]">B</span>
+            <span className="text-primary-foreground font-heading font-bold text-xs">B</span>
           </div>
           <span className="font-heading font-semibold text-sm text-primary">Blissful Station</span>
         </div>

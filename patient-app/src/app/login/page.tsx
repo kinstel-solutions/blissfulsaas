@@ -29,15 +29,15 @@ export default function LoginPage() {
 
       {/* Header */}
       <header className="p-8 md:px-16 flex justify-between items-center z-10 bg-transparent">
-        <Link href="/" className="group inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40 hover:text-primary transition-colors">
+        <Link href="/" className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary/40 hover:text-primary transition-colors">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          The Sanctuary
+          Back to Home
         </Link>
         <div className="flex items-center gap-3 opacity-40">
           <div className="w-6 h-6 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-heading font-bold text-[10px]">B</span>
+            <span className="text-primary-foreground font-heading font-bold text-xs">B</span>
           </div>
-          <span className="font-heading font-semibold text-sm text-primary tracking-tighter">Blissful Portal</span>
+          <span className="font-heading font-semibold text-sm text-primary tracking-tighter">Portal Login</span>
         </div>
       </header>
 
@@ -48,7 +48,7 @@ export default function LoginPage() {
                <Fingerprint className="w-8 h-8 font-thin" />
             </div>
             <h1 className="text-4xl font-heading font-normal tracking-tight text-primary mb-4 leading-tight">Welcome Back.</h1>
-            <p className="text-primary/40 text-[10px] font-bold uppercase tracking-[0.3em]">Access Your Session Archive</p>
+            <p className="text-primary/40 text-xs font-bold uppercase tracking-[0.3em]">Sign in to your account</p>
           </div>
 
           <div className="bg-surface-container-lowest p-10 md:p-12 rounded-[2.5rem] shadow-2xl border border-outline-variant/10 relative overflow-hidden group">
@@ -56,15 +56,15 @@ export default function LoginPage() {
             
             <form onSubmit={handleLogin} className="space-y-8 relative z-10">
               <div className="space-y-3">
-                <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-[0.3em] text-primary/30 ml-1">
-                  Institutional Email
+                <label htmlFor="email" className="block text-xs font-bold uppercase tracking-[0.3em] text-primary/30 ml-1">
+                  Email Address
                 </label>
                 <input 
                   id="email" 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@sanctuary.com" 
+                  placeholder="your@email.com" 
                   className="w-full h-14 bg-surface-container-low border border-transparent focus:border-primary/10 focus:bg-surface-container-lowest px-6 outline-none transition-all rounded-2xl text-primary font-medium placeholder:text-primary/20 shadow-sm"
                   required
                 />
@@ -72,11 +72,11 @@ export default function LoginPage() {
               
               <div className="space-y-3">
                 <div className="flex justify-between items-center px-1">
-                  <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-[0.3em] text-primary/30">
-                    Secure Key
+                  <label htmlFor="password" className="block text-xs font-bold uppercase tracking-[0.3em] text-primary/30">
+                    Password
                   </label>
-                  <Link href="/forgot" className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60 hover:text-primary transition-colors underline decoration-primary/10 decoration-2 underline-offset-4">
-                    Recovery
+                  <Link href="/forgot" className="text-xs font-bold uppercase tracking-[0.2em] text-primary/60 hover:text-primary transition-colors underline decoration-primary/10 decoration-2 underline-offset-4">
+                    Forgot password?
                   </Link>
                 </div>
                 <input 
@@ -91,25 +91,25 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="p-4 bg-destructive/5 border border-destructive/10 rounded-2xl text-destructive text-[10px] font-bold uppercase tracking-widest text-center">
+                <div className="p-4 bg-destructive/5 border border-destructive/10 rounded-2xl text-destructive text-xs font-bold uppercase tracking-widest text-center">
                   {error}
                 </div>
               )}
 
               <button 
                 type="submit" 
-                className="w-full h-16 bg-primary text-primary-foreground font-bold uppercase tracking-[0.3em] text-[10px] rounded-2xl shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0.5 flex items-center justify-center group transition-all duration-500"
+                className="w-full h-16 bg-primary text-primary-foreground font-bold uppercase tracking-[0.3em] text-xs rounded-2xl shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0.5 flex items-center justify-center group transition-all duration-500"
               >
-                Enter sanctuary
+                Sign In
                 <ChevronRight className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" />
               </button>
             </form>
 
             <div className="mt-12 pt-10 border-t border-primary/5 text-center">
               <p className="text-xs text-primary/40 font-medium">
-                New to the platform?{" "}
+                Don't have an account?{" "}
                 <Link href="/signup" className="text-primary font-bold hover:underline decoration-primary/20 decoration-2 underline-offset-4">
-                  Commence Journey
+                  Sign Up
                 </Link>
               </p>
             </div>

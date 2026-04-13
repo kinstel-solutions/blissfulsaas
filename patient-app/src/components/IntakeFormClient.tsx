@@ -90,7 +90,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
             <div key={s.id} className="flex items-center gap-2">
               <button
                 onClick={() => step > s.id && setStep(s.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
                   step === s.id 
                     ? 'bg-primary text-white shadow-lg shadow-primary/20' 
                     : step > s.id 
@@ -271,7 +271,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
           </div>
         </div>
 
-        <p className="text-center text-[10px] text-muted-foreground/50 mt-8 uppercase tracking-widest font-bold">
+        <p className="text-center text-xs text-muted-foreground/50 mt-8 uppercase tracking-widest font-bold">
           🔒 End-to-end encrypted · HIPAA considerations applied
         </p>
       </div>

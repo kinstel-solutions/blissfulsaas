@@ -47,7 +47,7 @@ export default async function TherapistDetailPage({
         <div className="flex flex-col gap-4">
           <Link 
             href="/dashboard/therapists" 
-            className="group inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40 hover:text-primary transition-colors mb-2"
+            className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary/40 hover:text-primary transition-colors mb-2"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
             Back to Registry
@@ -63,10 +63,10 @@ export default async function TherapistDetailPage({
               <div className="flex items-center gap-4 mt-2">
                 <div className="flex items-center gap-2 px-3 py-1 bg-surface-container-low rounded-full border border-outline-variant/10">
                    <Activity className="w-3 h-3 text-primary/40" />
-                   <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60">Psychotherapist</span>
+                   <span className="text-xs font-bold uppercase tracking-widest text-primary/60">Psychotherapist</span>
                 </div>
                 {therapist.isVerified && (
-                  <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/5 text-emerald-600 border border-emerald-500/10 rounded-full font-bold uppercase tracking-[0.1em] text-[9px]">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/5 text-emerald-600 border border-emerald-500/10 rounded-full font-bold uppercase tracking-[0.1em] text-xs">
                     <ShieldCheck className="w-3 h-3" /> Legitimacy Verified
                   </div>
                 )}
@@ -95,7 +95,7 @@ export default async function TherapistDetailPage({
              
              <div className="mt-12 pt-10 border-t border-outline-variant/5 grid grid-cols-2 gap-10">
                 <div>
-                   <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 mb-3">Specialities</p>
+                   <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40 mb-3">Specialities</p>
                    <div className="flex flex-wrap gap-2">
                       {therapist.specialities?.map((spec: string, i: number) => (
                         <span key={i} className="px-3 py-1.5 bg-surface-container-low rounded-xl text-xs font-medium text-primary/70">
@@ -105,7 +105,7 @@ export default async function TherapistDetailPage({
                    </div>
                 </div>
                 <div>
-                   <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 mb-3">Professional Stance</p>
+                   <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40 mb-3">Professional Stance</p>
                    <div className="flex items-center gap-3 p-4 bg-primary/5 rounded-2xl border border-primary/10">
                       <Award className="w-5 h-5 text-primary" />
                       <span className="text-sm font-bold text-primary uppercase tracking-widest">Board Eligible</span>
@@ -124,7 +124,7 @@ export default async function TherapistDetailPage({
                        <DollarSign className="w-6 h-6 text-emerald-600" />
                     </div>
                     <div>
-                       <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/50">Hourly Rate</p>
+                       <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">Hourly Rate</p>
                        <p className="text-xl font-bold text-foreground">${therapist.hourlyRate || 0}.00</p>
                     </div>
                  </div>
@@ -133,7 +133,7 @@ export default async function TherapistDetailPage({
                        <User className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                       <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/50">Provider ID</p>
+                       <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">Provider ID</p>
                        <p className="text-sm font-mono text-foreground/60 overflow-hidden text-ellipsis">{therapist.id.substring(0, 13)}...</p>
                     </div>
                  </div>
@@ -153,7 +153,7 @@ export default async function TherapistDetailPage({
                          <Mail className="w-5 h-5" />
                       </div>
                       <div className="flex-1 overflow-hidden">
-                         <p className="text-[9px] font-bold uppercase tracking-widest text-white/40">Verified Email</p>
+                         <p className="text-xs font-bold uppercase tracking-widest text-white/40">Verified Email</p>
                          <p className="text-sm font-medium text-white truncate">{(therapist.user as any)?.email}</p>
                       </div>
                    </div>
@@ -162,7 +162,7 @@ export default async function TherapistDetailPage({
                          <Calendar className="w-5 h-5" />
                       </div>
                       <div>
-                         <p className="text-[9px] font-bold uppercase tracking-widest text-white/40">Enrolled Since</p>
+                         <p className="text-xs font-bold uppercase tracking-widest text-white/40">Enrolled Since</p>
                          <p className="text-sm font-medium text-white">
                            {new Date((therapist.user as any)?.createdAt).toLocaleDateString()}
                          </p>
@@ -170,7 +170,7 @@ export default async function TherapistDetailPage({
                    </div>
                 </div>
                 <div className="mt-4 pt-10 border-t border-white/10">
-                   <button className="w-full h-14 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-bold uppercase tracking-widest text-[9px] transition-all border border-white/5">
+                   <button className="w-full h-14 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-bold uppercase tracking-widest text-xs transition-all border border-white/5">
                       Open Communication Channel
                    </button>
                 </div>

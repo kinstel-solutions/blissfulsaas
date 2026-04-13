@@ -104,11 +104,11 @@ export default function ChatSidebar({
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <h3 className="text-[10px] font-bold uppercase tracking-widest text-primary/60 flex items-center gap-2">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-primary/60 flex items-center gap-2">
             <MessageSquare className="w-4 h-4" /> Session Chat
           </h3>
           {status !== 'connected' && (
-            <span className={`text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-widest ${
+            <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-widest ${
               status === 'error' ? 'bg-red-100 text-red-700' : 
               'bg-yellow-100 text-yellow-700'
             }`}>
@@ -122,7 +122,7 @@ export default function ChatSidebar({
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-32 gap-2 text-slate-300">
             <MessageSquare className="w-6 h-6" />
-            <p className="text-[10px] font-bold uppercase tracking-widest">
+            <p className="text-xs font-bold uppercase tracking-widest">
               No messages yet
             </p>
           </div>
@@ -143,7 +143,7 @@ export default function ChatSidebar({
               >
                 <p>{msg.content}</p>
                 <p
-                  className={`text-[9px] mt-1 font-bold uppercase tracking-wider ${
+                  className={`text-xs mt-1 font-bold uppercase tracking-wider ${
                     isMe ? "text-white/40" : "text-slate-400"
                   }`}
                 >

@@ -130,6 +130,7 @@ model Message {
   senderId      String      @db.Uuid
   sender        User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
   content       String
+  isRead        Boolean     @default(false)
   createdAt     DateTime    @default(now())
 
   @@index([appointmentId, createdAt])

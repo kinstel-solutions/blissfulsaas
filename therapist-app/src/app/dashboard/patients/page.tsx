@@ -36,10 +36,10 @@ export default async function PatientRosterPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-100">
-                <th className="px-10 py-8 text-left text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Patient identity</th>
-                <th className="px-10 py-8 text-left text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Contact Details</th>
-                <th className="px-10 py-8 text-left text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 text-center">Engagement</th>
-                <th className="px-10 py-8 text-left text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Last Session</th>
+                <th className="px-10 py-8 text-left text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Patient identity</th>
+                <th className="px-10 py-8 text-left text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Contact Details</th>
+                <th className="px-10 py-8 text-left text-xs font-bold uppercase tracking-[0.2em] text-slate-400 text-center">Engagement</th>
+                <th className="px-10 py-8 text-left text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Last Session</th>
                 <th className="px-10 py-8"></th>
               </tr>
             </thead>
@@ -55,7 +55,7 @@ export default async function PatientRosterPage() {
                         <p className="font-heading text-lg font-medium text-slate-900 leading-tight">
                           {p.firstName} {p.lastName}
                         </p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Ref: {p.id.slice(0, 8)}</p>
+                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Ref: {p.id.slice(0, 8)}</p>
                       </div>
                     </div>
                   </td>
@@ -85,7 +85,7 @@ export default async function PatientRosterPage() {
                   <td className="px-10 py-8 text-right">
                     <Link 
                       href="/dashboard/messages"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-900 hover:text-white hover:border-slate-900 rounded-xl transition-all"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-xs font-bold uppercase tracking-widest text-slate-600 hover:bg-slate-900 hover:text-white hover:border-slate-900 rounded-xl transition-all"
                     >
                       History <ArrowRight className="w-3.5 h-3.5" />
                     </Link>

@@ -16,11 +16,31 @@ export class MessagesController {
     return this.messagesService.sendMessage(req.user.userId, body.appointmentId, body.content);
   }
 
+  @Get('unread/counts')
+  getUnreadCounts(@Request() req: any) {
+    return this.messagesService.getUnreadCounts(req.user.userId);
+  }
+
+  // TEST ENDPOINT - REMOVE LATER
+  @Get('test-unread')
+  getTestUnreadCounts(@Request() req: any) {
+    const userId = req.query.userId || req.body.userId;
+    return this.messagesService.getUnreadCounts(userId);
+  }
+
   @Get(':appointmentId')
   getForAppointment(
     @Request() req: any,
     @Param('appointmentId', ParseUUIDPipe) appointmentId: string,
   ) {
     return this.messagesService.getMessages(req.user.userId, appointmentId);
+  }
+
+  @Post(':appointmentId/read')
+  markRead(
+    @Request() req: any,
+    @Param('appointmentId', ParseUUIDPipe) appointmentId: string,
+  ) {
+    return this.messagesService.markAsRead(req.user.userId, appointmentId);
   }
 }

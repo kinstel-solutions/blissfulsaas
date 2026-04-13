@@ -40,7 +40,7 @@ export default async function BookingPage() {
                       className="w-full h-full object-cover rounded-[1.8rem]"
                     />
                   </div>
-                  <div className="flex items-center gap-1 bg-primary/10 px-3 py-1.5 rounded-full text-primary text-[10px] font-bold uppercase tracking-widest">
+                  <div className="flex items-center gap-1 bg-primary/10 px-3 py-1.5 rounded-full text-primary text-xs font-bold uppercase tracking-widest">
                     <Star className="w-3 h-3 fill-primary" />
                     Verified
                   </div>
@@ -55,12 +55,12 @@ export default async function BookingPage() {
 
                 <div className="flex flex-wrap gap-2 mb-8">
                   {therapist.specialities?.slice(0, 3).map((spec: string) => (
-                    <span key={spec} className="px-3 py-1 bg-surface-container-lowest border border-outline-variant/50 rounded-full text-[10px] font-medium text-primary/80">
+                    <span key={spec} className="px-3 py-1 bg-surface-container-lowest border border-outline-variant/50 rounded-full text-xs font-medium text-primary/80">
                       {spec}
                     </span>
                   ))}
                   {therapist.specialities?.length > 3 && (
-                    <span className="text-[10px] font-bold text-muted-foreground/60 ml-1">+{therapist.specialities.length - 3} more</span>
+                    <span className="text-xs font-bold text-muted-foreground/60 ml-1">+{therapist.specialities.length - 3} more</span>
                   )}
                 </div>
               </div>
@@ -68,12 +68,12 @@ export default async function BookingPage() {
               <div className="p-8 pt-0 border-t border-outline-variant/10 bg-surface-container-lowest/50">
                 <div className="flex items-center justify-between mb-6">
                    <div>
-                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Standard Rate</p>
+                     <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Standard Rate</p>
                      <p className="text-lg font-heading font-medium text-foreground text-primary/80">₹{therapist.hourlyRate || "1,500"}/hr</p>
                    </div>
                    <div className="flex items-center gap-2 text-primary/60">
                       <Shield className="w-4 h-4" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Secured</span>
+                      <span className="text-xs font-bold uppercase tracking-widest">Secured</span>
                    </div>
                 </div>
                 <Link href={`/dashboard/sessions/book/${therapist.id}`}>

@@ -51,7 +51,7 @@ export default async function TherapistsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-outline-variant/10 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50 bg-primary/[0.01]">
+              <tr className="border-b border-outline-variant/10 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/50 bg-primary/[0.01]">
                 <th className="px-10 py-6">Practitioner</th>
                 <th className="px-8 py-6">Status</th>
                 <th className="px-8 py-6">Rate</th>
@@ -77,18 +77,18 @@ export default async function TherapistsPage() {
                   </td>
                   <td className="px-8 py-8">
                     {therapist.isVerified ? (
-                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/5 text-emerald-600 border border-emerald-500/10 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/5 text-emerald-600 border border-emerald-500/10 rounded-full text-xs font-bold uppercase tracking-widest">
                         <CheckCircle2 className="w-3 h-3" /> Verified
                       </div>
                     ) : (
-                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/5 text-amber-600 border border-amber-500/10 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/5 text-amber-600 border border-amber-500/10 rounded-full text-xs font-bold uppercase tracking-widest">
                         <Clock className="w-3 h-3" /> Pending
                       </div>
                     )}
                   </td>
                   <td className="px-8 py-8">
                     <p className="text-sm font-bold text-primary">${therapist.hourlyRate || 0}/hr</p>
-                    <p className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-tighter">Market Value</p>
+                    <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-tighter">Market Value</p>
                   </td>
                   <td className="px-8 py-8">
                     <p className="text-sm font-medium text-foreground/70">

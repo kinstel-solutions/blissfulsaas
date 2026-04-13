@@ -79,7 +79,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
             <VideoOff className="w-8 h-8" />
           </div>
         )}
-        <div className="absolute bottom-2 left-3 z-40 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-[8px] font-bold uppercase tracking-widest text-white">
+        <div className="absolute bottom-2 left-3 z-40 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-xs font-bold uppercase tracking-widest text-white">
           You (Patient)
         </div>
       </div>
@@ -87,7 +87,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
       {/* Secure Banner */}
       <div className="absolute top-8 left-8 z-30 flex items-center gap-3 bg-black/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/10">
         <Shield className="w-3 h-3 text-green-400" />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-white/70">HIPAA Protected</span>
+        <span className="text-xs font-bold uppercase tracking-widest text-white/70">HIPAA Protected</span>
       </div>
 
       {/* Call Controls HUD */}

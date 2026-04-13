@@ -111,14 +111,14 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
                 <VideoOff className="w-8 h-8" />
               </div>
             )}
-            <div className="absolute bottom-2 left-3 z-30 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-[8px] font-bold uppercase tracking-widest text-white">
+            <div className="absolute bottom-2 left-3 z-30 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-xs font-bold uppercase tracking-widest text-white">
               You (Clinician)
             </div>
           </div>
 
           {/* Session Header Overlay */}
           <div className="absolute top-10 left-10 z-20 flex flex-col gap-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">
+            <p className="text-xs font-bold uppercase tracking-widest text-white/60">
               Active Consultation
             </p>
             <h2 className="text-3xl font-heading text-white">
@@ -126,7 +126,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
             </h2>
             <div className="flex items-center gap-3 bg-black/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/10 w-fit">
               <Shield className="w-3 h-3 text-green-400" />
-              <span className="text-[8px] font-bold uppercase tracking-widest text-white/70">HIPAA Secure Room</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-white/70">HIPAA Secure Room</span>
             </div>
           </div>
 
@@ -165,7 +165,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
           <div className="flex p-1 bg-slate-100 rounded-2xl mb-6">
             <button 
               onClick={() => setActiveTab('notes')}
-              className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all ${
                 activeTab === 'notes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
               }`}
             >
@@ -173,7 +173,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
             </button>
             <button 
               onClick={() => setActiveTab('chat')}
-              className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all ${
                 activeTab === 'chat' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
               }`}
             >
@@ -197,17 +197,17 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
             <div className="p-5 bg-green-50 rounded-2xl border border-green-100 flex items-center gap-4">
               <CheckCircle className="w-5 h-5 text-green-600" />
               <div className="text-left">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-green-700">
+                <p className="text-xs font-bold uppercase tracking-widest text-green-700">
                   Ready to Finalize
                 </p>
-                <p className="text-[10px] font-medium text-green-600 opacity-60">
+                <p className="text-xs font-medium text-green-600 opacity-60">
                   Session status: In Progress
                 </p>
               </div>
             </div>
             <button 
               onClick={handleComplete}
-              className="w-full h-14 bg-slate-900 text-white font-bold uppercase tracking-widest text-[10px] rounded-2xl shadow-lg hover:bg-primary transition-all"
+              className="w-full h-14 bg-slate-900 text-white font-bold uppercase tracking-widest text-xs rounded-2xl shadow-lg hover:bg-primary transition-all"
             >
               Complete and Close
             </button>

@@ -81,7 +81,7 @@ export default async function DashboardPage() {
                 <p className="text-foreground font-semibold text-sm">
                   {new Date(nextSession.scheduledAt).toLocaleDateString(undefined, { weekday: 'long', hour: '2-digit', minute: '2-digit' })}
                 </p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1">Virtual Sanctuary</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">Virtual Sanctuary</p>
               </div>
               <Link href={`/dashboard/sessions/${nextSession.id}/call`}>
                 <button className="px-6 py-2.5 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground text-sm font-bold rounded-xl transition-all">

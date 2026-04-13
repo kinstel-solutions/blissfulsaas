@@ -21,6 +21,18 @@ export class MessagesService {
       throw new ForbiddenException('Not a participant of this appointment');
     }
 
+    // 2.2 Status check: cannot chat on cancelled appointments
+    if (appointment.status === 'CANCELLED') {
+      throw new ForbiddenException('Cannot send messages to a cancelled appointment');
+    }
+
+    // 2.5 Security: Ensure we are within the 7-day Post-Consultation Chat Window
+    const sessionEndTime = new Date(appointment.scheduledAt).getTime() + (appointment.duration * 60000);
+    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+    if (Date.now() > sessionEndTime + SEVEN_DAYS_MS) {
+      throw new ForbiddenException('Chat window has closed (7 days after consultation)');
+    }
+
     // 3. Insert the message
     return this.prisma.message.create({
       data: {
@@ -56,5 +68,48 @@ export class MessagesService {
       },
       orderBy: { createdAt: 'asc' },
     });
+  }
+
+  async markAsRead(requesterUserId: string, appointmentId: string) {
+    // Mark as read all messages in this appointment NOT sent by the requester
+    return this.prisma.message.updateMany({
+      where: {
+        appointmentId,
+        senderId: { not: requesterUserId },
+        isRead: false,
+      },
+      data: { isRead: true },
+    });
+  }
+
+  async getUnreadCounts(userId: string) {
+    // Find all appointments involving the user
+    // Then count unread messages in those where sender is NOT the user
+    console.log(`fetching unread counts for userId: ${userId}`);
+    const unreadMessages = await this.prisma.message.findMany({
+      where: {
+        appointment: {
+          OR: [
+            { patient: { userId } },
+            { therapist: { userId } }
+          ]
+        },
+        senderId: { not: userId },
+        isRead: false,
+      },
+      select: {
+        appointmentId: true
+      }
+    });
+    
+    console.log(`Found ${unreadMessages.length} total unread messages for user: ${userId}`);
+
+    // Transform to a map of appointmentId -> count
+    const countMap: Record<string, number> = {};
+    for (const msg of unreadMessages) {
+      countMap[msg.appointmentId] = (countMap[msg.appointmentId] || 0) + 1;
+    }
+    
+    return countMap;
   }
 }

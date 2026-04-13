@@ -58,8 +58,8 @@ export default async function SessionsPage() {
 
               <div className="flex items-center gap-3">
                   <div className="hidden lg:flex flex-col items-end mr-6">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40 block mb-1">Status</span>
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                    <span className="text-xs font-bold uppercase tracking-widest text-primary/40 block mb-1">Status</span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${
                       session.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
                       session.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
                       session.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :

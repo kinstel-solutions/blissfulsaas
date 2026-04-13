@@ -28,7 +28,7 @@ export default function ApproveButton({ id }: { id: string }) {
     <button 
       onClick={handleApprove}
       disabled={loading}
-      className="h-14 px-8 bg-emerald-600 text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 hover:-translate-y-1 active:translate-y-0.5 flex items-center gap-3 transition-all disabled:opacity-50"
+      className="h-14 px-8 bg-emerald-600 text-white rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/40 hover:-translate-y-1 active:translate-y-0.5 flex items-center gap-3 transition-all disabled:opacity-50"
     >
       {loading ? (
         <Loader2 className="w-4 h-4 animate-spin" />

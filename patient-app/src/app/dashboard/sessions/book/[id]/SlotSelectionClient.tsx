@@ -117,7 +117,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                                 {slot.startTime} - {slot.endTime}
                               </span>
                             </div>
-                            {booked && <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Booked</span>}
+                            {booked && <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Booked</span>}
                             {selectedSlot?.id === slot.id && !booked && <CheckCircle2 className="w-5 h-5 text-white animate-in zoom-in" />}
                           </button>
                         );
@@ -142,19 +142,19 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                 </div>
                 <div>
                   <p className="text-sm font-bold text-foreground">Dr. {therapist.firstName} {therapist.lastName}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Selected Expert</p>
+                  <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">Selected Expert</p>
                 </div>
              </div>
 
              {selectedSlot ? (
                <div className="p-5 bg-primary/5 border border-primary/10 rounded-2xl animate-in fade-in duration-500">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2">Selected Time</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Selected Time</p>
                   <p className="text-sm font-medium text-foreground">Every {DAYS[selectedSlot.dayOfWeek]}</p>
                   <p className="text-lg font-bold text-primary">{selectedSlot.startTime} (IST)</p>
                </div>
              ) : (
                <div className="p-10 border-2 border-dashed border-outline-variant/30 rounded-2xl text-center">
-                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">Select a slot</p>
+                 <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">Select a slot</p>
                </div>
              )}
            </div>
@@ -185,7 +185,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
              )}
            </button>
            
-           <p className="mt-6 text-[10px] text-center text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-4 font-bold">
+           <p className="mt-6 text-xs text-center text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-4 font-bold">
              By booking, you agree to our clinical consultation terms and 24h grace period.
            </p>
         </div>

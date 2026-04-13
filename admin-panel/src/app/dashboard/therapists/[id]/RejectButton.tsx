@@ -29,7 +29,7 @@ export default function RejectButton({ id }: { id: string }) {
     <button 
       onClick={handleReject}
       disabled={loading}
-      className="h-14 px-8 bg-surface border border-destructive/20 text-destructive rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-destructive hover:text-white transition-all disabled:opacity-50 flex items-center gap-3"
+      className="h-14 px-8 bg-surface border border-destructive/20 text-destructive rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-destructive hover:text-white transition-all disabled:opacity-50 flex items-center gap-3"
     >
       {loading ? (
         <Loader2 className="w-4 h-4 animate-spin" />

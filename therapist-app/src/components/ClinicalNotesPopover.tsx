@@ -33,7 +33,7 @@ export default function ClinicalNotesPopover({ appointmentId, initialNotes }: { 
         title="View Clinical Notes"
       >
         <StickyNote className="w-5 h-5" />
-        {initialNotes && <span className="text-[10px] font-bold uppercase tracking-widest">Notes</span>}
+        {initialNotes && <span className="text-xs font-bold uppercase tracking-widest">Notes</span>}
       </button>
     );
   }
@@ -48,7 +48,7 @@ export default function ClinicalNotesPopover({ appointmentId, initialNotes }: { 
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 leading-tight">Clinical Session Notes</h3>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Private Record • Confidential</p>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Private Record • Confidential</p>
             </div>
           </div>
           <button onClick={() => setIsOpen(false)} className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
@@ -65,7 +65,7 @@ export default function ClinicalNotesPopover({ appointmentId, initialNotes }: { 
           />
           
           <div className="mt-8 flex items-center justify-between">
-            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">
               Last auto-synced: {new Date().toLocaleTimeString()}
             </p>
             <button 

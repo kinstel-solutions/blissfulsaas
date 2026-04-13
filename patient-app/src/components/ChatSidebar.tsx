@@ -118,7 +118,7 @@ export default function ChatSidebar({
             Session Chat
           </h3>
           {status !== 'connected' && (
-            <span className={`text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-widest ${
+            <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-widest ${
               status === 'error' ? 'bg-red-500/20 text-red-400' : 
               'bg-yellow-500/20 text-yellow-400'
             }`}>
@@ -160,7 +160,7 @@ export default function ChatSidebar({
               >
                 <p>{msg.content}</p>
                 <p
-                  className={`text-[10px] mt-1 font-bold uppercase tracking-wider ${
+                  className={`text-xs mt-1 font-bold uppercase tracking-wider ${
                     isMe ? "text-white/50" : "text-white/30"
                   }`}
                 >

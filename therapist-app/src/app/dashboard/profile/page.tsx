@@ -121,7 +121,7 @@ export default function ProfilePage() {
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">First Name</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">First Name</label>
               <input
                 type="text"
                 name="firstName"
@@ -132,7 +132,7 @@ export default function ProfilePage() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Last Name</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Last Name</label>
               <input
                 type="text"
                 name="lastName"
@@ -145,7 +145,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Editorial Bio</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Editorial Bio</label>
             <textarea
               name="bio"
               value={formData.bio}
@@ -158,7 +158,7 @@ export default function ProfilePage() {
 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Hourly Rate (USD)</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Hourly Rate (USD)</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
                 <input
@@ -174,7 +174,7 @@ export default function ProfilePage() {
             </div>
             {/* Future Video URL if needed 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Introductory Video URL</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Introductory Video URL</label>
               <input
                 type="url"
                 name="videoUrl"
@@ -188,7 +188,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Specialities</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Specialities</label>
             <div className="p-4 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl min-h-[100px] flex gap-2 flex-wrap items-start focus-within:border-primary/50 transition-colors">
               {formData.specialities.map(tag => (
                 <span key={tag} className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1.5 rounded-lg text-xs font-bold tracking-tight">

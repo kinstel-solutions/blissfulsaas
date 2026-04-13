@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
         </div>
         <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-destructive/5 border border-destructive/10 rounded-full">
            <ShieldAlert className="w-3.5 h-3.5 text-destructive animate-pulse" />
-           <span className="text-[10px] font-bold uppercase tracking-widest text-destructive/80">Restricted Access</span>
+           <span className="text-xs font-bold uppercase tracking-widest text-destructive/80">Restricted Access</span>
         </div>
       </header>
 
@@ -63,7 +63,7 @@ export default function AdminLoginPage() {
                <Fingerprint className="w-10 h-10 font-thin transition-transform duration-500 group-hover:scale-110" />
             </div>
             <h1 className="text-4xl font-heading font-normal tracking-tight text-primary mb-4 leading-tight">Admin OS.</h1>
-            <p className="text-primary/40 text-[10px] font-bold uppercase tracking-[0.4em] ml-1">Terminal Authorization Required</p>
+            <p className="text-primary/40 text-xs font-bold uppercase tracking-[0.4em] ml-1">Admin Login</p>
           </div>
 
           <div className="bg-surface-container-lowest p-10 md:p-12 rounded-[3.5rem] shadow-2xl border border-outline-variant/10 relative overflow-hidden group">
@@ -71,8 +71,8 @@ export default function AdminLoginPage() {
             
             <form onSubmit={handleLogin} className="space-y-8 relative z-10">
               <div className="space-y-3">
-                <label className="block text-[10px] font-bold uppercase tracking-[0.3em] text-primary/30 ml-2">
-                  System Identifier
+                <label className="block text-xs font-bold uppercase tracking-[0.3em] text-primary/30 ml-2">
+                  Email Address
                 </label>
                 <input 
                   type="email" 
@@ -85,8 +85,8 @@ export default function AdminLoginPage() {
               </div>
               
               <div className="space-y-3">
-                <label className="block text-[10px] font-bold uppercase tracking-[0.3em] text-primary/30 ml-2">
-                  Security Token
+                <label className="block text-xs font-bold uppercase tracking-[0.3em] text-primary/30 ml-2">
+                  Password
                 </label>
                 <input 
                   type="password" 
@@ -99,7 +99,7 @@ export default function AdminLoginPage() {
               </div>
 
               {error && (
-                <div className="p-5 bg-destructive/5 border border-destructive/10 rounded-3xl text-destructive text-[10px] font-bold uppercase tracking-[0.1em] text-center leading-relaxed">
+                <div className="p-5 bg-destructive/5 border border-destructive/10 rounded-3xl text-destructive text-xs font-bold uppercase tracking-[0.1em] text-center leading-relaxed">
                   {error}
                 </div>
               )}
@@ -107,13 +107,13 @@ export default function AdminLoginPage() {
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full h-20 bg-primary text-primary-foreground font-bold uppercase tracking-[0.4em] text-[10px] rounded-[2.5rem] shadow-2xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1.5 active:translate-y-0.5 flex items-center justify-center group transition-all duration-500 disabled:opacity-50 disabled:translate-y-0"
+                className="w-full h-20 bg-primary text-primary-foreground font-bold uppercase tracking-[0.4em] text-xs rounded-[2.5rem] shadow-2xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1.5 active:translate-y-0.5 flex items-center justify-center group transition-all duration-500 disabled:opacity-50 disabled:translate-y-0"
               >
                 {loading ? (
                   <Loader2 className="w-6 h-6 animate-spin" />
                 ) : (
                   <>
-                    Initialize Session
+                    Login
                     <ChevronRight className="w-4 h-4 ml-4 group-hover:translate-x-2 transition-transform duration-500" />
                   </>
                 )}
@@ -121,7 +121,7 @@ export default function AdminLoginPage() {
             </form>
 
             <div className="mt-14 pt-10 border-t border-primary/5 text-center">
-              <p className="text-[10px] text-primary/30 font-bold uppercase tracking-[0.2em] leading-relaxed">
+              <p className="text-xs text-primary/30 font-bold uppercase tracking-[0.2em] leading-relaxed">
                 Access to this terminal is restricted to authorized personnel. 
                 <br />Unauthorized access will be logged.
               </p>

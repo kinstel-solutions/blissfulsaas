@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import SignOutButton from "@/components/SignOutButton";
+import MobileNav from "@/components/MobileNav";
 
 export default async function DashboardLayout({
   children,
@@ -28,7 +29,6 @@ export default async function DashboardLayout({
   }
 
   // We use the ADMIN CLIENT to bypass RLS for the role check
-  // Otherwise, if no RLS policy exists for User table, this returns null
   const adminClient = await createAdminClient();
   const { data: dbUser } = await adminClient
     .from("User")
@@ -50,9 +50,10 @@ export default async function DashboardLayout({
   ];
 
   return (
-    <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-72 bg-surface-container-low border-r border-outline-variant/20 flex flex-col z-20 shadow-sm">
+    <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden relative">
+      <MobileNav currentUserId={user.id} />
+      {/* Sidebar - Desktop Only */}
+      <aside className="w-72 bg-surface-container-low border-r border-outline-variant/20 flex-col z-20 shadow-sm hidden lg:flex">
         <div className="h-20 flex items-center px-8 border-b border-outline-variant/20">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
@@ -63,7 +64,7 @@ export default async function DashboardLayout({
         </div>
         
         <div className="px-6 py-10 flex flex-col flex-1 gap-2">
-          <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Systems</p>
+          <p className="px-4 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Systems</p>
           {navItems.map((item) => (
             <Link 
               key={item.label}
@@ -95,25 +96,30 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden relative">
+      <main className="flex-1 flex flex-col overflow-hidden relative pb-20 lg:pb-0">
         <div className="absolute top-0 right-0 w-full h-[40vh] bg-linear-to-b from-primary/5 to-transparent -z-10 pointer-events-none" />
         
-        <header className="h-20 flex items-center justify-between px-10 bg-surface/40 backdrop-blur-xl border-b border-outline-variant/10 z-10">
-          <div className="flex flex-col">
+        <header className="h-20 flex items-center justify-between px-6 lg:px-10 bg-surface/40 backdrop-blur-xl border-b border-outline-variant/10 z-10 shrink-0">
+          <div className="flex items-center gap-3 lg:hidden">
+            <div className="w-8 h-8 rounded bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+              <span className="text-primary-foreground font-heading font-bold text-lg">B</span>
+            </div>
+          </div>
+          <div className="hidden sm:flex flex-col">
             <h2 className="text-xl font-heading font-medium text-primary">Admin Control Center</h2>
             <p className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest mt-0.5">The Blissful Station Internal OS</p>
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 lg:gap-6">
             <button className="relative p-2 text-muted-foreground/60 hover:text-primary transition-colors">
               <Bell className="w-5 h-5" />
               <div className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full border-2 border-surface animate-ping" />
             </button>
             <div className="h-8 w-px bg-outline-variant/20" />
             <div className="flex items-center gap-4">
-              <div className="text-right hidden sm:block">
+              <div className="text-right hidden md:block">
                 <p className="text-xs font-bold text-foreground leading-none">{dbUser?.role === 'ADMIN' ? 'Super User' : 'Standard User'}</p>
-                <p className="text-[9px] text-primary/60 mt-1 uppercase tracking-tighter font-bold">Root Access</p>
+                <p className="text-xs text-primary/60 mt-1 uppercase tracking-tighter font-bold">Root Access</p>
               </div>
               <div className="w-10 h-10 rounded-2xl bg-primary shadow-lg shadow-primary/20 flex items-center justify-center text-primary-foreground font-bold border border-primary/20">
                 A
@@ -122,7 +128,7 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <div className="flex-1 overflow-auto p-12 relative">
+        <div className="flex-1 overflow-auto p-6 lg:p-12 relative">
           <div className="max-w-6xl mx-auto h-full">
             {children}
           </div>

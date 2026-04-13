@@ -1,8 +1,10 @@
-import { LayoutDashboard, MessageSquare, Calendar, Home, Users, Plus, ClipboardList } from "lucide-react";
+import { Home } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
+import DashboardSidebar from "@/components/DashboardSidebar";
+import MobileNav from "@/components/MobileNav";
 
 export default async function DashboardLayout({
   children,
@@ -29,20 +31,13 @@ export default async function DashboardLayout({
     redirect("/login?error=Unauthorized: Patient access required");
   }
 
-  const navItems = [
-    { label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
-    { label: "My Sessions", icon: Calendar, href: "/dashboard/sessions" },
-    { label: "Messages", icon: MessageSquare, href: "/dashboard/messages" },
-    { label: "Book Session", icon: Plus, href: "/dashboard/sessions/book" },
-    { label: "My Intake Form", icon: ClipboardList, href: "/dashboard/intake" },
-  ];
-
   return (
-    <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-72 bg-surface-container-low border-r border-outline-variant/30 flex flex-col z-20 shadow-sm">
+    <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden relative">
+      <MobileNav currentUserId={user.id} />
+      {/* Sidebar - Desktop Only */}
+      <aside className="w-72 bg-surface-container-low border-r border-outline-variant/30 flex-col z-20 shadow-sm hidden lg:flex">
         <div className="h-20 flex items-center px-8 border-b border-outline-variant/20">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded bg-primary flex items-center justify-center shadow-sm">
               <span className="text-primary-foreground font-heading font-bold text-lg">B</span>
             </div>
@@ -50,19 +45,7 @@ export default async function DashboardLayout({
           </Link>
         </div>
         
-        <div className="px-6 py-8 flex flex-col flex-1 gap-1">
-          <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2">Workspace</p>
-          {navItems.map((item) => (
-            <Link 
-              key={item.href}
-              href={item.href} 
-              className="flex items-center px-4 py-3 text-foreground/70 hover:bg-surface-container-lowest hover:text-primary rounded-xl transition-all duration-200 group"
-            >
-              <item.icon className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
-              <span className="font-medium text-sm">{item.label}</span>
-            </Link>
-          ))}
-        </div>
+        <DashboardSidebar currentUserId={user.id} />
 
         <div className="p-6 border-t border-outline-variant/20 space-y-2">
           <Link 
@@ -77,17 +60,22 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden relative">
+      <main className="flex-1 flex flex-col overflow-hidden relative pb-20 lg:pb-0">
         <div className="absolute top-0 right-0 w-full h-[30vh] bg-linear-to-b from-primary/5 to-transparent -z-10 pointer-events-none" />
         
-        <header className="h-20 flex items-center justify-between px-10 bg-surface/40 backdrop-blur-md border-b border-outline-variant/20 z-10">
-          <div>
-            <h2 className="text-2xl font-heading font-normal text-foreground">Patient Portal</h2>
+        <header className="h-16 md:h-20 flex items-center justify-between px-6 md:px-10 bg-surface/40 backdrop-blur-md border-b border-outline-variant/20 z-10 shrink-0">
+          <div className="flex items-center gap-3 lg:hidden">
+            <div className="w-8 h-8 rounded bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-heading font-bold text-lg">B</span>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            <h2 className="text-xl md:text-2xl font-heading font-normal text-foreground">Patient Portal</h2>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-semibold text-foreground leading-none">{user.user_metadata?.first_name || "User"}</p>
-              <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">Premium Patient</p>
+              <p className="text-xs text-muted-foreground mt-1 uppercase tracking-tighter">Premium Patient</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary font-bold shadow-inner">
               {user.user_metadata?.first_name?.[0] || "U"}
@@ -95,7 +83,7 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <div className="flex-1 overflow-auto p-10 relative">
+        <div className="flex-1 overflow-auto p-6 md:p-10 relative">
           <div className="max-w-5xl mx-auto">
             {children}
           </div>

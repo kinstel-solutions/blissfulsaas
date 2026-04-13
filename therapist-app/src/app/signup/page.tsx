@@ -57,7 +57,7 @@ export default function SignupPage() {
         </Link>
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-heading font-bold text-[10px]">B</span>
+            <span className="text-primary-foreground font-heading font-bold text-xs">B</span>
           </div>
           <span className="font-heading font-semibold text-sm text-primary tracking-tight">Provider Portal</span>
         </div>
@@ -77,7 +77,7 @@ export default function SignupPage() {
             <form onSubmit={handleSignup} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">
-                   <label htmlFor="firstName" className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">
+                   <label htmlFor="firstName" className="block text-xs font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">
                      First Name
                    </label>
                    <input 
@@ -90,7 +90,7 @@ export default function SignupPage() {
                    />
                  </div>
                  <div className="space-y-2">
-                   <label htmlFor="lastName" className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">
+                   <label htmlFor="lastName" className="block text-xs font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">
                      Last Name
                    </label>
                    <input 
@@ -105,7 +105,7 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">
+                <label htmlFor="email" className="block text-xs font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">
                   Professional Email
                 </label>
                 <input 
@@ -120,7 +120,7 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">
+                <label htmlFor="password" className="block text-xs font-bold uppercase tracking-widest text-muted-foreground/80 ml-1">
                   Create Account Password
                 </label>
                 <input 

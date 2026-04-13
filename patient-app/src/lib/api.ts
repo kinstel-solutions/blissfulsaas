@@ -51,6 +51,8 @@ export const api = {
       fetchWithAuth('/messages', { method: 'POST', body: JSON.stringify({ appointmentId, content }) }),
     history: (appointmentId: string) =>
       fetchWithAuth(`/messages/${appointmentId}`),
+    unreadCounts: () => fetchWithAuth('/messages/unread/counts'),
+    markRead: (appointmentId: string) => fetchWithAuth(`/messages/${appointmentId}/read`, { method: 'POST' }),
   },
   intake: {
     get: () => fetchWithAuth('/patients/intake'),
