@@ -66,14 +66,14 @@ export default function SignupPage() {
       <main className="flex-1 flex items-center justify-center p-6 pb-24 z-10 overflow-auto">
         <div className="w-full max-w-lg mt-12 mb-24">
           <div className="text-center mb-10">
-            <div className="w-16 h-16 rounded-3xl bg-primary/5 flex items-center justify-center mx-auto mb-6 text-primary border border-primary/10 shadow-sm">
+            <div className="w-16 h-16 rounded-xl bg-primary/5 flex items-center justify-center mx-auto mb-6 text-primary border border-primary/10 shadow-sm">
                <Briefcase className="w-8 h-8" />
             </div>
             <h1 className="text-4xl font-heading font-normal tracking-tight text-foreground mb-3">Join Our Network</h1>
             <p className="text-muted-foreground text-sm font-medium">Apply for a curated practice space at Blissful Station</p>
           </div>
 
-          <div className="bg-surface-container-lowest p-8 md:p-10 rounded-3xl shadow-xl border border-outline-variant/30 relative">
+          <div className="bg-surface-container-lowest p-4 md:p-8 md:p-10 rounded-xl shadow-xl border border-outline-variant/30 relative">
             <form onSubmit={handleSignup} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">

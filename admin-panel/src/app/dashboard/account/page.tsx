@@ -20,7 +20,7 @@ export default function AccountPage() {
       </div>
 
       {/* Admin Section Preview */}
-      <div className="bg-primary shadow-lg shadow-primary/20 rounded-3xl p-6 flex items-center gap-4 border border-primary/20">
+      <div className="bg-primary shadow-lg shadow-primary/20 rounded-xl p-6 flex items-center gap-4 border border-primary/20">
         <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-2xl font-bold">
           A
         </div>
@@ -32,7 +32,7 @@ export default function AccountPage() {
 
       <div className="space-y-2">
         <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">System Functions</p>
-        <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden divide-y divide-slate-50">
+        <div className="bg-white border border-slate-100 rounded-xl overflow-hidden divide-y divide-slate-50">
           <Link 
             href="#" 
             className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group opacity-50 cursor-not-allowed"
@@ -67,7 +67,7 @@ export default function AccountPage() {
 
       <div className="space-y-2">
         <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Security</p>
-        <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden divide-y divide-slate-50">
+        <div className="bg-white border border-slate-100 rounded-xl overflow-hidden divide-y divide-slate-50">
           <div className="flex items-center justify-between p-5">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-500">
@@ -83,7 +83,7 @@ export default function AccountPage() {
       </div>
 
       <div className="pt-4">
-        <div className="bg-red-50/50 border border-red-100 rounded-3xl p-2">
+        <div className="bg-red-50/50 border border-red-100 rounded-xl p-2">
            <SignOutButton />
         </div>
       </div>

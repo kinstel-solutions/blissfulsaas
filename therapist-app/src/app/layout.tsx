@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Manrope, Inter } from "next/font/google";
+import { Outfit, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +26,8 @@ export default function RootLayout({
   return (
       <html
         lang="en"
-        className={`${manrope.variable} ${inter.variable} h-full antialiased`}
+        className={`${outfit.variable} ${cormorant.variable} h-full antialiased`}
+        suppressHydrationWarning
       >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

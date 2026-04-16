@@ -7,7 +7,6 @@ export function createClient() {
     {
       cookieOptions: {
         name: 'sb-patient-auth-token',
-        domain: 'localhost',
         path: '/',
         sameSite: 'lax',
         secure: false

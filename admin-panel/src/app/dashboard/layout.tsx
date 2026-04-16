@@ -54,7 +54,7 @@ export default async function DashboardLayout({
       <MobileNav currentUserId={user.id} />
       {/* Sidebar - Desktop Only */}
       <aside className="w-72 bg-surface-container-low border-r border-outline-variant/20 flex-col z-20 shadow-sm hidden lg:flex">
-        <div className="h-20 flex items-center px-8 border-b border-outline-variant/20">
+        <div className="h-20 flex items-center px-4 md:px-8 border-b border-outline-variant/20">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
               <span className="text-primary-foreground font-heading font-bold text-lg">B</span>
@@ -63,7 +63,7 @@ export default async function DashboardLayout({
           </Link>
         </div>
         
-        <div className="px-6 py-10 flex flex-col flex-1 gap-2">
+        <div className="px-6 py-5 md:py-10 flex flex-col flex-1 gap-2">
           <p className="px-4 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Systems</p>
           {navItems.map((item) => (
             <Link 

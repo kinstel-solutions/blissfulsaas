@@ -8,7 +8,8 @@ import {
   MessageSquare, 
   Calendar, 
   Plus, 
-  ClipboardList 
+  ClipboardList,
+  Compass
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { createClient } from "@/lib/supabase";
@@ -17,6 +18,7 @@ const supabaseClient = createClient();
 
 const NAV_ITEMS = [
   { label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
+  { label: "Discover Specialists", icon: Compass, href: "/dashboard/discover" },
   { label: "My Sessions", icon: Calendar, href: "/dashboard/sessions" },
   { label: "Messages", icon: MessageSquare, href: "/dashboard/messages" },
   { label: "Book Session", icon: Plus, href: "/dashboard/sessions/book" },
@@ -63,7 +65,7 @@ export default function DashboardSidebar({
   }, [fetchTotalUnread, currentUserId, pathname]);
 
   return (
-    <div className="px-6 py-8 flex flex-col flex-1 gap-1">
+    <div className="px-6 py-4 md:py-8 flex flex-col flex-1 gap-1">
       <p className="px-4 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-2">Workspace</p>
       {NAV_ITEMS.map((item) => {
         const isActive = pathname === item.href;

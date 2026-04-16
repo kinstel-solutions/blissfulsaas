@@ -13,14 +13,20 @@ export default async function DashboardPage() {
   const upcomingSessions = await fetchWithAuthContent("/sessions/upcoming");
   const nextSession = Array.isArray(upcomingSessions) && upcomingSessions.length > 0 ? upcomingSessions[0] : null;
 
+  const now = new Date();
+  const hour = now.getHours();
+  let greeting = "Good evening";
+  if (hour < 12) greeting = "Good morning";
+  else if (hour < 17) greeting = "Good afternoon";
+
   return (
     <div className="space-y-10">
       {/* Welcome Section */}
-      <div className="relative overflow-hidden group bg-surface-container-lowest border border-outline-variant/30 p-10 rounded-3xl shadow-sm">
+      <div className="relative overflow-hidden group bg-surface-container-lowest border border-outline-variant/30 p-5 md:p-10 rounded-xl shadow-sm">
         <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
         <div className="relative z-10">
-          <h1 className="text-4xl font-heading font-medium text-foreground mb-4">
-            Welcome back, {firstName}
+          <h1 className="text-4xl font-heading font-medium text-foreground mb-4" suppressHydrationWarning>
+            {greeting}, {firstName}
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed">
             Your sanctuary for growth and healing is ready. You have <span className="text-primary font-bold">{upcomingSessions?.length || 0} session(s)</span> scheduled this week.
@@ -52,7 +58,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
         {/* Therapist Spotlight */}
-        <div className="col-span-1 md:col-span-2 bg-surface-container-low/50 backdrop-blur-sm border border-outline-variant/20 rounded-3xl p-8 relative group">
+        <div className="col-span-1 md:col-span-2 bg-surface-container-low/50 backdrop-blur-sm border border-outline-variant/20 rounded-xl p-4 md:p-8 relative group">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-heading font-normal text-foreground">Next Active Session</h3>
             <Link href="/dashboard/sessions" className="text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-colors flex items-center group">
@@ -65,7 +71,7 @@ export default async function DashboardPage() {
               <div className="flex items-center gap-5">
                 <div className="w-16 h-16 rounded-2xl bg-primary-container/20 border border-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden shadow-inner">
                   <Image 
-                    src={`https://ui-avatars.com/api/?name=${nextSession.therapist?.firstName}+${nextSession.therapist?.lastName}&background=random&color=fff&size=200`}
+                    src={`https://ui-avatars.com/api/?name=${nextSession.therapist?.firstName}+${nextSession.therapist?.lastName}&background=f8f9fa&color=5f43b2&size=200`}
                     alt="Specialist"
                     width={64}
                     height={64}
@@ -74,12 +80,12 @@ export default async function DashboardPage() {
                 </div>
                 <div className="text-left">
                   <h4 className="text-foreground font-heading font-medium text-lg">Dr. {nextSession.therapist?.firstName} {nextSession.therapist?.lastName}</h4>
-                  <p className="text-sm text-muted-foreground font-medium">Verified Clinical Specialist</p>
+                  <p className="text-sm text-muted-foreground font-medium">{nextSession.therapist?.qualifications || "Verified Clinical Specialist"}</p>
                 </div>
               </div>
               <div className="text-center md:text-right">
-                <p className="text-foreground font-semibold text-sm">
-                  {new Date(nextSession.scheduledAt).toLocaleDateString(undefined, { weekday: 'long', hour: '2-digit', minute: '2-digit' })}
+                <p className="text-foreground font-semibold text-sm" suppressHydrationWarning>
+                  {new Date(nextSession.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', hour: '2-digit', minute: '2-digit' })}
                 </p>
                 <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">Virtual Sanctuary</p>
               </div>
@@ -90,7 +96,7 @@ export default async function DashboardPage() {
               </Link>
             </div>
           ) : (
-            <div className="bg-surface-container-lowest rounded-2xl p-10 border border-outline-variant/20 text-center">
+            <div className="bg-surface-container-lowest rounded-2xl p-5 md:p-10 border border-outline-variant/20 text-center">
               <Calendar className="w-12 h-12 text-primary/10 mx-auto mb-4" />
               <p className="text-muted-foreground">No upcoming sessions found.</p>
               <Link href="/dashboard/sessions/book" className="text-primary font-bold text-xs uppercase tracking-widest mt-4 inline-block hover:underline">
@@ -101,7 +107,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Wellness Score/Placeholder */}
-        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-3xl p-8 flex flex-col justify-between shadow-sm relative overflow-hidden group">
+        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-4 md:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden group">
           <div className="absolute bottom-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl z-0 pointer-events-none" />
           <div className="flex items-center justify-between z-10">
              <h3 className="text-lg font-heading font-normal text-foreground">Wellness Pulse</h3>

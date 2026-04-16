@@ -57,21 +57,21 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
   };
 
   return (
-    <div className="bg-white lg:border border-slate-200 lg:rounded-[2.5rem] overflow-hidden lg:shadow-sm">
+    <div className="bg-white lg:border border-slate-200 lg:rounded-xl overflow-hidden lg:shadow-sm">
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full text-left border-separate border-spacing-0">
           <thead>
             <tr className="bg-slate-50/50 border-b border-slate-100">
-              <th className="px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Consultation</th>
-              <th className="px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Timing</th>
-              <th className="px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Status</th>
-              <th className="px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400 text-right">Reference</th>
+              <th className="px-4 md:px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Consultation</th>
+              <th className="px-4 md:px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Timing</th>
+              <th className="px-4 md:px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Status</th>
+              <th className="px-4 md:px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400 text-right">Reference</th>
             </tr>
           </thead>
           <tbody className="">
             {initialAppointments.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-8 py-32 text-center text-slate-300">
+                <td colSpan={4} className="px-4 md:px-8 py-32 text-center text-slate-300">
                   <CalendarIcon className="w-16 h-16 mx-auto mb-4 opacity-10" />
                   <p className="text-sm font-medium">Your clinical schedule is currently clear.</p>
                 </td>
@@ -90,7 +90,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                         isExpanded ? 'bg-primary/5' : 'hover:bg-slate-50/50'
                       } ${['CANCELLED', 'COMPLETED'].includes(appt.status) && !isExpanded ? 'opacity-50 grayscale-[0.2]' : ''}`}
                     >
-                      <td className="px-8 py-6 border-b border-slate-50">
+                      <td className="px-4 md:px-8 py-6 border-b border-slate-50">
                         <div className="flex items-center gap-4">
                           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg transition-all shadow-sm border ${
                             isExpanded ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-slate-100'
@@ -111,18 +111,18 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-6 border-b border-slate-50">
+                      <td className="px-4 md:px-8 py-6 border-b border-slate-50">
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                            {new Date(appt.scheduledAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                            {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           </div>
                           <div className="flex items-center gap-2 text-xs text-slate-400 font-bold uppercase">
                             <Clock className="w-3 h-3" />
-                            {new Date(appt.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-6 border-b border-slate-50">
+                      <td className="px-4 md:px-8 py-6 border-b border-slate-50">
                          <span className={`px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-widest border ${
                             appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
                             appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
@@ -132,7 +132,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                             {appt.status}
                           </span>
                       </td>
-                      <td className="px-8 py-6 border-b border-slate-50 text-right">
+                      <td className="px-4 md:px-8 py-6 border-b border-slate-50 text-right">
                         <div className="flex items-center justify-end gap-3" onClick={e => e.stopPropagation()}>
                            <AppointmentActions id={appt.id} status={appt.status} />
                            {isExpanded ? <ChevronUp className="w-5 h-5 text-primary" /> : <ChevronDown className="w-5 h-5 text-slate-300 group-hover:text-primary transition-colors" />}
@@ -252,7 +252,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                                       value={state.content}
                                       onChange={(e) => handleNotesChange(appt.id, e.target.value)}
                                       placeholder="Start typing your clinical observations here..."
-                                      className="w-full h-44 bg-slate-50/50 border border-slate-100 rounded-[1.5rem] p-5 text-sm text-slate-700 placeholder:text-slate-300 focus:ring-4 focus:ring-primary/5 transition-all outline-none resize-none leading-relaxed"
+                                      className="w-full h-44 bg-slate-50/50 border border-slate-100 rounded-lg p-5 text-sm text-slate-700 placeholder:text-slate-300 focus:ring-4 focus:ring-primary/5 transition-all outline-none resize-none leading-relaxed"
                                    />
                                    <p className="mt-3 text-xs font-bold text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
                                       <StickyNote className="w-3 h-3" />
@@ -288,7 +288,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
             return (
               <div 
                 key={appt.id}
-                className={`flex flex-col rounded-3xl border transition-all duration-300 overflow-hidden ${
+                className={`flex flex-col rounded-xl border transition-all duration-300 overflow-hidden ${
                   isExpanded ? 'bg-primary/5 border-primary/20 ring-4 ring-primary/5 translate-y-[-2px]' : 'bg-white border-slate-100 hover:border-slate-200'
                 }`}
               >
@@ -328,10 +328,10 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                   <div className="flex flex-col items-end gap-2">
                     <div className="text-right">
                       <div className="text-xs font-bold text-slate-900">
-                        {new Date(appt.scheduledAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </div>
                       <div className="text-[10px] text-slate-400 font-bold uppercase mt-1">
-                        {new Date(appt.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
                   </div>

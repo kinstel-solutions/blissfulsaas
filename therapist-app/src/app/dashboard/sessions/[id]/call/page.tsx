@@ -27,7 +27,7 @@ export default async function SessionRoomPage({ params }: { params: Promise<{ id
             You don't have permission to join this room, or the session has expired.
           </p>
           <Link href="/dashboard/appointments">
-            <button className="bg-slate-100 text-slate-900 border border-slate-200 px-8 py-3 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-white transition-all">
+            <button className="bg-slate-100 text-slate-900 border border-slate-200 px-4 md:px-8 py-3 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-white transition-all">
               Back to Appointments
             </button>
           </Link>
@@ -43,7 +43,7 @@ export default async function SessionRoomPage({ params }: { params: Promise<{ id
 
   return (
     <div className="h-[calc(100vh-120px)] flex flex-col gap-6">
-      <header className="flex justify-between items-center bg-white/50 backdrop-blur-md p-4 px-1 rounded-3xl z-10 border border-slate-100 shadow-sm">
+      <header className="flex justify-between items-center bg-white/50 backdrop-blur-md p-4 px-1 rounded-xl z-10 border border-slate-100 shadow-sm">
         <Link
           href="/dashboard"
           className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors pl-4">
@@ -53,7 +53,7 @@ export default async function SessionRoomPage({ params }: { params: Promise<{ id
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
           <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mr-4 flex items-center gap-2">
-            <Shield className="w-3.5 h-3.5" /> HIPAA Secured Channel
+            Private & Encrypted Session
           </p>
         </div>
       </header>

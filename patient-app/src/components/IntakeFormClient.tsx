@@ -107,7 +107,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
         </div>
 
         {/* Form Card */}
-        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-[3rem] p-10 shadow-xl">
+        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-5 md:p-10 shadow-xl">
           
           {/* Step 1: Reason & Concerns */}
           {step === 1 && (
@@ -254,7 +254,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
               <button
                 onClick={() => setStep(prev => prev + 1)}
                 disabled={!isStepValid()}
-                className="flex items-center gap-2 px-8 py-3 rounded-2xl text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
+                className="flex items-center gap-2 px-4 md:px-8 py-3 rounded-2xl text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
               >
                 Continue <ChevronRight className="w-4 h-4" />
               </button>
@@ -262,7 +262,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
               <button
                 onClick={handleSubmit}
                 disabled={!isStepValid() || saving}
-                className="flex items-center gap-2 px-8 py-3 rounded-2xl text-sm font-bold bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40"
+                className="flex items-center gap-2 px-4 md:px-8 py-3 rounded-2xl text-sm font-bold bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                 {saving ? "Submitting..." : "Complete Intake"}
@@ -272,7 +272,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
         </div>
 
         <p className="text-center text-xs text-muted-foreground/50 mt-8 uppercase tracking-widest font-bold">
-          🔒 End-to-end encrypted · HIPAA considerations applied
+          🔒 Industry-standard AES-256 encryption • Your privacy is our priority
         </p>
       </div>
     </div>

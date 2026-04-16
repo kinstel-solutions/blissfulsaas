@@ -182,7 +182,7 @@ export class SessionsService {
     const appCertificate = process.env.AGORA_APP_CERTIFICATE;
     const channelName = appointment.videoRoomId;
     const uid = 0; // Use 0 to let Agora assign a UID
-    const role = isTherapist ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER;
+    const role = RtcRole.PUBLISHER; // Both participants must be publishers for two-way video
     
     // Token expires in 2 hours
     const expirationTimeInSeconds = 3600 * 2;

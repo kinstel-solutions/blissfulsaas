@@ -109,7 +109,7 @@ export default function ChatSidebar({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute inset-0 z-40 flex flex-col bg-slate-950/95 backdrop-blur-xl rounded-[3rem] border border-white/10 animate-in slide-in-from-right duration-300">
+    <div className="absolute inset-0 z-40 flex flex-col bg-slate-950/95 backdrop-blur-xl rounded-2xl border border-white/10 animate-in slide-in-from-right duration-300">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
         <div className="flex items-center gap-3">
@@ -164,7 +164,7 @@ export default function ChatSidebar({
                     isMe ? "text-white/50" : "text-white/30"
                   }`}
                 >
-                  {new Date(msg.createdAt).toLocaleTimeString([], {
+                  {new Date(msg.createdAt).toLocaleTimeString('en-US', {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}

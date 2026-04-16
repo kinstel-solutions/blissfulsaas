@@ -45,7 +45,7 @@ export default function NotesSidebar({ appointmentId }: NotesSidebarProps) {
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex flex-col bg-slate-50 border border-slate-200 rounded-[3rem] animate-in slide-in-from-right duration-300">
+    <div className="absolute inset-0 z-40 flex flex-col bg-slate-50 border border-slate-200 rounded-2xl animate-in slide-in-from-right duration-300">
       <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 bg-white rounded-t-[3rem]">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">

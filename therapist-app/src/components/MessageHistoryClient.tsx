@@ -163,7 +163,7 @@ export default function MessageHistoryClient({
   ) : false;
 
   return (
-    <div className="flex-1 bg-white border border-slate-200 rounded-2xl md:rounded-[2.5rem] shadow-sm flex overflow-hidden h-[calc(100vh-16rem)] md:h-[calc(100vh-18rem)]">
+    <div className="flex-1 bg-white border border-slate-200 rounded-2xl md:rounded-xl shadow-sm flex overflow-hidden h-[calc(100vh-16rem)] md:h-[calc(100vh-18rem)]">
       {/* Sidebar - Conversation List */}
       <div className={`w-full md:w-80 border-r border-slate-100 flex flex-col ${selectedSession ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-4 md:p-6 border-b border-slate-50">
@@ -227,7 +227,7 @@ export default function MessageHistoryClient({
       <div className={`flex-1 flex flex-col bg-slate-50/30 ${!selectedSession ? 'hidden md:flex' : 'flex'}`}>
         {!selectedSession ? (
           <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 text-center">
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-[1.5rem] md:rounded-3xl shadow-lg border border-slate-100 flex items-center justify-center mb-6 text-slate-200">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-lg md:rounded-xl shadow-lg border border-slate-100 flex items-center justify-center mb-6 text-slate-200">
               <MessageSquare className="w-8 h-8 md:w-10 md:h-10" />
             </div>
             <h3 className="text-lg md:text-xl font-heading font-medium text-slate-800 mb-2">Clinical Archive</h3>

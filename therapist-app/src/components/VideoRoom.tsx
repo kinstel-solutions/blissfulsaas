@@ -15,18 +15,22 @@ import { Mic, MicOff, Video, VideoOff, PhoneOff, Shield, CheckCircle } from "luc
 import { useRouter } from "next/navigation";
 import ChatSidebar from "./ChatSidebar";
 import NotesSidebar from "./NotesSidebar";
+import { uuidToUid } from "@/lib/utils";
 
 // Initialize the Agora client
 const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
-export default function VideoRoom({ appId, channel, token, uid, appointmentId, patientName, currentUserId }: any) {
+export default function VideoRoom({ appId, channel, token, appointmentId, patientName, currentUserId }: any) {
+  // Use a fixed UID derived from the user's ID
+  const numericUid = uuidToUid(currentUserId);
+
   return (
     <AgoraRTCProvider client={client}>
       <VideoCallInner
         appId={appId}
         channel={channel}
         token={token}
-        uid={uid}
+        uid={numericUid}
         appointmentId={appointmentId}
         patientName={patientName}
         currentUserId={currentUserId}
@@ -41,17 +45,30 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
   const [cameraOn, setCamera] = useState(true);
   const [activeTab, setActiveTab] = useState<'chat' | 'notes'>('notes');
 
-  const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
-  const { localCameraTrack } = useLocalCameraTrack(cameraOn);
+  const { localMicrophoneTrack } = useLocalMicrophoneTrack(true);
+  const { localCameraTrack } = useLocalCameraTrack(true);
   
   useJoin({
     appid: appId,
     channel: channel,
     token: token,
-    uid: uid || null,
+    uid: uid,
   });
 
   usePublish([localMicrophoneTrack, localCameraTrack]);
+
+  // Handle Dynamic Muting/Disabling
+  useEffect(() => {
+    if (localMicrophoneTrack) {
+      localMicrophoneTrack.setMuted(!micOn);
+    }
+  }, [micOn, localMicrophoneTrack]);
+
+  useEffect(() => {
+    if (localCameraTrack) {
+      localCameraTrack.setMuted(!cameraOn);
+    }
+  }, [cameraOn, localCameraTrack]);
 
   const remoteUsers = useRemoteUsers();
 
@@ -99,20 +116,19 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
           </div>
 
           {/* Self-Feed (Local Video) */}
-          <div className="absolute top-10 right-10 w-48 aspect-video rounded-3xl border border-white/20 shadow-2xl overflow-hidden z-20 group/pip hover:scale-105 transition-transform bg-slate-800">
-            {cameraOn ? (
-               <LocalVideoTrack 
-                 track={localCameraTrack} 
-                 play={true} 
-                 style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-               />
-            ) : (
+          <div className="absolute top-10 right-10 w-48 aspect-video rounded-xl border border-white/20 shadow-2xl overflow-hidden z-20 group/pip hover:scale-105 transition-transform bg-slate-800">
+            {localCameraTrack ? (
+               <div className={`w-full h-full relative ${!cameraOn ? 'hidden' : 'block'}`}>
+                  <LocalVideoTrack track={localCameraTrack} play style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+               </div>
+            ) : null}
+            {!cameraOn && (
               <div className="w-full h-full flex items-center justify-center text-white/20 bg-slate-900">
                 <VideoOff className="w-8 h-8" />
               </div>
             )}
             <div className="absolute bottom-2 left-3 z-30 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-xs font-bold uppercase tracking-widest text-white">
-              You (Clinician)
+              You
             </div>
           </div>
 
@@ -125,15 +141,14 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
               {patientName || "Joint Session"}
             </h2>
             <div className="flex items-center gap-3 bg-black/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/10 w-fit">
-              <Shield className="w-3 h-3 text-green-400" />
-              <span className="text-xs font-bold uppercase tracking-widest text-white/70">HIPAA Secure Room</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-white/70">Private Consultation Room</span>
             </div>
           </div>
 
           {/* Call Controls HUD */}
           <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4">
             <button 
-              onClick={() => setMic(prev => !prev)}
+              onClick={() => setMic(p => !p)}
               className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${
                 micOn ? "bg-white/10 text-white border-white/20 hover:bg-white/20" : "bg-red-500 text-white border-red-400"
               }`}
@@ -141,7 +156,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
               {micOn ? <Mic className="w-6 h-6" /> : <MicOff className="w-6 h-6" />}
             </button>
             <button 
-              onClick={() => setCamera(prev => !prev)}
+              onClick={() => setCamera(p => !p)}
               className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${
                 cameraOn ? "bg-white/10 text-white border-white/20 hover:bg-white/20" : "bg-red-500 text-white border-red-400"
               }`}
@@ -160,7 +175,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
 
       {/* Persistence / Sidebar (Integrated Chat & Notes) */}
       <aside className="w-full lg:w-96 flex flex-col gap-8 h-full min-h-0 max-h-[calc(100vh-180px)]">
-        <div className="flex-1 bg-white rounded-[3rem] border border-slate-200 p-10 flex flex-col shadow-sm min-h-0 overflow-hidden">
+        <div className="flex-1 bg-white rounded-2xl border border-slate-200 p-5 md:p-10 flex flex-col shadow-sm min-h-0 overflow-hidden">
           
           <div className="flex p-1 bg-slate-100 rounded-2xl mb-6">
             <button 

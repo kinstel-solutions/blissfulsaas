@@ -84,7 +84,7 @@ export default async function TherapistDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Profile Card */}
         <div className="lg:col-span-2 space-y-8">
-           <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-[3rem] p-12 shadow-sm relative overflow-hidden">
+           <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-6 md:p-12 shadow-sm relative overflow-hidden">
              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
              <h3 className="text-xl font-heading font-medium text-primary mb-8 flex items-center gap-3">
                 <FileText className="w-5 h-5 text-primary/30" /> Clinical Biography
@@ -114,12 +114,12 @@ export default async function TherapistDetailPage({
              </div>
            </div>
 
-           <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-[3rem] p-12 shadow-sm">
+           <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-6 md:p-12 shadow-sm">
               <h3 className="text-xl font-heading font-medium text-primary mb-8 flex items-center gap-3">
                  <Activity className="w-5 h-5 text-primary/30" /> Platform Configuration
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <div className="p-6 bg-surface-container-low rounded-3xl flex items-center gap-6">
+                 <div className="p-6 bg-surface-container-low rounded-xl flex items-center gap-6">
                     <div className="w-12 h-12 bg-surface-container-lowest rounded-2xl flex items-center justify-center border border-outline-variant/10 shadow-sm">
                        <DollarSign className="w-6 h-6 text-emerald-600" />
                     </div>
@@ -128,7 +128,7 @@ export default async function TherapistDetailPage({
                        <p className="text-xl font-bold text-foreground">${therapist.hourlyRate || 0}.00</p>
                     </div>
                  </div>
-                 <div className="p-6 bg-surface-container-low rounded-3xl flex items-center gap-6">
+                 <div className="p-6 bg-surface-container-low rounded-xl flex items-center gap-6">
                     <div className="w-12 h-12 bg-surface-container-lowest rounded-2xl flex items-center justify-center border border-outline-variant/10 shadow-sm">
                        <User className="w-6 h-6 text-primary" />
                     </div>
@@ -143,7 +143,7 @@ export default async function TherapistDetailPage({
 
         {/* Sidebar Data */}
         <div className="space-y-8">
-           <div className="bg-primary border border-primary/20 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
+           <div className="bg-primary border border-primary/20 rounded-2xl p-5 md:p-10 shadow-2xl relative overflow-hidden">
              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-2xl z-0" />
              <div className="relative z-10 flex flex-col gap-8">
                 <h3 className="text-white text-lg font-heading font-normal">Contact Registry</h3>
@@ -164,7 +164,7 @@ export default async function TherapistDetailPage({
                       <div>
                          <p className="text-xs font-bold uppercase tracking-widest text-white/40">Enrolled Since</p>
                          <p className="text-sm font-medium text-white">
-                           {new Date((therapist.user as any)?.createdAt).toLocaleDateString()}
+                           {new Date((therapist.user as any)?.createdAt).toLocaleDateString('en-US')}
                          </p>
                       </div>
                    </div>
@@ -177,7 +177,7 @@ export default async function TherapistDetailPage({
              </div>
            </div>
 
-           <div className="bg-destructive/5 border border-destructive/10 rounded-[2.5rem] p-8">
+           <div className="bg-destructive/5 border border-destructive/10 rounded-xl p-4 md:p-8">
               <div className="flex items-center gap-3 text-destructive mb-4">
                  <ShieldX className="w-5 h-5" />
                  <h4 className="text-sm font-bold uppercase tracking-widest">Compliance Warnings</h4>

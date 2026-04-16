@@ -64,7 +64,7 @@ export default function DashboardSidebar({
   }, [fetchTotalUnread, currentUserId, pathname]);
 
   return (
-    <div className="px-6 py-10 flex flex-col flex-1 gap-2">
+    <div className="px-6 py-5 md:py-10 flex flex-col flex-1 gap-2">
       <p className="px-4 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-3">Clinical workspace</p>
       {NAV_ITEMS.map((item) => {
         const isActive = pathname === item.href;

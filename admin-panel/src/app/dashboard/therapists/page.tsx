@@ -47,22 +47,22 @@ export default async function TherapistsPage() {
         </div>
       </div>
 
-      <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-[2.5rem] shadow-xl overflow-hidden relative group">
+      <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-xl shadow-xl overflow-hidden relative group">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-outline-variant/10 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/50 bg-primary/[0.01]">
-                <th className="px-10 py-6">Practitioner</th>
-                <th className="px-8 py-6">Status</th>
-                <th className="px-8 py-6">Rate</th>
-                <th className="px-8 py-6">Registration</th>
-                <th className="px-8 py-6 text-right">Action</th>
+                <th className="px-5 md:px-10 py-6">Practitioner</th>
+                <th className="px-4 md:px-8 py-6">Status</th>
+                <th className="px-4 md:px-8 py-6">Rate</th>
+                <th className="px-4 md:px-8 py-6">Registration</th>
+                <th className="px-4 md:px-8 py-6 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/5">
               {therapists?.map((therapist) => (
                 <tr key={therapist.id} className="group/row hover:bg-primary/[0.01] transition-colors">
-                  <td className="px-10 py-8">
+                  <td className="px-5 md:px-10 py-4 md:py-8">
                     <div className="flex items-center gap-5">
                       <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-lg">
                         {therapist.firstName?.[0] || "?"}
@@ -75,7 +75,7 @@ export default async function TherapistsPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-8">
+                  <td className="px-4 md:px-8 py-4 md:py-8">
                     {therapist.isVerified ? (
                       <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/5 text-emerald-600 border border-emerald-500/10 rounded-full text-xs font-bold uppercase tracking-widest">
                         <CheckCircle2 className="w-3 h-3" /> Verified
@@ -86,16 +86,16 @@ export default async function TherapistsPage() {
                       </div>
                     )}
                   </td>
-                  <td className="px-8 py-8">
+                  <td className="px-4 md:px-8 py-4 md:py-8">
                     <p className="text-sm font-bold text-primary">${therapist.hourlyRate || 0}/hr</p>
                     <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-tighter">Market Value</p>
                   </td>
-                  <td className="px-8 py-8">
+                  <td className="px-4 md:px-8 py-4 md:py-8">
                     <p className="text-sm font-medium text-foreground/70">
-                      {new Date((therapist.user as any)?.createdAt).toLocaleDateString()}
+                      {new Date((therapist.user as any)?.createdAt).toLocaleDateString('en-US')}
                     </p>
                   </td>
-                  <td className="px-8 py-8 text-right">
+                  <td className="px-4 md:px-8 py-4 md:py-8 text-right">
                     <Link 
                       href={`/dashboard/therapists/${therapist.id}`}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-surface hover:bg-primary hover:text-white rounded-xl border border-outline-variant/30 hover:border-primary transition-all text-xs font-bold uppercase tracking-widest group/btn"
@@ -107,7 +107,7 @@ export default async function TherapistsPage() {
               ))}
               {(!therapists || therapists.length === 0) && (
                 <tr>
-                  <td colSpan={5} className="px-10 py-20 text-center">
+                  <td colSpan={5} className="px-5 md:px-10 py-20 text-center">
                      <p className="text-muted-foreground italic text-sm">No practitioners registered in the database sanctuary yet.</p>
                   </td>
                 </tr>

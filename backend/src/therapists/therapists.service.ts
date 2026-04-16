@@ -28,6 +28,9 @@ export class TherapistsService {
         bio: true,
         hourlyRate: true,
         specialities: true,
+        qualifications: true,
+        languages: true,
+        yearsOfExperience: true,
         // We don't need email for discovery yet
       }
     });
@@ -51,6 +54,9 @@ export class TherapistsService {
         lastName: data.lastName,
         bio: data.bio,
         specialities: data.specialities,
+        languages: data.languages,
+        qualifications: data.qualifications,
+        yearsOfExperience: data.yearsOfExperience,
         hourlyRate: data.hourlyRate,
         videoUrl: data.videoUrl, // if applicable
       },

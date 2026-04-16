@@ -57,7 +57,7 @@ export default function AvailabilityPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Add New Slot */}
-        <div className="lg:col-span-1 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <div className="lg:col-span-1 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl p-6 shadow-sm">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Plus className="w-5 h-5 text-blue-600" />
             Add New Slot
@@ -106,17 +106,17 @@ export default function AvailabilityPage() {
         </div>
 
         {/* Existing Slots List */}
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-3xl p-6 shadow-sm">
+        <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl p-6 shadow-sm">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-indigo-600" />
             Weekly Schedule
           </h2>
           {loading ? (
-            <div className="flex justify-center py-12">
+            <div className="flex justify-center py-6 md:py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
           ) : slots.length === 0 ? (
-            <div className="text-center py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+            <div className="text-center py-6 md:py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
               <p className="text-slate-400">No availability slots added yet.</p>
             </div>
           ) : (

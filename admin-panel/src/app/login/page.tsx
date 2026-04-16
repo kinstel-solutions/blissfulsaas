@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
       <div className="absolute bottom-0 left-0 w-1/3 h-[40vh] bg-destructive/5 rounded-full blur-[120px] -z-10 pointer-events-none transform -translate-x-1/4 translate-y-1/4" />
 
       {/* Header */}
-      <header className="p-8 md:px-16 flex justify-between items-center z-10 transition-all duration-500">
+      <header className="p-4 md:p-8 md:px-16 flex justify-between items-center z-10 transition-all duration-500">
         <div className="flex items-center gap-4 group cursor-default">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 rotate-0 group-hover:rotate-12 transition-transform">
             <span className="text-primary-foreground font-heading font-bold text-xs">B</span>
@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
         </div>
       </header>
 
-      <main className="flex-1 flex items-center justify-center p-8 pb-32 z-10">
+      <main className="flex-1 flex items-center justify-center p-4 md:p-8 pb-32 z-10">
         <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
           <div className="text-center mb-12">
             <div className="w-20 h-20 rounded-[2rem] bg-surface-container-low flex items-center justify-center mx-auto mb-8 text-primary shadow-inner border border-outline-variant/10 relative overflow-hidden group">
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
             <p className="text-primary/40 text-xs font-bold uppercase tracking-[0.4em] ml-1">Admin Login</p>
           </div>
 
-          <div className="bg-surface-container-lowest p-10 md:p-12 rounded-[3.5rem] shadow-2xl border border-outline-variant/10 relative overflow-hidden group">
+          <div className="bg-surface-container-lowest p-5 md:p-10 md:p-12 rounded-[3.5rem] shadow-2xl border border-outline-variant/10 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000" />
             
             <form onSubmit={handleLogin} className="space-y-8 relative z-10">
@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@station.os" 
-                  className="w-full h-16 bg-surface-container-low border border-transparent focus:border-primary/10 focus:bg-surface-container-lowest px-8 outline-none transition-all rounded-3xl text-primary font-medium placeholder:text-primary/10 shadow-sm"
+                  className="w-full h-16 bg-surface-container-low border border-transparent focus:border-primary/10 focus:bg-surface-container-lowest px-4 md:px-8 outline-none transition-all rounded-xl text-primary font-medium placeholder:text-primary/10 shadow-sm"
                   required
                 />
               </div>
@@ -93,13 +93,13 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••" 
-                  className="w-full h-16 bg-surface-container-low border border-transparent focus:border-primary/10 focus:bg-surface-container-lowest px-8 outline-none transition-all rounded-3xl text-primary font-medium placeholder:text-primary/10 shadow-sm"
+                  className="w-full h-16 bg-surface-container-low border border-transparent focus:border-primary/10 focus:bg-surface-container-lowest px-4 md:px-8 outline-none transition-all rounded-xl text-primary font-medium placeholder:text-primary/10 shadow-sm"
                   required
                 />
               </div>
 
               {error && (
-                <div className="p-5 bg-destructive/5 border border-destructive/10 rounded-3xl text-destructive text-xs font-bold uppercase tracking-[0.1em] text-center leading-relaxed">
+                <div className="p-5 bg-destructive/5 border border-destructive/10 rounded-xl text-destructive text-xs font-bold uppercase tracking-[0.1em] text-center leading-relaxed">
                   {error}
                 </div>
               )}
@@ -107,7 +107,7 @@ export default function AdminLoginPage() {
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full h-20 bg-primary text-primary-foreground font-bold uppercase tracking-[0.4em] text-xs rounded-[2.5rem] shadow-2xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1.5 active:translate-y-0.5 flex items-center justify-center group transition-all duration-500 disabled:opacity-50 disabled:translate-y-0"
+                className="w-full h-20 bg-primary text-primary-foreground font-bold uppercase tracking-[0.4em] text-xs rounded-xl shadow-2xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1.5 active:translate-y-0.5 flex items-center justify-center group transition-all duration-500 disabled:opacity-50 disabled:translate-y-0"
               >
                 {loading ? (
                   <Loader2 className="w-6 h-6 animate-spin" />

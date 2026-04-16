@@ -47,7 +47,7 @@ export default function Home() {
               A private ecosystem designed to unify your clinical rigor with an environment of profound digital calm.
             </p>
             <div className="flex gap-4 w-full md:w-auto">
-               <Link href="/signup" className="group w-full md:w-auto bg-primary text-primary-foreground px-8 md:px-12 py-5 md:py-6 rounded-2xl md:rounded-[2rem] font-bold text-xs uppercase tracking-[0.25em] shadow-2xl hover:shadow-primary/40 transition-all flex items-center justify-center gap-3">
+               <Link href="/signup" className="group w-full md:w-auto bg-primary text-primary-foreground px-4 md:px-8 md:px-12 py-5 md:py-6 rounded-2xl md:rounded-[2rem] font-bold text-xs uppercase tracking-[0.25em] shadow-2xl hover:shadow-primary/40 transition-all flex items-center justify-center gap-3">
                   Join the Network
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                </Link>
@@ -62,7 +62,7 @@ export default function Home() {
           
           {/* Card 1: Overlapping Layout */}
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16 lg:gap-32 text-center md:text-left">
-             <div className="w-full md:w-1/2 aspect-[4/3] bg-surface-container-lowest rounded-[2.5rem] md:rounded-[3.5rem] border border-outline-variant/10 shadow-2xl overflow-hidden group">
+             <div className="w-full md:w-1/2 aspect-[4/3] bg-surface-container-lowest rounded-xl md:rounded-[3.5rem] border border-outline-variant/10 shadow-2xl overflow-hidden group">
                 <img 
                   src="https://images.unsplash.com/photo-1549221544-77cc6770fa45?auto=format&fit=crop&q=80&w=800&h=600" 
                   alt="Clinical Focus" 
@@ -73,12 +73,12 @@ export default function Home() {
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] text-primary/30">Network 01</span>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-normal leading-tight">Focus on <br className="hidden md:block"/> Healing Alone.</h2>
                 <p className="text-base md:text-lg text-primary/60 leading-relaxed font-light tracking-tight">
-                  We handle the administrative overhead, from billing to HIPAA compliance, so you can dedicate your full presence to the patient journey.
+                  We handle the administrative overhead, from billing to digital privacy, so you can dedicate your full presence to the patient journey.
                 </p>
                 <div className="flex flex-wrap justify-center md:justify-start gap-6 md:gap-8 pt-4 md:pt-6">
                    <div className="flex flex-col gap-2 items-center md:items-start">
                       <ShieldCheck className="w-6 h-6 text-primary/30" />
-                      <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-40">HIPAA SHIELD</span>
+                      <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-40">Privacy Shield</span>
                    </div>
                    <div className="flex flex-col gap-2 items-center md:items-start">
                       <Globe className="w-6 h-6 text-primary/30" />
@@ -128,7 +128,7 @@ export default function Home() {
         </div>
         <div className="max-w-7xl mx-auto mt-16 md:mt-20 pt-8 md:pt-10 border-t border-primary/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/20 text-center md:text-left">
            <span>© {new Date().getFullYear()} Blissful Station Provider Network</span>
-           <span>SECURE HIPAA CLINIC</span>
+            <span>PRIVATE & ENCRYPTED CLINIC</span>
         </div>
       </footer>
     </main>

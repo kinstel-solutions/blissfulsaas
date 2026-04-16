@@ -66,7 +66,7 @@ export default function SignupPage() {
             <p className="text-muted-foreground">Join our curated workspace for mental wellness.</p>
           </div>
 
-          <div className="bg-surface-container-lowest p-8 md:p-10 rounded-2xl shadow-sm border border-outline-variant/30 relative">
+          <div className="bg-surface-container-lowest p-4 md:p-8 md:p-10 rounded-2xl shadow-sm border border-outline-variant/30 relative">
             <form onSubmit={handleSignup} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">

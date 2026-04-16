@@ -9,7 +9,7 @@ const VideoRoom = dynamic(() => import("@/components/VideoRoom"), {
       <div className="flex flex-col items-center gap-6">
         <div className="w-12 h-12 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
         <p className="text-white/40 text-xs font-bold uppercase tracking-widest animate-pulse">
-          Initializing secure clinical environment...
+          Joining private consultation room...
         </p>
       </div>
     </div>

@@ -72,14 +72,14 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
       <div className="lg:col-span-2 space-y-6">
-        <div className="bg-surface-container-low/30 backdrop-blur-sm border border-outline-variant/20 rounded-[2.5rem] p-10 shadow-sm">
+        <div className="bg-surface-container-low/30 backdrop-blur-sm border border-outline-variant/20 rounded-xl p-5 md:p-10 shadow-sm">
           <h3 className="text-xl font-heading font-normal text-foreground mb-8 flex items-center gap-3">
              <Calendar className="w-5 h-5 text-primary" />
              Available Recurring Slots
           </h3>
 
           {slots.length === 0 ? (
-            <div className="text-center py-12 px-6 bg-surface-container-lowest rounded-2xl border border-dashed border-outline-variant/30">
+            <div className="text-center py-6 md:py-12 px-6 bg-surface-container-lowest rounded-2xl border border-dashed border-outline-variant/30">
                <p className="text-muted-foreground italic">No availability slots found for this therapist.</p>
             </div>
           ) : (
@@ -99,7 +99,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                             key={slot.id}
                             disabled={booked}
                             onClick={() => setSelectedSlot(slot)}
-                            className={`flex items-center justify-between p-5 rounded-3xl border-2 transition-all duration-300 group ${
+                            className={`flex items-center justify-between p-5 rounded-xl border-2 transition-all duration-300 group ${
                               booked 
                                 ? "bg-slate-100 border-slate-200 cursor-not-allowed opacity-60" 
                                 : selectedSlot?.id === slot.id 
@@ -132,7 +132,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
       </div>
 
       <div className="lg:col-span-1">
-        <div className="sticky top-8 bg-surface-container-lowest border border-outline-variant/30 rounded-[2.5rem] p-8 shadow-xl shadow-primary/5">
+        <div className="sticky top-8 bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-8 shadow-xl shadow-primary/5">
            <h3 className="text-lg font-heading font-medium text-foreground mb-6">Booking Summary</h3>
            
            <div className="space-y-6 mb-8">
@@ -153,7 +153,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                   <p className="text-lg font-bold text-primary">{selectedSlot.startTime} (IST)</p>
                </div>
              ) : (
-               <div className="p-10 border-2 border-dashed border-outline-variant/30 rounded-2xl text-center">
+               <div className="p-5 md:p-10 border-2 border-dashed border-outline-variant/30 rounded-2xl text-center">
                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">Select a slot</p>
                </div>
              )}

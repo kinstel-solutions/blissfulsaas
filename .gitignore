@@ -39,3 +39,10 @@ backend/dist/
 
 # Prisma
 backend/prisma/client/
+
+# Scratch & Reference
+scratch/
+
+# Agent Specific
+.antigravity/
+.gemini/

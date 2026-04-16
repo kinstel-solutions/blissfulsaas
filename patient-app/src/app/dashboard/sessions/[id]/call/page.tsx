@@ -26,7 +26,7 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
             You don't have permission to join this room, or the session has expired.
           </p>
           <Link href="/dashboard/sessions">
-            <button className="bg-surface-container-low text-foreground border border-outline-variant/50 px-8 py-3 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-surface transition-all">
+            <button className="bg-surface-container-low text-foreground border border-outline-variant/50 px-4 md:px-8 py-3 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-surface transition-all">
               Back to Sessions
             </button>
           </Link>

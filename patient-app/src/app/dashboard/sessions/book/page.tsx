@@ -1,4 +1,4 @@
-import { Star, Shield, ArrowRight, User } from "lucide-react";
+import { Star, Shield, ArrowRight, User, Clock, GraduationCap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
@@ -22,18 +22,18 @@ export default async function BookingPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {therapistList.length === 0 ? (
-          <div className="col-span-full py-20 text-center bg-surface-container-lowest rounded-[2.5rem] border-2 border-dashed border-outline-variant/30">
+          <div className="col-span-full py-20 text-center bg-surface-container-lowest rounded-xl border-2 border-dashed border-outline-variant/30">
             <User className="w-16 h-16 text-primary/10 mx-auto mb-4" />
             <p className="text-muted-foreground">No verified therapists are available for booking at this time.</p>
           </div>
         ) : (
           therapistList.map((therapist) => (
-            <div key={therapist.id} className="bg-surface-container-low/50 backdrop-blur-md border border-outline-variant/30 rounded-[2.5rem] overflow-hidden hover:shadow-2xl hover:-translate-y-1 hover:border-primary/20 transition-all duration-500 group flex flex-col">
-              <div className="p-8 flex-1">
+            <div key={therapist.id} className="bg-surface-container-low/50 backdrop-blur-md border border-outline-variant/30 rounded-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 hover:border-primary/20 transition-all duration-500 group flex flex-col">
+              <div className="p-4 md:p-8 flex-1">
                 <div className="flex items-start justify-between mb-6">
                   <div className="w-20 h-20 rounded-[2rem] bg-surface-container-lowest border border-outline-variant/50 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5 shadow-inner">
                     <Image 
-                      src={`https://ui-avatars.com/api/?name=${therapist.firstName}+${therapist.lastName}&background=random&color=fff&size=200`}
+                      src={`https://ui-avatars.com/api/?name=${therapist.firstName}+${therapist.lastName}&background=f8f9fa&color=5f43b2&size=200`}
                       alt={therapist.firstName}
                       width={80}
                       height={80}
@@ -53,7 +53,7 @@ export default async function BookingPage() {
                    {therapist.bio || "Specialized in providing clinical support and personalized growth strategies."}
                 </p>
 
-                <div className="flex flex-wrap gap-2 mb-8">
+                <div className="flex flex-wrap gap-2 mb-6">
                   {therapist.specialities?.slice(0, 3).map((spec: string) => (
                     <span key={spec} className="px-3 py-1 bg-surface-container-lowest border border-outline-variant/50 rounded-full text-xs font-medium text-primary/80">
                       {spec}
@@ -63,17 +63,27 @@ export default async function BookingPage() {
                     <span className="text-xs font-bold text-muted-foreground/60 ml-1">+{therapist.specialities.length - 3} more</span>
                   )}
                 </div>
+
+                <div className="flex flex-col gap-2 pt-4 border-t border-outline-variant/10">
+                   <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
+                      <Clock className="w-3 h-3" />
+                      <span className="font-bold uppercase tracking-widest">{therapist.yearsOfExperience || 5}+ Years Experience</span>
+                   </div>
+                   <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
+                      <GraduationCap className="w-3 h-3" />
+                      <span className="font-medium">{therapist.qualifications || "Verified Specialist"}</span>
+                   </div>
+                </div>
               </div>
 
-              <div className="p-8 pt-0 border-t border-outline-variant/10 bg-surface-container-lowest/50">
+              <div className="p-4 md:p-8 pt-0 border-t border-outline-variant/10 bg-surface-container-lowest/50">
                 <div className="flex items-center justify-between mb-6">
                    <div>
                      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Standard Rate</p>
                      <p className="text-lg font-heading font-medium text-foreground text-primary/80">₹{therapist.hourlyRate || "1,500"}/hr</p>
                    </div>
                    <div className="flex items-center gap-2 text-primary/60">
-                      <Shield className="w-4 h-4" />
-                      <span className="text-xs font-bold uppercase tracking-widest">Secured</span>
+                      <span className="text-xs font-bold uppercase tracking-widest">Confidential</span>
                    </div>
                 </div>
                 <Link href={`/dashboard/sessions/book/${therapist.id}`}>

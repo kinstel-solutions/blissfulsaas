@@ -19,7 +19,7 @@ export default async function SessionsPage() {
           </p>
         </div>
         <Link href="/dashboard/sessions/book">
-          <button className="bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center gap-2">
+          <button className="bg-primary text-primary-foreground px-4 md:px-8 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center gap-2">
             <Plus className="w-4 h-4" />
             Book New Session
           </button>
@@ -28,8 +28,8 @@ export default async function SessionsPage() {
 
       <div className="grid grid-cols-1 gap-6">
         {upcoming.length === 0 ? (
-          <div className="py-32 text-center bg-surface-container-low/30 rounded-[3rem] border border-outline-variant/30 px-6">
-            <div className="w-20 h-20 bg-surface-container-lowest rounded-3xl flex items-center justify-center mx-auto mb-6 text-primary/10">
+          <div className="py-32 text-center bg-surface-container-low/30 rounded-2xl border border-outline-variant/30 px-6">
+            <div className="w-20 h-20 bg-surface-container-lowest rounded-xl flex items-center justify-center mx-auto mb-6 text-primary/10">
               <Calendar className="w-10 h-10" />
             </div>
             <h3 className="text-2xl font-heading font-medium text-foreground mb-4">No sessions scheduled</h3>
@@ -42,7 +42,7 @@ export default async function SessionsPage() {
           </div>
         ) : (
           upcoming.map((session) => (
-            <div key={session.id} className="bg-surface-container-lowest border border-outline-variant/30 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center justify-between gap-8 hover:shadow-xl transition-all group border-l-4 border-l-primary/50">
+            <div key={session.id} className="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8 hover:shadow-xl transition-all group border-l-4 border-l-primary/50">
               <div className="flex items-center gap-6">
                 <div className="w-20 h-20 rounded-[2rem] bg-primary-container/20 flex items-center justify-center text-primary font-bold overflow-hidden">
                   <Video className="w-8 h-8" />
@@ -50,8 +50,8 @@ export default async function SessionsPage() {
                 <div>
                   <h4 className="text-xl font-heading font-medium text-foreground mb-1">Dr. {session.therapist?.firstName} {session.therapist?.lastName}</h4>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground font-medium">
-                    <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 opacity-40" /> {new Date(session.scheduledAt).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</span>
-                    <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 opacity-40" /> {new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 opacity-40" /> {new Date(session.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+                    <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 opacity-40" /> {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                 </div>
               </div>
@@ -73,7 +73,7 @@ export default async function SessionsPage() {
                     <CancelSessionButton id={session.id} />
                   )}
                  <Link href={`/dashboard/sessions/${session.id}/call`}>
-                    <button className="bg-foreground text-surface px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-primary transition-all">
+                    <button className="bg-foreground text-surface px-5 md:px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-primary transition-all">
                       Join Call
                     </button>
                  </Link>

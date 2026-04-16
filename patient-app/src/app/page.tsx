@@ -44,7 +44,7 @@ export default function Home() {
               A private ecosystem designed to pair world-class clinical expertise with an environment of profound digital calm.
             </p>
             <div className="flex gap-4 w-full md:w-auto mt-4 md:mt-0">
-               <Link href="/signup" className="group w-full md:w-auto bg-primary text-primary-foreground px-8 md:px-12 py-5 md:py-6 rounded-2xl md:rounded-[2rem] font-bold text-xs uppercase tracking-[0.25em] shadow-2xl hover:shadow-primary/40 transition-all flex items-center justify-center gap-3">
+               <Link href="/signup" className="group w-full md:w-auto bg-primary text-primary-foreground px-4 md:px-8 md:px-12 py-5 md:py-6 rounded-2xl md:rounded-[2rem] font-bold text-xs uppercase tracking-[0.25em] shadow-2xl hover:shadow-primary/40 transition-all flex items-center justify-center gap-3">
                   Find Your Specialist
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                </Link>
@@ -59,7 +59,7 @@ export default function Home() {
           
           {/* Card 1: Overlapping Layout */}
           <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16 lg:gap-32 text-center md:text-left">
-             <div className="w-full md:w-1/2 aspect-[4/5] bg-surface-container-lowest rounded-[2.5rem] md:rounded-[3.5rem] border border-outline-variant/10 shadow-2xl overflow-hidden group">
+             <div className="w-full md:w-1/2 aspect-[4/5] bg-surface-container-lowest rounded-xl md:rounded-[3.5rem] border border-outline-variant/10 shadow-2xl overflow-hidden group">
                 <img 
                   src="https://images.unsplash.com/photo-1554177255-61502b352de3?auto=format&fit=crop&q=80&w=800&h=1000" 
                   alt="Curated Care" 
@@ -82,7 +82,7 @@ export default function Home() {
 
           {/* Card 2: Flip */}
           <div className="flex flex-col md:flex-row-reverse items-center gap-12 md:gap-16 lg:gap-32 text-center md:text-left">
-             <div className="w-full md:w-1/2 aspect-[4/5] bg-surface-container-lowest rounded-[2.5rem] md:rounded-[3.5rem] border border-outline-variant/10 shadow-2xl overflow-hidden group hover:rotate-0 transition-transform duration-1000 md:-rotate-2">
+             <div className="w-full md:w-1/2 aspect-[4/5] bg-surface-container-lowest rounded-xl md:rounded-[3.5rem] border border-outline-variant/10 shadow-2xl overflow-hidden group hover:rotate-0 transition-transform duration-1000 md:-rotate-2">
                 <img 
                   src="https://images.unsplash.com/photo-1523413363574-c3c44439366e?auto=format&fit=crop&q=80&w=800&h=1000" 
                   alt="Architectural Calm" 
@@ -154,7 +154,7 @@ export default function Home() {
         </div>
         <div className="max-w-7xl mx-auto mt-16 md:mt-20 pt-8 md:pt-10 border-t border-primary/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/20">
            <span>© {new Date().getFullYear()} Blissful Station Sanctuary</span>
-           <span>SECURE HIPAA END-TO-END</span>
+           <span>PRIVATE • ENCRYPTED • SECURE</span>
         </div>
       </footer>
     </main>

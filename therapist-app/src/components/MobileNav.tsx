@@ -61,7 +61,7 @@ export default function MobileNav({ currentUserId }: { currentUserId: string }) 
 
   return (
     <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-[100] lg:hidden">
-      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border border-white/20 dark:border-white/10 rounded-[2.5rem] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex justify-between items-center ring-1 ring-black/5">
+      <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border border-white/20 dark:border-white/10 rounded-xl p-3 shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex justify-between items-center ring-1 ring-black/5">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           const isMessages = item.href?.includes("/messages");

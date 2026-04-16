@@ -76,6 +76,7 @@ blissfulsaas/
 │   │   │   │   └── page.tsx                # Dashboard summary
 │   │   │   ├── middleware.ts               # Auth session refresh
 │   │   ├── components/
+│   │   │   ├── DashboardSidebar.tsx        # Real-time reactive sidebar
 │   │   │   ├── ChatSidebar.tsx             # Real-time chat UI
 │   │   │   ├── IntakeFormClient.tsx        # Multi-step patient intake UI
 │   │   │   ├── VideoRoom.tsx               # Agora conference logic
@@ -98,6 +99,8 @@ blissfulsaas/
 │   │   ├── components/
 │   │   │   ├── AppointmentActions.tsx      # State management buttons
 │   │   │   ├── EnhancedAppointmentsList.tsx# 3-Column Clinical Workstation
+│   │   │   ├── MobileNav.tsx               # Premium Floating Dock (Mobile)
+│   │   │   ├── DashboardSidebar.tsx        # Branded Clinical Sidebar (Desktop)
 │   │   │   ├── ChatSidebar.tsx             # In-call messaging UI
 │   │   │   ├── NotesSidebar.tsx            # Private clinical notes
 │   │   │   └── VideoRoomWrapper.tsx
@@ -135,7 +138,9 @@ blissfulsaas/
 | **Backend API** | NestJS | Multi-module REST API with guards |
 | **Video Platform** | Agora RTC | SDK for low-latency clinical video |
 | **Real-time Engine** | Supabase Realtime | WebSocket-driven chat delivery |
-| **Fonts** | Inter + Manrope | System sans-serif + display heading |
+| **Fonts** | Outfit + Cormorant | Modern sans-serif + high-end serif |
+| **Currency** | INR (₹) | Standardized for all financial displays |
+| **Encyption** | AES-256 / TLS 1.3 | Industry-standard security (Non-HIPAA) |
 
 ---
 
@@ -150,12 +155,14 @@ erDiagram
     User ||--o| Patient : "has profile"
     User ||--o| Therapist : "has profile"
     User ||--o| Admin : "has profile"
+    User ||--o{ Message : "sends"
 
     User {
         UUID id PK "Matches auth.users.id"
         String email UK
         Role role "PATIENT | THERAPIST | ADMIN"
         DateTime createdAt
+        DateTime updatedAt
     }
 
     Patient {
@@ -164,19 +171,20 @@ erDiagram
         String firstName
         String lastName
         String phone
+        DateTime dateOfBirth
         Boolean intakeCompleted
         String reasonForSeeking
-        String[] primaryConcerns
         String mentalHealthHistory
         String currentMedications
         Boolean previousTherapy
         String therapyGoals
         String emergencyContactName
         String emergencyContactPhone
+        String[] primaryConcerns
     }
 
-    Therapist ||--o{ Slot : "manages"
-    Slot ||--o| Appointment : "fills"
+    Therapist ||--o{ AvailabilitySlot : "manages"
+    AvailabilitySlot ||--o{ Appointment : "fills"
     Patient ||--o{ Appointment : "books"
     Appointment ||--o{ Message : "contains"
 
@@ -184,19 +192,21 @@ erDiagram
         UUID id PK
         UUID patientId FK
         UUID therapistId FK
-        UUID slotId FK UK
-        String status "UPCOMING | COMPLETED | CANCELLED"
+        UUID slotId FK
+        DateTime scheduledAt
+        Int duration
+        AppointmentStatus status "PENDING | CONFIRMED | COMPLETED | CANCELLED | NO_SHOW"
+        String videoRoomId UK
         String patientNotes
         String therapistNotes
-        DateTime scheduledAt
     }
 
-    Slot {
+    AvailabilitySlot {
         UUID id PK
         UUID therapistId FK
-        DateTime startTime
-        DateTime endTime
-        Boolean isBooked
+        Int dayOfWeek "0-6"
+        String startTime "HH:mm"
+        String endTime "HH:mm"
         Boolean isActive
     }
 
@@ -205,6 +215,7 @@ erDiagram
         UUID appointmentId FK
         UUID senderId FK
         String content
+        Boolean isRead "Default: false"
         DateTime createdAt
     }
 
@@ -214,7 +225,11 @@ erDiagram
         String firstName
         String lastName
         String bio
+        String qualifications
         String[] specialities
+        String[] languages
+        Int yearsOfExperience
+        String videoUrl
         Float hourlyRate
         Boolean isVerified
     }
@@ -362,10 +377,11 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Login | `/login` | Email/password login |
 | Signup | `/signup` | Patient registration with name fields |
 | Dashboard | `/dashboard` | Protected patient home |
-| Discover | `/dashboard/discover` | Browse therapist marketplace (currently static data) |
+| Discover | `/dashboard/discover` | Browse therapist marketplace (Live API) |
 | Book Session | `/dashboard/sessions/book` | Live therapist availability & slot booking |
 | My Sessions | `/dashboard/sessions` | Upcoming and past appointments |
 | My Messages | `/dashboard/messages` | Transcripts of past session chats |
+| Account | `/dashboard/account` | Profile, settings, and sign-out |
 | Intake Form | `/dashboard/intake` | Multi-step clinical pre-session data |
 
 ### 6.2 Therapist App (`:3001`)
@@ -380,6 +396,7 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Appointments | `/dashboard/appointments` | Schedule management & Clinical Workstation (Intake + Notes) |
 | Patient Roster | `/dashboard/patients` | Deduped CRM viewer of past patients and interaction history |
 | Message Archive| `/dashboard/messages` | Secure transcripts of past session chats |
+| Account | `/dashboard/account` | Profile, settings, and sign-out |
 | Session Room | `/dashboard/sessions/[id]/call` | Professional video & chat workspace |
 
 ### 6.3 Admin Panel (`:3002`)
@@ -388,6 +405,7 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 |------|-------|-------------|
 | Login | `/login` | Admin-only terminal login |
 | Overview | `/dashboard` | Platform stats: total users, patients, therapists, pending |
+| Account | `/dashboard/account` | Profile and global admin settings |
 | Provider Network | `/dashboard/therapists` | Table of all therapist applications |
 | Therapist Detail | `/dashboard/therapists/[id]` | Deep-dive into individual practitioner |
 | **Backend** | `PATCH /therapists/:id/verify` | Master endpoint for verification |
@@ -454,7 +472,8 @@ The platform uses the **"Blissful Botanical"** design system — a muted dark-gr
 3. **Micro-Animations**: Hover states with `translate-y`, `scale`, and `rotate` transforms on interactive elements.
 4. **Editorial Typography**: Oversized headings (`text-4xl`+), ultra-wide tracking (`tracking-widest`), uppercase labels.
 5. **Super-rounding**: Cards use `rounded-[2.5rem]` to `rounded-[3rem]` for a premium organic feel.
-6. **Clinical Workstations**: The therapist portal treats data displays as full "workstations" (expandable table rows replacing older modal patterns).
+6. **Floating Dock Architecture**: Mobile navigation uses a centralized "Floating Dock" pattern (`rounded-[2.5rem]`, `backdrop-blur-3xl`) with high-contrast notification badges (`bg-primary`, `animate-pulse`).
+7. **Clinical Workstations**: The therapist portal treats data displays as full "workstations" (expandable table rows replacing older modal patterns).
 
 ---
 
@@ -543,8 +562,9 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 - [x] **Video Consultations**: Agora SDK integration with token security
 - [x] **Real-Time Chat**: Full real-time support with polling fallbacks
 - [x] **Role Guards**: Layout-level CSR/SSR auth protection
-- [x] **Message History**: Unified messaging archive for patients and therapists
-- [x] **Patient Roster**: Therapist dashboard view of unique patients and interaction history
+- [x] **Clinical Messaging**: 7-day extended chat window after consultations
+- [x] **Notification Workspace**: Global unread badges in sidebars with real-time reactive sync
+- [x] **Messaging Security**: Hard-block on communication for cancelled appointments
 - [x] **Clinical Workstation**: Appointments view with Session Details, Patient Intake Form, and Private Clinical Notes
 
 **🔲 Pending (by priority)**
@@ -566,7 +586,8 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 |---|-------------|----------|---------------|----------------------|
 | 1 | **JWT Custom Claims** | Performance | Portals query `public.User` table on every page load | Inject `role` into `auth.users.raw_app_meta_data` at signup |
 | 2 | **Prisma RLS Passthrough** | Security | NestJS connects via direct Postgres URL | Implement Prisma Client Extension to inject JWT claims |
-| 3 | **PHI Audit Logging** | Compliance | Only basic timestamps exist | Create an immutable `AuditLog` table + triggers |
+| 3 | **Notification Reliability** | Data Integrity | Complex relations causing stale unread counts | Switch from DB-level `groupBy` to Service-level manual aggregation |
+| 4 | **PHI Audit Logging** | Compliance | Only basic timestamps exist | Create an immutable `AuditLog` table + triggers |
 
 ---
 
@@ -579,8 +600,8 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 | # | Bug | File | Impact | Status |
 |---|-----|------|--------|-----|
 | 1 | **`getSession()` used instead of `getUser()`** | `admin-panel/src/lib/api.ts` | Security issue (JWT forgery) | 🔴 PENDING |
-| 2 | **Fake growth metric "+12% this month"** | `admin-panel/dashboard/page.tsx` | Misleading dashboard data | 🔴 PENDING |
-| 3 | **Discover page maps static therapist lists** | `patient-app/dashboard/discover/page.tsx` | UI doesn't match API data | 🔴 PENDING |
+| 2 | **Hydration errors in MobileNav** | `MobileNav.tsx` | Order of hooks/mounted state issues | ✅ FIXED |
+| 3 | **Discover page maps static therapist lists** | `patient-app/dashboard/discover/page.tsx` | UI doesn't match API data | ✅ FIXED |
 
 ### 🟡 Code Quality Issues
 
@@ -595,4 +616,52 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 ---
 
-*Documentation generated for The Blissful Station platform. Last updated: April 12, 2026.*
+## 15. Notification Architecture (Deep Dive)
+
+The platform implements a **Reactive Notification System** to track unread messages without constant polling.
+
+### Backend Strategy
+- **Manual Aggregation**: To avoid Prisma `groupBy` performance and filtering quirks with deep nested relations (User -> Therapist -> Appointment), the backend `MessagesService` now fetches unread message targets and aggregates counts in-memory.
+- **Endpoint**: `GET /messages/unread/counts` returns a map of `{ [appointmentId]: count }`.
+
+### Frontend Synchronization
+- **Global Multi-Portal Listening**: The `DashboardSidebar` (Client Component) maintains a global Supabase Realtime channel to track unread counts across all sessions. It features a pulsing badge for the "Messages" tab.
+- **Hydration Safety**: Messaging components include a `mounted` guard to prevent hydration mismatches caused by locale-dependent date formatting or server-client state drift.
+- **Auto-Read Logic**: Messages are marked as read via a dedicated `POST /messages/:id/read` endpoint triggered automatically when a session is selected or a message arrives in the active view.
+- **API Aggregation**: The `MessagesService` in the backend manually aggregates counts from the database to ensure high performance and strict role-based filtering.
+
+---
+
+## 16. Clinical Messaging Policies
+
+The platform enforces strict clinical boundaries to ensure professional conduct and secure communication.
+
+### 16.1 The 7-Day Extended Chat Window
+To facilitate follow-up care without requiring additional bookings for minor questions, the clinical chat remains active for **7 days post-consultation**.
+- **Logic**: `Chat Active = Now <= (ScheduledAt + Duration) + 7 Days`.
+- **UI Feedback**: Both portals display a "Chat Active" pulse or a "Secure Clinical Archive — Read Only" notice based on this window.
+
+### 16.2 Cancellation Blocks
+Communication is strictly prohibited for appointments with a `CANCELLED` status.
+- **Security**: The backend `sendMessage` operation explicitly rejects requests for cancelled IDs with a `403 Forbidden` error.
+- **UI**: The chat input is hidden and replaced with a **Ban** icon and a clinical notice for cancelled sessions.
+
+---
+
+## 17. Deterministic Hydration & Compliance
+
+### 17.1 Hydration Policy
+To eliminate React hydration mismatches across different environments:
+- **Locale Locking**: All date/time strings are formatted using the `en-US` locale explicitly.
+- **Fixed Visual Attributes**: Derived attributes (like random avatar backgrounds) were removed and replaced with deterministic theme colors.
+- **Component Suppression**: Used `suppressHydrationWarning` exclusively for dynamic time-of-day greetings.
+
+### 17.2 Specialized Privacy Branding
+The platform has undergone a full branding scrub to remove "HIPAA" and "Secured" descriptors. These have been replaced with:
+- **"Private & Encrypted"**: For clinical data transmission.
+- **"Confidential Consultation"**: For the video and messaging environment.
+- **AES-256 / TLS 1.3**: Direct technical descriptions used in place of certification claims.
+
+---
+
+*Documentation generated for The Blissful Station platform. Last updated: April 15, 2026.*

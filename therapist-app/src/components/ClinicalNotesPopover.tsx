@@ -40,8 +40,8 @@ export default function ClinicalNotesPopover({ appointmentId, initialNotes }: { 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
-        <header className="p-8 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl border border-slate-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
+        <header className="p-4 md:p-8 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg">
               <StickyNote className="w-5 h-5" />
@@ -56,12 +56,12 @@ export default function ClinicalNotesPopover({ appointmentId, initialNotes }: { 
           </button>
         </header>
 
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Type your clinical observations, treatment plans, or private session notes here..."
-            className="w-full h-64 bg-slate-50/50 border-none rounded-3xl p-6 text-sm text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none outline-none leading-relaxed"
+            className="w-full h-64 bg-slate-50/50 border-none rounded-xl p-6 text-sm text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none outline-none leading-relaxed"
           />
           
           <div className="mt-8 flex items-center justify-between">

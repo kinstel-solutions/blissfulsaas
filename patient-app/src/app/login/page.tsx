@@ -28,7 +28,7 @@ export default function LoginPage() {
       <div className="absolute bottom-0 left-0 w-1/3 h-[40vh] bg-accent/20 rounded-full blur-[100px] -z-10 pointer-events-none transform -translate-x-1/4 translate-y-1/4" />
 
       {/* Header */}
-      <header className="p-8 md:px-16 flex justify-between items-center z-10 bg-transparent">
+      <header className="p-4 md:p-8 md:px-16 flex justify-between items-center z-10 bg-transparent">
         <Link href="/" className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary/40 hover:text-primary transition-colors">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back to Home
@@ -41,17 +41,17 @@ export default function LoginPage() {
         </div>
       </header>
 
-      <main className="flex-1 flex items-center justify-center p-8 pb-32 z-10">
+      <main className="flex-1 flex items-center justify-center p-4 md:p-8 pb-32 z-10">
         <div className="w-full max-w-md">
           <div className="text-center mb-12">
-            <div className="w-16 h-16 rounded-3xl bg-primary/2 flex items-center justify-center mx-auto mb-8 text-primary/40 shadow-sm border border-primary/5">
+            <div className="w-16 h-16 rounded-xl bg-primary/2 flex items-center justify-center mx-auto mb-8 text-primary/40 shadow-sm border border-primary/5">
                <Fingerprint className="w-8 h-8 font-thin" />
             </div>
             <h1 className="text-4xl font-heading font-normal tracking-tight text-primary mb-4 leading-tight">Welcome Back.</h1>
             <p className="text-primary/40 text-xs font-bold uppercase tracking-[0.3em]">Sign in to your account</p>
           </div>
 
-          <div className="bg-surface-container-lowest p-10 md:p-12 rounded-[2.5rem] shadow-2xl border border-outline-variant/10 relative overflow-hidden group">
+          <div className="bg-surface-container-lowest p-5 md:p-10 md:p-12 rounded-xl shadow-2xl border border-outline-variant/10 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/2 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
             
             <form onSubmit={handleLogin} className="space-y-8 relative z-10">

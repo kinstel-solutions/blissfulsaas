@@ -65,7 +65,10 @@ model Therapist {
   firstName     String?
   lastName      String?
   bio           String?
+  qualifications String?  // e.g. "M.Phil Clinical Psychology"
   specialities  String[]
+  languages     String[]  // e.g. ["English", "Hindi"]
+  yearsOfExperience Int?
   videoUrl      String?
   hourlyRate    Float?
   isVerified    Boolean  @default(false)
