@@ -12,7 +12,6 @@
   
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary-container: var(--primary-container);
   
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -36,6 +35,9 @@
   --radius-2xl: 2rem;
   --radius-3xl: 2.5rem;
   --radius-4xl: 3rem;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-marquee: marquee 40s linear infinite;
 }
 
 :root {
@@ -50,9 +52,8 @@
 
   --primary: #214D3E;
   --primary-foreground: #ffffff;
-  --primary-container: #2d6653;
   
-  --secondary: #E8F0EE;
+  --secondary: #EAF4F3;
   --secondary-foreground: #214D3E;
 
   --outline: #717974;
@@ -87,9 +88,14 @@
 
 /* --- Premium Animation Suite --- */
 
-@keyframes shimmerBg {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 @keyframes simmer {

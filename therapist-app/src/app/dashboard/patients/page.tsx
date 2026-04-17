@@ -33,7 +33,8 @@ export default async function PatientRosterPage() {
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[900px] md:min-w-full">
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="px-5 md:px-10 py-4 md:py-8 text-left text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Patient identity</th>
@@ -95,6 +96,7 @@ export default async function PatientRosterPage() {
             </tbody>
           </table>
         </div>
+      </div>
       )}
     </div>
   );

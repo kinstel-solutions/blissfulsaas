@@ -49,9 +49,18 @@ export default async function SessionsPage() {
                 </div>
                 <div>
                   <h4 className="text-xl font-heading font-medium text-foreground mb-1">Dr. {session.therapist?.firstName} {session.therapist?.lastName}</h4>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground font-medium">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground font-medium">
                     <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 opacity-40" /> {new Date(session.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
                     <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 opacity-40" /> {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className={`lg:hidden px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${
+                      session.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
+                      session.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
+                      session.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
+                      session.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700' :
+                      'bg-primary/10 text-primary'
+                    }`}>
+                      {session.status}
+                    </span>
                   </div>
                 </div>
               </div>
