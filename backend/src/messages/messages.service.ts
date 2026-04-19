@@ -1,15 +1,23 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '@prisma/client';
 
 @Injectable()
 export class MessagesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService
+  ) {}
 
   async sendMessage(senderUserId: string, appointmentId: string, content: string) {
     // 1. Verify the appointment exists
     const appointment = await this.prisma.appointment.findUnique({
       where: { id: appointmentId },
-      include: { patient: true, therapist: true },
+      include: { 
+        patient: { include: { user: true } }, 
+        therapist: { include: { user: true } } 
+      },
     });
 
     if (!appointment) throw new NotFoundException('Appointment not found');
@@ -34,7 +42,7 @@ export class MessagesService {
     }
 
     // 3. Insert the message
-    return this.prisma.message.create({
+    const message = await this.prisma.message.create({
       data: {
         appointmentId,
         senderId: senderUserId,
@@ -44,6 +52,24 @@ export class MessagesService {
         sender: { select: { id: true, email: true, role: true } },
       },
     });
+
+    // 4. Emit Notification to the recipient
+    const recipientUserId = isPatient ? appointment.therapist.userId : appointment.patient.userId;
+    const senderName = isPatient 
+      ? `${appointment.patient.firstName ?? 'Patient'}` 
+      : `Dr. ${appointment.therapist.lastName ?? 'Therapist'}`;
+
+    setImmediate(() => {
+      this.notifications.create({
+        userId: recipientUserId,
+        type: NotificationType.NEW_MESSAGE,
+        title: 'New Message',
+        body: `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`,
+        metadata: { appointmentId, senderId: senderUserId, senderName },
+      }).catch(console.error);
+    });
+
+    return message;
   }
 
   async getMessages(requesterUserId: string, appointmentId: string) {
@@ -71,8 +97,8 @@ export class MessagesService {
   }
 
   async markAsRead(requesterUserId: string, appointmentId: string) {
-    // Mark as read all messages in this appointment NOT sent by the requester
-    return this.prisma.message.updateMany({
+    // 1. Mark messages as read
+    await this.prisma.message.updateMany({
       where: {
         appointmentId,
         senderId: { not: requesterUserId },
@@ -80,6 +106,28 @@ export class MessagesService {
       },
       data: { isRead: true },
     });
+
+    // 2. Mark notifications as read using a reliable in-memory filter + updateMany
+    const unreadNotifs = await this.prisma.notification.findMany({
+      where: {
+        userId: requesterUserId,
+        type: 'NEW_MESSAGE',
+        isRead: false,
+      },
+    });
+
+    const targetNotifIds = unreadNotifs
+      .filter(n => (n.metadata as any)?.appointmentId === appointmentId)
+      .map(n => n.id);
+
+    if (targetNotifIds.length > 0) {
+      await this.prisma.notification.updateMany({
+        where: { id: { in: targetNotifIds } },
+        data: { isRead: true },
+      });
+    }
+
+    return { success: true };
   }
 
   async getUnreadCounts(userId: string) {
@@ -123,6 +171,7 @@ export class MessagesService {
         appointment: {
           therapistId: therapist.id,
           patientId: patientId,
+          status: { not: 'CANCELLED' }
         },
       },
       include: {

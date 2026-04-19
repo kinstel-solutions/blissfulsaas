@@ -9,6 +9,8 @@ import { AvailabilityModule } from './availability/availability.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { MessagesModule } from './messages/messages.module';
 import { PatientsModule } from './patients/patients.module';
+import { PaymentsModule } from './payments/payments.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { PatientsModule } from './patients/patients.module';
     SessionsModule,
     MessagesModule,
     PatientsModule,
+    PaymentsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

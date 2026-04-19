@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import MobileNav from "@/components/MobileNav";
+import NotificationBell from "@/components/NotificationBell";
 
 export default async function DashboardLayout({
   children,
@@ -81,7 +82,7 @@ export default async function DashboardLayout({
       <main className="flex-1 flex flex-col overflow-hidden relative bg-surface-container-lowest/30 pb-20 lg:pb-0">
         <div className="absolute top-0 right-0 w-full h-[40vh] bg-linear-to-b from-primary/5 via-transparent to-transparent -z-10 pointer-events-none" />
         
-        <header className="h-20 lg:h-24 flex items-center justify-between px-6 lg:px-12 bg-surface/30 backdrop-blur-3xl border-b border-outline-variant/20 z-10 shrink-0">
+        <header className="h-20 lg:h-24 flex items-center justify-between px-6 lg:px-12 bg-white border-b border-outline-variant/20 z-30 shrink-0">
           <div className="flex items-center gap-3 lg:hidden">
             <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
               <span className="text-primary-foreground font-heading font-bold text-xl">B</span>
@@ -90,13 +91,17 @@ export default async function DashboardLayout({
           <div className="hidden md:block">
             <h2 className="text-xl lg:text-2xl font-heading font-normal text-foreground">Provider Dashboard</h2>
           </div>
-          <div className="hidden sm:flex items-center gap-6">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-bold text-foreground leading-none">{user.user_metadata?.first_name || "Doctor"}</p>
-              <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest font-bold">LCSW • Active Practitioner</p>
-            </div>
-            <div className="w-12 h-12 rounded-2xl bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary font-bold shadow-inner">
-              {user.user_metadata?.first_name?.[0] || "D"}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <NotificationBell currentUserId={user.id} />
+
+            <div className="hidden sm:flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-sm font-bold text-foreground leading-none">{user.user_metadata?.first_name || "Doctor"}</p>
+                <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest font-bold">LCSW • Active Practitioner</p>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary font-bold shadow-inner">
+                {user.user_metadata?.first_name?.[0] || "D"}
+              </div>
             </div>
           </div>
         </header>

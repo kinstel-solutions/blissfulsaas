@@ -1,4 +1,4 @@
-import { Calendar, Clock, User, ArrowRight, CheckCircle2, Video, Plus, Trash2 } from "lucide-react";
+import { Calendar, Clock, User, ArrowRight, CheckCircle2, Video, Plus, Trash2, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
 import CancelSessionButton from "@/components/CancelSessionButton";
@@ -81,11 +81,19 @@ export default async function SessionsPage() {
                   {(session.status === 'PENDING' || session.status === 'CONFIRMED') && (
                     <CancelSessionButton id={session.id} />
                   )}
-                 <Link href={`/dashboard/sessions/${session.id}/call`}>
-                    <button className="bg-foreground text-surface px-5 md:px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-primary transition-all">
-                      Join Call
-                    </button>
-                 </Link>
+                  <div className="flex items-center gap-3">
+                    <Link href={`/dashboard/messages?sessionId=${session.id}`}>
+                      <button className="bg-primary/5 text-primary border border-primary/20 px-4 md:px-6 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-primary/10 transition-all flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4" />
+                        Chat
+                      </button>
+                    </Link>
+                    <Link href={`/dashboard/sessions/${session.id}/call`}>
+                      <button className="bg-foreground text-surface px-5 md:px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg hover:bg-primary transition-all">
+                        Join Call
+                      </button>
+                    </Link>
+                  </div>
               </div>
             </div>
           ))

@@ -43,25 +43,35 @@ export default function DashboardSidebar({
   useEffect(() => {
     fetchTotalUnread();
 
+    const handleRefresh = () => {
+      fetchTotalUnread();
+    };
+
+    window.addEventListener('refresh-unread-counts', handleRefresh);
+
     const channel = supabaseClient
-      .channel('global-nav-notifications')
+      .channel(`sidebar-updates-${currentUserId}`)
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "Message",
-        },
-        () => fetchTotalUnread()
+        { event: "*", schema: "public", table: "Message" },
+        () => {
+          setTimeout(() => fetchTotalUnread(), 500);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Notification", filter: `userId=eq.${currentUserId}` },
+        () => {
+          setTimeout(() => fetchTotalUnread(), 500);
+        }
       )
       .subscribe();
 
-    fetchTotalUnread();
-
     return () => {
+      window.removeEventListener('refresh-unread-counts', handleRefresh);
       supabaseClient.removeChannel(channel);
     };
-  }, [fetchTotalUnread, currentUserId, pathname]);
+  }, [fetchTotalUnread, currentUserId]);
 
   return (
     <div className="px-6 py-5 md:py-10 flex flex-col flex-1 gap-2">

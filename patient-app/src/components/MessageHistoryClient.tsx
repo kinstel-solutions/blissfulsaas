@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { MessageSquare, Search, Clock, Calendar, ChevronRight, Send, Ban } from "lucide-react";
 import { api } from "@/lib/api";
 import { createClient } from "@/lib/supabase";
@@ -48,10 +49,21 @@ export default function MessageHistoryClient({
     } catch (e) {}
   }, []);
 
+  const searchParams = useSearchParams();
+  const sessionIdFromUrl = searchParams.get('sessionId');
+
   useEffect(() => {
     setMounted(true);
     fetchUnreadCounts();
-  }, [fetchUnreadCounts]);
+
+    // If we have a sessionId from the URL, select it
+    if (sessionIdFromUrl && initialSessions.length > 0) {
+      const session = initialSessions.find(s => s.id === sessionIdFromUrl);
+      if (session) {
+        setSelectedSession(session);
+      }
+    }
+  }, [fetchUnreadCounts, sessionIdFromUrl, initialSessions]);
 
   // Realtime subscription for BOTH selected room and global notifications
   useEffect(() => {
@@ -154,11 +166,20 @@ export default function MessageHistoryClient({
     }
   };
 
-  const filteredSessions = initialSessions.filter(s => {
-    const therapist = s.therapist;
-    const name = `${therapist?.firstName} ${therapist?.lastName}`.toLowerCase();
-    return name.includes(search.toLowerCase());
-  });
+  const filteredSessions = initialSessions
+    .filter(s => {
+      const therapist = s.therapist;
+      const name = `${therapist?.firstName} ${therapist?.lastName}`.toLowerCase();
+      return name.includes(search.toLowerCase());
+    })
+    .sort((a, b) => {
+      // Primary sort: Active status first
+      if (a.status !== 'CANCELLED' && b.status === 'CANCELLED') return -1;
+      if (a.status === 'CANCELLED' && b.status !== 'CANCELLED') return 1;
+      
+      // Secondary sort: Most recent date
+      return new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime();
+    });
 
   const isCancelled = selectedSession?.status === 'CANCELLED';
   const isChatActive = selectedSession && !isCancelled ? (
@@ -211,9 +232,17 @@ export default function MessageHistoryClient({
                     {therapist?.firstName?.[0]}{therapist?.lastName?.[0]}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-bold truncate ${isActive ? 'text-primary' : 'text-slate-900'}`}>
-                      Dr. {therapist?.firstName} {therapist?.lastName}
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={`text-sm font-bold truncate ${isActive ? 'text-primary' : 'text-slate-900'}`}>
+                        Dr. {therapist?.firstName} {therapist?.lastName}
+                      </p>
+                      {s.status === 'CANCELLED' && (
+                        <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 bg-red-50 text-red-500 rounded-md shrink-0">Cancelled</span>
+                      )}
+                      {s.status === 'COMPLETED' && (
+                        <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded-md shrink-0">Done</span>
+                      )}
+                    </div>
                     <div className={`flex items-center gap-1.5 text-[10px] md:text-xs font-medium ${unreadCount > 0 ? 'text-primary' : 'text-slate-400'}`}>
                       <Calendar className="w-3 h-3" />
                       {mounted ? new Date(s.scheduledAt).toLocaleDateString() : 'Loading...'}

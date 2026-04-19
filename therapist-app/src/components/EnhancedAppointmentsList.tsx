@@ -123,11 +123,13 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                             <div className="flex items-center gap-2">
                               <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Video Consultation</p>
                               <div className="w-1 h-1 rounded-full bg-slate-300 mt-1" />
-                              <button 
-                                className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1 hover:text-primary transition-colors"
-                              >
-                                Message
-                              </button>
+                              <Link href={`/dashboard/messages?sessionId=${appt.id}`}>
+                                <button 
+                                  className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1 hover:text-primary transition-colors"
+                                >
+                                  Message
+                                </button>
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -361,6 +363,11 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                 {/* Actions Bar */}
                 <div className="px-5 pb-5 flex items-center justify-between gap-3 border-t border-slate-50 pt-4">
                    <div className="flex gap-2" onClick={e => e.stopPropagation()}>
+                      <Link href={`/dashboard/messages?sessionId=${appt.id}`}>
+                        <button className="p-2.5 bg-primary/5 text-primary rounded-xl border border-primary/10">
+                          <MessageSquare className="w-4 h-4" />
+                        </button>
+                      </Link>
                       <AppointmentActions id={appt.id} status={appt.status} />
                    </div>
                    <button 

@@ -60,24 +60,36 @@ enum PaymentStatus {
 
 ---
 
-### 2. Email Notifications 📧
+### 2. In-App Notifications 🔔
 **Scope Ref**: A.8 — Notifications
+**Status**: COMPLETED — In-App (April 19, 2026) | Email deferred (dummy emails in dev)
 
-No transactional email infrastructure exists.
+Email notifications replaced with a real-time in-app notification system using Supabase Realtime + a dedicated `Notification` table.
 
-| Task | Details |
-|------|---------|
-| **Email Service Setup** | Integrate Resend, Postmark, or SendGrid |
-| **Booking Confirmation Email** | Sent to patient + therapist on successful booking |
-| **Booking Reminder Email** | Scheduled reminders (24h before, 1h before) |
-| **Cancellation Notification** | Email both parties on cancellation |
-| **Therapist Approval Email** | Notify therapist when admin approves application |
-| **Email Templates** | Branded HTML email templates matching design system |
+| Task | Details | Status |
+|------|---------|--------|
+| **`Notification` Prisma Model** | userId, type (enum), title, body, isRead, metadata (JSON), indexes | ✅ Done |
+| **NestJS `notifications` module** | `GET /notifications`, `GET /notifications/unread/count`, `PATCH /:id/read`, `PATCH /read-all`, `DELETE /:id` | ✅ Done |
+| **Booking Confirmation Notification** | Sent to patient + therapist on session book or payment verify | ✅ Done |
+| **Cancellation Notification** | Notifies the other party when either side cancels | ✅ Done |
+| **Session Completed Notification** | Patient receives notification when therapist marks complete | ✅ Done |
+| **Payment Success Notification** | Patient receives ₹ amount + appointment details on payment | ✅ Done |
+| **Therapist Approval Notification** | Fires `THERAPIST_APPROVED` when admin approves application | ✅ Done |
+| **`NotificationBell` UI Component** | Bell icon in both dashboard headers, animated badge, dropdown panel | ✅ Done |
+| **Real-time badge via Supabase** | INSERT subscription on `Notification` table filters by `userId` | ✅ Done |
+| **Mark as read / mark all read** | Per-notification and bulk read actions in dropdown | ✅ Done |
+| **Email Notifications** | Requires Resend/Postmark + real emails. Deferred until post-launch. | ❌ Deferred |
+| **Scheduled Reminders (24h/1h)** | Requires cron or Supabase Edge Functions. Phase 2. | ❌ Phase 2 |
+
+> [!IMPORTANT]
+> **One manual step required**: Enable Realtime on the `Notification` table in the Supabase Dashboard.
+> Go to **Database → Replication → Tables** and toggle **Notification** to ON.
+> Without this, the live badge update won't work (initial fetch still works).
 
 **Backend Work:**
-- New `notifications` NestJS module
-- Cron-based scheduler for reminders (or use Supabase Edge Functions)
-- Email template engine
+- `notifications` NestJS module at `backend/src/notifications/`
+- `NotificationType` enum: BOOKING_CONFIRMED, BOOKING_CANCELLED, SESSION_COMPLETED, PAYMENT_SUCCESS, THERAPIST_APPROVED, NEW_MESSAGE, GENERAL
+- SessionsService, PaymentsService, TherapistsService all inject NotificationsService
 
 ---
 

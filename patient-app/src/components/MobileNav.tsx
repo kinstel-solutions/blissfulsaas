@@ -38,24 +38,36 @@ export default function MobileNav({ currentUserId }: { currentUserId: string }) 
   useEffect(() => {
     fetchTotalUnread();
 
-    const channelId = `mobile-nav-patient-${currentUserId}`;
+    const handleRefresh = () => {
+      fetchTotalUnread();
+    };
+
+    window.addEventListener('refresh-unread-counts', handleRefresh);
+
+    const channelId = `mobile-nav-patient-updates-${currentUserId}`;
     const channel = supabaseClient
       .channel(channelId)
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "Message",
-        },
-        () => fetchTotalUnread()
+        { event: "*", schema: "public", table: "Message" },
+        () => {
+          setTimeout(() => fetchTotalUnread(), 500);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Notification", filter: `userId=eq.${currentUserId}` },
+        () => {
+          setTimeout(() => fetchTotalUnread(), 500);
+        }
       )
       .subscribe();
 
     return () => {
+      window.removeEventListener('refresh-unread-counts', handleRefresh);
       supabaseClient.removeChannel(channel);
     };
-  }, [fetchTotalUnread, currentUserId, pathname]);
+  }, [fetchTotalUnread, currentUserId]);
 
   return (
     <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-[100] lg:hidden">

@@ -1,11 +1,15 @@
 import { Injectable, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AppointmentStatus } from '@prisma/client';
+import { AppointmentStatus, NotificationType } from '@prisma/client';
 import { RtcTokenBuilder, RtcRole } from 'agora-token';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class SessionsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService,
+  ) {}
 
   async book(patientUserId: string, data: { slotId: string; date: string; notes?: string }) {
     return this.prisma.$transaction(async (tx) => {
@@ -16,7 +20,6 @@ export class SessionsService {
       if (!patient) throw new NotFoundException('Patient profile not found');
 
       // 2. Check if the slot is already booked for this specific date
-      // We parse the date to ensure we are looking at the right day
       const scheduledAt = new Date(data.date);
       
       const existing = await tx.appointment.findFirst({
@@ -34,13 +37,13 @@ export class SessionsService {
       // 3. Get the slot details
       const slot = await tx.availabilitySlot.findUnique({
         where: { id: data.slotId, isActive: true },
-        include: { therapist: true }
+        include: { therapist: { include: { user: true } } }
       });
 
       if (!slot) throw new NotFoundException('Availability slot not found or inactive');
 
       // 4. Create the appointment
-      return tx.appointment.create({
+      const appointment = await tx.appointment.create({
         data: {
           patientId: patient.id,
           therapistId: slot.therapistId,
@@ -50,6 +53,35 @@ export class SessionsService {
           status: AppointmentStatus.PENDING,
         },
       });
+
+      // 5. Emit notifications (fire-and-forget after tx)
+      const therapistName = `Dr. ${slot.therapist.firstName ?? ''} ${slot.therapist.lastName ?? ''}`.trim();
+      const dateStr = scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      const timeStr = `${slot.startTime} – ${slot.endTime}`;
+
+      // Patient: booking confirmed
+      setImmediate(() => {
+        this.notifications.create({
+          userId: patientUserId,
+          type: NotificationType.BOOKING_CONFIRMED,
+          title: 'Appointment Booked ✓',
+          body: `Your session with ${therapistName} is confirmed for ${dateStr} at ${timeStr}.`,
+          metadata: { appointmentId: appointment.id, therapistName, scheduledAt: data.date },
+        }).catch(console.error);
+
+        // Therapist: new appointment
+        if (slot.therapist.userId) {
+          this.notifications.create({
+            userId: slot.therapist.userId,
+            type: NotificationType.BOOKING_CONFIRMED,
+            title: 'New Appointment Request',
+            body: `A patient has booked a session with you on ${dateStr} at ${timeStr}.`,
+            metadata: { appointmentId: appointment.id, scheduledAt: data.date },
+          }).catch(console.error);
+        }
+      });
+
+      return appointment;
     });
   }
 
@@ -110,7 +142,11 @@ export class SessionsService {
   async cancelSession(userId: string, appointmentId: string, role: string) {
     const appointment = await this.prisma.appointment.findUnique({
       where: { id: appointmentId },
-      include: { patient: true, therapist: true }
+      include: {
+        patient: { include: { user: true } },
+        therapist: { include: { user: true } },
+        slot: true,
+      }
     });
 
     if (!appointment) throw new NotFoundException('Appointment not found');
@@ -119,23 +155,71 @@ export class SessionsService {
     if (role === 'PATIENT' && appointment.patient.userId !== userId) throw new ForbiddenException();
     if (role === 'THERAPIST' && appointment.therapist.userId !== userId) throw new ForbiddenException();
 
-    return this.prisma.appointment.update({
+    const updated = await this.prisma.appointment.update({
       where: { id: appointmentId },
       data: { status: AppointmentStatus.CANCELLED }
     });
+
+    // Notify the other party
+    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+
+    setImmediate(() => {
+      if (role === 'PATIENT') {
+        // Patient cancelled → notify therapist
+        this.notifications.create({
+          userId: appointment.therapist.userId,
+          type: NotificationType.BOOKING_CANCELLED,
+          title: 'Appointment Cancelled',
+          body: `A patient has cancelled their session scheduled for ${dateStr}.`,
+          metadata: { appointmentId },
+        }).catch(console.error);
+      } else {
+        // Therapist cancelled → notify patient
+        this.notifications.create({
+          userId: appointment.patient.userId,
+          type: NotificationType.BOOKING_CANCELLED,
+          title: 'Appointment Cancelled',
+          body: `Your session with ${therapistName} on ${dateStr} has been cancelled.`,
+          metadata: { appointmentId, therapistName },
+        }).catch(console.error);
+      }
+    });
+
+    return updated;
   }
 
   async completeSession(therapistUserId: string, appointmentId: string) {
     const appointment = await this.prisma.appointment.findUnique({
-      where: { id: appointmentId, therapist: { userId: therapistUserId } }
+      where: { id: appointmentId },
+      include: {
+        therapist: true,
+        patient: { include: { user: true } },
+      }
     });
 
-    if (!appointment) throw new ForbiddenException('Not your appointment to complete');
+    if (!appointment || appointment.therapist.userId !== therapistUserId) {
+      throw new ForbiddenException('Not your appointment to complete');
+    }
 
-    return this.prisma.appointment.update({
+    const updated = await this.prisma.appointment.update({
       where: { id: appointmentId },
       data: { status: AppointmentStatus.COMPLETED }
     });
+
+    // Notify patient session is complete
+    const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+    setImmediate(() => {
+      this.notifications.create({
+        userId: appointment.patient.userId,
+        type: NotificationType.SESSION_COMPLETED,
+        title: 'Session Completed',
+        body: `Your session with ${therapistName} has been marked as complete. We hope it went well!`,
+        metadata: { appointmentId, therapistName },
+      }).catch(console.error);
+    });
+
+    return updated;
   }
 
   async getNotes(therapistUserId: string, appointmentId: string) {

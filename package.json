@@ -1,0 +1,12 @@
+{
+  "name": "blissfulsaas-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n \"BACKEND,PATIENT,THERAPIST,ADMIN\" -c \"blue,green,magenta,cyan\" \"npm run dev --prefix backend\" \"npm run dev --prefix patient-app\" \"npm run dev --prefix therapist-app\" \"npm run dev --prefix admin-panel\"",
+    "install-all": "npm install && npm install --prefix backend && npm install --prefix patient-app && npm install --prefix therapist-app && npm install --prefix admin-panel"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -20,6 +20,13 @@ enum AppointmentStatus {
   NO_SHOW
 }
 
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+  REFUNDED
+}
+
 model User {
   id        String   @id @db.Uuid // Must match Supabase auth.users.id exactly
   email     String   @unique
@@ -31,6 +38,7 @@ model User {
   therapistProfile Therapist?
   adminProfile     Admin?
   messages         Message[]
+  notifications    Notification[]
 }
 
 model Patient {
@@ -117,6 +125,12 @@ model Appointment {
   patientNotes  String?
   therapistNotes String?
 
+  // Payment fields
+  paymentStatus  PaymentStatus @default(UNPAID)
+  paymentId      String?       // Razorpay payment ID (or MOCK-xxx in mock mode)
+  amountPaid     Float?        // Amount in INR
+  paidAt         DateTime?
+
   messages      Message[]
 
   createdAt     DateTime          @default(now())
@@ -137,4 +151,29 @@ model Message {
   createdAt     DateTime    @default(now())
 
   @@index([appointmentId, createdAt])
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  SESSION_COMPLETED
+  PAYMENT_SUCCESS
+  THERAPIST_APPROVED
+  NEW_MESSAGE
+  GENERAL
+}
+
+model Notification {
+  id        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String           @db.Uuid
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType @default(GENERAL)
+  title     String
+  body      String
+  isRead    Boolean          @default(false)
+  metadata  Json?            // e.g. { appointmentId, therapistName, amount }
+  createdAt DateTime         @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, isRead])
 }

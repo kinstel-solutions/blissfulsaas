@@ -1,9 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '@prisma/client';
 
 @Injectable()
 export class TherapistsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService,
+  ) {}
 
   async getPending() {
     return this.prisma.therapist.findMany({
@@ -89,10 +94,23 @@ export class TherapistsService {
       throw new NotFoundException('Therapist not found');
     }
 
-    return this.prisma.therapist.update({
+    const updated = await this.prisma.therapist.update({
       where: { id },
       data: { isVerified: true },
     });
+
+    // Notify the therapist of their approval
+    setImmediate(() => {
+      this.notifications.create({
+        userId: therapist.userId,
+        type: NotificationType.THERAPIST_APPROVED,
+        title: 'Application Approved 🎉',
+        body: 'Congratulations! Your therapist application has been reviewed and approved. You can now start accepting patients.',
+        metadata: { therapistId: id },
+      }).catch(console.error);
+    });
+
+    return updated;
   }
 
   async reject(id: string) {
