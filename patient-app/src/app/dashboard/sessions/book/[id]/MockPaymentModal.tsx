@@ -134,14 +134,14 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
             {/* ── Success State ────────────────────────────── */}
             {step === "success" && (
               <div className="flex flex-col items-center gap-5 py-8 text-center">
-                <div className="w-20 h-20 rounded-full bg-green-500/15 flex items-center justify-center animate-in zoom-in duration-500">
-                  <CheckCircle2 className="w-10 h-10 text-green-400" />
+                <div className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center animate-in zoom-in duration-500">
+                  <CheckCircle2 className="w-10 h-10 text-primary" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-heading text-white font-medium">Payment Successful!</h2>
                   <p className="text-white/50 text-sm mt-2">Redirecting to your sessions…</p>
                 </div>
-                <div className="flex items-center gap-2 text-green-400 text-xs font-bold uppercase tracking-widest">
+                <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   Please wait
                 </div>
@@ -206,7 +206,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                       <p className="text-white/40 text-xs">{formattedDate} • {formattedTime} IST</p>
                       {orderData.mode && (
                         <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${
-                          orderData.mode === 'IN_CLINIC' ? 'text-emerald-400' : 'text-primary'
+                          orderData.mode === 'IN_CLINIC' ? 'text-primary' : 'text-primary'
                         }`}>
                           {orderData.mode === 'IN_CLINIC' ? '🏥 In-Clinic Visit' : '🖥️ Online Consultation'}
                         </p>

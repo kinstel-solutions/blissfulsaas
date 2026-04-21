@@ -107,7 +107,7 @@ export default function AvailabilityPage() {
                     onClick={() => setNewSlot({ ...newSlot, mode: "IN_CLINIC" })}
                     className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
                       newSlot.mode === "IN_CLINIC"
-                        ? "bg-emerald-600 text-white shadow-lg"
+                        ? "bg-primary text-primary-foreground shadow-lg"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
@@ -171,7 +171,7 @@ export default function AvailabilityPage() {
                 disabled={adding}
                 className={`w-full py-3.5 rounded-xl font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed text-white ${
                   newSlot.mode === "IN_CLINIC"
-                    ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200"
+                    ? "bg-primary hover:bg-primary/90 shadow-primary/20"
                     : "bg-primary shadow-primary/20 hover:bg-primary/90"
                 }`}
               >
@@ -220,8 +220,8 @@ export default function AvailabilityPage() {
                   title="In-Clinic Visits"
                   icon={<Building2 className="w-4 h-4" />}
                   slots={clinicSlots}
-                  badgeClass="bg-emerald-50 text-emerald-700 border-emerald-200"
-                  iconBgClass="bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white"
+                  badgeClass="bg-primary/5 text-primary border-primary/20"
+                  iconBgClass="bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"
                   onDelete={handleDeleteSlot}
                 />
               )}

@@ -25,12 +25,12 @@ export default async function SessionsPage() {
       <div
         className={`bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:shadow-lg transition-all group border-l-4 ${
           isCompleted
-            ? "border-l-blue-400/50 opacity-90"
+            ? "border-l-blue-400/50 bg-blue-50/10"
             : isCancelled
             ? "border-l-destructive/30 opacity-60"
             : isClinic
-            ? "border-l-emerald-500/50"
-            : "border-l-primary/50"
+            ? "border-l-primary/50"
+            : "border-l-primary/30"
         }`}
       >
         <div className="flex items-start gap-5">
@@ -41,7 +41,7 @@ export default async function SessionsPage() {
                 : isCancelled
                 ? "bg-destructive/5 text-destructive/40"
                 : isClinic
-                ? "bg-emerald-50 text-emerald-600"
+                ? "bg-primary/5 text-primary"
                 : "bg-primary-container/20 text-primary"
             }`}
           >
@@ -55,7 +55,7 @@ export default async function SessionsPage() {
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest border ${
                   isClinic
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    ? "bg-primary/5 text-primary border-primary/20"
                     : "bg-primary/5 text-primary border-primary/20"
                 }`}
               >
@@ -80,7 +80,7 @@ export default async function SessionsPage() {
               </span>
             </div>
             {isClinic && clinicAddress && (
-              <div className="flex items-center gap-1.5 mt-1.5 text-xs text-emerald-700 font-medium">
+              <div className="flex items-center gap-1.5 mt-1.5 text-xs text-primary/70 font-medium">
                 <MapPin className="w-3 h-3 flex-shrink-0" />
                 {clinicAddress}
               </div>
@@ -113,7 +113,7 @@ export default async function SessionsPage() {
           <span
             className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
               session.status === "CONFIRMED"
-                ? "bg-green-100 text-green-700"
+                ? "bg-primary/10 text-primary"
                 : session.status === "PENDING"
                 ? "bg-amber-100 text-amber-700"
                 : session.status === "CANCELLED"
@@ -143,7 +143,7 @@ export default async function SessionsPage() {
                   </button>
                 </Link>
               ) : (
-                <div className="px-4 py-3 rounded-2xl font-bold uppercase tracking-widest text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+                <div className="px-4 py-3 rounded-2xl font-bold uppercase tracking-widest text-[10px] bg-primary/5 text-primary border border-primary/20 flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5" />
                   In-Person
                 </div>

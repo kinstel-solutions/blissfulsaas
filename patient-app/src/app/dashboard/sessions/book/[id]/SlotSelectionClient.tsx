@@ -134,7 +134,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                 {selectedMode === "ONLINE" ? (
                   <Monitor className="w-5 h-5 text-primary" />
                 ) : (
-                  <Building2 className="w-5 h-5 text-emerald-600" />
+                  <Building2 className="w-5 h-5 text-primary" />
                 )}
                 {selectedMode === "ONLINE" ? "Online" : "In-Clinic"} Available Slots
               </h3>
@@ -143,7 +143,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                 <div className="text-center py-6 md:py-12 px-6 bg-surface-container-lowest rounded-2xl border border-dashed border-outline-variant/30">
                   {selectedMode === "IN_CLINIC" ? (
                     <>
-                      <Building2 className="w-10 h-10 text-emerald-200 mx-auto mb-3" />
+                      <Building2 className="w-10 h-10 text-primary/20 mx-auto mb-3" />
                       <p className="text-muted-foreground italic text-sm">
                         This therapist has no in-clinic slots available.
                       </p>
@@ -164,7 +164,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                     return (
                       <div key={day} className="space-y-3">
                         <h4 className={`text-xs font-bold uppercase tracking-widest pl-2 ${
-                          selectedMode === "IN_CLINIC" ? "text-emerald-500/60" : "text-primary/40"
+                          selectedMode === "IN_CLINIC" ? "text-primary/60" : "text-primary/40"
                         }`}>{day}s</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {daySlots.map((slot) => {
@@ -182,10 +182,10 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                                     ? "bg-slate-100 border-slate-200 cursor-not-allowed opacity-60"
                                     : isSelected
                                     ? isClinic
-                                      ? "bg-emerald-600 border-emerald-600 shadow-xl shadow-emerald-500/20 -translate-y-1"
+                                      ? "bg-primary border-primary shadow-xl shadow-primary/20 -translate-y-1"
                                       : "bg-primary border-primary shadow-xl shadow-primary/20 -translate-y-1"
                                     : isClinic
-                                    ? "bg-surface-container-lowest border-outline-variant/20 hover:border-emerald-400/40 hover:bg-emerald-50/30"
+                                    ? "bg-surface-container-lowest border-outline-variant/20 hover:border-primary/40 hover:bg-primary/5"
                                     : "bg-surface-container-lowest border-outline-variant/20 hover:border-primary/40 hover:bg-white"
                                 }`}
                               >
@@ -196,7 +196,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                                       : isSelected
                                       ? "bg-white/20 text-white"
                                       : isClinic
-                                      ? "bg-emerald-50 text-emerald-600"
+                                      ? "bg-primary/5 text-primary"
                                       : "bg-primary/5 text-primary"
                                   }`}>
                                     <Clock className="w-4 h-4" />
@@ -251,17 +251,17 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                 {/* Visit Type */}
                 <div className={`p-4 rounded-2xl border flex items-center gap-3 ${
                   selectedMode === "IN_CLINIC"
-                    ? "bg-emerald-50/50 border-emerald-200/50"
+                    ? "bg-primary/5 border-primary/20"
                     : "bg-primary/5 border-primary/10"
                 }`}>
                   <div className={`p-2 rounded-xl ${
-                    selectedMode === "IN_CLINIC" ? "bg-emerald-100 text-emerald-600" : "bg-primary/10 text-primary"
+                    selectedMode === "IN_CLINIC" ? "bg-primary/10 text-primary" : "bg-primary/10 text-primary"
                   }`}>
                     {selectedMode === "IN_CLINIC" ? <Building2 className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
                   </div>
                   <div>
                     <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Visit Type</p>
-                    <p className={`text-sm font-semibold ${selectedMode === "IN_CLINIC" ? "text-emerald-700" : "text-primary"}`}>
+                    <p className={`text-sm font-semibold ${selectedMode === "IN_CLINIC" ? "text-primary" : "text-primary"}`}>
                       {selectedMode === "IN_CLINIC" ? "In-Clinic Visit" : "Online Consultation"}
                     </p>
                   </div>
@@ -269,10 +269,10 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
 
                 {/* Clinic address (shown only for in-clinic) */}
                 {selectedMode === "IN_CLINIC" && clinicAddress && (
-                  <div className="p-4 bg-emerald-50/50 border border-emerald-200/30 rounded-2xl flex items-start gap-3 animate-in fade-in duration-300">
-                    <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                  <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl flex items-start gap-3 animate-in fade-in duration-300">
+                    <MapPin className="w-4 h-4 text-primary/70 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-emerald-600/70 mb-1">Clinic Location</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-1">Clinic Location</p>
                       <p className="text-sm text-foreground font-medium leading-snug">{clinicAddress}</p>
                     </div>
                   </div>
@@ -282,14 +282,14 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                 {selectedSlot ? (
                   <div className={`p-5 rounded-2xl animate-in fade-in duration-500 border ${
                     selectedMode === "IN_CLINIC"
-                      ? "bg-emerald-50/50 border-emerald-200/50"
+                      ? "bg-primary/5 border-primary/20"
                       : "bg-primary/5 border-primary/10"
                   }`}>
                     <p className={`text-xs font-bold uppercase tracking-widest mb-2 ${
-                      selectedMode === "IN_CLINIC" ? "text-emerald-600" : "text-primary"
+                      selectedMode === "IN_CLINIC" ? "text-primary" : "text-primary"
                     }`}>Selected Time</p>
                     <p className="text-sm font-medium text-foreground">Every {DAYS[selectedSlot.dayOfWeek]}</p>
-                    <p className={`text-lg font-bold ${selectedMode === "IN_CLINIC" ? "text-emerald-700" : "text-primary"}`}>
+                    <p className={`text-lg font-bold ${selectedMode === "IN_CLINIC" ? "text-primary" : "text-primary"}`}>
                       {selectedSlot.startTime} (IST)
                     </p>
                   </div>
@@ -326,7 +326,7 @@ export default function SlotSelectionClient({ therapist, slots }: { therapist: a
                   !selectedSlot || loadingOrder
                     ? "bg-outline-variant/30 text-muted-foreground cursor-not-allowed"
                     : selectedMode === "IN_CLINIC"
-                    ? "bg-emerald-600 text-white shadow-xl shadow-emerald-500/20 hover:shadow-2xl hover:-translate-y-1 active:scale-95"
+                    ? "bg-primary text-white shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 active:scale-95"
                     : "bg-primary text-primary-foreground shadow-xl shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 active:scale-95"
                 }`}
               >
@@ -381,7 +381,7 @@ function ModeCard({
           ? "opacity-40 cursor-not-allowed border-outline-variant/20 bg-surface-container-low/30"
           : selected
           ? isClinic
-            ? "border-emerald-500 bg-emerald-50/50 shadow-lg shadow-emerald-500/10"
+            ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
             : "border-primary bg-primary/5 shadow-lg shadow-primary/10"
           : "border-outline-variant/20 bg-surface-container-lowest hover:border-primary/30 hover:shadow-md"
       }`}
@@ -389,7 +389,7 @@ function ModeCard({
       <div className={`p-3 rounded-xl flex-shrink-0 transition-colors ${
         selected
           ? isClinic
-            ? "bg-emerald-600 text-white"
+            ? "bg-primary text-white"
             : "bg-primary text-primary-foreground"
           : "bg-surface-container-low text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
       }`}>
@@ -397,7 +397,7 @@ function ModeCard({
       </div>
       <div className="flex-1 min-w-0">
         <p className={`font-bold text-sm tracking-tight mb-1 ${
-          selected ? isClinic ? "text-emerald-700" : "text-primary" : "text-foreground"
+          selected ? isClinic ? "text-primary" : "text-primary" : "text-foreground"
         }`}>
           {isClinic ? "In-Clinic Visit" : "Online Consultation"}
         </p>
@@ -408,7 +408,7 @@ function ModeCard({
         </p>
         {available && (
           <p className={`text-[10px] font-bold uppercase tracking-widest mt-2 ${
-            isClinic ? "text-emerald-600/70" : "text-primary/60"
+            isClinic ? "text-primary/70" : "text-primary/60"
           }`}>
             {slotCount} slot{slotCount !== 1 ? "s" : ""} available
           </p>
@@ -420,7 +420,7 @@ function ModeCard({
         )}
       </div>
       {selected && (
-        <CheckCircle2 className={`w-5 h-5 flex-shrink-0 ${isClinic ? "text-emerald-600" : "text-primary"}`} />
+        <CheckCircle2 className={`w-5 h-5 flex-shrink-0 ${isClinic ? "text-primary" : "text-primary"}`} />
       )}
     </button>
   );

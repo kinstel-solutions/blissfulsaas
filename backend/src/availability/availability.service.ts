@@ -68,17 +68,11 @@ export class AvailabilityService {
   }
 
   async getTherapistSlots(therapistId: string) {
-    return this.prisma.availabilitySlot.findMany({
+    const slots = await this.prisma.availabilitySlot.findMany({
       where: { therapistId, isActive: true },
       include: {
         therapist: {
           select: { clinicAddress: true }
-        },
-        appointments: {
-          where: {
-            status: { not: 'CANCELLED' },
-            scheduledAt: { gte: new Date() }
-          }
         }
       },
       orderBy: [
@@ -86,5 +80,20 @@ export class AvailabilityService {
         { startTime: 'asc' },
       ],
     });
+
+    // Fetch all upcoming appointments for this therapist across ALL slots/modes
+    const allAppointments = await this.prisma.appointment.findMany({
+      where: {
+        therapistId,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+        scheduledAt: { gte: new Date() }
+      }
+    });
+
+    // Return slots and include the therapist's entire schedule for collision detection
+    return slots.map(slot => ({
+      ...slot,
+      appointments: allAppointments // Map to 'appointments' key for frontend compatibility
+    }));
   }
 }

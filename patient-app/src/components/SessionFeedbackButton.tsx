@@ -30,20 +30,20 @@ export default function SessionFeedbackButton({ session }: SessionFeedbackButton
   if (hasExistingFeedback || submitted) {
     const rating = session.feedback?.rating ?? 5;
     return (
-      <div className="flex items-center gap-1.5 px-4 py-2 bg-yellow-50 border border-yellow-200 rounded-xl">
+      <div className="flex items-center gap-1.5 px-4 py-2 bg-primary/5 border border-primary/10 rounded-xl">
         <div className="flex items-center gap-0.5">
           {[1, 2, 3, 4, 5].map((star) => (
             <Star
               key={star}
               className={`w-3.5 h-3.5 ${
                 star <= rating
-                  ? "fill-yellow-400 text-yellow-400"
+                  ? "fill-primary text-primary"
                   : "text-outline-variant/30"
               }`}
             />
           ))}
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-yellow-700">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
           Reviewed
         </span>
       </div>
@@ -55,7 +55,7 @@ export default function SessionFeedbackButton({ session }: SessionFeedbackButton
       <button
         id={`leave-review-btn-${session.id}`}
         onClick={() => setShowForm(true)}
-        className="px-4 py-3 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-yellow-100 transition-all flex items-center gap-1.5"
+        className="px-4 py-3 bg-primary/5 text-primary border border-primary/10 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-primary/10 transition-all flex items-center gap-1.5"
       >
         <Star className="w-3.5 h-3.5" />
         Rate Session

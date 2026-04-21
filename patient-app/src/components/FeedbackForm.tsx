@@ -79,10 +79,10 @@ export default function FeedbackForm({
 
   if (submitted) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-        <div className="bg-white rounded-3xl p-10 max-w-sm w-full text-center shadow-2xl animate-in zoom-in-95 duration-300">
-          <div className="w-20 h-20 bg-emerald-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
+        <div className="bg-white border border-outline-variant/20 rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-in zoom-in-95 duration-300">
+          <div className="w-20 h-20 bg-primary/5 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+            <CheckCircle2 className="w-10 h-10 text-primary" />
           </div>
           <h3 className="text-2xl font-heading font-medium text-foreground mb-2">Thank you!</h3>
           <p className="text-muted-foreground text-sm">
@@ -96,8 +96,8 @@ export default function FeedbackForm({
   const displayRating = hoveredRating || rating;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl animate-in zoom-in-95 duration-300 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
+      <div className="bg-white border border-outline-variant/20 rounded-[2.5rem] p-8 md:p-12 max-w-xl w-full shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-in zoom-in-95 duration-300 relative">
         {/* Close button */}
         <button
           onClick={onClose}

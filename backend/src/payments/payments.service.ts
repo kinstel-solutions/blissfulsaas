@@ -37,17 +37,17 @@ export class PaymentsService {
     });
     if (!patient) throw new NotFoundException('Patient profile not found');
 
-    // Check the slot isn't already booked for this date
+    // Check if the therapist is already booked for this date and time (any mode)
     const scheduledAt = new Date(data.date);
     const existing = await this.prisma.appointment.findFirst({
       where: {
-        slotId: data.slotId,
+        therapistId: slot.therapistId,
         scheduledAt,
         status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
       },
     });
     if (existing) {
-      throw new BadRequestException('This slot is already booked for the selected date');
+      throw new BadRequestException('This therapist is already booked for the selected date and time');
     }
 
     const therapistName = `Dr. ${slot.therapist.firstName ?? ''} ${slot.therapist.lastName ?? ''}`.trim();
@@ -153,14 +153,15 @@ export class PaymentsService {
 
       const scheduledAt = new Date(data.date);
 
+      // Final safety check: therapist availability for this time
       const existing = await tx.appointment.findFirst({
         where: {
-          slotId: data.slotId,
+          therapistId: slot.therapistId,
           scheduledAt,
           status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
         },
       });
-      if (existing) throw new BadRequestException('Slot already booked for this date');
+      if (existing) throw new BadRequestException('Therapist is already booked for this date and time');
 
       const slot = await tx.availabilitySlot.findUnique({
         where: { id: data.slotId, isActive: true },
