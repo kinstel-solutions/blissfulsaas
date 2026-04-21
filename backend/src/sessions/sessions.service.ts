@@ -1,6 +1,6 @@
 import { Injectable, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AppointmentStatus, NotificationType } from '@prisma/client';
+import { AppointmentStatus, NotificationType, ConsultationMode, PaymentStatus } from '@prisma/client';
 import { RtcTokenBuilder, RtcRole } from 'agora-token';
 import { NotificationsService } from '../notifications/notifications.service';
 
@@ -11,7 +11,7 @@ export class SessionsService {
     private notifications: NotificationsService,
   ) {}
 
-  async book(patientUserId: string, data: { slotId: string; date: string; notes?: string }) {
+  async book(patientUserId: string, data: { slotId: string; date: string; notes?: string; mode?: ConsultationMode }) {
     return this.prisma.$transaction(async (tx) => {
       // 1. Get the patient profile
       const patient = await tx.patient.findUnique({
@@ -42,6 +42,9 @@ export class SessionsService {
 
       if (!slot) throw new NotFoundException('Availability slot not found or inactive');
 
+      // Inherit mode from slot if not explicitly provided
+      const mode = data.mode ?? slot.mode ?? ConsultationMode.ONLINE;
+
       // 4. Create the appointment
       const appointment = await tx.appointment.create({
         data: {
@@ -51,6 +54,7 @@ export class SessionsService {
           scheduledAt,
           patientNotes: data.notes,
           status: AppointmentStatus.PENDING,
+          mode,
         },
       });
 
@@ -58,6 +62,10 @@ export class SessionsService {
       const therapistName = `Dr. ${slot.therapist.firstName ?? ''} ${slot.therapist.lastName ?? ''}`.trim();
       const dateStr = scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
       const timeStr = `${slot.startTime} – ${slot.endTime}`;
+      const isClinic = mode === ConsultationMode.IN_CLINIC;
+      const locationNote = isClinic
+        ? ` (In-Clinic${slot.therapist.clinicAddress ? ` at ${slot.therapist.clinicAddress}` : ''})`
+        : ' (Online)';
 
       // Patient: booking confirmed
       setImmediate(() => {
@@ -65,8 +73,8 @@ export class SessionsService {
           userId: patientUserId,
           type: NotificationType.BOOKING_CONFIRMED,
           title: 'Appointment Booked ✓',
-          body: `Your session with ${therapistName} is confirmed for ${dateStr} at ${timeStr}.`,
-          metadata: { appointmentId: appointment.id, therapistName, scheduledAt: data.date },
+          body: `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} is confirmed for ${dateStr} at ${timeStr}${locationNote}.`,
+          metadata: { appointmentId: appointment.id, therapistName, scheduledAt: data.date, mode },
         }).catch(console.error);
 
         // Therapist: new appointment
@@ -75,8 +83,8 @@ export class SessionsService {
             userId: slot.therapist.userId,
             type: NotificationType.BOOKING_CONFIRMED,
             title: 'New Appointment Request',
-            body: `A patient has booked a session with you on ${dateStr} at ${timeStr}.`,
-            metadata: { appointmentId: appointment.id, scheduledAt: data.date },
+            body: `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr}.`,
+            metadata: { appointmentId: appointment.id, scheduledAt: data.date, mode },
           }).catch(console.error);
         }
       });
@@ -117,7 +125,7 @@ export class SessionsService {
       if (!patient) return [];
       return this.prisma.appointment.findMany({
         where: { patientId: patient.id },
-        include: { therapist: true, slot: true },
+        include: { therapist: true, slot: true, feedback: true },
         orderBy: { scheduledAt: 'desc' }
       });
     } else if (role === 'THERAPIST') {
@@ -137,6 +145,85 @@ export class SessionsService {
       });
     }
     return [];
+  }
+
+  async getAdminAllSessions() {
+    return this.prisma.appointment.findMany({
+      include: {
+        patient: {
+          include: {
+            user: { select: { email: true } },
+          },
+        },
+        therapist: {
+          include: {
+            user: { select: { email: true } },
+          },
+        },
+        slot: true,
+      },
+      orderBy: { scheduledAt: 'desc' },
+    });
+  }
+
+  async getAdminStats() {
+    const appointments = await this.prisma.appointment.findMany({
+      include: {
+        therapist: {
+          include: {
+            user: { select: { email: true } },
+          },
+        },
+      },
+    });
+
+    const totalSessions = appointments.length;
+    const completedSessions = appointments.filter(a => a.status === AppointmentStatus.COMPLETED).length;
+    const cancelledSessions = appointments.filter(a => a.status === AppointmentStatus.CANCELLED).length;
+    
+    // Calculate total revenue (Gross revenue from paid sessions)
+    const paidAppointments = appointments.filter(a => a.paymentStatus === PaymentStatus.PAID && a.amountPaid);
+    const totalRevenue = paidAppointments.reduce((sum, a) => sum + (a.amountPaid || 0), 0);
+
+    const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
+    const cancellationRate = totalSessions > 0 ? (cancelledSessions / totalSessions) * 100 : 0;
+
+    // Revenue per therapist
+    const therapistStatsMap = new Map();
+
+    for (const appt of appointments) {
+      if (!appt.therapist) continue;
+      
+      const tId = appt.therapist.id;
+      if (!therapistStatsMap.has(tId)) {
+        therapistStatsMap.set(tId, {
+          therapistId: tId,
+          therapistName: `Dr. ${appt.therapist.firstName || ''} ${appt.therapist.lastName || ''}`.trim(),
+          email: appt.therapist.user?.email || '',
+          totalConsultations: 0,
+          revenue: 0,
+          specialities: appt.therapist.specialities || [],
+          qualifications: appt.therapist.qualifications || '',
+          yearsOfExperience: appt.therapist.yearsOfExperience || 0,
+        });
+      }
+
+      const stats = therapistStatsMap.get(tId);
+      stats.totalConsultations += 1;
+      if (appt.paymentStatus === PaymentStatus.PAID && appt.amountPaid) {
+        stats.revenue += appt.amountPaid;
+      }
+    }
+
+    const therapistStats = Array.from(therapistStatsMap.values());
+
+    return {
+      totalSessions,
+      totalRevenue,
+      completionRate,
+      cancellationRate,
+      therapistStats,
+    };
   }
 
   async cancelSession(userId: string, appointmentId: string, role: string) {
@@ -207,7 +294,7 @@ export class SessionsService {
       data: { status: AppointmentStatus.COMPLETED }
     });
 
-    // Notify patient session is complete
+    // Notify patient session is complete + request feedback
     const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
     setImmediate(() => {
       this.notifications.create({
@@ -215,6 +302,15 @@ export class SessionsService {
         type: NotificationType.SESSION_COMPLETED,
         title: 'Session Completed',
         body: `Your session with ${therapistName} has been marked as complete. We hope it went well!`,
+        metadata: { appointmentId, therapistName },
+      }).catch(console.error);
+
+      // Prompt patient to leave a review
+      this.notifications.create({
+        userId: appointment.patient.userId,
+        type: NotificationType.FEEDBACK_REQUEST,
+        title: 'How was your session?',
+        body: `Please take a moment to rate your experience with ${therapistName}.`,
         metadata: { appointmentId, therapistName },
       }).catch(console.error);
     });

@@ -121,7 +121,11 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Video Consultation</p>
+                              <p className={`text-xs font-bold uppercase tracking-widest mt-1 ${
+                                appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
+                              }`}>
+                                {appt.mode === 'IN_CLINIC' ? '🏥 In-Clinic Visit' : '🖥️ Video Consultation'}
+                              </p>
                               <div className="w-1 h-1 rounded-full bg-slate-300 mt-1" />
                               <Link href={`/dashboard/messages?sessionId=${appt.id}`}>
                                 <button 
@@ -185,12 +189,18 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                                       <p className="text-sm font-medium text-slate-800">{appt.duration} Min</p>
                                    </div>
                                    {appt.status !== 'COMPLETED' && appt.status !== 'CANCELLED' && (
-                                      <Link href={`/dashboard/sessions/${appt.id}/call`} className="block">
-                                         <button className="w-full py-3 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-blue-600 transition-all flex items-center justify-center gap-2">
+                                      appt.mode === 'IN_CLINIC' ? (
+                                        <div className="w-full py-3 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 border border-emerald-200">
+                                          🏥 In-Person Visit
+                                        </div>
+                                      ) : (
+                                        <Link href={`/dashboard/sessions/${appt.id}/call`} className="block">
+                                          <button className="w-full py-3 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-blue-600 transition-all flex items-center justify-center gap-2">
                                             <Video className="w-3.5 h-3.5" />
                                             Join Call
-                                         </button>
-                                      </Link>
+                                          </button>
+                                        </Link>
+                                      )
                                    )}
                                 </div>
 
@@ -393,11 +403,17 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mb-1">Duration</p>
                             <p className="text-xs font-medium text-slate-800">{appt.duration} Min</p>
                           </div>
-                          <Link href={`/dashboard/sessions/${appt.id}/call`} className="block">
-                            <button className="w-full h-full py-3 bg-slate-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-blue-600 transition-all flex items-center justify-center gap-2 shrink-0">
-                                <Video className="w-3 h-3" /> Join Call
-                            </button>
-                          </Link>
+                          {appt.mode === 'IN_CLINIC' ? (
+                            <div className="w-full py-3 bg-emerald-50 text-emerald-700 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-1.5 border border-emerald-200">
+                              🏥 In-Person
+                            </div>
+                          ) : (
+                            <Link href={`/dashboard/sessions/${appt.id}/call`} className="block">
+                              <button className="w-full h-full py-3 bg-slate-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-blue-600 transition-all flex items-center justify-center gap-2 shrink-0">
+                                  <Video className="w-3 h-3" /> Join Call
+                              </button>
+                            </Link>
+                          )}
                         </div>
                       </section>
 

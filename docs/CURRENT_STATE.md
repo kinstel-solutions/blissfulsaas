@@ -1,6 +1,6 @@
 # 📋 The Blissful Station — Current Project State
 
-> Audit Date: April 16, 2026
+> Audit Date: April 20, 2026
 > Scope Reference: Phase 1 — Hybrid Mental Health Consultation Platform
 
 ---
@@ -42,7 +42,7 @@ The platform is a **multi-portal monorepo** with the following structure:
 - [ ] **Featured therapist visibility** — "AI Personalized Match" section is hardcoded static content (Dr. Sarah Jenkins)
 - [x] Individual therapist profile page at `/dashboard/therapist/[id]` — detail view with slot selection
 
-### 3. Booking System ✅ DONE (Online Only)
+### 3. Booking System ✅ DONE (Online & In-Clinic)
 
 **Online Consultation:**
 - [x] Slot-based booking flow at `/dashboard/sessions/book/[id]`
@@ -52,8 +52,9 @@ The platform is a **multi-portal monorepo** with the following structure:
 - [x] Appointment status lifecycle: `PENDING → CONFIRMED → COMPLETED / CANCELLED`
 
 **In-Clinic Appointment:**
-- [ ] **Not implemented** — no in-clinic booking mode exists
-- [ ] No physical location or visit type selection
+- [x] Consultation mode selection (Online vs. In-Clinic)
+- [x] Dynamic slot filtering based on mode
+- [x] Clinic address display in summary and session list
 
 **Pricing & Payments:**
 - [x] Hourly rate is displayed on therapist cards and profiles
@@ -140,7 +141,7 @@ The platform is a **multi-portal monorepo** with the following structure:
 - [x] Status management: Confirm, Cancel, Complete actions via `AppointmentActions.tsx`
 - [x] Booking tracking with patient info, scheduled time, status indicators
 - [x] Availability management at `/dashboard/availability` — slot creation/deletion by day-of-week and time
-- [ ] **Separate Online vs Clinic availability** — only one type of slot (no location distinction)
+- [x] **Separate Online vs Clinic availability** — mode toggle in availability form and grouped list view
 
 ### 4. Therapist Dashboard ✅ DONE (with hardcoded elements)
 - [x] Dashboard home at `/dashboard` — clinical overview
@@ -179,15 +180,15 @@ The platform is a **multi-portal monorepo** with the following structure:
 - [ ] **Featured control** — no toggle to feature/unfeature therapists in the patient marketplace
 - [ ] **Profile moderation** — no ability to edit therapist profiles from admin side
 
-### 3. Appointment Oversight ❌ NOT STARTED
-- [ ] No complete booking visibility from admin panel
-- [ ] No session reporting
-- [ ] No feedback review panel
+### 3. Appointment Oversight 🟡 PARTIAL
+- [x] Complete booking visibility from admin panel at `/dashboard/appointments`
+- [x] Session reporting with payment and status visibility
+- [ ] No feedback review panel (dependent on Feedback Form)
 
-### 4. Financial Tracking ❌ NOT STARTED
-- [ ] No revenue per therapist
-- [ ] No session tracking (from admin perspective)
-- [ ] No payout reports
+### 4. Financial Tracking ✅ DONE
+- [x] Revenue per therapist tracked
+- [x] Session tracking (from admin perspective)
+- [x] Financial tracking dashboard at `/dashboard/financials`
 
 ### Admin Dashboard ✅ DONE (with limitations)
 - [x] Overview at `/dashboard` — 4 stat cards (Total Users, Patients, Therapists, Pending Verifications)

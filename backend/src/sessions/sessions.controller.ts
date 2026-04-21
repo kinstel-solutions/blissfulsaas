@@ -10,13 +10,25 @@ export class SessionsController {
 
   @Post('book')
   @Roles('PATIENT')
-  book(@Request() req: any, @Body() data: { slotId: string; date: string; notes?: string }) {
+  book(@Request() req: any, @Body() data: { slotId: string; date: string; notes?: string; mode?: 'ONLINE' | 'IN_CLINIC' }) {
     return this.sessionsService.book(req.user.userId, data);
   }
 
   @Get('upcoming')
   getUpcoming(@Request() req: any) {
     return this.sessionsService.getUpcomingSessions(req.user.userId, req.user.role);
+  }
+
+  @Get('admin/all')
+  @Roles('ADMIN')
+  getAdminAll() {
+    return this.sessionsService.getAdminAllSessions();
+  }
+
+  @Get('admin/stats')
+  @Roles('ADMIN')
+  getAdminStats() {
+    return this.sessionsService.getAdminStats();
   }
 
   @Get('all')

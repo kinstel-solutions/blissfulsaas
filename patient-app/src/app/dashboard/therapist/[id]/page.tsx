@@ -2,11 +2,12 @@ import { ArrowLeft, Star, MapPin, Calendar, Clock, MessageSquare, Video, ArrowRi
 import Image from "next/image";
 import Link from "next/link";
 
-import { api } from "@/lib/api-server";
+import { api, fetchWithAuthContent } from "@/lib/api-server";
 
-export default async function TherapistProfilePage({ params }: { params: { id: string } }) {
+export default async function TherapistProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const dbTherapist = await api.therapists.getById(id);
+  const ratingStats = await fetchWithAuthContent(`/feedback/therapist/${id}/stats`).catch(() => null);
 
   if (!dbTherapist) {
     return (
@@ -17,13 +18,17 @@ export default async function TherapistProfilePage({ params }: { params: { id: s
     );
   }
 
+  const avgRating: number | null = ratingStats?.average ? Number(ratingStats.average.toFixed(1)) : null;
+  const totalReviews: number = ratingStats?.total ?? 0;
+  const reviews: { rating: number; comment?: string; createdAt: string }[] = ratingStats?.reviews ?? [];
+
   // Map db data to UI
   const specialist = {
     id: dbTherapist.id,
     name: `${dbTherapist.firstName} ${dbTherapist.lastName}`,
     role: dbTherapist.qualifications || dbTherapist.specialities?.[0] || "Clinical Psychotherapist",
-    rating: 4.9, 
-    reviews: 128,
+    rating: avgRating,
+    reviews: totalReviews,
     bio: dbTherapist.bio || "Specializes in comprehensive mental health support.",
     image: `https://ui-avatars.com/api/?name=${dbTherapist.firstName}+${dbTherapist.lastName}&background=f8f9fa&color=5f43b2&size=600`,
     experience: dbTherapist.yearsOfExperience ? `${dbTherapist.yearsOfExperience} Years Experience` : "Highly Experienced",
@@ -69,11 +74,19 @@ export default async function TherapistProfilePage({ params }: { params: { id: s
              </div>
           </div>
           <div className="mt-12 flex flex-col items-center text-center">
-             <div className="flex items-center gap-2 mb-2 text-primary">
-                <Star className="w-5 h-5 fill-primary" />
-                <span className="text-xl font-heading font-medium">{specialist.rating}</span>
-                <span className="text-muted-foreground text-sm font-medium">({specialist.reviews} reviews)</span>
-             </div>
+             {specialist.rating !== null ? (
+               <div className="flex items-center gap-2 mb-2">
+                 <div className="flex items-center gap-0.5">
+                   {[1,2,3,4,5].map(s => (
+                     <Star key={s} className={`w-4 h-4 ${s <= Math.round(specialist.rating!) ? "fill-yellow-400 text-yellow-400" : "text-outline-variant/30"}`} />
+                   ))}
+                 </div>
+                 <span className="text-lg font-heading font-medium text-foreground">{specialist.rating}</span>
+                 <span className="text-muted-foreground text-sm font-medium">({specialist.reviews} {specialist.reviews === 1 ? "review" : "reviews"})</span>
+               </div>
+             ) : (
+               <p className="text-xs text-muted-foreground/50 mb-2">No reviews yet</p>
+             )}
              <h2 className="text-4xl font-heading text-primary font-medium tracking-tight mt-6 mb-6">{specialist.rate}</h2>
              <div className="flex gap-2 w-full">
                 <Link href={`/dashboard/sessions/book/${specialist.id}`} className="flex-1 bg-primary text-primary-foreground py-5 rounded-2xl font-bold uppercase tracking-[0.1em] text-xs shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all text-center">
@@ -132,32 +145,58 @@ export default async function TherapistProfilePage({ params }: { params: { id: s
               </div>
            </div>
 
-           {/* Availability Ticker */}
-           <div className="p-4 md:p-8 bg-primary/5 rounded-xl border border-primary/10 group hover:shadow-xl transition-all duration-700 overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-              <div className="flex flex-col md:flex-row items-center justify-between gap-8 z-10 relative">
-                 <div className="flex flex-col">
-                    <h3 className="text-xl font-heading font-normal text-primary">Next Open Sessions</h3>
-                    <p className="text-xs text-primary/40 font-bold uppercase mt-1">Book your time slot</p>
-                 </div>
-                 <div className="flex gap-4">
-                    {specialist.availability.map((slot: any) => (
-                      <div key={`${slot.day}-${slot.time}`} className="flex flex-col items-center bg-white/50 backdrop-blur-md px-6 py-3 rounded-2xl border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer">
-                         <span className="text-xs font-bold uppercase tracking-widest opacity-60 mb-1">{slot.day}</span>
-                         <span className="text-sm font-bold tracking-tight">{slot.time}</span>
-                      </div>
-                    ))}
-                    {specialist.availability.length === 0 && (
-                      <div className="text-sm text-primary/60 italic">No available sessions this week.</div>
+           {/* Patient Reviews */}
+           {reviews.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40 pb-2 border-b border-outline-variant/10 w-fit flex items-center gap-2">
+                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> Patient Reviews
+              </h3>
+              <div className="space-y-3">
+                {reviews.map((review, i) => (
+                  <div key={i} className="p-4 bg-surface-container-low/50 rounded-xl border border-outline-variant/10">
+                    <div className="flex items-center gap-1 mb-2">
+                      {[1,2,3,4,5].map(s => (
+                        <Star key={s} className={`w-3.5 h-3.5 ${s <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-outline-variant/30"}`} />
+                      ))}
+                      <span className="ml-2 text-[10px] text-muted-foreground/50">
+                        {new Date(review.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+                    {review.comment && (
+                      <p className="text-sm text-muted-foreground italic leading-relaxed">"{review.comment}"</p>
                     )}
-                 </div>
-                 <Link href={`/dashboard/sessions/book/${specialist.id}`} className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground group-hover:scale-110 transition-transform shadow-lg">
-                    <ArrowRight className="w-5 h-5" />
-                  </Link>
+                  </div>
+                ))}
               </div>
-           </div>
-        </div>
-      </div>
-    </div>
-  );
+            </div>
+           )}
+
+            {/* Availability Ticker */}
+            <div className="p-4 md:p-8 bg-primary/5 rounded-xl border border-primary/10 group hover:shadow-xl transition-all duration-700 overflow-hidden relative">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+               <div className="flex flex-col md:flex-row items-center justify-between gap-8 z-10 relative">
+                  <div className="flex flex-col">
+                     <h3 className="text-xl font-heading font-normal text-primary">Next Open Sessions</h3>
+                     <p className="text-xs text-primary/40 font-bold uppercase mt-1">Book your time slot</p>
+                  </div>
+                  <div className="flex gap-4">
+                     {specialist.availability.map((slot: any) => (
+                       <div key={`${slot.day}-${slot.time}`} className="flex flex-col items-center bg-white/50 backdrop-blur-md px-6 py-3 rounded-2xl border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer">
+                          <span className="text-xs font-bold uppercase tracking-widest opacity-60 mb-1">{slot.day}</span>
+                          <span className="text-sm font-bold tracking-tight">{slot.time}</span>
+                       </div>
+                     ))}
+                     {specialist.availability.length === 0 && (
+                       <div className="text-sm text-primary/60 italic">No available sessions this week.</div>
+                     )}
+                  </div>
+                  <Link href={`/dashboard/sessions/book/${specialist.id}`} className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground group-hover:scale-110 transition-transform shadow-lg">
+                     <ArrowRight className="w-5 h-5" />
+                   </Link>
+               </div>
+            </div>
+         </div>
+       </div>
+     </div>
+   );
 }

@@ -47,7 +47,7 @@ export const api = {
     getToken: (id: string) => fetchWithAuth(`/sessions/${id}/token`),
   },
   payments: {
-    createOrder: (data: { slotId: string; date: string; notes?: string }) =>
+    createOrder: (data: { slotId: string; date: string; notes?: string; mode?: string }) =>
       fetchWithAuth("/payments/create-order", { method: "POST", body: JSON.stringify(data) }),
     verify: (data: {
       razorpay_order_id: string;
@@ -56,6 +56,7 @@ export const api = {
       slotId: string;
       date: string;
       notes?: string;
+      mode?: string;
     }) => fetchWithAuth("/payments/verify", { method: "POST", body: JSON.stringify(data) }),
   },
   messages: {

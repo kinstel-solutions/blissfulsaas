@@ -31,7 +31,7 @@ export async function fetchWithAuth(path: string, options: RequestInit = {}) {
 export const api = {
   availability: {
     getMySlots: () => fetchWithAuth("/availability"),
-    createSlot: (data: any) => fetchWithAuth("/availability", { method: "POST", body: JSON.stringify(data) }),
+    createSlot: (data: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }) => fetchWithAuth("/availability", { method: "POST", body: JSON.stringify(data) }),
     deleteSlot: (id: string) => fetchWithAuth(`/availability/${id}`, { method: "DELETE" }),
   },
   sessions: {

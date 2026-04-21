@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag } from "lucide-react";
+import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin } from "lucide-react";
 
 const COMMON_SPECIALITIES = [
   "Anxiety", "Depression", "Trauma", "ADHD", "Couples Therapy", 
@@ -31,7 +31,8 @@ export default function ProfilePage() {
     hourlyRate: 150,
     specialities: [] as string[],
     languages: [] as string[],
-    videoUrl: ""
+    videoUrl: "",
+    clinicAddress: "",
   });
 
   const [specialityInput, setSpecialityInput] = useState("");
@@ -50,7 +51,8 @@ export default function ProfilePage() {
           hourlyRate: data.hourlyRate || 0,
           specialities: data.specialities || [],
           languages: data.languages || [],
-          videoUrl: data.videoUrl || ""
+          videoUrl: data.videoUrl || "",
+          clinicAddress: data.clinicAddress || "",
         });
       } catch (err: any) {
         setError(err.message || "Failed to load profile");
@@ -189,6 +191,25 @@ export default function ProfilePage() {
               className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors resize-none leading-relaxed"
               placeholder="Describe your unique therapeutic approach..."
             />
+          </div>
+
+          {/* Clinic Address */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Clinic Address (for in-clinic visits)</label>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+              <input
+                type="text"
+                name="clinicAddress"
+                value={formData.clinicAddress}
+                onChange={handleInputChange}
+                placeholder="e.g. 24 MG Road, Bengaluru, Karnataka 560001"
+                className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+              />
+            </div>
+            <p className="text-[10px] text-muted-foreground/50 font-medium">
+              Only shown to patients who book an in-clinic appointment with you.
+            </p>
           </div>
 
           {/* Metrics */}

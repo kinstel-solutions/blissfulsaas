@@ -27,6 +27,11 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum ConsultationMode {
+  ONLINE
+  IN_CLINIC
+}
+
 model User {
   id        String   @id @db.Uuid // Must match Supabase auth.users.id exactly
   email     String   @unique
@@ -79,6 +84,7 @@ model Therapist {
   yearsOfExperience Int?
   videoUrl      String?
   hourlyRate    Float?
+  clinicAddress String?  // Physical address for in-clinic appointments
   isVerified    Boolean  @default(false)
 
   slots         AvailabilitySlot[]
@@ -95,17 +101,18 @@ model AvailabilitySlot {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   therapistId  String    @db.Uuid
   therapist    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
-  dayOfWeek    Int       // 0=Sun, 1=Mon, ..., 6=Sat (recurring weekly)
-  startTime    String    // "09:00" (HH:mm, local time)
-  endTime      String    // "10:00" (HH:mm, local time)
-  isActive     Boolean   @default(true)
+  dayOfWeek    Int              // 0=Sun, 1=Mon, ..., 6=Sat (recurring weekly)
+  startTime    String           // "09:00" (HH:mm, local time)
+  endTime      String           // "10:00" (HH:mm, local time)
+  mode         ConsultationMode @default(ONLINE) // ONLINE or IN_CLINIC
+  isActive     Boolean          @default(true)
 
   appointments Appointment[]
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  @@unique([therapistId, dayOfWeek, startTime]) // Prevent duplicate slots
+  @@unique([therapistId, dayOfWeek, startTime, mode]) // Allow same time as both ONLINE and IN_CLINIC
 }
 
 model Appointment {
@@ -121,6 +128,7 @@ model Appointment {
   duration      Int               @default(60) // Duration in minutes
 
   status        AppointmentStatus @default(PENDING)
+  mode          ConsultationMode  @default(ONLINE) // Inherited from slot at booking time
   videoRoomId   String            @unique @default(dbgenerated("gen_random_uuid()"))
   patientNotes  String?
   therapistNotes String?
@@ -132,12 +140,27 @@ model Appointment {
   paidAt         DateTime?
 
   messages      Message[]
+  feedback      SessionFeedback?
 
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
   @@index([patientId, scheduledAt])
   @@index([therapistId, scheduledAt])
+}
+
+model SessionFeedback {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  appointmentId String      @unique @db.Uuid
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  therapistId   String      @db.Uuid   // denormalised for fast aggregate queries
+  rating        Int                    // 1–5 star rating
+  comment       String?               // optional written review
+  isPublic      Boolean     @default(true)  // admin can hide
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([therapistId])
 }
 
 model Message {
@@ -160,6 +183,7 @@ enum NotificationType {
   PAYMENT_SUCCESS
   THERAPIST_APPROVED
   NEW_MESSAGE
+  FEEDBACK_REQUEST
   GENERAL
 }
 

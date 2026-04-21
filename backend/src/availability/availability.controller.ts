@@ -10,7 +10,7 @@ export class AvailabilityController {
 
   @Post()
   @Roles('THERAPIST')
-  async create(@Request() req: any, @Body() data: { dayOfWeek: number; startTime: string; endTime: string }) {
+  async create(@Request() req: any, @Body() data: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }) {
     // Current user is a therapist, find their therapist profile ID if needed
     // In this schema, User.id == Therapist.userId
     // We need to fetch the Therapist profile ID from the User ID

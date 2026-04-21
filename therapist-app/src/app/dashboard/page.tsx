@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Users, Calendar, ArrowRight, Shield, Star, Clock } from "lucide-react";
+import { Calendar, ArrowRight, Shield, Star, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
@@ -14,11 +14,21 @@ export default async function DashboardPage() {
   const upcomingSessions = await fetchWithAuthContent("/sessions/upcoming");
   const nextSession = Array.isArray(upcomingSessions) && upcomingSessions.length > 0 ? upcomingSessions[0] : null;
 
+  // Fetch therapist profile to get their ID for rating stats
+  const profile = await fetchWithAuthContent("/therapists/profile");
+  const ratingStats = profile?.id
+    ? await fetchWithAuthContent(`/feedback/therapist/${profile.id}/stats`)
+    : null;
+
   const now = new Date();
   const hour = now.getHours();
   let greeting = "Good evening";
   if (hour < 12) greeting = "Good morning";
   else if (hour < 17) greeting = "Good afternoon";
+
+  const avgRating = ratingStats?.average ? Number(ratingStats.average.toFixed(1)) : null;
+  const totalReviews = ratingStats?.total ?? 0;
+  const distribution = ratingStats?.distribution ?? {};
 
   return (
     <div className="space-y-8 md:space-y-12 pb-24 px-4 md:px-0">
@@ -36,7 +46,7 @@ export default async function DashboardPage() {
              <div className="mb-6 md:mb-8 flex justify-center md:justify-start">
                <div className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white/90 text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                  <Shield className="w-4 h-4 text-green-300 animate-pulse" />
-                  Clinic Status: <span className="underline decoration-green-300">Private & Active</span>
+                  Clinic Status: <span className="underline decoration-green-300">Private &amp; Active</span>
                </div>
              </div>
              <div className="flex flex-col sm:flex-row gap-4 w-full">
@@ -53,7 +63,7 @@ export default async function DashboardPage() {
              <div className="bg-white/5 px-6 py-4 rounded-2xl border border-white/10">
                <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">Clinic Status</p>
                 <p className="text-white font-bold flex items-center gap-2 text-sm">
-                  <Shield className="w-4 h-4 text-primary-container" /> Private & Encrypted
+                  <Shield className="w-4 h-4 text-primary-container" /> Private &amp; Encrypted
                 </p>
              </div>
           </div>
@@ -102,13 +112,13 @@ export default async function DashboardPage() {
                 </div>
               </div>
               <Link href={`/dashboard/appointments/${nextSession.id}`} className="w-full md:w-auto">
-                <button className="w-full md:w-auto px-4 md:px-8 md:px-10 py-3 md:py-3.5 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-xl md:rounded-2xl transition-all duration-300">
+                <button className="w-full md:w-auto px-4 md:px-8 py-3 md:py-3.5 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-xl md:rounded-2xl transition-all duration-300">
                   Prepare Notes
                 </button>
               </Link>
             </div>
           ) : (
-            <div className="bg-surface p-4 md:p-8 md:p-10 rounded-[2rem] md:rounded-xl border border-outline-variant/30 text-center py-16 md:py-20">
+            <div className="bg-surface p-4 md:p-10 rounded-[2rem] md:rounded-xl border border-outline-variant/30 text-center py-16 md:py-20">
               <Calendar className="w-10 h-10 md:w-12 md:h-12 text-primary/20 mx-auto mb-4" />
               <p className="text-sm md:text-base text-muted-foreground">No sessions scheduled for today.</p>
               <Link href="/dashboard/availability" className="text-primary font-bold text-[10px] md:text-xs uppercase tracking-widest mt-4 inline-block hover:underline">
@@ -118,26 +128,76 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        {/* Clinical Performance */}
+        {/* Rating & Reviews Widget */}
         <div className="space-y-6">
            <div className="hidden md:block px-2 h-8" />
-           <div className="bg-surface-container-low rounded-[2rem] md:rounded-xl p-4 md:p-8 md:p-10 border border-outline-variant/20 flex flex-col justify-between shadow-sm relative overflow-hidden group min-h-[300px] h-full">
-            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/5 rounded-full blur-3xl -z-0 pointer-events-none group-hover:scale-125 transition-transform duration-700" />
+           <div className="bg-surface-container-low rounded-[2rem] md:rounded-xl p-4 md:p-8 border border-outline-variant/20 flex flex-col justify-between shadow-sm relative overflow-hidden group min-h-[300px] h-full">
+            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-yellow-400/5 rounded-full blur-3xl -z-0 pointer-events-none group-hover:scale-125 transition-transform duration-700" />
             <div className="flex items-center justify-between z-10">
-               <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60">Clinical Performance</p>
-               <Star className="w-4 h-4 text-primary fill-primary" />
+               <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60">Patient Reviews</p>
+               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
             </div>
-            <div className="flex-1 flex flex-col items-center justify-center py-6 md:py-10 z-10">
-              <div className="text-6xl md:text-8xl font-heading font-normal text-primary drop-shadow-xl">
-                {upcomingSessions?.length > 0 ? "100%" : "—"}
-              </div>
-              <p className="text-[10px] md:text-xs font-bold text-muted-foreground mt-4 md:mt-6 text-center uppercase tracking-widest leading-relaxed">
-                Attendance <br/> This Week
-              </p>
+            <div className="flex-1 flex flex-col items-center justify-center py-6 z-10">
+              {avgRating !== null ? (
+                <>
+                  {/* Big average */}
+                  <div className="text-6xl md:text-7xl font-heading font-normal text-foreground drop-shadow-xl mb-1">
+                    {avgRating}
+                  </div>
+                  {/* Star row */}
+                  <div className="flex items-center gap-1 mb-2">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        className={`w-5 h-5 ${
+                          s <= Math.round(avgRating)
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-outline-variant/30"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Based on <span className="font-bold text-foreground">{totalReviews}</span> {totalReviews === 1 ? "review" : "reviews"}
+                  </p>
+                  {/* Distribution bars */}
+                  <div className="w-full space-y-1.5">
+                    {[5, 4, 3, 2, 1].map((star) => {
+                      const count = (distribution as Record<number, number>)[star] ?? 0;
+                      const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+                      return (
+                        <div key={star} className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-muted-foreground w-3">{star}</span>
+                          <div className="flex-1 h-1.5 bg-surface-container-lowest rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-yellow-400 rounded-full transition-all duration-700"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] text-muted-foreground/60 w-5 text-right">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-5xl mb-3">⭐</div>
+                  <p className="text-sm font-heading text-foreground/60 text-center">No reviews yet</p>
+                  <p className="text-[10px] text-muted-foreground/50 text-center mt-1">
+                    Complete your first session to start receiving feedback.
+                  </p>
+                </>
+              )}
             </div>
-            <div className="h-2 w-full bg-surface-container-lowest rounded-full overflow-hidden z-10 border border-outline-variant/10">
-              <div className="h-full w-[100%] bg-primary rounded-full shadow-lg shadow-primary/50" />
-            </div>
+            {totalReviews > 0 && (
+              <Link
+                href="/dashboard/profile"
+                className="text-[10px] font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-colors text-center z-10"
+              >
+                View on Profile →
+              </Link>
+            )}
           </div>
         </div>
 

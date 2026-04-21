@@ -36,6 +36,7 @@ export class TherapistsService {
         qualifications: true,
         languages: true,
         yearsOfExperience: true,
+        clinicAddress: true,
         // We don't need email for discovery yet
       }
     });
@@ -63,7 +64,8 @@ export class TherapistsService {
         qualifications: data.qualifications,
         yearsOfExperience: data.yearsOfExperience,
         hourlyRate: data.hourlyRate,
-        videoUrl: data.videoUrl, // if applicable
+        videoUrl: data.videoUrl,
+        clinicAddress: data.clinicAddress,
       },
     });
   }

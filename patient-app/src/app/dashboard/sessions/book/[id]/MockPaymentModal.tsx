@@ -15,6 +15,8 @@ interface OrderData {
   date: string;
   notes?: string;
   isMock: boolean;
+  mode?: string;         // 'ONLINE' | 'IN_CLINIC'
+  clinicAddress?: string;
 }
 
 interface Props {
@@ -77,6 +79,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
         slotId: orderData.slotId,
         date: orderData.date,
         notes: orderData.notes,
+        mode: orderData.mode,
       });
 
       setStep("success");
@@ -201,9 +204,21 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                     <div>
                       <p className="text-white text-sm font-medium">{orderData.therapistName}</p>
                       <p className="text-white/40 text-xs">{formattedDate} • {formattedTime} IST</p>
+                      {orderData.mode && (
+                        <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${
+                          orderData.mode === 'IN_CLINIC' ? 'text-emerald-400' : 'text-primary'
+                        }`}>
+                          {orderData.mode === 'IN_CLINIC' ? '🏥 In-Clinic Visit' : '🖥️ Online Consultation'}
+                        </p>
+                      )}
                     </div>
                     <p className="text-white text-xl font-heading font-medium">₹{amountInRupees}</p>
                   </div>
+                  {orderData.mode === 'IN_CLINIC' && orderData.clinicAddress && (
+                    <p className="text-white/30 text-xs pt-2 border-t border-white/5">
+                      📍 {orderData.clinicAddress}
+                    </p>
+                  )}
                 </div>
 
                 {/* Card form */}

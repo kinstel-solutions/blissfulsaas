@@ -51,9 +51,6 @@ export default async function DashboardPage() {
               <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">{stat.label}</p>
               <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{stat.value}</h3>
             </div>
-            <div className="mt-4 md:mt-6 flex items-center gap-2 text-[10px] md:text-xs font-bold text-emerald-600/60 uppercase tracking-widest">
-               <TrendingUp className="w-3 h-3" /> +12% this month
-            </div>
           </div>
         ))}
       </div>

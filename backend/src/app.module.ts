@@ -11,6 +11,7 @@ import { MessagesModule } from './messages/messages.module';
 import { PatientsModule } from './patients/patients.module';
 import { PaymentsModule } from './payments/payments.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     PatientsModule,
     PaymentsModule,
     NotificationsModule,
+    FeedbackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

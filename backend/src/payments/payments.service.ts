@@ -22,7 +22,7 @@ export class PaymentsService {
    */
   async createOrder(
     patientUserId: string,
-    data: { slotId: string; date: string; notes?: string },
+    data: { slotId: string; date: string; notes?: string; mode?: string },
   ) {
     // Validate the slot exists and is active
     const slot = await this.prisma.availabilitySlot.findUnique({
@@ -64,6 +64,7 @@ export class PaymentsService {
         slotId: data.slotId,
         date: data.date,
         notes: data.notes,
+        mode: data.mode ?? slot.mode ?? 'ONLINE',
         isMock: true,
       };
     }
@@ -104,6 +105,7 @@ export class PaymentsService {
       slotId: data.slotId,
       date: data.date,
       notes: data.notes,
+      mode: data.mode ?? slot.mode ?? 'ONLINE',
       isMock: false,
     };
   }
@@ -122,6 +124,7 @@ export class PaymentsService {
       slotId: string;
       date: string;
       notes?: string;
+      mode?: string;
     },
   ) {
     if (!this.isMock) {
@@ -179,6 +182,7 @@ export class PaymentsService {
           paymentId: data.razorpay_payment_id,
           amountPaid,
           paidAt: new Date(),
+          mode: (data.mode as any) ?? slot.mode ?? 'ONLINE',
         },
         include: { therapist: { include: { user: true } }, slot: true },
       });

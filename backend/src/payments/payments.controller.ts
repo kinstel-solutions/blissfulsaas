@@ -16,7 +16,7 @@ export class PaymentsController {
   @Roles('PATIENT')
   createOrder(
     @Request() req: any,
-    @Body() data: { slotId: string; date: string; notes?: string },
+    @Body() data: { slotId: string; date: string; notes?: string; mode?: string },
   ) {
     return this.paymentsService.createOrder(req.user.userId, data);
   }
@@ -38,6 +38,7 @@ export class PaymentsController {
       slotId: string;
       date: string;
       notes?: string;
+      mode?: string;
     },
   ) {
     return this.paymentsService.verifyAndBook(req.user.userId, data);

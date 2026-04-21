@@ -7,7 +7,9 @@ import {
   ShieldCheck, 
   FileCheck, 
   Settings,
-  Bell
+  Bell,
+  CalendarDays,
+  DollarSign
 } from "lucide-react";
 
 import SignOutButton from "@/components/SignOutButton";
@@ -44,6 +46,8 @@ export default async function DashboardLayout({
 
   const navItems = [
     { label: "Overview", icon: LayoutDashboard, href: "/dashboard", active: true },
+    { label: "Appointments", icon: CalendarDays, href: "/dashboard/appointments", active: true },
+    { label: "Financials", icon: DollarSign, href: "/dashboard/financials", active: true },
     { label: "Providers", icon: ShieldCheck, href: "/dashboard/therapists", active: true },
     { label: "Applications (Soon)", icon: FileCheck, href: "#", active: false },
     { label: "Users (Soon)", icon: Users, href: "#", active: false },

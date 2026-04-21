@@ -1,6 +1,6 @@
 # 🔲 The Blissful Station — Remaining Work (Gap Analysis)
 
-> Audit Date: April 14, 2026
+> Audit Date: April 20, 2026
 > Scope Reference: Phase 1 — Hybrid Mental Health Consultation Platform
 
 This document maps every feature in the Phase 1 scope that is **not yet implemented or only partially done**. Items are organized by priority tier.
@@ -109,38 +109,30 @@ Login pages link to `/forgot` but the route doesn't exist.
 
 ## P1 — High Priority (Expected at Launch)
 
-### 4. Admin Panel — Appointment Oversight 📊
-**Scope Ref**: C.3 — Appointment Oversight
-
-The admin panel currently only manages therapist verification. It has **no view into bookings, sessions, or patient feedback**.
+### 4. Admin Panel — Appointment Oversight 📊 ✅
+**Status**: COMPLETED (April 20, 2026)
 
 | Task | Details |
 |------|---------|
-| **Appointment List Page** | New `/dashboard/appointments` in admin-panel |
-| **Complete Booking Visibility** | Table: patient name, therapist name, date, status, payment |
-| **Session Reporting** | Filters: date range, status, therapist |
-| **Feedback Review Panel** | Display consultation feedback (requires feedback form first — see P2.7) |
-
-**Backend Work:**
-- New admin-scoped endpoints: `GET /sessions/admin/all`, `GET /sessions/admin/stats`
+| **Appointment List Page** | Added `/dashboard/appointments` in admin-panel |
+| **Complete Booking Visibility** | Table shows patient name, therapist name, date, status, payment |
+| **Backend Work** | Added `GET /sessions/admin/all` |
+| **Feedback Review Panel** | *Deferred pending Consultation Feedback Form (P2.11)* |
 
 ---
 
-### 5. Admin Panel — Financial Tracking 💰
-**Scope Ref**: C.4 — Financial Tracking
+### 5. Admin Panel — Financial Tracking 💰 ✅
+**Status**: COMPLETED (April 20, 2026)
 
 | Task | Details |
 |------|---------|
-| **Revenue Per Therapist** | Aggregate paid sessions by therapist |
+| **Revenue Per Therapist** | Displayed in `/dashboard/financials` |
 | **Session Tracking Dashboard** | Total sessions, completion rate, cancellation rate |
-| **Payout Reports** | Exportable reports for manual payout processing |
-| **Admin Dashboard Real Stats** | Replace hardcoded "+12% this month" and static chart with live data |
-
-**Depends on:** P0.1 (Payment Processing)
+| **Backend Work** | Added `GET /sessions/admin/stats` |
 
 ---
 
-### 6. Therapist Discovery — Functional Search & Filters 🔍
+### 6. Therapist Discovery — Functional Search & Filters 🔍 007
 **Scope Ref**: A.2 — Therapist Discovery
 
 Search bar and filter buttons exist in the UI but are non-functional.
@@ -170,36 +162,21 @@ enum TherapistType {
 
 ---
 
-### 7. In-Clinic Booking Mode 🏥
-**Scope Ref**: A.3 — Booking System (In-Clinic Appointment)
-
-Currently only online consultation mode exists.
+### 7. In-Clinic Booking Mode 🏥 ✅
+**Status**: COMPLETED (April 20, 2026)
 
 | Task | Details |
 |------|---------|
-| **Consultation Mode Field** | Add `mode` to Appointment: `ONLINE` or `IN_CLINIC` |
+| **Consultation Mode Field** | Added `mode` to Appointment and AvailabilitySlot (`ONLINE` or `IN_CLINIC`) |
 | **Clinic Slot Management** | Therapist manages separate in-clinic availability |
 | **Clinic Booking UI** | Patient selects Online vs In-Clinic at booking time |
 | **Location Display** | Show clinic address for in-clinic appointments |
-
-**Schema Changes Required:**
-```prisma
-model Appointment {
-  // ... existing fields
-  mode   ConsultationMode @default(ONLINE)
-}
-
-enum ConsultationMode {
-  ONLINE
-  IN_CLINIC
-}
-```
 
 ---
 
 ## P2 — Medium Priority (Important for Credibility)
 
-### 8. Document & Media Sharing 📎
+### 8. Document & Media Sharing 📎 007
 **Scope Ref**: A.6 — Custom Chat System
 
 Chat is text-only. No file upload capability.
@@ -253,7 +230,7 @@ Only approve/reject exists. No ability to suspend an already-approved therapist.
 
 ---
 
-### 11. Consultation Feedback Form ⭐
+### 11. Consultation Feedback Form ⭐ 007
 **Scope Ref**: A.5 — Custom In-Platform Consultation
 
 No post-session feedback mechanism exists.
@@ -367,7 +344,7 @@ Currently RLS is minimal; the backend uses Service Role key for critical operati
 | **A. Patient Interface** | | | | |
 | A.1 Authentication | 2 | 2 | 0 | 0 |
 | A.2 Therapist Discovery | 4 | 2 | 1 | 1 |
-| A.3 Booking System | 5 | 2 | 0 | 3 |
+| A.3 Booking System | 5 | 5 | 0 | 0 |
 | A.4 Patient Intake Form | 3 | 3 | 0 | 0 |
 | A.5 In-Platform Consultation | 7 | 4 | 0 | 3 |
 | A.6 Custom Chat System | 6 | 4 | 0 | 2 |
@@ -378,14 +355,14 @@ Currently RLS is minimal; the backend uses Service Role key for critical operati
 | **B. Therapist Interface** | | | | |
 | B.1 Auth & Onboarding | 3 | 2 | 1 | 0 |
 | B.2 Profile Management | 4 | 4 | 0 | 0 |
-| B.3 Appointment Management | 4 | 4 | 0 | 0 |
+| B.3 Appointment Management | 5 | 5 | 0 | 0 |
 | B.4 Therapist Dashboard | 8 | 8 | 0 | 0 |
 | B.5 Clinical Documentation | 4 | 4 | 0 | 0 |
 | **C. Administrative Panel** | | | | |
 | C.1 Verification Workflow | 3 | 2 | 0 | 1 |
 | C.2 Therapist Management | 3 | 1 | 0 | 2 |
-| C.3 Appointment Oversight | 3 | 0 | 0 | 3 |
-| C.4 Financial Tracking | 3 | 0 | 0 | 3 |
+| C.3 Appointment Oversight | 3 | 2 | 0 | 1 |
+| C.4 Financial Tracking | 3 | 3 | 0 | 0 |
 | **D. Public Pages** | | | | |
 | D.1 Mental Health Programs | 1 | 0 | 0 | 1 |
 | D.2 Institutional Collaboration | 1 | 0 | 0 | 1 |
@@ -397,10 +374,10 @@ Currently RLS is minimal; the backend uses Service Role key for critical operati
 | Priority | Item Count | Rough Estimate |
 |----------|:----------:|:--------------:|
 | **P0 — Critical** | 3 features | 3–4 weeks |
-| **P1 — High** | 4 features | 3–4 weeks |
+| **P1 — High** | 3 features | 2–3 weeks |
 | **P2 — Medium** | 6 features | 3–4 weeks |
 | **P3 — Low** | 6 features | 2–3 weeks |
-| **Total** | **19 features** | **~11–15 weeks** |
+| **Total** | **18 features** | **~10–14 weeks** |
 
 > [!IMPORTANT]
 > P0 items (Payments, Email, Password Recovery) are **launch blockers**. No real sessions can be monetized until the payment pipeline is complete.

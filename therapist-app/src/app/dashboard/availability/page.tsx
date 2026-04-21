@@ -1,15 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, Plus, Trash2, Calendar, Save } from "lucide-react";
+import { Clock, Plus, Trash2, Calendar, Save, Monitor, Building2 } from "lucide-react";
 import { api } from "@/lib/api";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+type ConsultationMode = "ONLINE" | "IN_CLINIC";
+
 export default function AvailabilityPage() {
   const [slots, setSlots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newSlot, setNewSlot] = useState({ dayOfWeek: 1, startTime: "09:00", endTime: "10:00" });
+  const [newSlot, setNewSlot] = useState<{
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+    mode: ConsultationMode;
+  }>({ dayOfWeek: 1, startTime: "09:00", endTime: "10:00", mode: "ONLINE" });
+  const [adding, setAdding] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSlots();
@@ -27,11 +36,15 @@ export default function AvailabilityPage() {
   };
 
   const handleAddSlot = async () => {
+    setAdding(true);
+    setAddError(null);
     try {
       await api.availability.createSlot(newSlot);
       fetchSlots();
-    } catch (error) {
-      console.error("Failed to add slot", error);
+    } catch (error: any) {
+      setAddError(error.message || "Failed to add slot");
+    } finally {
+      setAdding(false);
     }
   };
 
@@ -44,115 +57,244 @@ export default function AvailabilityPage() {
     }
   };
 
+  const onlineSlots = slots.filter((s) => s.mode === "ONLINE");
+  const clinicSlots = slots.filter((s) => s.mode === "IN_CLINIC");
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            My Availability
-          </h1>
-          <p className="text-slate-500 mt-1">Manage your recurring weekly consulting hours.</p>
+    <div className="space-y-8 pb-12 animate-in fade-in duration-700">
+      <div className="flex items-center gap-4 border-b border-outline-variant/20 pb-6">
+        <div className="w-12 h-12 bg-primary/10 flex items-center justify-center rounded-2xl text-primary">
+          <Calendar className="w-6 h-6" />
         </div>
-      </header>
+        <div>
+          <h1 className="text-3xl font-heading font-medium text-foreground">Availability</h1>
+          <p className="text-sm font-medium text-muted-foreground mt-1">
+            Manage your recurring weekly availability for online and in-clinic sessions.
+          </p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Add New Slot */}
-        <div className="lg:col-span-1 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Plus className="w-5 h-5 text-blue-600" />
-            Add New Slot
-          </h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Day of Week</label>
-              <select 
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                value={newSlot.dayOfWeek}
-                onChange={(e) => setNewSlot({...newSlot, dayOfWeek: parseInt(e.target.value)})}
+        {/* ── Add New Slot Panel ───────────────────────────────────── */}
+        <div className="lg:col-span-1">
+          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm sticky top-8">
+            <h2 className="text-base font-bold text-foreground mb-5 flex items-center gap-2">
+              <Plus className="w-4 h-4 text-primary" />
+              Add New Slot
+            </h2>
+
+            <div className="space-y-5">
+              {/* Mode Toggle */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
+                  Session Type
+                </label>
+                <div className="grid grid-cols-2 gap-2 p-1 bg-surface-container-low/50 rounded-xl border border-outline-variant/20">
+                  <button
+                    type="button"
+                    onClick={() => setNewSlot({ ...newSlot, mode: "ONLINE" })}
+                    className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+                      newSlot.mode === "ONLINE"
+                        ? "bg-primary text-primary-foreground shadow-lg"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Monitor className="w-3.5 h-3.5" />
+                    Online
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewSlot({ ...newSlot, mode: "IN_CLINIC" })}
+                    className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+                      newSlot.mode === "IN_CLINIC"
+                        ? "bg-emerald-600 text-white shadow-lg"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Building2 className="w-3.5 h-3.5" />
+                    In-Clinic
+                  </button>
+                </div>
+              </div>
+
+              {/* Day */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
+                  Day of Week
+                </label>
+                <select
+                  className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 outline-none transition-all"
+                  value={newSlot.dayOfWeek}
+                  onChange={(e) => setNewSlot({ ...newSlot, dayOfWeek: parseInt(e.target.value) })}
+                >
+                  {DAYS.map((day, idx) => (
+                    <option key={day} value={idx}>{day}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Time */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
+                    Start
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 outline-none transition-all"
+                    value={newSlot.startTime}
+                    onChange={(e) => setNewSlot({ ...newSlot, startTime: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
+                    End
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 outline-none transition-all"
+                    value={newSlot.endTime}
+                    onChange={(e) => setNewSlot({ ...newSlot, endTime: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              {addError && (
+                <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                  {addError}
+                </p>
+              )}
+
+              <button
+                id="add-availability-slot-btn"
+                onClick={handleAddSlot}
+                disabled={adding}
+                className={`w-full py-3.5 rounded-xl font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed text-white ${
+                  newSlot.mode === "IN_CLINIC"
+                    ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200"
+                    : "bg-primary shadow-primary/20 hover:bg-primary/90"
+                }`}
               >
-                {DAYS.map((day, idx) => (
-                  <option key={day} value={idx}>{day}</option>
-                ))}
-              </select>
+                {adding ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    {newSlot.mode === "IN_CLINIC" ? "Save In-Clinic Slot" : "Save Online Slot"}
+                  </>
+                )}
+              </button>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Start Time</label>
-                <input 
-                  type="time" 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                  value={newSlot.startTime}
-                  onChange={(e) => setNewSlot({...newSlot, startTime: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">End Time</label>
-                <input 
-                  type="time" 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                  value={newSlot.endTime}
-                  onChange={(e) => setNewSlot({...newSlot, endTime: e.target.value})}
-                />
-              </div>
-            </div>
-            <button 
-              onClick={handleAddSlot}
-              className="w-full bg-blue-600 text-white rounded-xl py-3 font-semibold shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
-            >
-              <Save className="w-5 h-5" />
-              Save Weekly Slot
-            </button>
           </div>
         </div>
 
-        {/* Existing Slots List */}
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-indigo-600" />
-            Weekly Schedule
-          </h2>
+        {/* ── Slots List ───────────────────────────────────────────── */}
+        <div className="lg:col-span-2 space-y-8">
           {loading ? (
-            <div className="flex justify-center py-6 md:py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
             </div>
           ) : slots.length === 0 ? (
-            <div className="text-center py-6 md:py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-              <p className="text-slate-400">No availability slots added yet.</p>
+            <div className="text-center py-20 bg-surface-container-low/30 rounded-2xl border-2 border-dashed border-outline-variant/30">
+              <Calendar className="w-12 h-12 text-primary/10 mx-auto mb-4" />
+              <p className="text-muted-foreground text-sm">No availability slots added yet.</p>
+              <p className="text-muted-foreground/60 text-xs mt-2">Add your first online or in-clinic slot using the panel on the left.</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {DAYS.map((day, dayIdx) => {
-                const daySlots = slots.filter(s => s.dayOfWeek === dayIdx);
-                if (daySlots.length === 0) return null;
-                return (
-                  <div key={day} className="space-y-2">
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">{day}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {daySlots.map((slot) => (
-                        <div key={slot.id} className="flex items-center justify-between bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-blue-50 p-2 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                              <Clock className="w-4 h-4" />
-                            </div>
-                            <span className="font-medium text-slate-700">
-                              {slot.startTime} - {slot.endTime}
-                            </span>
-                          </div>
-                          <button 
-                            onClick={() => handleDeleteSlot(slot.id)}
-                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <>
+              {/* Online Slots */}
+              {onlineSlots.length > 0 && (
+                <SlotSection
+                  title="Online Consultation"
+                  icon={<Monitor className="w-4 h-4" />}
+                  slots={onlineSlots}
+                  badgeClass="bg-primary/10 text-primary border-primary/20"
+                  iconBgClass="bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"
+                  onDelete={handleDeleteSlot}
+                />
+              )}
+
+              {/* In-Clinic Slots */}
+              {clinicSlots.length > 0 && (
+                <SlotSection
+                  title="In-Clinic Visits"
+                  icon={<Building2 className="w-4 h-4" />}
+                  slots={clinicSlots}
+                  badgeClass="bg-emerald-50 text-emerald-700 border-emerald-200"
+                  iconBgClass="bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white"
+                  onDelete={handleDeleteSlot}
+                />
+              )}
+            </>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function SlotSection({
+  title,
+  icon,
+  slots,
+  badgeClass,
+  iconBgClass,
+  onDelete,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  slots: any[];
+  badgeClass: string;
+  iconBgClass: string;
+  onDelete: (id: string) => void;
+}) {
+  return (
+    <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 shadow-sm">
+      <h2 className="text-base font-bold text-foreground mb-5 flex items-center gap-2">
+        <span className={`p-1.5 rounded-lg ${badgeClass} border`}>{icon}</span>
+        {title}
+        <span className="ml-auto text-xs font-bold text-muted-foreground/60 bg-surface-container-low px-3 py-1 rounded-full">
+          {slots.length} slot{slots.length !== 1 ? "s" : ""}
+        </span>
+      </h2>
+      <div className="space-y-4">
+        {DAYS.map((day, dayIdx) => {
+          const daySlots = slots.filter((s) => s.dayOfWeek === dayIdx);
+          if (daySlots.length === 0) return null;
+          return (
+            <div key={day} className="space-y-2">
+              <h3 className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">{day}</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {daySlots.map((slot) => (
+                  <div
+                    key={slot.id}
+                    className="flex items-center justify-between bg-surface-container-low/50 border border-outline-variant/20 rounded-xl p-4 hover:shadow-md transition-all group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-xl transition-colors ${iconBgClass}`}>
+                        <Clock className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <span className="font-semibold text-sm text-foreground">
+                          {slot.startTime} – {slot.endTime}
+                        </span>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 mt-0.5">
+                          {day}s (recurring)
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => onDelete(slot.id)}
+                      className="p-2 text-muted-foreground/30 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
