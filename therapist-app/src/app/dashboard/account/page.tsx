@@ -1,18 +1,46 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { 
   Home, 
   User, 
-  LogOut, 
   ChevronRight, 
   Clock,
-  ShieldCheck,
-  Settings
+  Loader2
 } from "lucide-react";
 import SignOutButton from "@/components/SignOutButton";
+import { api } from "@/lib/api";
 
 export default function AccountPage() {
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const data = await api.therapists.getProfile();
+        setProfile(data);
+      } catch (err) {
+        console.error("Failed to load profile", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-[40vh] items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const initials = profile ? `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}` : "??";
+  const fullName = profile ? `${profile.firstName} ${profile.lastName}` : "Practitioner";
+
   return (
     <div className="space-y-6 pb-24">
       <div className="flex flex-col gap-1">
@@ -22,12 +50,14 @@ export default function AccountPage() {
 
       {/* Provider Section Preview */}
       <div className="bg-surface-container-low border border-outline-variant/20 rounded-xl p-6 flex items-center gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-2xl font-bold">
-          DR
+        <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-2xl font-bold uppercase">
+          {initials}
         </div>
         <div>
-          <h2 className="text-lg font-bold text-foreground leading-none">Dr. Robert Smith</h2>
-          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest font-bold">LCSW • Active Practitioner</p>
+          <h2 className="text-lg font-bold text-foreground leading-none">{fullName}</h2>
+          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest font-bold">
+            {profile?.qualifications || "Active Practitioner"}
+          </p>
         </div>
       </div>
 
@@ -44,7 +74,7 @@ export default function AccountPage() {
               </div>
               <div>
                 <p className="text-sm font-bold text-slate-900">My Clinical Profile</p>
-                <p className="text-[10px] text-slate-400 font-medium">Update bio, specialties, and photo</p>
+                <p className="text-[10px] text-slate-400 font-medium">Update bio, specialties, and video</p>
               </div>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
@@ -80,25 +110,6 @@ export default function AccountPage() {
               </div>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Internal OS</p>
-        <div className="bg-white border border-slate-100 rounded-xl overflow-hidden divide-y divide-slate-50">
-          <Link 
-            href="#" 
-            className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors opacity-50 cursor-not-allowed"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
-                <Settings className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-slate-900">System Settings</p>
-              </div>
-            </div>
           </Link>
         </div>
       </div>

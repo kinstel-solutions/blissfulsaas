@@ -146,6 +146,45 @@ export default async function TherapistProfilePage({ params }: { params: Promise
               </div>
            </div>
 
+           {/* Introduction Video */}
+           {dbTherapist.videoUrl && (
+             <div className="space-y-6">
+               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40 pb-2 border-b border-outline-variant/10 w-fit">Clinical Introduction</h3>
+               <div className="w-full max-w-2xl aspect-video rounded-3xl overflow-hidden border border-outline-variant/20 shadow-xl bg-surface-container-low">
+                 {(() => {
+                   const url = dbTherapist.videoUrl;
+                   let embedUrl = url;
+                   
+                   if (url.includes('youtube.com/watch?v=')) {
+                     const id = url.split('v=')[1]?.split('&')[0];
+                     embedUrl = `https://www.youtube.com/embed/${id}`;
+                   } else if (url.includes('youtu.be/')) {
+                     const id = url.split('youtu.be/')[1]?.split('?')[0];
+                     embedUrl = `https://www.youtube.com/embed/${id}`;
+                   } else if (url.includes('vimeo.com/')) {
+                     const id = url.split('vimeo.com/')[1]?.split('?')[0];
+                     embedUrl = `https://player.vimeo.com/video/${id}`;
+                   } else if (url.includes('loom.com/share/')) {
+                     const id = url.split('loom.com/share/')[1]?.split('?')[0];
+                     embedUrl = `https://www.loom.com/embed/${id}`;
+                   }
+
+                   return (
+                     <iframe 
+                       src={embedUrl}
+                       className="w-full h-full"
+                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                       allowFullScreen
+                     />
+                   );
+                 })()}
+               </div>
+               <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] ml-2">
+                 Watch {dbTherapist.firstName}'s professional introduction
+               </p>
+             </div>
+           )}
+
            <div className="space-y-6">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40 pb-2 border-b border-outline-variant/10 w-fit">Specializations</h3>
               <div className="flex flex-wrap gap-3">

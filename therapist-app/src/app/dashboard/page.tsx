@@ -32,6 +32,26 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 md:space-y-12 pb-24 px-4 md:px-0">
+      {/* Verification Notice */}
+      {!profile?.isVerified && (
+        <div className="bg-amber-500/10 border border-amber-500/20 p-6 rounded-[2rem] flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4 text-center md:text-left">
+            <div className="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-600 shrink-0">
+               <Shield className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-amber-900 uppercase tracking-widest">Application Pending Review</p>
+              <p className="text-xs text-amber-800/60 font-medium mt-1">Your profile is currently private. An administrator will review your credentials before publishing you to the marketplace.</p>
+            </div>
+          </div>
+          <Link href="/dashboard/profile">
+            <button className="px-6 py-3 bg-amber-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-amber-700 transition-colors shadow-lg shadow-amber-600/20">
+              Complete Your Profile
+            </button>
+          </Link>
+        </div>
+      )}
+
       {/* Welcome Banner */}
       <div className="relative group bg-primary border border-primary/20 p-4 md:p-8 md:p-12 rounded-[2rem] shadow-2xl shadow-primary/20 overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary-container/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000" />
@@ -41,12 +61,14 @@ export default async function DashboardPage() {
                {greeting}, {firstName}
              </h1>
              <p className="text-primary-foreground/70 text-base md:text-lg leading-relaxed mb-6 md:mb-8">
-               Your private practice is flourishing. You have <span className="text-primary-foreground font-bold underline decoration-primary-container decoration-4 underline-offset-4">{upcomingSessions?.length || 0} session(s)</span> scheduled for today.
+               Your private practice is flourishing. You have <span className="text-primary-foreground font-bold">{upcomingSessions?.length || 0} session(s)</span> scheduled for today.
              </p>
              <div className="mb-6 md:mb-8 flex justify-center md:justify-start">
-               <div className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white/90 text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                 <Shield className="w-4 h-4 text-green-300 animate-pulse" />
-                  Clinic Status: <span className="underline decoration-green-300">Private &amp; Active</span>
+               <div className={`px-4 py-2 rounded-xl border text-white/90 text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${profile?.isVerified ? 'bg-white/10 border-white/20' : 'bg-amber-500/20 border-amber-500/30'}`}>
+                 <Shield className={`w-4 h-4 ${profile?.isVerified ? 'text-green-300' : 'text-amber-300 animate-pulse'}`} />
+                  Clinic Status: <span>
+                    {profile?.isVerified ? 'Verified & Public' : 'Private & Pending'}
+                  </span>
                </div>
              </div>
              <div className="flex flex-col sm:flex-row gap-4 w-full">
@@ -63,7 +85,8 @@ export default async function DashboardPage() {
              <div className="bg-white/5 px-6 py-4 rounded-2xl border border-white/10">
                <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">Clinic Status</p>
                 <p className="text-white font-bold flex items-center gap-2 text-sm">
-                  <Shield className="w-4 h-4 text-primary-container" /> Private &amp; Encrypted
+                  <Shield className={`w-4 h-4 ${profile?.isVerified ? 'text-primary-container' : 'text-amber-300'}`} /> 
+                  {profile?.isVerified ? 'Public & Encrypted' : 'Private & Encrypted'}
                 </p>
              </div>
           </div>

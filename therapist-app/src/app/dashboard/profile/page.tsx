@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin } from "lucide-react";
+import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin, Shield, Video } from "lucide-react";
 
 const COMMON_SPECIALITIES = [
   "Anxiety", "Depression", "Trauma", "ADHD", "Couples Therapy", 
@@ -38,6 +38,8 @@ export default function ProfilePage() {
   const [specialityInput, setSpecialityInput] = useState("");
   const [languageInput, setLanguageInput] = useState("");
 
+  const [isVerified, setIsVerified] = useState(false);
+
   useEffect(() => {
     async function loadProfile() {
       try {
@@ -54,6 +56,7 @@ export default function ProfilePage() {
           videoUrl: data.videoUrl || "",
           clinicAddress: data.clinicAddress || "",
         });
+        setIsVerified(data.isVerified);
       } catch (err: any) {
         setError(err.message || "Failed to load profile");
       } finally {
@@ -99,7 +102,10 @@ export default function ProfilePage() {
 
     try {
       await api.therapists.updateProfile(formData);
-      setSuccessMessage("Profile updated successfully. Changes will be reflected in the Patient Marketplace.");
+      setSuccessMessage(isVerified 
+        ? "Profile updated successfully. Changes are now live on the marketplace."
+        : "Profile updated successfully. Changes will be visible once your application is approved."
+      );
     } catch (err: any) {
       setError(err.message || "Failed to save profile");
     } finally {
@@ -136,6 +142,19 @@ export default function ProfilePage() {
         {successMessage && (
           <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-600 rounded-2xl text-sm font-medium">
             {successMessage}
+          </div>
+        )}
+        
+        {/* Verification Alert */}
+        {!isVerified && (
+          <div className="p-6 bg-amber-500/5 border border-amber-500/20 rounded-[2rem] flex items-center gap-6">
+             <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-600 shrink-0">
+               <Shield className="w-5 h-5" />
+             </div>
+             <p className="text-xs font-medium text-amber-800 leading-relaxed">
+               Your profile is currently <span className="font-bold">Pending Approval</span>. 
+               Feel free to complete your details now; they will be reviewed by our clinical board before your profile goes live.
+             </p>
           </div>
         )}
 
@@ -191,6 +210,24 @@ export default function ProfilePage() {
               className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors resize-none leading-relaxed"
               placeholder="Describe your unique therapeutic approach..."
             />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Introduction Video URL</label>
+            <div className="relative">
+              <Video className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+              <input
+                type="url"
+                name="videoUrl"
+                value={formData.videoUrl}
+                onChange={handleInputChange}
+                placeholder="e.g. https://www.youtube.com/watch?v=..."
+                className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+              />
+            </div>
+            <p className="text-[10px] text-muted-foreground/50 font-medium">
+              Share a brief video introduction (YouTube, Vimeo, or Loom link).
+            </p>
           </div>
 
           {/* Clinic Address */}
@@ -360,7 +397,7 @@ export default function ProfilePage() {
             className="flex items-center gap-2 bg-slate-900 text-white px-5 md:px-10 py-5 rounded-[2rem] text-xs font-bold uppercase tracking-widest disabled:opacity-50 hover:bg-primary transition-all shadow-xl hover:-translate-y-1"
           >
             {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-            Publish to Marketplace
+            {isVerified ? "Publish Updates" : "Submit for Approval"}
           </button>
         </div>
       </form>
