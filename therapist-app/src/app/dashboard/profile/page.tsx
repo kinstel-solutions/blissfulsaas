@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/lib/api";
-import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin, Shield, Video } from "lucide-react";
+import { therapistProfileSchema, type TherapistProfileValues } from "@/lib/validations";
+import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin, Shield, Video, AlertCircle } from "lucide-react";
+import { ImageUpload } from "@/components/ImageUpload";
 
 const COMMON_SPECIALITIES = [
   "Anxiety", "Depression", "Trauma", "ADHD", "Couples Therapy", 
@@ -22,39 +26,53 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    bio: "",
-    qualifications: "",
-    yearsOfExperience: 0,
-    hourlyRate: 150,
-    specialities: [] as string[],
-    languages: [] as string[],
-    videoUrl: "",
-    clinicAddress: "",
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<TherapistProfileValues>({
+    resolver: zodResolver(therapistProfileSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      bio: "",
+      qualifications: "",
+      yearsOfExperience: 0,
+      hourlyRate: 150,
+      specialities: [],
+      languages: [],
+      videoUrl: "",
+      clinicAddress: "",
+      profileImageUrl: "",
+      phone: "",
+    },
   });
 
+  const formData = watch();
   const [specialityInput, setSpecialityInput] = useState("");
   const [languageInput, setLanguageInput] = useState("");
-
   const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
       try {
         const data = await api.therapists.getProfile();
-        setFormData({
+        reset({
           firstName: data.firstName || "",
           lastName: data.lastName || "",
           bio: data.bio || "",
           qualifications: data.qualifications || "",
           yearsOfExperience: data.yearsOfExperience || 0,
-          hourlyRate: data.hourlyRate || 0,
+          hourlyRate: data.hourlyRate || 150,
           specialities: data.specialities || [],
           languages: data.languages || [],
           videoUrl: data.videoUrl || "",
           clinicAddress: data.clinicAddress || "",
+          profileImageUrl: data.profileImageUrl || "",
+          phone: data.phone || "",
         });
         setIsVerified(data.isVerified);
       } catch (err: any) {
@@ -64,44 +82,31 @@ export default function ProfilePage() {
       }
     }
     loadProfile();
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: (name === "hourlyRate" || name === "yearsOfExperience") ? Number(value) : value,
-    }));
-  };
+  }, [reset]);
 
   const handleAddItem = (e: React.KeyboardEvent<HTMLInputElement>, field: 'specialities' | 'languages', input: string, setInput: (v: string) => void) => {
     if (e.key === "Enter" && input.trim()) {
       e.preventDefault();
-      if (!formData[field].includes(input.trim())) {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: [...prev[field], input.trim()]
-        }));
+      const currentItems = watch(field);
+      if (!currentItems.includes(input.trim())) {
+        setValue(field, [...currentItems, input.trim()], { shouldDirty: true });
       }
       setInput("");
     }
   };
 
   const handleRemoveItem = (tag: string, field: 'specialities' | 'languages') => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: prev[field].filter(t => t !== tag)
-    }));
+    const currentItems = watch(field);
+    setValue(field, currentItems.filter(t => t !== tag), { shouldDirty: true });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: TherapistProfileValues) => {
     setSaving(true);
     setError(null);
     setSuccessMessage(null);
 
     try {
-      await api.therapists.updateProfile(formData);
+      await api.therapists.updateProfile(data);
       setSuccessMessage(isVerified 
         ? "Profile updated successfully. Changes are now live on the marketplace."
         : "Profile updated successfully. Changes will be visible once your application is approved."
@@ -122,18 +127,22 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-8 pb-12 max-w-4xl mx-auto">
-      <div className="flex items-center gap-4 border-b border-outline-variant/20 pb-6">
-        <div className="w-12 h-12 bg-primary/10 flex items-center justify-center rounded-2xl text-primary">
-          <UserCircle2 className="w-6 h-6" />
+    <div className="space-y-8 pb-32 max-w-4xl mx-auto px-4 md:px-0">
+      <div className="flex items-center gap-6 border-b border-outline-variant/20 pb-8">
+        <div className="w-20 h-20 bg-primary/5 flex items-center justify-center rounded-xl text-primary overflow-hidden border border-primary/10 shadow-inner">
+          {formData.profileImageUrl ? (
+            <img src={formData.profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            <UserCircle2 className="w-8 h-8" />
+          )}
         </div>
         <div>
-          <h1 className="text-3xl font-heading font-medium text-foreground">Clinical Profile</h1>
-          <p className="text-sm font-medium text-muted-foreground mt-1">Manage our public marketplace presence and trust-building credentials.</p>
+          <h1 className="text-xl md:text-2xl font-heading font-medium text-foreground tracking-tight">Clinical Profile</h1>
+          <p className="text-[11px] md:text-xs font-medium text-muted-foreground/70 mt-0.5 max-w-xl leading-relaxed">Refine your public presence and manage clinical credentials.</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-12">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
         {error && (
           <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-600 rounded-2xl text-sm font-medium">
             {error}
@@ -147,69 +156,99 @@ export default function ProfilePage() {
         
         {/* Verification Alert */}
         {!isVerified && (
-          <div className="p-6 bg-amber-500/5 border border-amber-500/20 rounded-[2rem] flex items-center gap-6">
-             <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-600 shrink-0">
-               <Shield className="w-5 h-5" />
+          <div className="p-5 md:p-6 bg-amber-500/5 border border-amber-500/10 rounded-[2.5rem] flex items-center gap-5 md:gap-6 relative overflow-hidden group">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+             <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 shrink-0 shadow-inner border border-amber-500/5">
+               <Shield className="w-6 h-6" />
              </div>
-             <p className="text-xs font-medium text-amber-800 leading-relaxed">
-               Your profile is currently <span className="font-bold">Pending Approval</span>. 
-               Feel free to complete your details now; they will be reviewed by our clinical board before your profile goes live.
-             </p>
+             <div className="space-y-1">
+               <p className="text-sm font-bold text-amber-900/80">Pending Clinical Verification</p>
+               <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
+                 Your credentials are currently being reviewed by our clinical board. Complete your profile now to expedite the process.
+               </p>
+             </div>
           </div>
         )}
 
         <div className="space-y-10">
-          {/* Core Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors"
-                required
+          <div className="flex flex-col md:flex-row gap-12 items-center">
+            <div className="w-full md:w-2/5">
+              <ImageUpload
+                label="Profile Photo"
+                value={formData.profileImageUrl}
+                onChange={(url) => setValue("profileImageUrl", url, { shouldDirty: true })}
+                description="Professional headshot."
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors"
-                required
-              />
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Professional Headline / Qualifications</label>
-            <div className="relative">
-              <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-              <input
-                type="text"
-                name="qualifications"
-                value={formData.qualifications}
-                onChange={handleInputChange}
-                placeholder="e.g. M.Phil in Clinical Psychology, Yale University"
-                className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors"
-              />
+            <div className="flex-1 space-y-6 w-full">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">First Name</label>
+                <input
+                  type="text"
+                  {...register("firstName")}
+                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.firstName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
+                />
+                {errors.firstName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.firstName.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Last Name</label>
+                <input
+                  type="text"
+                  {...register("lastName")}
+                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.lastName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
+                />
+                {errors.lastName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.lastName.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Phone Number</label>
+                <input
+                  type="tel"
+                  {...register("phone")}
+                  placeholder="e.g. +1 (555) 000-0000"
+                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.phone ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
+                />
+                {errors.phone && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.phone.message}</p>}
+              </div>
+
+              </div>
             </div>
-          </div>
 
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Editorial Bio</label>
             <textarea
-              name="bio"
-              value={formData.bio}
-              onChange={handleInputChange}
+              {...register("bio")}
               rows={5}
-              className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors resize-none leading-relaxed"
+              className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors resize-none leading-relaxed ${
+                errors.bio ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+              }`}
               placeholder="Describe your unique therapeutic approach..."
             />
+            {errors.bio && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.bio.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Qualifications</label>
+            <div className="relative">
+              <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+              <input
+                type="text"
+                {...register("qualifications")}
+                placeholder="e.g. M.Phil in Clinical Psychology, Yale University"
+                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                  errors.qualifications ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                }`}
+              />
+              {errors.qualifications && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.qualifications.message}</p>}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -218,12 +257,13 @@ export default function ProfilePage() {
               <Video className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
               <input
                 type="url"
-                name="videoUrl"
-                value={formData.videoUrl}
-                onChange={handleInputChange}
+                {...register("videoUrl")}
                 placeholder="e.g. https://www.youtube.com/watch?v=..."
-                className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                  errors.videoUrl ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                }`}
               />
+              {errors.videoUrl && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.videoUrl.message}</p>}
             </div>
             <p className="text-[10px] text-muted-foreground/50 font-medium">
               Share a brief video introduction (YouTube, Vimeo, or Loom link).
@@ -237,12 +277,13 @@ export default function ProfilePage() {
               <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
               <input
                 type="text"
-                name="clinicAddress"
-                value={formData.clinicAddress}
-                onChange={handleInputChange}
+                {...register("clinicAddress")}
                 placeholder="e.g. 24 MG Road, Bengaluru, Karnataka 560001"
-                className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
+                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                  errors.clinicAddress ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-emerald-500/50'
+                }`}
               />
+              {errors.clinicAddress && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.clinicAddress.message}</p>}
             </div>
             <p className="text-[10px] text-muted-foreground/50 font-medium">
               Only shown to patients who book an in-clinic appointment with you.
@@ -257,13 +298,13 @@ export default function ProfilePage() {
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
                 <input
                   type="number"
-                  name="hourlyRate"
-                  value={formData.hourlyRate}
-                  onChange={handleInputChange}
-                  className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                  {...register("hourlyRate", { valueAsNumber: true })}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.hourlyRate ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
                   min="0"
-                  required
                 />
+                {errors.hourlyRate && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.hourlyRate.message}</p>}
               </div>
             </div>
             <div className="space-y-2">
@@ -272,12 +313,13 @@ export default function ProfilePage() {
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
                 <input
                   type="number"
-                  name="yearsOfExperience"
-                  value={formData.yearsOfExperience}
-                  onChange={handleInputChange}
-                  className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-colors"
+                  {...register("yearsOfExperience", { valueAsNumber: true })}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.yearsOfExperience ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
                   min="0"
                 />
+                {errors.yearsOfExperience && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.yearsOfExperience.message}</p>}
               </div>
             </div>
             <div className="space-y-2">
@@ -313,10 +355,7 @@ export default function ProfilePage() {
                         if (isSelected) {
                           handleRemoveItem(lang, 'languages');
                         } else {
-                          setFormData(prev => ({
-                            ...prev,
-                            languages: [...prev.languages, lang]
-                          }));
+                          setValue("languages", [...formData.languages, lang], { shouldDirty: true });
                         }
                       }}
                       className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${
@@ -368,10 +407,7 @@ export default function ProfilePage() {
                         if (isSelected) {
                           handleRemoveItem(spec, 'specialities');
                         } else {
-                          setFormData(prev => ({
-                            ...prev,
-                            specialities: [...prev.specialities, spec]
-                          }));
+                          setValue("specialities", [...formData.specialities, spec], { shouldDirty: true });
                         }
                       }}
                       className={`px-4 py-2 rounded-xl text-xs font-bold tracking-tight transition-all duration-300 border ${

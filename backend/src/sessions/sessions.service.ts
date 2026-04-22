@@ -147,6 +147,52 @@ export class SessionsService {
     return [];
   }
 
+  async getSessionById(userId: string, id: string, role: string) {
+    const where: any = { id };
+    
+    if (role === 'PATIENT') {
+      const patient = await this.prisma.patient.findUnique({ where: { userId } });
+      if (!patient) throw new NotFoundException('Patient profile not found');
+      where.patientId = patient.id;
+    } else if (role === 'THERAPIST') {
+      let therapist = await this.prisma.therapist.findUnique({ where: { userId } });
+      if (!therapist) {
+        // Self-healing: Create missing profile if accessed via a session
+        therapist = await this.prisma.therapist.create({
+          data: {
+            userId,
+            firstName: 'Therapist',
+            lastName: '',
+            isVerified: false,
+            hourlyRate: 0,
+          }
+        });
+      }
+      where.therapistId = therapist.id;
+    }
+
+    const appointment = await this.prisma.appointment.findFirst({
+      where,
+      include: {
+        patient: {
+          include: {
+            user: { select: { email: true } }
+          }
+        },
+        therapist: {
+          include: {
+            user: { select: { email: true } }
+          }
+        },
+        slot: true,
+        feedback: true,
+      }
+    });
+
+    if (!appointment) throw new NotFoundException('Appointment not found');
+    return appointment;
+  }
+
   async getAdminAllSessions() {
     return this.prisma.appointment.findMany({
       include: {

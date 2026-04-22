@@ -3,6 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
 import { SessionsService } from './sessions.service';
 
+import { CreateBookingDto, UpdateNotesDto } from './dto/session.dto';
+
 @Controller('sessions')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class SessionsController {
@@ -10,7 +12,7 @@ export class SessionsController {
 
   @Post('book')
   @Roles('PATIENT')
-  book(@Request() req: any, @Body() data: { slotId: string; date: string; notes?: string; mode?: 'ONLINE' | 'IN_CLINIC' }) {
+  book(@Request() req: any, @Body() data: CreateBookingDto) {
     return this.sessionsService.book(req.user.userId, data);
   }
 
@@ -34,6 +36,11 @@ export class SessionsController {
   @Get('all')
   getAll(@Request() req: any) {
     return this.sessionsService.getAllSessions(req.user.userId, req.user.role);
+  }
+
+  @Get(':id')
+  getSession(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
+    return this.sessionsService.getSessionById(req.user.userId, id, req.user.role);
   }
 
   @Patch(':id/cancel')
@@ -60,7 +67,7 @@ export class SessionsController {
 
   @Patch(':id/notes')
   @Roles('THERAPIST')
-  updateNotes(@Request() req: any, @Param('id', ParseUUIDPipe) id: string, @Body() body: { notes: string }) {
+  updateNotes(@Request() req: any, @Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateNotesDto) {
     return this.sessionsService.updateNotes(req.user.userId, id, body.notes);
   }
 }

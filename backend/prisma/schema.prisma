@@ -77,6 +77,7 @@ model Therapist {
   
   firstName     String?
   lastName      String?
+  phone         String?
   bio           String?
   qualifications String?  // e.g. "M.Phil Clinical Psychology"
   specialities  String[]
@@ -85,6 +86,7 @@ model Therapist {
   videoUrl      String?
   hourlyRate    Float?
   clinicAddress String?  // Physical address for in-clinic appointments
+  profileImageUrl String? // URL for therapist profile image
   isVerified    Boolean  @default(false)
 
   slots         AvailabilitySlot[]

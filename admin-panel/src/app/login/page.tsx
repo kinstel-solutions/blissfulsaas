@@ -3,28 +3,37 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ShieldAlert, Loader2, Mail, Lock, Terminal } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { adminLoginSchema, type AdminLoginValues } from "@/lib/validations";
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AdminLoginValues>({
+    resolver: zodResolver(adminLoginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: AdminLoginValues) => {
     setLoading(true);
     setError(null);
     
     const supabase = createClient();
     
-    const { error: authError } = await supabase.auth.signInWithPassword({ 
-      email, 
-      password 
-    });
+    const { error: authError } = await supabase.auth.signInWithPassword(data);
 
     if (authError) {
       setError(authError.message);
@@ -74,7 +83,7 @@ export default function AdminLoginPage() {
           <div className="bg-white/5 backdrop-blur-2xl p-8 md:p-14 rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.5)] border border-white/10 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#2D4F43]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000" />
             
-            <form onSubmit={handleLogin} className="space-y-8 relative z-10">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 relative z-10">
               <div className="space-y-3">
                 <label className="block text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 ml-4">
                   Root Credentials
@@ -85,13 +94,14 @@ export default function AdminLoginPage() {
                   </div>
                   <input 
                     type="email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                     placeholder="admin@station.os" 
-                    className="w-full h-16 bg-white/5 border border-white/10 focus:border-[#2D4F43]/30 focus:bg-white/10 px-14 outline-none transition-all rounded-2xl text-white font-medium placeholder:text-white/10 shadow-inner"
-                    required
+                    className={`w-full h-16 bg-white/5 border focus:bg-white/10 px-14 outline-none transition-all rounded-2xl text-white font-medium placeholder:text-white/10 shadow-inner ${
+                      errors.email ? 'border-red-500' : 'border-white/10 focus:border-[#2D4F43]/30'
+                    }`}
                   />
                 </div>
+                {errors.email && <p className="text-[10px] text-red-500 font-bold uppercase tracking-[0.2em] mt-1 ml-4">{errors.email.message}</p>}
               </div>
               
               <div className="space-y-3">
@@ -104,13 +114,14 @@ export default function AdminLoginPage() {
                   </div>
                   <input 
                     type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
                     placeholder="••••••••" 
-                    className="w-full h-16 bg-white/5 border border-white/10 focus:border-[#2D4F43]/30 focus:bg-white/10 px-14 outline-none transition-all rounded-2xl text-white font-medium placeholder:text-white/10 shadow-inner"
-                    required
+                    className={`w-full h-16 bg-white/5 border focus:bg-white/10 px-14 outline-none transition-all rounded-2xl text-white font-medium placeholder:text-white/10 shadow-inner ${
+                      errors.password ? 'border-red-500' : 'border-white/10 focus:border-[#2D4F43]/30'
+                    }`}
                   />
                 </div>
+                {errors.password && <p className="text-[10px] text-red-500 font-bold uppercase tracking-[0.2em] mt-1 ml-4">{errors.password.message}</p>}
               </div>
 
               {error && (

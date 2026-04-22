@@ -30,7 +30,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
     rating: avgRating,
     reviews: totalReviews,
     bio: dbTherapist.bio || "Specializes in comprehensive mental health support.",
-    image: `https://ui-avatars.com/api/?name=${dbTherapist.firstName}+${dbTherapist.lastName}&background=f8f9fa&color=5f43b2&size=600`,
+    image: dbTherapist.profileImageUrl || `https://ui-avatars.com/api/?name=${dbTherapist.firstName}+${dbTherapist.lastName}&background=f8f9fa&color=5f43b2&size=600`,
     experience: dbTherapist.yearsOfExperience ? `${dbTherapist.yearsOfExperience} Years Experience` : "Highly Experienced",
     qualifications: dbTherapist.qualifications || "Accredited Clinical Specialist",
     languages: (dbTherapist.languages && dbTherapist.languages.length > 0) ? dbTherapist.languages : ["English"],

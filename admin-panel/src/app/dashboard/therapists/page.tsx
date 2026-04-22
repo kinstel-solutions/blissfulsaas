@@ -64,8 +64,12 @@ export default async function TherapistsPage() {
                 <tr key={therapist.id} className="group/row hover:bg-primary/[0.01] transition-colors">
                   <td className="px-5 md:px-10 py-4 md:py-8">
                     <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-lg">
-                        {therapist.firstName?.[0] || "?"}
+                      <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-lg overflow-hidden">
+                        {therapist.profileImageUrl ? (
+                          <img src={therapist.profileImageUrl} alt={therapist.firstName} className="w-full h-full object-cover" />
+                        ) : (
+                          therapist.firstName?.[0] || "?"
+                        )}
                       </div>
                       <div>
                         <p className="font-heading font-medium text-foreground text-lg leading-tight">

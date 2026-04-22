@@ -160,10 +160,21 @@ export class MessagesService {
 
   async getMessagesByPatient(therapistUserId: string, patientId: string) {
     // 1. Find the therapist profile
-    const therapist = await this.prisma.therapist.findUnique({
+    let therapist = await this.prisma.therapist.findUnique({
       where: { userId: therapistUserId },
     });
-    if (!therapist) throw new NotFoundException('Therapist profile not found');
+    if (!therapist) {
+      // Self-healing: Create missing profile
+      therapist = await this.prisma.therapist.create({
+        data: {
+          userId: therapistUserId,
+          firstName: 'Therapist',
+          lastName: '',
+          isVerified: false,
+          hourlyRate: 0,
+        }
+      });
+    }
 
     // 2. Fetch all messages for all appointments between this therapist and patient
     return this.prisma.message.findMany({

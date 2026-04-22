@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Clock, Plus, Trash2, Calendar, Save, Monitor, Building2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { availabilitySchema, type AvailabilityValues } from "@/lib/validations";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -11,14 +14,28 @@ type ConsultationMode = "ONLINE" | "IN_CLINIC";
 export default function AvailabilityPage() {
   const [slots, setSlots] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newSlot, setNewSlot] = useState<{
-    dayOfWeek: number;
-    startTime: string;
-    endTime: string;
-    mode: ConsultationMode;
-  }>({ dayOfWeek: 1, startTime: "09:00", endTime: "10:00", mode: "ONLINE" });
   const [adding, setAdding] = useState(false);
-  const [addError, setAddError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<AvailabilityValues>({
+    resolver: zodResolver(availabilitySchema),
+    defaultValues: {
+      dayOfWeek: 1,
+      startTime: "09:00",
+      endTime: "10:00",
+      mode: "ONLINE",
+    },
+  });
+
+  const selectedMode = watch("mode");
+  const selectedDay = watch("dayOfWeek");
 
   useEffect(() => {
     fetchSlots();
@@ -35,14 +52,15 @@ export default function AvailabilityPage() {
     }
   };
 
-  const handleAddSlot = async () => {
+  const onSubmit = async (data: AvailabilityValues) => {
     setAdding(true);
-    setAddError(null);
+    setError(null);
     try {
-      await api.availability.createSlot(newSlot);
+      await api.availability.createSlot(data);
+      reset({ ...data }); // Reset but keep the mode/day for convenience
       fetchSlots();
-    } catch (error: any) {
-      setAddError(error.message || "Failed to add slot");
+    } catch (err: any) {
+      setError(err.message || "Failed to add slot");
     } finally {
       setAdding(false);
     }
@@ -92,9 +110,9 @@ export default function AvailabilityPage() {
                 <div className="grid grid-cols-2 gap-2 p-1 bg-surface-container-low/50 rounded-xl border border-outline-variant/20">
                   <button
                     type="button"
-                    onClick={() => setNewSlot({ ...newSlot, mode: "ONLINE" })}
+                    onClick={() => setValue("mode", "ONLINE", { shouldValidate: true })}
                     className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
-                      newSlot.mode === "ONLINE"
+                      selectedMode === "ONLINE"
                         ? "bg-primary text-primary-foreground shadow-lg"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
@@ -104,9 +122,9 @@ export default function AvailabilityPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setNewSlot({ ...newSlot, mode: "IN_CLINIC" })}
+                    onClick={() => setValue("mode", "IN_CLINIC", { shouldValidate: true })}
                     className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
-                      newSlot.mode === "IN_CLINIC"
+                      selectedMode === "IN_CLINIC"
                         ? "bg-primary text-primary-foreground shadow-lg"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
@@ -124,8 +142,7 @@ export default function AvailabilityPage() {
                 </label>
                 <select
                   className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 outline-none transition-all"
-                  value={newSlot.dayOfWeek}
-                  onChange={(e) => setNewSlot({ ...newSlot, dayOfWeek: parseInt(e.target.value) })}
+                  {...register("dayOfWeek", { valueAsNumber: true })}
                 >
                   {DAYS.map((day, idx) => (
                     <option key={day} value={idx}>{day}</option>
@@ -141,10 +158,12 @@ export default function AvailabilityPage() {
                   </label>
                   <input
                     type="time"
-                    className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 outline-none transition-all"
-                    value={newSlot.startTime}
-                    onChange={(e) => setNewSlot({ ...newSlot, startTime: e.target.value })}
+                    className={`w-full bg-surface-container-low border rounded-xl px-3 py-2.5 text-sm outline-none transition-all ${
+                      errors.startTime ? 'border-red-500' : 'border-outline-variant/30 focus:ring-2 focus:ring-primary/30'
+                    }`}
+                    {...register("startTime")}
                   />
+                  {errors.startTime && <p className="text-[10px] text-red-500 font-bold mt-1">{errors.startTime.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
@@ -152,25 +171,27 @@ export default function AvailabilityPage() {
                   </label>
                   <input
                     type="time"
-                    className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 outline-none transition-all"
-                    value={newSlot.endTime}
-                    onChange={(e) => setNewSlot({ ...newSlot, endTime: e.target.value })}
+                    className={`w-full bg-surface-container-low border rounded-xl px-3 py-2.5 text-sm outline-none transition-all ${
+                      errors.endTime ? 'border-red-500' : 'border-outline-variant/30 focus:ring-2 focus:ring-primary/30'
+                    }`}
+                    {...register("endTime")}
                   />
+                  {errors.endTime && <p className="text-[10px] text-red-500 font-bold mt-1">{errors.endTime.message}</p>}
                 </div>
               </div>
 
-              {addError && (
+              {error && (
                 <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-                  {addError}
+                  {error}
                 </p>
               )}
 
               <button
                 id="add-availability-slot-btn"
-                onClick={handleAddSlot}
+                onClick={handleSubmit(onSubmit)}
                 disabled={adding}
                 className={`w-full py-3.5 rounded-xl font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed text-white ${
-                  newSlot.mode === "IN_CLINIC"
+                  selectedMode === "IN_CLINIC"
                     ? "bg-primary hover:bg-primary/90 shadow-primary/20"
                     : "bg-primary shadow-primary/20 hover:bg-primary/90"
                 }`}
@@ -180,7 +201,7 @@ export default function AvailabilityPage() {
                 ) : (
                   <>
                     <Save className="w-4 h-4" />
-                    {newSlot.mode === "IN_CLINIC" ? "Save In-Clinic Slot" : "Save Online Slot"}
+                    {selectedMode === "IN_CLINIC" ? "Save In-Clinic Slot" : "Save Online Slot"}
                   </>
                 )}
               </button>

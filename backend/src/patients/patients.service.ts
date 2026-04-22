@@ -6,21 +6,21 @@ export class PatientsService {
   constructor(private prisma: PrismaService) {}
 
   async getIntake(userId: string) {
-    const patient = await this.prisma.patient.findUnique({
+    let patient = await this.prisma.patient.findUnique({
       where: { userId },
-      select: {
-        intakeCompleted: true,
-        reasonForSeeking: true,
-        mentalHealthHistory: true,
-        currentMedications: true,
-        previousTherapy: true,
-        therapyGoals: true,
-        emergencyContactName: true,
-        emergencyContactPhone: true,
-        primaryConcerns: true,
-      },
     });
-    if (!patient) throw new NotFoundException('Patient profile not found');
+
+    if (!patient) {
+      // Auto-create skeleton patient profile if missing
+      patient = await this.prisma.patient.create({
+        data: {
+          userId,
+          firstName: 'New',
+          lastName: 'Patient',
+        }
+      });
+    }
+
     return patient;
   }
 

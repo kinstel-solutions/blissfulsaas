@@ -18,6 +18,7 @@ import {
   MapPin,
   Tag,
   Video,
+  Phone,
   ExternalLink
 } from "lucide-react";
 import ApproveButton from "./ApproveButton";
@@ -60,8 +61,12 @@ export default async function TherapistDetailPage({
             Back to Registry
           </Link>
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-[2.5rem] bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/10 text-3xl">
-              {therapist.firstName?.[0]}
+            <div className="w-20 h-20 rounded-[2.5rem] bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/10 text-3xl overflow-hidden">
+              {therapist.profileImageUrl ? (
+                <img src={therapist.profileImageUrl} alt={therapist.firstName} className="w-full h-full object-cover" />
+              ) : (
+                therapist.firstName?.[0]
+              )}
             </div>
             <div>
               <h1 className="text-4xl font-heading font-medium text-primary leading-tight">
@@ -96,7 +101,7 @@ export default async function TherapistDetailPage({
         {/* Core Profile Info */}
         <div className="space-y-10">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
              <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Clinical Credentials</label>
                 <div className="relative group">
@@ -117,6 +122,18 @@ export default async function TherapistDetailPage({
                   </div>
                   <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
                     {(therapist.user as any)?.email}
+                  </div>
+                </div>
+             </div>
+
+             <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Phone Number</label>
+                <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary/40 group-hover:text-primary group-hover:bg-primary/10 transition-all">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
+                    {therapist.phone || "Not provided"}
                   </div>
                 </div>
              </div>

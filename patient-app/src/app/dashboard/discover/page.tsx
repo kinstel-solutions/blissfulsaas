@@ -81,7 +81,7 @@ export default function DiscoverPage() {
             
             <div className="aspect-[4/3] overflow-hidden relative">
                <Image 
-                src={`https://ui-avatars.com/api/?name=${t.firstName}+${t.lastName}&background=f8f9fa&color=5f43b2&size=400`} 
+                src={t.profileImageUrl || `https://ui-avatars.com/api/?name=${t.firstName}+${t.lastName}&background=f8f9fa&color=5f43b2&size=400`} 
                 alt={`${t.firstName} ${t.lastName}`}
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-1000"

@@ -37,16 +37,31 @@ export class TherapistsService {
         languages: true,
         yearsOfExperience: true,
         clinicAddress: true,
+        profileImageUrl: true,
+        phone: true,
         // We don't need email for discovery yet
       }
     });
   }
 
   async getProfile(userId: string) {
-    const profile = await this.prisma.therapist.findUnique({
+    let profile = await this.prisma.therapist.findUnique({
       where: { userId },
     });
-    if (!profile) throw new NotFoundException('Therapist profile not found');
+
+    if (!profile) {
+      // Auto-create skeleton profile if missing (self-healing for sync gaps)
+      profile = await this.prisma.therapist.create({
+        data: {
+          userId,
+          firstName: 'New',
+          lastName: 'Therapist',
+          isVerified: false,
+          hourlyRate: 0,
+        }
+      });
+    }
+
     return profile;
   }
 
@@ -66,6 +81,8 @@ export class TherapistsService {
         hourlyRate: data.hourlyRate,
         videoUrl: data.videoUrl,
         clinicAddress: data.clinicAddress,
+        profileImageUrl: data.profileImageUrl,
+        phone: data.phone,
       },
     });
   }

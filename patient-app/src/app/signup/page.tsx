@@ -3,38 +3,54 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, User, Mail, Lock } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronRight, User, Mail, Lock, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { signupSchema, type SignupValues } from "@/lib/validations";
 
 export default function SignupPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+    },
+  });
+
+  const onSubmit = async (data: SignupValues) => {
+    setLoading(true);
     setError(null);
     const supabase = createClient();
     
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
+    const { error: authError } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
       options: {
         data: {
-          first_name: firstName,
-          last_name: lastName,
+          first_name: data.firstName,
+          last_name: data.lastName,
           role: "PATIENT" 
         }
       }
     });
     
-    if (error) {
-      setError(error.message);
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
     } else {
       router.push("/dashboard/discover");
     }
@@ -61,7 +77,7 @@ export default function SignupPage() {
             {/* Inner Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#E3F2ED]/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000" />
             
-            <form onSubmit={handleSignup} className="space-y-6 relative z-10">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="firstName" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
@@ -73,13 +89,14 @@ export default function SignupPage() {
                     </div>
                     <input 
                       id="firstName" 
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      {...register("firstName")}
                       placeholder="Jane" 
-                      className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
-                      required
+                      className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
+                        errors.firstName ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                      }`}
                     />
                   </div>
+                  {errors.firstName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.firstName.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="lastName" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
@@ -91,13 +108,14 @@ export default function SignupPage() {
                     </div>
                     <input 
                       id="lastName" 
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
+                      {...register("lastName")}
                       placeholder="Doe" 
-                      className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
-                      required
+                      className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
+                        errors.lastName ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                      }`}
                     />
                   </div>
+                  {errors.lastName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.lastName.message}</p>}
                 </div>
               </div>
 
@@ -112,32 +130,57 @@ export default function SignupPage() {
                   <input 
                     id="email" 
                     type="email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                     placeholder="jane.doe@example.com" 
-                    className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
-                    required
+                    className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
+                      errors.email ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                    }`}
                   />
                 </div>
+                {errors.email && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.email.message}</p>}
               </div>
               
-              <div className="space-y-2">
-                <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
-                  Security Code
-                </label>
-                <div className="relative group/input">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors">
-                    <Lock size={18} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
+                    Security Code
+                  </label>
+                  <div className="relative group/input">
+                    <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors">
+                      <Lock size={18} />
+                    </div>
+                    <input 
+                      id="password" 
+                      type="password" 
+                      {...register("password")}
+                      placeholder="••••••••" 
+                      className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
+                        errors.password ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                      }`}
+                    />
                   </div>
-                  <input 
-                    id="password" 
-                    type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••" 
-                    className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
-                    required
-                  />
+                  {errors.password && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.password.message}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="confirmPassword" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
+                    Confirm Code
+                  </label>
+                  <div className="relative group/input">
+                    <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors">
+                      <Lock size={18} />
+                    </div>
+                    <input 
+                      id="confirmPassword" 
+                      type="password" 
+                      {...register("confirmPassword")}
+                      placeholder="••••••••" 
+                      className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
+                        errors.confirmPassword ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                      }`}
+                    />
+                  </div>
+                  {errors.confirmPassword && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.confirmPassword.message}</p>}
                 </div>
               </div>
 
@@ -151,9 +194,10 @@ export default function SignupPage() {
                 <AlexButton 
                   type="submit" 
                   size="lg"
+                  disabled={loading}
                   className="px-12 text-sm uppercase tracking-[0.2em]"
                 >
-                  Create Account
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create Account"}
                 </AlexButton>
               </div>
             </form>

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
-import { FeedbackService } from './feedback.service';
+import { SubmitFeedbackDto } from './dto/submit-feedback.dto';
 
 @Controller('feedback')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -24,7 +24,7 @@ export class FeedbackController {
   submit(
     @Request() req: any,
     @Param('appointmentId', ParseUUIDPipe) appointmentId: string,
-    @Body() body: { rating: number; comment?: string },
+    @Body() body: SubmitFeedbackDto,
   ) {
     return this.feedbackService.submitFeedback(
       req.user.userId,

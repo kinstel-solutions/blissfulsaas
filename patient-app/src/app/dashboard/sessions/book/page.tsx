@@ -33,7 +33,7 @@ export default async function BookingPage() {
                 <div className="flex items-start justify-between mb-6">
                   <div className="w-20 h-20 rounded-[2rem] bg-surface-container-lowest border border-outline-variant/50 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5 shadow-inner">
                     <Image 
-                      src={`https://ui-avatars.com/api/?name=${therapist.firstName}+${therapist.lastName}&background=f8f9fa&color=5f43b2&size=200`}
+                      src={therapist.profileImageUrl || `https://ui-avatars.com/api/?name=${therapist.firstName}+${therapist.lastName}&background=f8f9fa&color=5f43b2&size=200`}
                       alt={therapist.firstName}
                       width={80}
                       height={80}

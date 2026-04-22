@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
-import { TherapistsService } from './therapists.service';
+import { UpdateTherapistProfileDto } from './dto/update-profile.dto';
 
 @Controller('therapists')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -38,7 +38,7 @@ export class TherapistsController {
 
   @Patch('profile')
   @Roles('THERAPIST')
-  updateProfile(@Req() req: any, @Body() body: any) {
+  updateProfile(@Req() req: any, @Body() body: UpdateTherapistProfileDto) {
     return this.therapistsService.updateProfile(req.user.userId, body);
   }
 

@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { 
   Heart, Brain, Pill, Users, Target, Phone, 
   ChevronRight, ChevronLeft, CheckCircle, Loader2,
   AlertCircle, Shield
 } from "lucide-react";
 import { fetchWithAuth } from "@/lib/api";
+import { patientIntakeSchema, type PatientIntakeValues } from "@/lib/validations";
 
 const CONCERN_OPTIONS = [
   "Anxiety", "Depression", "Stress", "Trauma / PTSD", "Relationship Issues",
@@ -16,42 +19,55 @@ const CONCERN_OPTIONS = [
 ];
 
 const STEPS = [
-  { id: 1, label: "Your Journey", icon: Heart },
-  { id: 2, label: "Health History", icon: Brain },
-  { id: 3, label: "Goals", icon: Target },
-  { id: 4, label: "Emergency Contact", icon: Phone },
+  { id: 1, label: "Your Journey", icon: Heart, fields: ["reasonForSeeking", "primaryConcerns"] },
+  { id: 2, label: "Health History", icon: Brain, fields: ["previousTherapy"] },
+  { id: 3, label: "Goals", icon: Target, fields: ["therapyGoals"] },
+  { id: 4, label: "Emergency Contact", icon: Phone, fields: ["emergencyContactName", "emergencyContactPhone"] },
 ];
 
 export default function IntakeFormClient({ initialData }: { initialData: any }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({
-    reasonForSeeking: initialData?.reasonForSeeking || "",
-    primaryConcerns: initialData?.primaryConcerns || [],
-    mentalHealthHistory: initialData?.mentalHealthHistory || "",
-    currentMedications: initialData?.currentMedications || "",
-    previousTherapy: initialData?.previousTherapy ?? null,
-    therapyGoals: initialData?.therapyGoals || "",
-    emergencyContactName: initialData?.emergencyContactName || "",
-    emergencyContactPhone: initialData?.emergencyContactPhone || "",
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    trigger,
+    formState: { errors, isValid },
+  } = useForm<PatientIntakeValues>({
+    resolver: zodResolver(patientIntakeSchema),
+    mode: "onChange",
+    defaultValues: {
+      reasonForSeeking: initialData?.reasonForSeeking || "",
+      primaryConcerns: initialData?.primaryConcerns || [],
+      mentalHealthHistory: initialData?.mentalHealthHistory || "",
+      currentMedications: initialData?.currentMedications || "",
+      previousTherapy: initialData?.previousTherapy ?? undefined,
+      therapyGoals: initialData?.therapyGoals || "",
+      emergencyContactName: initialData?.emergencyContactName || "",
+      emergencyContactPhone: initialData?.emergencyContactPhone || "",
+    },
   });
 
+  const form = watch();
+
   const toggleConcern = (concern: string) => {
-    setForm(prev => ({
-      ...prev,
-      primaryConcerns: prev.primaryConcerns.includes(concern)
-        ? prev.primaryConcerns.filter((c: string) => c !== concern)
-        : [...prev.primaryConcerns, concern]
-    }));
+    const current = watch("primaryConcerns");
+    const next = current.includes(concern)
+      ? current.filter((c: string) => c !== concern)
+      : [...current, concern];
+    setValue("primaryConcerns", next, { shouldValidate: true });
   };
 
-  const handleSubmit = async () => {
+  const onSubmit = async (data: PatientIntakeValues) => {
     setSaving(true);
     try {
       await fetchWithAuth("/patients/intake", {
         method: "PATCH",
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
       });
       router.push("/dashboard?intake=complete");
       router.refresh();
@@ -62,12 +78,12 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
     }
   };
 
-  const isStepValid = () => {
-    if (step === 1) return form.reasonForSeeking.trim().length > 10 && form.primaryConcerns.length > 0;
-    if (step === 2) return form.previousTherapy !== null;
-    if (step === 3) return form.therapyGoals.trim().length > 10;
-    if (step === 4) return form.emergencyContactName.trim().length > 0 && form.emergencyContactPhone.trim().length > 0;
-    return true;
+  const nextStep = async () => {
+    const fields = STEPS[step - 1].fields as any[];
+    const result = await trigger(fields);
+    if (result) {
+      setStep(prev => prev + 1);
+    }
   };
 
   return (
@@ -117,17 +133,20 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 <p className="text-sm text-muted-foreground">Be as open as you're comfortable with.</p>
               </div>
               <textarea
-                value={form.reasonForSeeking}
-                onChange={e => setForm(prev => ({ ...prev, reasonForSeeking: e.target.value }))}
+                {...register("reasonForSeeking")}
                 placeholder="E.g., I've been feeling overwhelmed at work and struggling with anxiety..."
-                className="w-full h-36 bg-surface-container-low border border-outline-variant/30 rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed"
+                className={`w-full h-36 bg-surface-container-low border rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed transition-colors ${
+                  errors.reasonForSeeking ? 'border-red-500' : 'border-outline-variant/30'
+                }`}
               />
+              {errors.reasonForSeeking && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.reasonForSeeking.message}</p>}
               <div>
                 <p className="text-sm font-bold text-foreground mb-4">Select your primary concerns <span className="text-muted-foreground font-normal">(choose all that apply)</span></p>
                 <div className="flex flex-wrap gap-2">
                   {CONCERN_OPTIONS.map(c => (
                     <button
                       key={c}
+                      type="button"
                       onClick={() => toggleConcern(c)}
                       className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
                         form.primaryConcerns.includes(c)
@@ -139,6 +158,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                     </button>
                   ))}
                 </div>
+                {errors.primaryConcerns && <p className="text-xs text-red-500 font-bold mt-2 ml-1">{errors.primaryConcerns.message}</p>}
               </div>
             </div>
           )}
@@ -156,7 +176,8 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                   {[{ label: "Yes", val: true }, { label: "No", val: false }].map(opt => (
                     <button
                       key={opt.label}
-                      onClick={() => setForm(prev => ({ ...prev, previousTherapy: opt.val }))}
+                      type="button"
+                      onClick={() => setValue("previousTherapy", opt.val, { shouldValidate: true })}
                       className={`flex-1 py-4 rounded-2xl text-sm font-bold border transition-all ${
                         form.previousTherapy === opt.val
                           ? 'bg-primary text-white border-primary'
@@ -167,12 +188,12 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                     </button>
                   ))}
                 </div>
+                {errors.previousTherapy && <p className="text-xs text-red-500 font-bold mt-2 ml-1">{errors.previousTherapy.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-bold text-foreground mb-3">Any relevant mental health history? <span className="font-normal text-muted-foreground">(optional)</span></label>
                 <textarea
-                  value={form.mentalHealthHistory}
-                  onChange={e => setForm(prev => ({ ...prev, mentalHealthHistory: e.target.value }))}
+                  {...register("mentalHealthHistory")}
                   placeholder="E.g., diagnosed conditions, hospitalizations, significant life events..."
                   className="w-full h-32 bg-surface-container-low border border-outline-variant/30 rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed"
                 />
@@ -180,8 +201,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
               <div>
                 <label className="block text-sm font-bold text-foreground mb-3">Current medications? <span className="font-normal text-muted-foreground">(optional)</span></label>
                 <textarea
-                  value={form.currentMedications}
-                  onChange={e => setForm(prev => ({ ...prev, currentMedications: e.target.value }))}
+                  {...register("currentMedications")}
                   placeholder="List any medications you are currently taking..."
                   className="w-full h-24 bg-surface-container-low border border-outline-variant/30 rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed"
                 />
@@ -197,11 +217,13 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 <p className="text-sm text-muted-foreground">Setting clear goals helps measure your progress.</p>
               </div>
               <textarea
-                value={form.therapyGoals}
-                onChange={e => setForm(prev => ({ ...prev, therapyGoals: e.target.value }))}
+                {...register("therapyGoals")}
                 placeholder="E.g., I want to learn coping strategies for anxiety, improve my communication in relationships, and feel more confident in daily life..."
-                className="w-full h-48 bg-surface-container-low border border-outline-variant/30 rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed"
+                className={`w-full h-48 bg-surface-container-low border rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed transition-colors ${
+                  errors.therapyGoals ? 'border-red-500' : 'border-outline-variant/30'
+                }`}
               />
+              {errors.therapyGoals && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.therapyGoals.message}</p>}
             </div>
           )}
 
@@ -216,20 +238,24 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 <div>
                   <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Full Name</label>
                   <input
-                    value={form.emergencyContactName}
-                    onChange={e => setForm(prev => ({ ...prev, emergencyContactName: e.target.value }))}
+                    {...register("emergencyContactName")}
                     placeholder="e.g. Jane Doe"
-                    className="w-full h-14 bg-surface-container-low border border-outline-variant/30 rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none"
+                    className={`w-full h-14 bg-surface-container-low border rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none transition-colors ${
+                      errors.emergencyContactName ? 'border-red-500' : 'border-outline-variant/30'
+                    }`}
                   />
+                  {errors.emergencyContactName && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactName.message}</p>}
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Phone Number</label>
                   <input
-                    value={form.emergencyContactPhone}
-                    onChange={e => setForm(prev => ({ ...prev, emergencyContactPhone: e.target.value }))}
+                    {...register("emergencyContactPhone")}
                     placeholder="+91 XXXXX XXXXX"
-                    className="w-full h-14 bg-surface-container-low border border-outline-variant/30 rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none"
+                    className={`w-full h-14 bg-surface-container-low border rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none transition-colors ${
+                      errors.emergencyContactPhone ? 'border-red-500' : 'border-outline-variant/30'
+                    }`}
                   />
+                  {errors.emergencyContactPhone && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactPhone.message}</p>}
                 </div>
               </div>
               <div className="p-5 bg-primary/5 rounded-2xl border border-primary/10 flex items-start gap-3">
@@ -252,16 +278,17 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
 
             {step < 4 ? (
               <button
-                onClick={() => setStep(prev => prev + 1)}
-                disabled={!isStepValid()}
-                className="flex items-center gap-2 px-4 md:px-8 py-3 rounded-2xl text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0"
+                type="button"
+                onClick={nextStep}
+                className="flex items-center gap-2 px-4 md:px-8 py-3 rounded-2xl text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all"
               >
                 Continue <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
               <button
-                onClick={handleSubmit}
-                disabled={!isStepValid() || saving}
+                type="button"
+                onClick={handleSubmit(onSubmit)}
+                disabled={saving}
                 className="flex items-center gap-2 px-4 md:px-8 py-3 rounded-2xl text-sm font-bold bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}

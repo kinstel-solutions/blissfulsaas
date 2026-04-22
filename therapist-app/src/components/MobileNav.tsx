@@ -71,7 +71,7 @@ export default function MobileNav({ currentUserId }: { currentUserId: string }) 
   }, [fetchTotalUnread, currentUserId]);
 
   return (
-    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-[100] lg:hidden">
+    <nav className="fixed bottom-2 left-1/2 -translate-x-1/2 w-[92%] max-w-md z-[100] lg:hidden">
       <div className="bg-surface/80 backdrop-blur-3xl border border-primary/5 rounded-[2.5rem] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.15)] flex justify-between items-center ring-1 ring-primary/5">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;

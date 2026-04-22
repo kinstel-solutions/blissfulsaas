@@ -153,6 +153,12 @@ export class PaymentsService {
 
       const scheduledAt = new Date(data.date);
 
+      const slot = await tx.availabilitySlot.findUnique({
+        where: { id: data.slotId, isActive: true },
+        include: { therapist: true },
+      });
+      if (!slot) throw new NotFoundException('Slot not found or inactive');
+
       // Final safety check: therapist availability for this time
       const existing = await tx.appointment.findFirst({
         where: {
@@ -162,12 +168,6 @@ export class PaymentsService {
         },
       });
       if (existing) throw new BadRequestException('Therapist is already booked for this date and time');
-
-      const slot = await tx.availabilitySlot.findUnique({
-        where: { id: data.slotId, isActive: true },
-        include: { therapist: true },
-      });
-      if (!slot) throw new NotFoundException('Slot not found or inactive');
 
       const amountPaid = slot.therapist.hourlyRate ?? 1500;
 

@@ -3,24 +3,42 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, Fingerprint, Mail, Lock } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronRight, Fingerprint, Mail, Lock, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { loginSchema, type LoginValues } from "@/lib/validations";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: LoginValues) => {
+    setLoading(true);
     setError(null);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message);
-    else router.push("/dashboard");
+    const { error: authError } = await supabase.auth.signInWithPassword(data);
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+    } else {
+      router.push("/dashboard");
+    }
   };
 
   return (
@@ -47,7 +65,7 @@ export default function LoginPage() {
             {/* Inner Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#E3F2ED]/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000" />
             
-            <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 relative z-10">
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
                   Work Email
@@ -59,13 +77,14 @@ export default function LoginPage() {
                   <input 
                     id="email" 
                     type="email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                     placeholder="dr.smith@blissfulstation.com" 
-                    className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
-                    required
+                    className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
+                      errors.email ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                    }`}
                   />
                 </div>
+                {errors.email && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.email.message}</p>}
               </div>
               
               <div className="space-y-2">
@@ -84,13 +103,14 @@ export default function LoginPage() {
                   <input 
                     id="password" 
                     type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
                     placeholder="••••••••" 
-                    className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
-                    required
+                    className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
+                      errors.password ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                    }`}
                   />
                 </div>
+                {errors.password && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.password.message}</p>}
               </div>
 
               {error && (
@@ -103,9 +123,10 @@ export default function LoginPage() {
                 <AlexButton 
                   type="submit" 
                   size="lg"
+                  disabled={loading}
                   className="px-12 text-sm uppercase tracking-[0.2em]"
                 >
-                  Sign In
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign In"}
                 </AlexButton>
               </div>
             </form>
