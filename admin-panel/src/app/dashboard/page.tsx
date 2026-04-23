@@ -1,4 +1,5 @@
-import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 import { 
   Users, 
   UserCheck, 
@@ -6,23 +7,71 @@ import {
   Activity,
   ArrowUpRight,
   TrendingUp,
-  Clock
+  Clock,
+  ChevronRight
 } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createAdminClient();
+  const client = await createClient();
+  const { data: { session } } = await client.auth.getSession();
+  const token = session?.access_token;
 
-  // Fetch counts
+  // 1. Fetch Backend Stats (Section 7.4)
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+  let adminStats = null;
+  if (token) {
+    try {
+      const res = await fetch(`${BACKEND_URL}/sessions/admin/stats`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      if (res.ok) adminStats = await res.json();
+    } catch (e) {
+      console.error("Failed to fetch admin stats:", e);
+    }
+  }
+
+  // 2. Fetch counts
   const { count: totalUsers } = await supabase.from("User").select("*", { count: "exact", head: true });
-  const { count: totalPatients } = await supabase.from("User").select("*", { count: "exact", head: true }).eq("role", "PATIENT");
-  const { count: totalTherapists } = await supabase.from("User").select("*", { count: "exact", head: true }).eq("role", "THERAPIST");
-  const { count: pendingTherapists } = await supabase.from("Therapist").select("*", { count: "exact", head: true }).eq("isVerified", false);
+  const { count: pendingTherapistsCount } = await supabase.from("Therapist").select("*", { count: "exact", head: true }).eq("isVerified", false);
+
+  // 3. Fetch pending therapists with details (Section 7.3)
+  const { data: pendingApplications } = await supabase
+    .from("Therapist")
+    .select("id, firstName, lastName, profileImageUrl")
+    .eq("isVerified", false)
+    .limit(3);
+
+  // 4. Fetch registration data for chart (Section 7.1)
+  const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: recentUsers } = await supabase
+    .from("User")
+    .select("createdAt")
+    .gte("createdAt", fourteenDaysAgo);
+
+  // Process registration data for the 14-day chart
+  const registrationsByDay = new Array(14).fill(0);
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  
+  recentUsers?.forEach(u => {
+    const regDate = new Date(u.createdAt);
+    const diffInMs = today.getTime() - regDate.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    if (diffInDays >= 0 && diffInDays < 14) {
+      registrationsByDay[13 - diffInDays]++;
+    }
+  });
+
+  const maxRegs = Math.max(...registrationsByDay, 1);
+  const chartData = registrationsByDay.map(count => (count / maxRegs) * 100);
 
   const stats = [
     { label: "Total Platform Users", value: totalUsers || 0, icon: Users, color: "text-primary", bg: "bg-primary/5" },
-    { label: "Registered Patients", value: totalPatients || 0, icon: UserCheck, color: "text-emerald-600", bg: "bg-emerald-500/5" },
-    { label: "Mental Health Specialists", value: totalTherapists || 0, icon: Activity, color: "text-blue-600", bg: "bg-blue-500/5" },
-    { label: "Pending Verifications", value: pendingTherapists || 0, icon: ShieldAlert, color: "text-destructive", bg: "bg-destructive/5" },
+    { label: "Gross Revenue", value: adminStats ? `₹${adminStats.totalRevenue.toLocaleString()}` : "₹0", icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-500/5" },
+    { label: "Completed Sessions", value: adminStats?.totalSessions || 0, icon: Activity, color: "text-blue-600", bg: "bg-blue-500/5" },
+    { label: "Pending Verifications", value: pendingTherapistsCount || 0, icon: ShieldAlert, color: "text-destructive", bg: "bg-destructive/5" },
   ];
 
   return (
@@ -35,7 +84,7 @@ export default async function DashboardPage() {
         <div className="flex gap-4">
            <div className="px-5 py-2.5 bg-surface-container-low border border-outline-variant/30 rounded-2xl flex items-center gap-3 shadow-sm">
              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-             <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60">Mainnet Live</span>
+             <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60">System Online</span>
            </div>
         </div>
       </div>
@@ -60,28 +109,25 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between mb-8 md:mb-10">
             <div>
               <h3 className="text-xl md:text-2xl font-heading font-normal text-primary">System Activity</h3>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Real-time user registration flow</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground mt-1">Daily user registration flow (Last 14 Days)</p>
             </div>
-            <button className="hidden sm:flex text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition-colors items-center gap-2">
-              Deep Analytics <ArrowUpRight className="w-3 h-3" />
-            </button>
           </div>
           
           <div className="h-48 md:h-64 w-full flex items-end gap-2 md:gap-3 px-1 md:px-2">
-             {[45, 67, 43, 89, 56, 78, 92, 65, 45, 87, 65, 34, 56, 88].map((height, i) => (
+             {chartData.map((height, i) => (
                <div 
                  key={i} 
                  className="flex-1 bg-primary/5 hover:bg-primary/20 rounded-t-lg transition-all duration-500 relative group/bar"
                  style={{ height: `${height}%` }}
                >
                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-10">
-                   {height}
+                   {registrationsByDay[i]} new
                  </div>
                </div>
              ))}
           </div>
           <div className="mt-6 flex justify-between px-2 text-[9px] md:text-xs font-bold uppercase tracking-widest text-muted-foreground/30">
-             <span>March 25</span>
+             <span>{new Date(fourteenDaysAgo).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
              <span>Today</span>
           </div>
         </div>
@@ -97,28 +143,44 @@ export default async function DashboardPage() {
                  <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mt-3">Priority action required</p>
               </div>
 
-              <div className="mt-8 md:mt-10 space-y-4 flex-1 overflow-auto max-h-48 pr-2 custom-scrollbar">
-                 {pendingTherapists === 0 ? (
+              <div className="mt-8 md:mt-10 space-y-3 flex-1 overflow-auto max-h-64 pr-2 custom-scrollbar">
+                 {pendingApplications?.length === 0 ? (
                    <div className="p-6 bg-white/5 rounded-xl border border-white/5 text-center italic text-white/40 text-[10px]">
                       No pending applications
                    </div>
                  ) : (
-                   <div className="p-6 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between group/item hover:bg-white/10 transition-colors">
-                      <div className="flex items-center gap-4">
-                         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-white">
-                            {pendingTherapists}
-                         </div>
-                         <p className="text-sm font-medium text-white/80">Application Pool</p>
-                      </div>
-                      <ArrowUpRight className="w-4 h-4 text-white/30 group-hover/item:text-white transition-colors" />
-                   </div>
+                   pendingApplications?.map((app) => (
+                     <Link 
+                       key={app.id}
+                       href={`/dashboard/therapists/${app.id}`}
+                       className="p-3 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between group/item hover:bg-white/10 transition-colors"
+                     >
+                       <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-white/10 overflow-hidden flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+                             {app.profileImageUrl ? (
+                               <img src={app.profileImageUrl} alt={app.firstName} className="w-full h-full object-cover" />
+                             ) : (
+                               app.firstName?.[0]
+                             )}
+                          </div>
+                          <p className="text-sm font-medium text-white/80 truncate max-w-[120px]">{app.firstName} {app.lastName}</p>
+                       </div>
+                       <ChevronRight className="w-4 h-4 text-white/30 group-hover/item:text-white transition-colors" />
+                     </Link>
+                   ))
+                 )}
+                 {pendingTherapistsCount && pendingTherapistsCount > 3 && (
+                   <p className="text-[10px] text-white/40 text-center pt-2 italic">+{pendingTherapistsCount - 3} more awaiting review</p>
                  )}
               </div>
 
               <div className="mt-8 md:mt-10">
-                 <button className="w-full h-14 bg-white text-primary rounded-2xl font-bold uppercase tracking-widest text-[10px] md:text-xs shadow-xl hover:shadow-primary-container hover:-translate-y-1 transition-all">
-                    Launch Review Terminal
-                 </button>
+                 <Link 
+                   href="/dashboard/therapists"
+                   className="w-full h-14 bg-white text-primary rounded-2xl flex items-center justify-center font-bold uppercase tracking-widest text-[10px] md:text-xs shadow-xl hover:shadow-primary-container hover:-translate-y-1 transition-all"
+                 >
+                    View All Applications
+                 </Link>
               </div>
            </div>
         </div>

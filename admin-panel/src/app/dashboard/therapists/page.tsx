@@ -23,7 +23,8 @@ export default async function TherapistsPage() {
         email,
         createdAt
       )
-    `);
+    `)
+    .order("isVerified", { ascending: true });
 
   if (error) {
     console.error("Error fetching therapists:", error);
@@ -37,13 +38,7 @@ export default async function TherapistsPage() {
           <p className="text-muted-foreground text-sm font-medium mt-1">Manage all mental health specialists and applications</p>
         </div>
         <div className="flex gap-3">
-          <div className="bg-surface-container-low border border-outline-variant/30 rounded-2xl px-4 py-2 flex items-center gap-2 group focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-             <Search className="w-4 h-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-             <input placeholder="Search providers..." className="bg-transparent border-none outline-none text-sm font-medium placeholder:text-muted-foreground/30 w-48" />
-          </div>
-          <button className="p-2.5 bg-surface-container-low border border-outline-variant/30 rounded-xl text-primary/60 hover:text-primary hover:bg-surface-container-lowest transition-all">
-             <Filter className="w-5 h-5" />
-          </button>
+          {/* Search and Filter removed as requested */}
         </div>
       </div>
 

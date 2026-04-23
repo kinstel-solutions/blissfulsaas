@@ -251,6 +251,7 @@ export class SessionsService {
           specialities: appt.therapist.specialities || [],
           qualifications: appt.therapist.qualifications || '',
           yearsOfExperience: appt.therapist.yearsOfExperience || 0,
+          profileImageUrl: appt.therapist.profileImageUrl || null,
         });
       }
 

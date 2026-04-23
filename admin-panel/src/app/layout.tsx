@@ -15,7 +15,7 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   title: "Admin OS | Blissful Station",
-  description: "Internal management terminal for the Blissful Station ecosystem.",
+  description: "Internal management system for the Blissful Station ecosystem.",
 };
 
 export default function RootLayout({

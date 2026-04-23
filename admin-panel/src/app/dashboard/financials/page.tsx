@@ -56,9 +56,7 @@ export default async function FinancialsPage() {
           <h1 className="text-3xl font-heading font-medium text-primary">Financial Tracking</h1>
           <p className="text-muted-foreground text-sm font-medium mt-1">Platform revenue, payouts, and engagement metrics</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-surface border border-outline-variant/30 rounded-xl text-primary/80 hover:text-primary hover:border-primary/50 transition-all text-xs font-bold uppercase tracking-widest shadow-sm">
-          <Download className="w-4 h-4" /> Export Report
-        </button>
+        {/* Export Report removed */}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -99,8 +97,12 @@ export default async function FinancialsPage() {
                 <tr key={t.therapistId} className="group/row hover:bg-primary/[0.01] transition-colors">
                   <td className="px-5 md:px-8 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-sm">
-                        {t.therapistName.replace('Dr. ', '')[0] || "?"}
+                      <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-sm overflow-hidden">
+                        {t.profileImageUrl ? (
+                          <img src={t.profileImageUrl} alt={t.therapistName} className="w-full h-full object-cover" />
+                        ) : (
+                          t.therapistName.replace('Dr. ', '')[0] || "?"
+                        )}
                       </div>
                       <div>
                         <p className="font-heading font-medium text-foreground text-sm leading-tight">
@@ -145,9 +147,7 @@ export default async function FinancialsPage() {
                     </p>
                   </td>
                   <td className="px-4 md:px-6 py-5 text-center">
-                    <button className="px-3 py-1.5 bg-surface hover:bg-surface-container-low border border-outline-variant/30 rounded-lg text-primary text-[10px] font-bold uppercase tracking-widest transition-colors">
-                      View Ledger
-                    </button>
+                    {/* View Ledger removed */}
                   </td>
                 </tr>
               ))}

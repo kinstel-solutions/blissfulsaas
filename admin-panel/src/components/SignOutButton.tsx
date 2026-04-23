@@ -29,7 +29,7 @@ export default function SignOutButton() {
       className="w-full flex items-center px-4 py-4 text-destructive/80 hover:bg-destructive/5 hover:text-destructive rounded-2xl transition-all duration-300 text-sm font-bold uppercase tracking-widest group"
     >
       <LogOut className="w-5 h-5 mr-3 group-hover:-translate-x-1 transition-transform" />
-      Terminal Off
+      Sign Out
     </button>
   );
 }

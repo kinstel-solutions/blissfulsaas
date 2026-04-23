@@ -478,7 +478,7 @@ Will review in a follow-up pass.
 
 ## 7. Frontend — Admin Panel
 
-### 7.1 Admin Dashboard — System Activity Chart Uses Hardcoded Fake Data
+### 7.1 Admin Dashboard — System Activity Chart Uses Hardcoded Fake Data (RESOLVED)
 
 **File:** `admin-panel/src/app/dashboard/page.tsx` lines 71–82
 
@@ -492,7 +492,7 @@ Will review in a follow-up pass.
 
 ---
 
-### 7.2 Admin Dashboard — "Launch Review Terminal" Button Has No Action
+### 7.2 Admin Dashboard — "Launch Review Terminal" Button Has No Action (RESOLVED)
 
 **File:** `admin-panel/src/app/dashboard/page.tsx` line 119
 
@@ -504,13 +504,13 @@ Will review in a follow-up pass.
 
 ---
 
-### 7.3 Admin Dashboard — Pending Queue Shows Count But Not Individual Applications
+### 7.3 Admin Dashboard — Pending Queue Shows Count But Not Individual Applications (RESOLVED)
 
 The pending queue panel shows only a count badge, not the actual pending therapists. The full list is only in `/dashboard/therapists`. The dashboard widget could be more useful by showing the first 3 pending names with a link to each.
 
 ---
 
-### 7.4 Admin Panel — No Financial Data on Dashboard
+### 7.4 Admin Panel — No Financial Data on Dashboard (RESOLVED)
 
 **Issue (MEDIUM):** The financial dashboard lives at `/dashboard/financials` but the main overview page has no financial KPIs (total revenue, sessions completed, etc.). These are already computed in `getAdminStats()` on the backend — they should be surfaced on the main dashboard page.
 

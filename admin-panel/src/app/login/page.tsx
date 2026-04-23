@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShieldAlert, Loader2, Mail, Lock, Terminal } from "lucide-react";
+import { ShieldAlert, Loader2, Mail, Lock, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { adminLoginSchema, type AdminLoginValues } from "@/lib/validations";
@@ -63,7 +63,7 @@ export default function AdminLoginPage() {
         </div>
         <div className="hidden sm:flex items-center gap-3 px-5 py-2.5 bg-red-500/5 border border-red-500/10 rounded-full backdrop-blur-md">
            <ShieldAlert className="w-3.5 h-3.5 text-red-400 animate-pulse" />
-           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-red-400/80">Restricted Terminal</span>
+           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-red-400/80">Restricted Access</span>
         </div>
       </header>
 
@@ -72,12 +72,12 @@ export default function AdminLoginPage() {
           <div className="text-center mb-10">
             <div className="w-20 h-20 rounded-[2rem] bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-8 text-white shadow-2xl relative overflow-hidden group">
                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-               <Terminal className="w-10 h-10 font-thin transition-transform duration-500 group-hover:scale-110 text-[#2D4F43]" />
+               <ShieldCheck className="w-10 h-10 font-thin transition-transform duration-500 group-hover:scale-110 text-[#2D4F43]" />
             </div>
             <h1 className="text-5xl md:text-6xl font-cormorant font-medium text-white mb-4 tracking-tight">
               Admin <span className="italic font-normal text-[#2D4F43]">OS</span>
             </h1>
-            <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.4em]">Biometric or Terminal Auth Required</p>
+            <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.4em]">Biometric or Security Auth Required</p>
           </div>
 
           <div className="bg-white/5 backdrop-blur-2xl p-8 md:p-14 rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.5)] border border-white/10 relative overflow-hidden group">
@@ -136,7 +136,7 @@ export default function AdminLoginPage() {
                   disabled={loading}
                   size="lg"
                   className="px-12 text-sm uppercase tracking-[0.3em]"
-                  icon={loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Terminal size={18} />}
+                  icon={loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <ShieldCheck size={18} />}
                 >
                   {loading ? "Processing..." : "Initiate Access"}
                 </AlexButton>
@@ -145,7 +145,7 @@ export default function AdminLoginPage() {
 
             <div className="mt-14 pt-10 border-t border-white/5 text-center">
               <p className="text-[10px] text-white/20 font-bold uppercase tracking-[0.2em] leading-relaxed">
-                Access to this terminal is restricted to authorized personnel. 
+                Access to this system is restricted to authorized personnel. 
                 <br />Unauthorized access attempts are logged and reported.
               </p>
             </div>

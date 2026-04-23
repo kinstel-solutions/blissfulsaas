@@ -12,6 +12,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
 import { UpdateTherapistProfileDto } from './dto/update-profile.dto';
+import { TherapistsService } from './therapists.service';
 
 @Controller('therapists')
 @UseGuards(AuthGuard('jwt'), RolesGuard)

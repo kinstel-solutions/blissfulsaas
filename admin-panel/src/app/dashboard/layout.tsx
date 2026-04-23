@@ -49,8 +49,6 @@ export default async function DashboardLayout({
     { label: "Appointments", icon: CalendarDays, href: "/dashboard/appointments", active: true },
     { label: "Financials", icon: DollarSign, href: "/dashboard/financials", active: true },
     { label: "Providers", icon: ShieldCheck, href: "/dashboard/therapists", active: true },
-    { label: "Applications (Soon)", icon: FileCheck, href: "#", active: false },
-    { label: "Users (Soon)", icon: Users, href: "#", active: false },
   ];
 
   return (
@@ -88,13 +86,6 @@ export default async function DashboardLayout({
         </div>
 
         <div className="p-6 border-t border-outline-variant/20 space-y-2">
-          <Link 
-            href="#" 
-            className="flex items-center px-4 py-3 text-muted-foreground/30 cursor-not-allowed pointer-events-none rounded-xl transition-colors text-sm font-medium"
-          >
-            <Settings className="w-5 h-5 mr-3" />
-            Config (Soon)
-          </Link>
           <SignOutButton />
         </div>
       </aside>
@@ -115,11 +106,6 @@ export default async function DashboardLayout({
           </div>
           
           <div className="flex items-center gap-4 lg:gap-6">
-            <button className="relative p-2 text-muted-foreground/60 hover:text-primary transition-colors">
-              <Bell className="w-5 h-5" />
-              <div className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full border-2 border-surface animate-ping" />
-            </button>
-            <div className="h-8 w-px bg-outline-variant/20" />
             <div className="flex items-center gap-4">
               <div className="text-right hidden md:block">
                 <p className="text-xs font-bold text-foreground leading-none">{dbUser?.role === 'ADMIN' ? 'Super User' : 'Standard User'}</p>

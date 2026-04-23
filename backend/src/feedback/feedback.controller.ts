@@ -12,6 +12,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
 import { SubmitFeedbackDto } from './dto/submit-feedback.dto';
+import { FeedbackService } from './feedback.service';
 
 @Controller('feedback')
 @UseGuards(AuthGuard('jwt'), RolesGuard)

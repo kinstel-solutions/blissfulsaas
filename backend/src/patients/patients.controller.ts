@@ -2,6 +2,7 @@ import { Controller, Get, Patch, Body, Request, UseGuards } from '@nestjs/common
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
 import { UpdateIntakeDto } from './dto/update-intake.dto';
+import { PatientsService } from './patients.service';
 
 @Controller('patients')
 @UseGuards(AuthGuard('jwt'), RolesGuard)

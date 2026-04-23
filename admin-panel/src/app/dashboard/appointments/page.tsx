@@ -129,13 +129,7 @@ export default async function AppointmentsPage() {
           <p className="text-muted-foreground text-sm font-medium mt-1">Monitor all platform bookings and patient reviews</p>
         </div>
         <div className="flex gap-3">
-          <div className="bg-surface-container-low border border-outline-variant/30 rounded-2xl px-4 py-2 flex items-center gap-2 group focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-             <Search className="w-4 h-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-             <input placeholder="Search bookings..." className="bg-transparent border-none outline-none text-sm font-medium placeholder:text-muted-foreground/30 w-48" />
-          </div>
-          <button className="p-2.5 bg-surface-container-low border border-outline-variant/30 rounded-xl text-primary/60 hover:text-primary hover:bg-surface-container-lowest transition-all">
-             <Filter className="w-5 h-5" />
-          </button>
+          {/* Search and Filter removed as requested */}
         </div>
       </div>
 
@@ -166,10 +160,21 @@ export default async function AppointmentsPage() {
                       <p className="text-[10px] text-muted-foreground mt-0.5 tracking-tight">{appt.patient?.user?.email}</p>
                     </td>
                     <td className="px-4 md:px-6 py-4">
-                      <p className="font-heading font-medium text-foreground text-sm">
-                        Dr. {appt.therapist?.firstName} {appt.therapist?.lastName}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5 tracking-tight">{appt.therapist?.user?.email}</p>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-xs overflow-hidden shrink-0">
+                          {appt.therapist?.profileImageUrl ? (
+                            <img src={appt.therapist.profileImageUrl} alt={appt.therapist.firstName} className="w-full h-full object-cover" />
+                          ) : (
+                            appt.therapist?.firstName?.[0] || "?"
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-heading font-medium text-foreground text-sm">
+                            Dr. {appt.therapist?.firstName} {appt.therapist?.lastName}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5 tracking-tight">{appt.therapist?.user?.email}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 md:px-6 py-4">
                       <div className="flex items-center gap-2">
