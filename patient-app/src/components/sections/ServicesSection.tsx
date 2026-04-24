@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { AlexButton } from "@/components/ui/AlexButton";
-import { CloudRain, Brain, ClipboardCheck, Compass, Infinity, Baby, Zap, MessageSquare, Heart, Briefcase, Link, Spa } from "lucide-react";
+import { CloudRain, Brain, ClipboardCheck, Compass, Infinity, Baby, Zap, MessageSquare, Heart } from "lucide-react";
 
 const services = [
   {

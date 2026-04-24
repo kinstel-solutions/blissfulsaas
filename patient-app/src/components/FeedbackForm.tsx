@@ -23,7 +23,6 @@ export default function FeedbackForm({
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
   const getRatingLabel = (r: number) => {
     switch (r) {

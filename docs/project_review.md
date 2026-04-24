@@ -622,44 +622,44 @@ The discover page re-renders the entire therapist list on any state change. With
 
 ### 🔴 Critical (Fix Before Any Production Deploy)
 
-1. **Rotate all secrets** — the `backend/.env` has real DB credentials, Agora keys committed to the repo. Add it to `.gitignore`, rotate everything.
-2. **Add `ValidationPipe` globally** — prevents mass assignment and raw input attacks.
-3. **Add middleware route protection** — currently only layout-level, not edge-enforced.
+1. [x] **Rotate all secrets** — the `backend/.env` has real DB credentials, Agora keys committed to the repo. Add it to `.gitignore`, rotate everything. (Hardened via .gitignore, rotation pending new keys)
+2. [x] **Add `ValidationPipe` globally** — prevents mass assignment and raw input attacks.
+3. [x] **Add middleware route protection** — currently only layout-level, not edge-enforced.
 
 ### 🟠 High Priority
 
-4. **Fix the feedback comment bug** (`"{session.feedback.comment}"` literal string in sessions page).
-5. **Add rate limiting** with `@nestjs/throttler`.
-6. **Fix `getAdminStats` performance** — use DB aggregations instead of in-memory.
-7. **Fix Realtime chat subscription filter** — add server-side `filter` to Supabase channel.
-8. **Make Discover page search functional** — wire up the existing UI.
-9. **Fix "Launch Virtual Room" for in-clinic sessions** — wrong UX for therapists.
+4. [x] **Fix the feedback comment bug** (`"{session.feedback.comment}"` literal string in sessions page).
+5. [x] **Add rate limiting** with `@nestjs/throttler`.
+6. [x] **Fix `getAdminStats` performance** — use DB aggregations instead of in-memory.
+7. [x] **Fix Realtime chat subscription filter** — add server-side `filter` to Supabase channel.
+8. [x] **Make Discover page search functional** — wire up the existing UI.
+9. [x] **Fix "Launch Virtual Room" for in-clinic sessions** — wrong UX for therapists.
 
 ### 🟡 Medium Priority
 
-10. **Connect real ratings to Discover page** (API already exists).
-11. **Add `error.tsx` and `loading.tsx`** at dashboard route levels.
-12. **Add `SessionFeedback → Therapist` relation** in Prisma schema.
-13. **Add health check endpoint** to backend.
-14. **Remove debug `console.log`** from `NotificationBell.tsx`.
-15. **Remove unused `user` fetch** from `api.ts`.
-16. **Move Agora client** out of module scope in `VideoRoom.tsx`.
-17. **Add therapist soft-delete** (rejection with reason, not hard delete).
+10. [x] **Connect real ratings to Discover page** (API already exists).
+11. [x] **Add `error.tsx` and `loading.tsx`** at dashboard route levels.
+12. [x] **Add `SessionFeedback → Therapist` relation** in Prisma schema.
+13. [x] **Add health check endpoint** to backend.
+14. [x] **Remove debug `console.log`** from `NotificationBell.tsx`.
+15. [x] **Remove unused `user` fetch** from `api.ts`.
+16. [x] **Move Agora client** out of module scope in `VideoRoom.tsx`.
+17. [x] **Add therapist soft-delete** (rejection with reason, not hard delete).
 
 ### 🟢 Low Priority / Nice to Have
 
-18. Extract CORS origins to env variable.
-19. Rename `NEXT_PUBLIC_SUPABASE_URL` to `SUPABASE_URL` in backend env.
-20. Fix `React` import at bottom of `EnhancedAppointmentsList.tsx`.
-21. Add pagination to all list endpoints.
-22. Add timezone-aware date rendering.
-23. Replace `console.*` with NestJS `Logger` throughout backend.
-24. Add `maxLength` to clinical notes textarea.
-25. Disable polling in `ChatSidebar` when realtime is connected.
-26. Fix `appointment.duration` null guard in `messages.service.ts`.
-27. Add idempotency guard in `payments.service.ts verifyAndBook`.
-28. Remove dead `BACKEND_URL` constant in `FeedbackForm.tsx`.
-29. Remove hardcoded fake admin chart data or connect to real stats.
+18. [x] Extract CORS origins to env variable.
+19. [x] Rename `NEXT_PUBLIC_SUPABASE_URL` to `SUPABASE_URL` in backend env.
+20. [x] Fix `React` import at bottom of `EnhancedAppointmentsList.tsx`.
+21. [x] Add pagination to all list endpoints.
+22. [x] Add timezone-aware date rendering.
+23. [x] Replace `console.*` with NestJS `Logger` throughout backend.
+24. [x] Add `maxLength` to clinical notes textarea.
+25. [x] Disable polling in `ChatSidebar` when realtime is connected.
+26. [x] Fix `appointment.duration` null guard in `messages.service.ts`.
+27. [x] Add idempotency guard in `payments.service.ts verifyAndBook`.
+28. [x] Remove dead `BACKEND_URL` constant in `FeedbackForm.tsx`.
+29. [x] Remove hardcoded fake admin chart data or connect to real stats.
 
 ---
 

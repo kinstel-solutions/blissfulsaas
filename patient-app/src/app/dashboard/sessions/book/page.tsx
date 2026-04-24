@@ -3,9 +3,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
 
+interface Therapist {
+  id: string;
+  firstName: string;
+  lastName: string;
+  profileImageUrl?: string;
+  bio?: string;
+  specialities?: string[];
+  yearsOfExperience?: number;
+  qualifications?: string;
+  hourlyRate?: number;
+}
+
 export default async function BookingPage() {
-  const therapists = await fetchWithAuthContent("/therapists/verified");
-  const therapistList = Array.isArray(therapists) ? therapists : [];
+  const response = await fetchWithAuthContent("/therapists/verified");
+  const therapistList: Therapist[] = response?.data && Array.isArray(response.data) ? response.data : [];
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
@@ -59,7 +71,7 @@ export default async function BookingPage() {
                       {spec}
                     </span>
                   ))}
-                  {therapist.specialities?.length > 3 && (
+                  {therapist.specialities && therapist.specialities.length > 3 && (
                     <span className="text-xs font-bold text-muted-foreground/60 ml-1">+{therapist.specialities.length - 3} more</span>
                   )}
                 </div>

@@ -6,8 +6,7 @@ export const patientIntakeSchema = z.object({
   mentalHealthHistory: z.string().optional().or(z.literal("")),
   currentMedications: z.string().optional().or(z.literal("")),
   previousTherapy: z.boolean({
-    required_error: "Please select an option",
-    invalid_type_error: "Please select an option",
+    message: "Please select an option",
   }),
   therapyGoals: z.string().min(10, "Please provide a bit more detail about your goals"),
   emergencyContactName: z.string().min(2, "Emergency contact name is required"),

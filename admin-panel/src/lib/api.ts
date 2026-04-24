@@ -34,6 +34,7 @@ export const api = {
   therapists: {
     getPending: () => fetchWithAuth("/therapists/pending"),
     verify: (id: string) => fetchWithAuth(`/therapists/${id}/verify`, { method: "PATCH" }),
-    reject: (id: string) => fetchWithAuth(`/therapists/${id}`, { method: "DELETE" }),
+    reject: (id: string, reason?: string) => 
+      fetchWithAuth(`/therapists/${id}${reason ? `?reason=${encodeURIComponent(reason)}` : ""}`, { method: "DELETE" }),
   }
 };

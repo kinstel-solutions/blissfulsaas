@@ -7,7 +7,8 @@ import {
   UseGuards, 
   ParseUUIDPipe,
   Req,
-  Body
+  Body,
+  Query
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
@@ -27,8 +28,11 @@ export class TherapistsController {
 
   @Get('verified')
   @Roles('PATIENT', 'ADMIN')
-  getVerified() {
-    return this.therapistsService.getAllVerified();
+  getVerified(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '12'
+  ) {
+    return this.therapistsService.getAllVerified(parseInt(page), parseInt(limit));
   }
 
   @Get('profile')
@@ -63,7 +67,10 @@ export class TherapistsController {
 
   @Delete(':id')
   @Roles('ADMIN')
-  reject(@Param('id', ParseUUIDPipe) id: string) {
-    return this.therapistsService.reject(id);
+  reject(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('reason') reason?: string,
+  ) {
+    return this.therapistsService.reject(id, reason);
   }
 }

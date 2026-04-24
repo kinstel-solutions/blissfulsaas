@@ -100,7 +100,7 @@ export default async function SessionsPage() {
                 ))}
                 {session.feedback.comment && (
                   <span className="ml-2 text-xs text-muted-foreground italic truncate max-w-[200px]">
-                    "{session.feedback.comment}"
+                    {`"${session.feedback.comment}"`}
                   </span>
                 )}
               </div>

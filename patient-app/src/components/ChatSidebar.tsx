@@ -54,10 +54,10 @@ export default function ChatSidebar({
           event: "INSERT",
           schema: "public",
           table: "Message",
+          filter: `appointmentId=eq.${appointmentId}`,
         },
         (payload: any) => {
           const msg = payload.new as Message;
-          if (msg.appointmentId !== appointmentId) return;
 
           setMessages((prev) => {
             if (prev.some((m) => m.id === msg.id)) return prev;
@@ -71,14 +71,17 @@ export default function ChatSidebar({
         if (status === "CHANNEL_ERROR") setStatus("error");
       });
 
-    // Fallback polling every 5s if Realtime is unreliable
-    const poll = setInterval(loadHistory, 5000);
-
     return () => {
       supabaseClient.removeChannel(channel);
-      clearInterval(poll);
     };
   }, [appointmentId, loadHistory]);
+
+  // Fallback polling (only when realtime is not connected)
+  useEffect(() => {
+    if (status === "connected") return;
+    const poll = setInterval(loadHistory, 8000);
+    return () => clearInterval(poll);
+  }, [status, loadHistory]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {

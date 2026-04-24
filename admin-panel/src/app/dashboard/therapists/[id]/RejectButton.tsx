@@ -14,11 +14,17 @@ export default function RejectButton({ id, isUpdate }: { id: string, isUpdate?: 
       ? "Are you sure you want to REJECT these profile updates? The practitioner's active profile will remain unchanged."
       : "Are you sure you want to REJECT and PERMANENTLY DELETE this practitioner application? This action cannot be reversed.";
 
+    let reason = "";
+    if (!isUpdate) {
+       reason = prompt("Please provide a reason for rejection (this will be stored for clinical records):") || "";
+       if (reason === null) return; // User cancelled prompt
+    }
+
     if (!confirm(msg)) return;
     
     setLoading(true);
     try {
-      await api.therapists.reject(id);
+      await api.therapists.reject(id, reason || undefined);
       if (!isUpdate) {
         router.push("/dashboard/therapists");
       }

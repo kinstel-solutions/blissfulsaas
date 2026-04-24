@@ -11,7 +11,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private config: ConfigService,
     private prisma: PrismaService
   ) {
-    const supabaseUrl = config.getOrThrow<string>('NEXT_PUBLIC_SUPABASE_URL');
+    const supabaseUrl = config.get<string>('SUPABASE_URL') || config.getOrThrow<string>('NEXT_PUBLIC_SUPABASE_URL');
     
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

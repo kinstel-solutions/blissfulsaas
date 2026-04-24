@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType, Prisma } from '@prisma/client';
 
 @Injectable()
 export class TherapistsService {
+  private readonly logger = new Logger(TherapistsService.name);
+
   constructor(
     private prisma: PrismaService,
     private notifications: NotificationsService,
@@ -14,7 +16,7 @@ export class TherapistsService {
     return this.prisma.therapist.findMany({
       where: {
         OR: [
-          { isVerified: false },
+          { isVerified: false, rejectionReason: null },
           { pendingFields: { not: Prisma.DbNull } }
         ]
       },
@@ -28,25 +30,54 @@ export class TherapistsService {
     });
   }
 
-  async getAllVerified() {
-    return this.prisma.therapist.findMany({
-      where: { isVerified: true },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        bio: true,
-        hourlyRate: true,
-        specialities: true,
-        qualifications: true,
-        languages: true,
-        yearsOfExperience: true,
-        clinicAddress: true,
-        profileImageUrl: true,
-        phone: true,
-        // We don't need email for discovery yet
-      }
+  async getAllVerified(page: number = 1, limit: number = 12) {
+    const skip = (page - 1) * limit;
+
+    const [therapists, total, ratingStats] = await Promise.all([
+      this.prisma.therapist.findMany({
+        where: { isVerified: true },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          bio: true,
+          hourlyRate: true,
+          specialities: true,
+          qualifications: true,
+          languages: true,
+          yearsOfExperience: true,
+          clinicAddress: true,
+          profileImageUrl: true,
+          phone: true,
+        },
+        skip,
+        take: limit,
+      }),
+      this.prisma.therapist.count({ where: { isVerified: true } }),
+      this.prisma.sessionFeedback.groupBy({
+        by: ['therapistId'],
+        _avg: { rating: true },
+        _count: { rating: true },
+        where: { isPublic: true },
+      })
+    ]);
+
+    const enriched = therapists.map(t => {
+      const stats = ratingStats.find(s => s.therapistId === t.id);
+      return {
+        ...t,
+        averageRating: stats?._avg?.rating ? Number(stats._avg.rating.toFixed(1)) : null,
+        totalReviews: stats?._count?.rating || 0,
+      };
     });
+
+    return {
+      data: enriched,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async getProfile(userId: string) {
@@ -163,7 +194,7 @@ export class TherapistsService {
     return updated;
   }
 
-  async reject(id: string) {
+  async reject(id: string, reason?: string) {
     const therapist = await this.prisma.therapist.findUnique({
       where: { id },
     });
@@ -184,14 +215,19 @@ export class TherapistsService {
           type: NotificationType.GENERAL,
           title: 'Profile Updates Rejected',
           body: 'Your recent profile updates were not approved. Please contact support for more details.',
-        }).catch(console.error);
+        }).catch(err => this.logger.error(err));
       });
 
       return updated;
     }
 
-    return this.prisma.therapist.delete({
+    return this.prisma.therapist.update({
       where: { id },
+      data: {
+        isVerified: false,
+        rejectionReason: reason || 'Application did not meet clinical requirements.',
+        pendingFields: Prisma.DbNull,
+      },
     });
   }
 

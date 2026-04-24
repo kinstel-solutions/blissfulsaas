@@ -34,7 +34,7 @@ export default function ProfilePage() {
     reset,
     formState: { errors },
   } = useForm<TherapistProfileValues>({
-    resolver: zodResolver(therapistProfileSchema),
+    resolver: zodResolver(therapistProfileSchema) as any,
     defaultValues: {
       firstName: "",
       lastName: "",

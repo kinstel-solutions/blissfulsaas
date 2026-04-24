@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function updateSession(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -32,13 +32,21 @@ export async function updateSession(request: NextRequest) {
   )
 
   // refreshing the auth token
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const url = new URL(request.url)
+
+  // 1. Protected routes - must be logged in
+  if (!user && url.pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  // 2. Auth routes - must NOT be logged in (login, signup)
+  if (user && (url.pathname === '/login' || url.pathname === '/signup')) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
 
   return supabaseResponse
-}
-
-export async function middleware(request: NextRequest) {
-  return await updateSession(request)
 }
 
 export const config = {

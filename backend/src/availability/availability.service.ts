@@ -6,6 +6,14 @@ import { ConsultationMode } from '@prisma/client';
 export class AvailabilityService {
   constructor(private prisma: PrismaService) {}
 
+  async getTherapistByUserId(userId: string) {
+    const therapist = await this.prisma.therapist.findUnique({
+      where: { userId },
+    });
+    if (!therapist) throw new NotFoundException('Therapist profile not found');
+    return therapist;
+  }
+
   async createSlot(therapistId: string, data: { dayOfWeek: number; startTime: string; endTime: string; mode?: ConsultationMode }) {
     const mode = data.mode ?? ConsultationMode.ONLINE;
     // Check for duplicates

@@ -1,4 +1,4 @@
-import { fetchWithAuthContent } from "@/lib/api-server";
+import { api, fetchWithAuthContent } from "@/lib/api-server";
 import SlotSelectionClient from "./SlotSelectionClient";
 import { notFound } from "next/navigation";
 
@@ -7,8 +7,7 @@ export default async function SlotSelectionPage({ params }: { params: Promise<{ 
   
   // Fetch therapist details (verified only)
   // Re-using verified check server side or directly fetching if needed
-  const therapists = await fetchWithAuthContent("/therapists/verified");
-  const therapist = Array.isArray(therapists) ? therapists.find(t => t.id === therapistId) : null;
+  const therapist = await api.therapists.getById(therapistId);
 
   if (!therapist) {
     notFound();

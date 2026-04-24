@@ -5,7 +5,7 @@ import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
 interface ImageUploadProps {
-  value: string;
+  value?: string;
   onChange: (url: string) => void;
   label?: string;
   description?: string;
@@ -83,7 +83,7 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
         {value ? (
           <div className="relative w-full aspect-square max-w-[240px] rounded-[2rem] overflow-hidden shadow-2xl border border-outline-variant/20 group/preview">
             <img 
-              src={value} 
+              src={value || ""} 
               alt="Upload Preview" 
               className="w-full h-full object-cover"
               onError={(e) => {

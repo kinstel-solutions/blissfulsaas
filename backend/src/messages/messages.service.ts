@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '@prisma/client';
 
 @Injectable()
 export class MessagesService {
+  private readonly logger = new Logger(MessagesService.name);
+
   constructor(
     private prisma: PrismaService,
     private notifications: NotificationsService
@@ -35,7 +37,8 @@ export class MessagesService {
     }
 
     // 2.5 Security: Ensure we are within the 7-day Post-Consultation Chat Window
-    const sessionEndTime = new Date(appointment.scheduledAt).getTime() + (appointment.duration * 60000);
+    const duration = appointment.duration ?? 60;
+    const sessionEndTime = new Date(appointment.scheduledAt).getTime() + (duration * 60000);
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
     if (Date.now() > sessionEndTime + SEVEN_DAYS_MS) {
       throw new ForbiddenException('Chat window has closed (7 days after consultation)');
@@ -66,7 +69,7 @@ export class MessagesService {
         title: 'New Message',
         body: `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`,
         metadata: { appointmentId, senderId: senderUserId, senderName },
-      }).catch(console.error);
+      }).catch(err => this.logger.error(err));
     });
 
     return message;

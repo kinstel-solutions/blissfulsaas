@@ -9,20 +9,52 @@ import { api } from "@/lib/api";
 export default function DiscoverPage() {
   const [therapists, setTherapists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    async function loadTherapists() {
-      try {
-        const data = await api.therapists.getVerified();
-        setTherapists(data);
-      } catch (err) {
-        console.error("Discovery failed:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadTherapists();
+    loadTherapists(1);
   }, []);
+
+  async function loadTherapists(pageNum: number, isMore: boolean = false) {
+    if (isMore) setLoadingMore(true);
+    else setLoading(true);
+
+    try {
+      const response = await api.therapists.getVerified(pageNum, 12);
+      if (isMore) {
+        setTherapists(prev => [...prev, ...response.data]);
+      } else {
+        setTherapists(response.data);
+      }
+      setHasMore(pageNum < response.totalPages);
+      setPage(pageNum);
+    } catch (err) {
+      console.error("Discovery failed:", err);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }
+
+  const handleLoadMore = () => {
+    loadTherapists(page + 1, true);
+  };
+
+  const filteredTherapists = therapists.filter((t) => {
+    const search = searchQuery.toLowerCase().trim();
+    if (!search) return true;
+
+    const fullName = `${t.firstName} ${t.lastName}`.toLowerCase();
+    const bio = (t.bio || "").toLowerCase();
+    const specialities = (t.specialities || []).some((s: string) =>
+      s.toLowerCase().includes(search)
+    );
+
+    return fullName.includes(search) || bio.includes(search) || specialities;
+  });
 
   if (loading) {
     return (
@@ -53,6 +85,8 @@ export default function DiscoverPage() {
             type="text" 
             placeholder="Search by specialty, name, or concern..." 
             className="w-full h-16 bg-transparent pl-14 pr-6 text-sm font-medium outline-none placeholder:text-muted-foreground/50"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <div className="w-px bg-outline-variant/20 hidden md:block" />
@@ -67,7 +101,7 @@ export default function DiscoverPage() {
 
       {/* Marketplace Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-        {therapists.map((t) => (
+        {filteredTherapists.map((t) => (
           <div key={t.id} className="group bg-surface-container-lowest border border-outline-variant/30 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-primary/20 transition-all duration-700 flex flex-col relative">
             
             {/* Experience Badge */}
@@ -76,7 +110,8 @@ export default function DiscoverPage() {
             </div>
 
             <div className="absolute top-6 right-6 z-10 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-outline-variant/20 text-xs font-bold uppercase tracking-tighter text-primary flex items-center gap-1 shadow-sm">
-              <Star className="w-3 h-3 fill-primary" /> 4.9
+              <Star className={`w-3 h-3 ${t.averageRating ? "fill-primary" : "text-primary/20"}`} /> 
+              {t.averageRating ? t.averageRating : "New"}
             </div>
             
             <div className="aspect-[4/3] overflow-hidden relative">
@@ -150,6 +185,22 @@ export default function DiscoverPage() {
           </div>
         )}
       </div>
+      
+      {hasMore && (
+        <div className="flex justify-center mt-16">
+          <button 
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="px-12 py-5 rounded-2xl bg-white border border-outline-variant/30 text-primary font-bold uppercase tracking-widest text-xs shadow-sm hover:shadow-xl hover:border-primary/20 hover:-translate-y-1 transition-all flex items-center gap-3 disabled:opacity-50"
+          >
+            {loadingMore ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Load More Specialists"
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

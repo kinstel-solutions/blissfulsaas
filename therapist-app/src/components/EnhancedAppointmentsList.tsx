@@ -11,7 +11,6 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AppointmentActions from "@/components/AppointmentActions";
-import React from "react";
 
 export default function EnhancedAppointmentsList({ initialAppointments }: { initialAppointments: any[] }) {
   const router = useRouter();

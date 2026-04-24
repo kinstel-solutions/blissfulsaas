@@ -13,15 +13,17 @@ async function bootstrap() {
   }));
 
   // Enable CORS for frontend portals
+  const corsOrigins = process.env.CORS_ORIGINS?.split(',') || [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://192.168.1.34:3000',
+    'http://192.168.1.34:3001',
+    'http://192.168.1.34:3002',
+  ];
+
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://192.168.1.34:3000',
-      'http://192.168.1.34:3001',
-      'http://192.168.1.34:3002',
-    ],
+    origin: corsOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

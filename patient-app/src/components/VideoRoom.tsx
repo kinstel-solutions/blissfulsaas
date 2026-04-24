@@ -16,9 +16,10 @@ import { useRouter } from "next/navigation";
 import ChatSidebar from "./ChatSidebar";
 import { uuidToUid } from "@/lib/utils";
 
-const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-
 export default function VideoRoom({ appId, channel, token, appointmentId, currentUserId }: any) {
+  // Initialize the Agora client inside the component to avoid module scope issues in Next.js
+  const [client] = useState(() => AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }));
+
   // Use a fixed UID derived from the user's ID to prevent "ghost user" sync issues
   const numericUid = uuidToUid(currentUserId);
 

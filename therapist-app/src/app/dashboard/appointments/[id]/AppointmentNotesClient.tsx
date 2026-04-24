@@ -70,6 +70,7 @@ export default function AppointmentNotesClient({ appointmentId, initialNotes }: 
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Begin documenting..."
+          maxLength={5000}
           className="w-full h-full bg-slate-50/30 border-none p-0 text-base lg:text-lg text-slate-700 placeholder:text-slate-300 outline-none resize-none leading-relaxed font-normal min-h-[300px]"
         />
         

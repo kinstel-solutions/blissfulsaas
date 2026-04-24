@@ -4,7 +4,6 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:500
 
 export async function fetchWithAuth(path: string, options: RequestInit = {}) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
   const { data: { session } } = await supabase.auth.getSession();
 
   const headers: Record<string, string> = {
@@ -31,7 +30,8 @@ export async function fetchWithAuth(path: string, options: RequestInit = {}) {
 
 export const api = {
   therapists: {
-    getVerified: () => fetchWithAuth("/therapists/verified"),
+    getVerified: (page: number = 1, limit: number = 12) => 
+      fetchWithAuth(`/therapists/verified?page=${page}&limit=${limit}`),
   },
   availability: {
     forTherapist: (therapistId: string) =>

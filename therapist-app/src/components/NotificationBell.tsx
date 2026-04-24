@@ -56,10 +56,8 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
   const panelRef = useRef<HTMLDivElement>(null);
 
   const fetchNotifications = useCallback(async () => {
-    console.log("[NotificationBell] Fetching notifications...");
     try {
       const data = await api.notifications.getAll();
-      console.log("[NotificationBell] Received notifications:", data);
       setNotifications(data);
       setUnread(data.filter((n: Notification) => !n.isRead).length);
     } catch (e) {

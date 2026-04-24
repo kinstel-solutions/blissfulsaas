@@ -11,30 +11,19 @@ export class AvailabilityController {
   @Post()
   @Roles('THERAPIST')
   async create(@Request() req: any, @Body() data: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }) {
-    // Current user is a therapist, find their therapist profile ID if needed
-    // In this schema, User.id == Therapist.userId
-    // We need to fetch the Therapist profile ID from the User ID
-    const therapist = await (this.availabilityService as any).prisma.therapist.findUnique({
-      where: { userId: req.user.userId }
-    });
+    const therapist = await this.availabilityService.getTherapistByUserId(req.user.userId);
     return this.availabilityService.createSlot(therapist.id, data);
   }
-
   @Get()
   @Roles('THERAPIST')
   async getMySlots(@Request() req: any) {
-    const therapist = await (this.availabilityService as any).prisma.therapist.findUnique({
-      where: { userId: req.user.userId }
-    });
+    const therapist = await this.availabilityService.getTherapistByUserId(req.user.userId);
     return this.availabilityService.getMySlots(therapist.id);
   }
-
   @Delete(':id')
   @Roles('THERAPIST')
   async remove(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
-    const therapist = await (this.availabilityService as any).prisma.therapist.findUnique({
-      where: { userId: req.user.userId }
-    });
+    const therapist = await this.availabilityService.getTherapistByUserId(req.user.userId);
     return this.availabilityService.deactivateSlot(therapist.id, id);
   }
 

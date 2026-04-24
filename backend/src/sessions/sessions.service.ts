@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AppointmentStatus, NotificationType, ConsultationMode, PaymentStatus } from '@prisma/client';
 import { RtcTokenBuilder, RtcRole } from 'agora-token';
@@ -6,6 +6,8 @@ import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class SessionsService {
+  private readonly logger = new Logger(SessionsService.name);
+
   constructor(
     private prisma: PrismaService,
     private notifications: NotificationsService,
@@ -75,7 +77,7 @@ export class SessionsService {
           title: 'Appointment Booked ✓',
           body: `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} is confirmed for ${dateStr} at ${timeStr}${locationNote}.`,
           metadata: { appointmentId: appointment.id, therapistName, scheduledAt: data.date, mode },
-        }).catch(console.error);
+        }).catch(err => this.logger.error(err));
 
         // Therapist: new appointment
         if (slot.therapist.userId) {
@@ -85,7 +87,7 @@ export class SessionsService {
             title: 'New Appointment Request',
             body: `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr}.`,
             metadata: { appointmentId: appointment.id, scheduledAt: data.date, mode },
-          }).catch(console.error);
+          }).catch(err => this.logger.error(err));
         }
       });
 
@@ -213,56 +215,49 @@ export class SessionsService {
   }
 
   async getAdminStats() {
-    const appointments = await this.prisma.appointment.findMany({
-      include: {
-        therapist: {
-          include: {
-            user: { select: { email: true } },
-          },
-        },
-      },
+    const [
+      totalSessions,
+      completedSessions,
+      cancelledSessions,
+      revenueData,
+      therapistAggregates,
+      therapists
+    ] = await Promise.all([
+      this.prisma.appointment.count(),
+      this.prisma.appointment.count({ where: { status: AppointmentStatus.COMPLETED } }),
+      this.prisma.appointment.count({ where: { status: AppointmentStatus.CANCELLED } }),
+      this.prisma.appointment.aggregate({
+        _sum: { amountPaid: true },
+        where: { paymentStatus: PaymentStatus.PAID }
+      }),
+      this.prisma.appointment.groupBy({
+        by: ['therapistId'],
+        _count: { _all: true },
+        _sum: { amountPaid: true },
+      }),
+      this.prisma.therapist.findMany({
+        include: { user: { select: { email: true } } }
+      })
+    ]);
+
+    const therapistStats = therapists.map(t => {
+      const stats = therapistAggregates.find(a => a.therapistId === t.id);
+      return {
+        therapistId: t.id,
+        therapistName: `Dr. ${t.firstName || ''} ${t.lastName || ''}`.trim(),
+        email: t.user?.email || '',
+        totalConsultations: stats?._count?._all || 0,
+        revenue: stats?._sum?.amountPaid || 0,
+        specialities: t.specialities || [],
+        qualifications: t.qualifications || '',
+        yearsOfExperience: t.yearsOfExperience || 0,
+        profileImageUrl: t.profileImageUrl || null,
+      };
     });
 
-    const totalSessions = appointments.length;
-    const completedSessions = appointments.filter(a => a.status === AppointmentStatus.COMPLETED).length;
-    const cancelledSessions = appointments.filter(a => a.status === AppointmentStatus.CANCELLED).length;
-    
-    // Calculate total revenue (Gross revenue from paid sessions)
-    const paidAppointments = appointments.filter(a => a.paymentStatus === PaymentStatus.PAID && a.amountPaid);
-    const totalRevenue = paidAppointments.reduce((sum, a) => sum + (a.amountPaid || 0), 0);
-
+    const totalRevenue = revenueData._sum.amountPaid || 0;
     const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
     const cancellationRate = totalSessions > 0 ? (cancelledSessions / totalSessions) * 100 : 0;
-
-    // Revenue per therapist
-    const therapistStatsMap = new Map();
-
-    for (const appt of appointments) {
-      if (!appt.therapist) continue;
-      
-      const tId = appt.therapist.id;
-      if (!therapistStatsMap.has(tId)) {
-        therapistStatsMap.set(tId, {
-          therapistId: tId,
-          therapistName: `Dr. ${appt.therapist.firstName || ''} ${appt.therapist.lastName || ''}`.trim(),
-          email: appt.therapist.user?.email || '',
-          totalConsultations: 0,
-          revenue: 0,
-          specialities: appt.therapist.specialities || [],
-          qualifications: appt.therapist.qualifications || '',
-          yearsOfExperience: appt.therapist.yearsOfExperience || 0,
-          profileImageUrl: appt.therapist.profileImageUrl || null,
-        });
-      }
-
-      const stats = therapistStatsMap.get(tId);
-      stats.totalConsultations += 1;
-      if (appt.paymentStatus === PaymentStatus.PAID && appt.amountPaid) {
-        stats.revenue += appt.amountPaid;
-      }
-    }
-
-    const therapistStats = Array.from(therapistStatsMap.values());
 
     return {
       totalSessions,
@@ -307,7 +302,7 @@ export class SessionsService {
           title: 'Appointment Cancelled',
           body: `A patient has cancelled their session scheduled for ${dateStr}.`,
           metadata: { appointmentId },
-        }).catch(console.error);
+        }).catch(err => this.logger.error(err));
       } else {
         // Therapist cancelled → notify patient
         this.notifications.create({
@@ -316,7 +311,7 @@ export class SessionsService {
           title: 'Appointment Cancelled',
           body: `Your session with ${therapistName} on ${dateStr} has been cancelled.`,
           metadata: { appointmentId, therapistName },
-        }).catch(console.error);
+        }).catch(err => this.logger.error(err));
       }
     });
 
@@ -350,7 +345,7 @@ export class SessionsService {
         title: 'Session Completed',
         body: `Your session with ${therapistName} has been marked as complete. We hope it went well!`,
         metadata: { appointmentId, therapistName },
-      }).catch(console.error);
+      }).catch(err => this.logger.error(err));
 
       // Prompt patient to leave a review
       this.notifications.create({
@@ -359,7 +354,7 @@ export class SessionsService {
         title: 'How was your session?',
         body: `Please take a moment to rate your experience with ${therapistName}.`,
         metadata: { appointmentId, therapistName },
-      }).catch(console.error);
+      }).catch(err => this.logger.error(err));
     });
 
     return updated;

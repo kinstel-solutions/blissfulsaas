@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaymentStatus, AppointmentStatus, NotificationType } from '@prisma/client';
 import * as crypto from 'crypto';
@@ -6,6 +6,8 @@ import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class PaymentsService {
+  private readonly logger = new Logger(PaymentsService.name);
+
   constructor(
     private prisma: PrismaService,
     private notifications: NotificationsService,
@@ -139,12 +141,15 @@ export class PaymentsService {
       if (expectedSignature !== data.razorpay_signature) {
         throw new BadRequestException('Payment signature verification failed');
       }
-    } else {
-      // ── Mock: accept any payment ID — just log it ──────────────
-      console.log(
-        `[MOCK PAYMENT] Auto-verifying payment: order=${data.razorpay_order_id} payment=${data.razorpay_payment_id}`,
-      );
     }
+
+    // 0. Idempotency guard: Check if this payment ID has already been used for a booking
+    // This prevents double-booking if the client retries or refreshes during verification
+    const existingPayment = await this.prisma.appointment.findFirst({
+      where: { paymentId: data.razorpay_payment_id },
+      include: { therapist: { include: { user: true } }, slot: true },
+    });
+    if (existingPayment) return existingPayment;
 
     // ── Book the appointment atomically ──────────────────────────
     return this.prisma.$transaction(async (tx) => {
@@ -201,7 +206,7 @@ export class PaymentsService {
           title: 'Payment Successful 💳',
           body: `Payment of ₹${amountPaid.toLocaleString('en-IN')} confirmed. Your session with ${therapistName} on ${dateStr} at ${timeStr} is booked.`,
           metadata: { appointmentId: appointment.id, amount: amountPaid, therapistName, scheduledAt: data.date },
-        }).catch(console.error);
+        }).catch(err => this.logger.error(err));
 
         // Therapist: new booking
         if (appointment.therapist.userId) {
@@ -211,7 +216,7 @@ export class PaymentsService {
             title: 'New Appointment Booked',
             body: `A patient has booked a paid session with you on ${dateStr} at ${timeStr}.`,
             metadata: { appointmentId: appointment.id, scheduledAt: data.date },
-          }).catch(console.error);
+          }).catch(err => this.logger.error(err));
         }
       });
 
