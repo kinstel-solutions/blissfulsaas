@@ -18,7 +18,7 @@ const supabaseClient = createClient();
 
 const NAV_ITEMS = [
   { label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Practice Registry", icon: Users, href: "/dashboard/patients" },
+  { label: "My Patients", icon: Users, href: "/dashboard/patients" },
   { label: "Appointments", icon: Calendar, href: "/dashboard/appointments" },
   { label: "Clinical Messages", icon: MessageSquare, href: "/dashboard/messages" },
   { label: "Availability", icon: Clock, href: "/dashboard/availability" },
@@ -75,7 +75,7 @@ export default function DashboardSidebar({
 
   return (
     <div className="px-6 py-5 md:py-10 flex flex-col flex-1 gap-2">
-      <p className="px-4 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-3">Confidential Practice Registry</p>
+      <p className="px-4 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 mb-3">Confidential Patient Records</p>
       {NAV_ITEMS.map((item) => {
         const isActive = pathname === item.href;
         const isMessages = item.href === "/dashboard/messages";

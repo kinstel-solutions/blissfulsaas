@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType } from '@prisma/client';
+import { NotificationType, Prisma } from '@prisma/client';
 
 @Injectable()
 export class TherapistsService {
@@ -12,7 +12,12 @@ export class TherapistsService {
 
   async getPending() {
     return this.prisma.therapist.findMany({
-      where: { isVerified: false },
+      where: {
+        OR: [
+          { isVerified: false },
+          { pendingFields: { not: Prisma.DbNull } }
+        ]
+      },
       include: {
         user: {
           select: {
@@ -68,6 +73,19 @@ export class TherapistsService {
   async updateProfile(userId: string, data: any) {
     const profile = await this.getProfile(userId);
     
+    if (profile.isVerified) {
+      const existingPending = (profile.pendingFields as object) || {};
+      return this.prisma.therapist.update({
+        where: { id: profile.id },
+        data: {
+          pendingFields: {
+            ...existingPending,
+            ...data,
+          },
+        },
+      });
+    }
+
     return this.prisma.therapist.update({
       where: { id: profile.id },
       data: {
@@ -113,9 +131,20 @@ export class TherapistsService {
       throw new NotFoundException('Therapist not found');
     }
 
+    let updatedData: any = { isVerified: true };
+    const hasPendingEdits = !!therapist.pendingFields;
+
+    if (hasPendingEdits) {
+      updatedData = {
+        ...updatedData,
+        ...(therapist.pendingFields as object),
+        pendingFields: Prisma.DbNull, // clear it out
+      };
+    }
+
     const updated = await this.prisma.therapist.update({
       where: { id },
-      data: { isVerified: true },
+      data: updatedData,
     });
 
     // Notify the therapist of their approval
@@ -123,8 +152,10 @@ export class TherapistsService {
       this.notifications.create({
         userId: therapist.userId,
         type: NotificationType.THERAPIST_APPROVED,
-        title: 'Application Approved 🎉',
-        body: 'Congratulations! Your therapist application has been reviewed and approved. You can now start accepting patients.',
+        title: hasPendingEdits ? 'Profile Updates Approved 🎉' : 'Application Approved 🎉',
+        body: hasPendingEdits 
+          ? 'Your recent profile updates have been reviewed and approved.' 
+          : 'Congratulations! Your therapist application has been reviewed and approved. You can now start accepting patients.',
         metadata: { therapistId: id },
       }).catch(console.error);
     });
@@ -139,6 +170,24 @@ export class TherapistsService {
 
     if (!therapist) {
       throw new NotFoundException('Therapist not found');
+    }
+
+    if (therapist.isVerified && therapist.pendingFields) {
+      const updated = await this.prisma.therapist.update({
+        where: { id },
+        data: { pendingFields: Prisma.DbNull },
+      });
+
+      setImmediate(() => {
+        this.notifications.create({
+          userId: therapist.userId,
+          type: NotificationType.GENERAL,
+          title: 'Profile Updates Rejected',
+          body: 'Your recent profile updates were not approved. Please contact support for more details.',
+        }).catch(console.error);
+      });
+
+      return updated;
     }
 
     return this.prisma.therapist.delete({

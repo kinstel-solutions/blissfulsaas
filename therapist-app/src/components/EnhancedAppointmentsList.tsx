@@ -11,19 +11,10 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AppointmentActions from "@/components/AppointmentActions";
-import PatientDetailPanel from "./PatientDetailPanel";
 import React from "react";
 
 export default function EnhancedAppointmentsList({ initialAppointments }: { initialAppointments: any[] }) {
   const router = useRouter();
-  const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-
-  const openPatientPanel = (e: React.MouseEvent, patient: any) => {
-    e.stopPropagation();
-    setSelectedPatient(patient);
-    setIsPanelOpen(true);
-  };
 
   const navigateToDetail = (id: string) => {
     router.push(`/dashboard/appointments/${id}`);
@@ -60,10 +51,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     className={`group transition-all cursor-pointer hover:bg-slate-50/50 ${['CANCELLED', 'COMPLETED'].includes(appt.status) ? 'opacity-70 grayscale-[0.2]' : ''}`}
                   >
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50">
-                      <div 
-                        className="flex items-center gap-4 group/patient"
-                        onClick={(e) => openPatientPanel(e, appt.patient)}
-                      >
+                      <div className="flex items-center gap-4 group/patient">
                         <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg transition-all shadow-sm border bg-white text-primary border-slate-100 group-hover/patient:bg-primary group-hover/patient:text-white group-hover/patient:border-primary">
                           {appt.patient?.firstName?.[0]}
                         </div>
@@ -212,12 +200,6 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
           })
         )}
       </div>
-
-      <PatientDetailPanel 
-        patient={selectedPatient} 
-        isOpen={isPanelOpen} 
-        onClose={() => setIsPanelOpen(false)} 
-      />
     </div>
   );
 }

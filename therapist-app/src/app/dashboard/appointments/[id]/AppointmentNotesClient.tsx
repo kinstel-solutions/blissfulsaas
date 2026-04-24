@@ -28,7 +28,7 @@ export default function AppointmentNotesClient({ appointmentId, initialNotes }: 
   };
 
   return (
-    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm h-full flex flex-col overflow-hidden min-h-[500px] lg:min-h-[600px]">
+    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm h-full flex flex-col overflow-hidden min-h-[400px] lg:min-h-[500px]">
       <div className="p-5 lg:p-8 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">

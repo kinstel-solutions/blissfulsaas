@@ -7,7 +7,8 @@ import {
   Activity,
   ClipboardList,
   ChevronLeft,
-  MessageSquare
+  MessageSquare,
+  Phone
 } from "lucide-react";
 import Link from "next/link";
 import AppointmentActions from "@/components/AppointmentActions";
@@ -86,78 +87,76 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Left Column: Session Info & Intake */}
-        <div className="lg:col-span-1 space-y-6 lg:space-y-8">
-          {/* Quick Stats */}
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-             <div className="p-5 lg:p-6 bg-slate-50/50 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                   <Activity className="w-4 h-4 text-primary" />
-                   <h2 className="text-[10px] lg:text-xs font-bold text-slate-900 uppercase tracking-widest">Session Summary</h2>
-                </div>
-             </div>
-             <div className="p-5 lg:p-6 space-y-5 lg:space-y-6">
-                <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-6">
-                  <div className="flex items-start gap-3 lg:gap-4">
-                    <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                        <CalendarIcon className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                        <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date</p>
-                        <p className="text-xs lg:text-sm font-semibold text-slate-900 mt-0.5 truncate">{scheduledAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-3 lg:gap-4">
-                    <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                        <Clock className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                        <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Time</p>
-                        <p className="text-xs lg:text-sm font-semibold text-slate-900 mt-0.5 truncate">{timeStr}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-50">
-                  {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
-                    appointment.mode === 'IN_CLINIC' ? (
-                      <div className="w-full py-3.5 lg:py-4 bg-emerald-50 text-emerald-700 rounded-2xl text-[10px] lg:text-xs font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em] flex items-center justify-center gap-2 border border-emerald-200 shadow-sm shadow-emerald-100/50">
-                        🏥 In-Clinic Visit
-                      </div>
-                    ) : (
-                      <Link href={`/dashboard/sessions/${appointment.id}/call`} className="block">
-                        <button className="w-full py-3.5 lg:py-4 bg-slate-900 text-white rounded-2xl text-[10px] lg:text-xs font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em] hover:bg-primary transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-200">
-                          <Video className="w-4 h-4" />
-                          Join Call
-                        </button>
-                      </Link>
-                    )
-                  )}
-                  <div className="mt-3 text-center">
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Duration: {appointment.duration} Min</p>
-                  </div>
-                </div>
-             </div>
+      {/* Session Metadata Bar */}
+      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-2 lg:p-3 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4 lg:gap-8 px-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <CalendarIcon className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Date</p>
+              <p className="text-[11px] font-semibold text-slate-900">{scheduledAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Time</p>
+              <p className="text-[11px] font-semibold text-slate-900">{timeStr}</p>
+            </div>
           </div>
 
-          {/* Intake Information */}
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-violet-100/50 flex items-center justify-center shrink-0">
+              <Activity className="w-4 h-4 text-violet-600" />
+            </div>
+            <div>
+              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Duration</p>
+              <p className="text-[11px] font-semibold text-slate-900">{appointment.duration} Min</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 pr-2">
+           {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
+             appointment.mode === 'IN_CLINIC' ? (
+               <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 border border-emerald-100">
+                 🏥 In-Clinic
+               </div>
+             ) : (
+               <Link href={`/dashboard/sessions/${appointment.id}/call`}>
+                 <button className="px-5 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-primary transition-all flex items-center gap-2">
+                   <Video className="w-3.5 h-3.5" />
+                   Join Call
+                 </button>
+               </Link>
+             )
+           )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        {/* Left Column: Patient Intake */}
+        <div className="lg:col-span-5">
+          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden h-full">
              <div className="p-5 lg:p-6 bg-slate-50/50 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                    <ClipboardList className="w-4 h-4 text-violet-600" />
-                   <h2 className="text-[10px] lg:text-xs font-bold text-slate-900 uppercase tracking-widest">Patient Intake</h2>
+                   <h2 className="text-[10px] lg:text-xs font-bold text-slate-900 uppercase tracking-widest">Clinical Intake</h2>
                 </div>
              </div>
-             <div className="p-5 lg:p-6">
+             <div className="p-5 lg:p-8">
                 {!appointment.patient?.intakeCompleted ? (
-                   <div className="flex flex-col items-center justify-center text-center py-6 lg:py-10 opacity-30">
-                      <ClipboardList className="w-10 h-10 lg:w-12 lg:h-12 mb-3 lg:mb-4 text-slate-300" />
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No Intake Form</p>
+                   <div className="flex flex-col items-center justify-center text-center py-10 lg:py-20 opacity-30">
+                      <ClipboardList className="w-10 h-10 lg:w-12 lg:h-12 mb-4 text-slate-300" />
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No Intake Data Available</p>
                    </div>
                 ) : (
-                   <div className="space-y-5 lg:space-y-6">
+                   <div className="space-y-6 lg:space-y-8">
                       {appointment.patient?.primaryConcerns?.length > 0 && (
                          <div>
                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Primary Concerns</p>
@@ -173,7 +172,36 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                          <div>
                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Reason for Seeking</p>
                             <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed italic truncate lg:whitespace-normal">"{appointment.patient.reasonForSeeking}"</p>
+                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed italic">"{appointment.patient.reasonForSeeking}"</p>
+                            </div>
+                         </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-4">
+                         {appointment.patient?.previousTherapy !== null && (
+                            <div className="col-span-1">
+                               <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Previous Therapy</p>
+                               <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${appointment.patient.previousTherapy ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
+                                  {appointment.patient.previousTherapy ? 'Yes' : 'No'}
+                               </span>
+                            </div>
+                         )}
+
+                         {appointment.patient?.currentMedications && (
+                            <div className="col-span-1">
+                               <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Medications</p>
+                               <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-100 text-[10px] font-bold uppercase tracking-wider inline-block">
+                                  {appointment.patient.currentMedications}
+                               </div>
+                            </div>
+                         )}
+                      </div>
+
+                      {appointment.patient?.mentalHealthHistory && (
+                         <div>
+                            <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical History</p>
+                            <div className="p-3 lg:p-4 bg-amber-50/30 rounded-2xl border border-amber-100/50">
+                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.mentalHealthHistory}</p>
                             </div>
                          </div>
                       )}
@@ -186,6 +214,21 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                             </div>
                          </div>
                       )}
+
+                      {(appointment.patient?.emergencyContactName || appointment.patient?.emergencyContactPhone) && (
+                         <div className="pt-6 border-t border-slate-100">
+                            <p className="text-[9px] lg:text-[10px] font-bold text-red-400 uppercase tracking-widest mb-3">Emergency Contact</p>
+                            <div className="flex items-center justify-between p-3 lg:p-4 bg-red-50/30 rounded-2xl border border-red-100/50">
+                               <div>
+                                  <p className="text-xs font-bold text-slate-900">{appointment.patient.emergencyContactName || 'Not Provided'}</p>
+                                  <p className="text-[10px] text-slate-500 font-medium">{appointment.patient.emergencyContactPhone || 'No Phone'}</p>
+                               </div>
+                               <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                  <Phone className="w-3.5 h-3.5 text-red-600" />
+                               </div>
+                            </div>
+                         </div>
+                      )}
                    </div>
                 )}
              </div>
@@ -193,7 +236,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
         </div>
 
         {/* Right Column: Clinical Workstation / Notes */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-7 h-full">
            <AppointmentNotesClient 
              appointmentId={appointment.id} 
              initialNotes={appointment.therapistNotes || ""} 

@@ -5,17 +5,23 @@ import { useRouter } from "next/navigation";
 import { ShieldX, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
 
-export default function RejectButton({ id }: { id: string }) {
+export default function RejectButton({ id, isUpdate }: { id: string, isUpdate?: boolean }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleReject = async () => {
-    if (!confirm("Are you sure you want to REJECT and PERMANENTLY DELETE this practitioner application? This action cannot be reversed.")) return;
+    const msg = isUpdate
+      ? "Are you sure you want to REJECT these profile updates? The practitioner's active profile will remain unchanged."
+      : "Are you sure you want to REJECT and PERMANENTLY DELETE this practitioner application? This action cannot be reversed.";
+
+    if (!confirm(msg)) return;
     
     setLoading(true);
     try {
       await api.therapists.reject(id);
-      router.push("/dashboard/therapists");
+      if (!isUpdate) {
+        router.push("/dashboard/therapists");
+      }
       router.refresh();
     } catch (err: any) {
       console.error(err);
@@ -35,7 +41,7 @@ export default function RejectButton({ id }: { id: string }) {
         <Loader2 className="w-4 h-4 animate-spin" />
       ) : (
         <>
-          <ShieldX className="w-4 h-4" /> Eject from Registry
+          <ShieldX className="w-4 h-4" /> {isUpdate ? "Reject Edits" : "Eject from Registry"}
         </>
       )}
     </button>

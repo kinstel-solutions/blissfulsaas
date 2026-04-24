@@ -14,6 +14,21 @@ export default async function DashboardPage() {
   const upcomingSessions = await fetchWithAuthContent("/sessions/upcoming");
   const nextSession = Array.isArray(upcomingSessions) && upcomingSessions.length > 0 ? upcomingSessions[0] : null;
 
+  // Fetch all sessions for filtering and insights
+  const allSessions = await fetchWithAuthContent("/sessions/all");
+  const pendingSessions = Array.isArray(allSessions) 
+    ? allSessions.filter((s: any) => s.status === 'PENDING') 
+    : [];
+
+  // Calculate insights
+  const completedSessionsCount = Array.isArray(allSessions) 
+    ? allSessions.filter((s: any) => s.status === 'COMPLETED').length 
+    : 0;
+    
+  const uniquePatientsCount = Array.isArray(allSessions)
+    ? new Set(allSessions.map((s: any) => s.patientId)).size
+    : 0;
+
   // Fetch therapist profile to get their ID for rating stats
   const profile = await fetchWithAuthContent("/therapists/profile");
   const ratingStats = profile?.id
@@ -55,15 +70,28 @@ export default async function DashboardPage() {
       {/* Welcome Banner */}
       <div className="relative group bg-primary border border-primary/20 p-4 md:p-8 md:p-12 rounded-[2rem] shadow-2xl shadow-primary/20 overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary-container/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000" />
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-10">
+        <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+          {/* Profile Image */}
+          <div className="shrink-0">
+             <div className="w-32 h-32 md:w-40 md:h-40 rounded-[3rem] border-4 border-white/10 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500 bg-white/5 p-1">
+                <Image 
+                  src={profile?.profileImageUrl || `https://ui-avatars.com/api/?name=${firstName}&background=EAF4F3&color=214D3E&size=400`}
+                  alt="Therapist Profile"
+                  width={160}
+                  height={160}
+                  className="w-full h-full object-cover rounded-[2.5rem]"
+                />
+             </div>
+          </div>
+
           <div className="max-w-xl text-center md:text-left">
              <h1 className="text-3xl md:text-[2.75rem] font-heading font-medium text-primary-foreground mb-4 md:mb-6 leading-tight" suppressHydrationWarning>
                {greeting}, {firstName}
              </h1>
              <p className="text-primary-foreground/70 text-base md:text-lg leading-relaxed mb-6 md:mb-8">
-               Your private practice is flourishing. You have <span className="text-primary-foreground font-bold">{upcomingSessions?.length || 0} session(s)</span> scheduled for today.
+               You have <span className="text-primary-foreground font-bold">{upcomingSessions?.length || 0} session(s)</span> scheduled for today.
              </p>
-             <div className="mb-6 md:mb-8 flex justify-center md:justify-start">
+             <div className="mb-0 flex justify-center md:justify-start">
                <div className={`px-4 py-2 rounded-xl border text-white/90 text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${profile?.isVerified ? 'bg-white/10 border-white/20' : 'bg-amber-500/20 border-amber-500/30'}`}>
                  <Shield className={`w-4 h-4 ${profile?.isVerified ? 'text-green-300' : 'text-amber-300 animate-pulse'}`} />
                   Clinic Status: <span>
@@ -71,108 +99,102 @@ export default async function DashboardPage() {
                   </span>
                </div>
              </div>
-             <div className="flex flex-col sm:flex-row gap-4 w-full">
-                {nextSession && (
-                  <Link href={`/dashboard/sessions/${nextSession.id}/call`} className="w-full sm:w-auto">
-                    <button className="w-full bg-primary-container text-primary-foreground px-4 md:px-8 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all">
-                      Launch Virtual Room
-                    </button>
-                  </Link>
-                )}
-             </div>
-          </div>
-          <div className="hidden lg:flex flex-col items-end gap-2 text-right">
-             <div className="bg-white/5 px-6 py-4 rounded-2xl border border-white/10">
-               <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1">Clinic Status</p>
-                <p className="text-white font-bold flex items-center gap-2 text-sm">
-                  <Shield className={`w-4 h-4 ${profile?.isVerified ? 'text-primary-container' : 'text-amber-300'}`} /> 
-                  {profile?.isVerified ? 'Public & Encrypted' : 'Private & Encrypted'}
-                </p>
-             </div>
           </div>
         </div>
       </div>
 
-      {/* Roster & Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-        
-        {/* Next Session Spotlight */}
-        <div className="col-span-1 md:col-span-2 space-y-6">
-          <div className="flex items-center justify-between px-2">
-            <h3 className="text-xl md:text-2xl font-heading font-normal text-foreground">Next Session</h3>
-            <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-all flex items-center group">
-              Full Schedule <ArrowRight className="w-3 h-3 ml-1.5 md:ml-2 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-          
-          {nextSession ? (
-            <div className="bg-surface p-6 md:p-10 rounded-[2rem] md:rounded-xl border border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 hover:shadow-xl hover:border-primary/20 transition-all duration-500 relative group">
-              <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 text-center sm:text-left w-full sm:w-auto">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-[2rem] bg-surface-container-low border border-outline-variant/50 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5 shadow-inner group-hover:scale-105 transition-transform shrink-0">
-                  <Image 
-                    src={`https://ui-avatars.com/api/?name=${nextSession.patient?.firstName}+${nextSession.patient?.lastName}&background=f8f9fa&color=5f43b2&size=200`}
-                    alt="Patient"
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover rounded-[1.4rem] md:rounded-[1.8rem]"
-                  />
-                </div>
-                <div className="text-left w-full sm:w-auto">
-                  <h4 className="text-foreground font-heading font-medium text-lg md:text-xl mb-1">{nextSession.patient?.firstName} {nextSession.patient?.lastName}</h4>
-                  <div className="flex flex-wrap items-center gap-2 md:gap-3">
-                    <span className="px-2 py-0.5 rounded-full bg-primary/5 text-primary text-[10px] font-bold uppercase">Booking Active</span>
-                    <span className="text-[10px] font-medium text-muted-foreground">• Video Session</span>
-                  </div>
-                </div>
-              </div>
-              <div className="text-center md:text-right">
-                <p className="text-foreground font-bold text-base md:text-lg mb-0.5 md:mb-1" suppressHydrationWarning>
-                  {new Date(nextSession.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                </p>
-                <div className="flex items-center justify-center md:justify-end gap-2 text-muted-foreground/60">
-                   <Clock className="w-3.5 h-3.5" />
-                   <span className="text-[10px] font-bold uppercase tracking-widest">{nextSession.duration} Min Session</span>
-                </div>
-              </div>
-              <Link href={`/dashboard/appointments/${nextSession.id}`} className="w-full md:w-auto">
-                <button className="w-full md:w-auto px-4 md:px-8 py-3 md:py-3.5 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-xl md:rounded-2xl transition-all duration-300">
-                  Prepare Notes
-                </button>
-              </Link>
-            </div>
-          ) : (
-            <div className="bg-surface p-4 md:p-10 rounded-[2rem] md:rounded-xl border border-outline-variant/30 text-center py-16 md:py-20">
-              <Calendar className="w-10 h-10 md:w-12 md:h-12 text-primary/20 mx-auto mb-4" />
-              <p className="text-sm md:text-base text-muted-foreground">No sessions scheduled for today.</p>
-              <Link href="/dashboard/availability" className="text-primary font-bold text-[10px] md:text-xs uppercase tracking-widest mt-4 inline-block hover:underline">
-                Update your availability
-              </Link>
-            </div>
-          )}
+      {/* Appointments Section */}
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-2">
+          <h3 className="text-xl md:text-2xl font-heading font-normal text-foreground flex flex-wrap items-center gap-3">
+            {pendingSessions.length > 0 ? "Pending Sessions" : "Appointments"}
+            {pendingSessions.length > 0 && (
+              <span className="bg-amber-500/10 text-amber-600 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-500/20 uppercase tracking-wider whitespace-nowrap">
+                {pendingSessions.length} Action Required
+              </span>
+            )}
+          </h3>
+          <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-all flex items-center group whitespace-nowrap">
+            Full Schedule <ArrowRight className="w-3 h-3 ml-1.5 md:ml-2 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
-        {/* Rating & Reviews Widget */}
-        <div className="space-y-6">
-           <div className="hidden md:block px-2 h-8" />
-           <div className="bg-surface-container-low rounded-[2rem] md:rounded-xl p-4 md:p-8 border border-outline-variant/20 flex flex-col justify-between shadow-sm relative overflow-hidden group min-h-[300px] h-full">
-            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-yellow-400/5 rounded-full blur-3xl -z-0 pointer-events-none group-hover:scale-125 transition-transform duration-700" />
-            <div className="flex items-center justify-between z-10">
-               <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60">Patient Reviews</p>
-               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-            </div>
-            <div className="flex-1 flex flex-col items-center justify-center py-6 z-10">
+        {pendingSessions.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {pendingSessions.map((session: any) => (
+              <div key={session.id} className="bg-white p-5 rounded-3xl border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-500/5 transition-all group relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-full blur-xl -translate-y-1/2 translate-x-1/2" />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5">
+                    <Image 
+                      src={`https://ui-avatars.com/api/?name=${session.patient?.firstName}+${session.patient?.lastName}&background=EAF4F3&color=214D3E&size=100`}
+                      alt="Patient"
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <h4 className="text-slate-900 font-bold text-sm">{session.patient?.firstName} {session.patient?.lastName}</h4>
+                    <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-2">
+                      {new Date(session.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      <span className={`px-1.5 py-0.5 rounded-full text-[7px] border font-bold uppercase tracking-wider ${
+                        session.mode === 'IN_CLINIC' 
+                          ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                          : 'bg-blue-50 text-blue-600 border-blue-100'
+                      }`}>
+                        {session.mode === 'IN_CLINIC' ? 'In-Clinic' : 'Online'}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span className="text-[9px] font-bold uppercase tracking-widest">
+                      {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  <Link href={`/dashboard/appointments/${session.id}`}>
+                    <button className="text-[9px] font-bold uppercase tracking-widest text-primary hover:text-primary/70 transition-colors flex items-center gap-1">
+                      Review <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-surface/50 p-12 rounded-[2rem] border border-dashed border-outline-variant/30 text-center">
+            <Calendar className="w-10 h-10 text-primary/20 mx-auto mb-4" />
+            <p className="text-sm text-muted-foreground font-medium">All caught up! No pending sessions at the moment.</p>
+            <Link href="/dashboard/appointments" className="text-primary font-bold text-[10px] uppercase tracking-widest mt-4 inline-block hover:underline">
+              View your schedule
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {/* Metrics Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+        
+        {/* Patient Reviews Widget - Now more prominent */}
+        <div className="col-span-1 md:col-span-2">
+           <div className="bg-surface-container-low rounded-[2rem] p-6 md:p-10 border border-outline-variant/20 flex flex-col md:flex-row items-center gap-8 md:gap-16 shadow-sm relative overflow-hidden group h-full">
+            <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-yellow-400/5 rounded-full blur-3xl -z-0 pointer-events-none group-hover:scale-125 transition-transform duration-700" />
+            
+            <div className="flex flex-col items-center md:items-start text-center md:text-left z-10">
+              <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60 mb-4">Clinical Performance</p>
               {avgRating !== null ? (
                 <>
-                  {/* Big average */}
-                  <div className="text-6xl md:text-7xl font-heading font-normal text-foreground drop-shadow-xl mb-1">
+                  <div className="text-7xl md:text-8xl font-heading font-normal text-foreground drop-shadow-xl mb-2">
                     {avgRating}
                   </div>
-                  {/* Star row */}
-                  <div className="flex items-center gap-1 mb-2">
+                  <div className="flex items-center gap-1 mb-4">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star
                         key={s}
-                        className={`w-5 h-5 ${
+                        className={`w-6 h-6 ${
                           s <= Math.round(avgRating)
                             ? "fill-yellow-400 text-yellow-400"
                             : "text-outline-variant/30"
@@ -180,48 +202,98 @@ export default async function DashboardPage() {
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Based on <span className="font-bold text-foreground">{totalReviews}</span> {totalReviews === 1 ? "review" : "reviews"}
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Based on <span className="font-bold text-foreground">{totalReviews}</span> patient reviews
                   </p>
-                  {/* Distribution bars */}
-                  <div className="w-full space-y-1.5">
-                    {[5, 4, 3, 2, 1].map((star) => {
-                      const count = (distribution as Record<number, number>)[star] ?? 0;
-                      const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
-                      return (
-                        <div key={star} className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-muted-foreground w-3">{star}</span>
-                          <div className="flex-1 h-1.5 bg-surface-container-lowest rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-yellow-400 rounded-full transition-all duration-700"
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
-                          <span className="text-[10px] text-muted-foreground/60 w-5 text-right">{count}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/40 mt-4">
+                    Verified Performance
+                  </p>
                 </>
               ) : (
-                <>
-                  <div className="text-5xl mb-3">⭐</div>
-                  <p className="text-sm font-heading text-foreground/60 text-center">No reviews yet</p>
-                  <p className="text-[10px] text-muted-foreground/50 text-center mt-1">
-                    Complete your first session to start receiving feedback.
+                <div className="py-8">
+                  <div className="text-5xl mb-4">⭐</div>
+                  <h4 className="text-xl font-heading text-foreground/60 mb-2">No reviews yet</h4>
+                  <p className="text-xs text-muted-foreground/60 max-w-xs">
+                    Complete your first session to start receiving feedback from your patients.
                   </p>
-                </>
+                </div>
               )}
             </div>
-            {totalReviews > 0 && (
-              <Link
-                href="/dashboard/profile"
-                className="text-[10px] font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-colors text-center z-10"
-              >
-                View on Profile →
-              </Link>
+
+            {avgRating !== null && (
+              <div className="flex-1 w-full max-w-sm z-10">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-4">Rating Distribution</p>
+                <div className="space-y-3">
+                  {[5, 4, 3, 2, 1].map((star) => {
+                    const count = (distribution as Record<number, number>)[star] ?? 0;
+                    const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+                    return (
+                      <div key={star} className="flex items-center gap-4">
+                        <span className="text-xs font-bold text-muted-foreground w-4">{star}</span>
+                        <div className="flex-1 h-2 bg-surface-container-lowest rounded-full overflow-hidden border border-outline-variant/10">
+                          <div
+                            className="h-full bg-yellow-400 rounded-full transition-all duration-1000"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] font-bold text-muted-foreground/60 w-8 text-right">{pct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             )}
           </div>
+        </div>
+
+        {/* Practice Insights Card */}
+        <div className="col-span-1 space-y-6">
+           <div className="bg-primary/5 rounded-[2rem] p-8 border border-primary/10 h-full flex flex-col justify-between relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+              
+              <div>
+                <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60 mb-8">Practice Insights</p>
+                
+                <div className="space-y-8">
+                  <div className="flex items-center gap-5">
+                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shrink-0">
+                      <Image 
+                        src="https://api.iconify.design/heroicons:users-solid.svg?color=%235f43b2" 
+                        alt="Patients" 
+                        width={24} 
+                        height={24} 
+                      />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-heading font-medium text-foreground">{uniquePatientsCount}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total Patients</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-5">
+                    <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600 shrink-0">
+                      <Image 
+                        src="https://api.iconify.design/heroicons:check-badge-solid.svg?color=%23059669" 
+                        alt="Sessions" 
+                        width={24} 
+                        height={24} 
+                      />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-heading font-medium text-foreground">{completedSessionsCount}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Sessions Completed</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-primary/10">
+                <div className="flex items-center gap-2 text-[10px] font-bold text-primary/40 uppercase tracking-widest">
+                  <Shield className="w-3.5 h-3.5" />
+                  <span>End-to-End Encrypted Data</span>
+                </div>
+              </div>
+           </div>
         </div>
 
       </div>

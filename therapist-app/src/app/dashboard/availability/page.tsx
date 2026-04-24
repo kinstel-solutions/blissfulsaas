@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Clock, Plus, Trash2, Calendar, Save, Monitor, Building2 } from "lucide-react";
+import { Clock, Plus, Trash2, Calendar, Save, Monitor, Building2, ChevronDown } from "lucide-react";
 import { api } from "@/lib/api";
 import { availabilitySchema, type AvailabilityValues } from "@/lib/validations";
 
@@ -16,6 +16,7 @@ export default function AvailabilityPage() {
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dayDropdownOpen, setDayDropdownOpen] = useState(false);
 
   const {
     register,
@@ -107,30 +108,36 @@ export default function AvailabilityPage() {
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
                   Session Type
                 </label>
-                <div className="grid grid-cols-2 gap-2 p-1 bg-surface-container-low/50 rounded-xl border border-outline-variant/20">
+                <div className="grid grid-cols-2 gap-4">
                   <button
                     type="button"
                     onClick={() => setValue("mode", "ONLINE", { shouldValidate: true })}
-                    className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+                    className={`flex flex-col items-center justify-center gap-3 p-6 rounded-[2rem] border-2 transition-all duration-300 relative group ${
                       selectedMode === "ONLINE"
-                        ? "bg-primary text-primary-foreground shadow-lg"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-primary/5 border-primary text-primary shadow-xl shadow-primary/10"
+                        : "bg-white border-slate-100 text-slate-400 hover:border-primary/30 hover:text-primary/60"
                     }`}
                   >
-                    <Monitor className="w-3.5 h-3.5" />
-                    Online
+                    {selectedMode === "ONLINE" && (
+                      <div className="absolute top-3 right-3 w-2 h-2 bg-primary rounded-full" />
+                    )}
+                    <Monitor className={`w-8 h-8 transition-transform group-hover:scale-110 ${selectedMode === "ONLINE" ? "text-primary" : "text-slate-300"}`} />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Online</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setValue("mode", "IN_CLINIC", { shouldValidate: true })}
-                    className={`flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all duration-300 ${
+                    className={`flex flex-col items-center justify-center gap-3 p-6 rounded-[2rem] border-2 transition-all duration-300 relative group ${
                       selectedMode === "IN_CLINIC"
-                        ? "bg-primary text-primary-foreground shadow-lg"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-primary/5 border-primary text-primary shadow-xl shadow-primary/10"
+                        : "bg-white border-slate-100 text-slate-400 hover:border-primary/30 hover:text-primary/60"
                     }`}
                   >
-                    <Building2 className="w-3.5 h-3.5" />
-                    In-Clinic
+                    {selectedMode === "IN_CLINIC" && (
+                      <div className="absolute top-3 right-3 w-2 h-2 bg-primary rounded-full" />
+                    )}
+                    <Building2 className={`w-8 h-8 transition-transform group-hover:scale-110 ${selectedMode === "IN_CLINIC" ? "text-primary" : "text-slate-300"}`} />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">In-Clinic</span>
                   </button>
                 </div>
               </div>
@@ -140,14 +147,46 @@ export default function AvailabilityPage() {
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
                   Day of Week
                 </label>
-                <select
-                  className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 outline-none transition-all"
-                  {...register("dayOfWeek", { valueAsNumber: true })}
-                >
-                  {DAYS.map((day, idx) => (
-                    <option key={day} value={idx}>{day}</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setDayDropdownOpen(!dayDropdownOpen)}
+                    className="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm flex items-center justify-between focus:ring-2 focus:ring-primary/30 outline-none transition-all hover:border-primary/30"
+                  >
+                    <span className="font-medium text-foreground">{DAYS[selectedDay]}</span>
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${dayDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {dayDropdownOpen && (
+                    <>
+                      {/* Backdrop for closing */}
+                      <div 
+                        className="fixed inset-0 z-40" 
+                        onClick={() => setDayDropdownOpen(false)} 
+                      />
+                      <div className="absolute z-50 w-full mt-2 bg-white border border-outline-variant/30 rounded-xl shadow-2xl shadow-primary/10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        {DAYS.map((day, idx) => (
+                          <button
+                            key={day}
+                            type="button"
+                            onClick={() => {
+                              setValue("dayOfWeek", idx, { shouldValidate: true });
+                              setDayDropdownOpen(false);
+                            }}
+                            className={`w-full px-4 py-3 text-left text-sm transition-all flex items-center justify-between group ${
+                              selectedDay === idx 
+                                ? 'bg-primary/5 text-primary font-bold' 
+                                : 'text-slate-600 hover:bg-slate-50'
+                            }`}
+                          >
+                            {day}
+                            {selectedDay === idx && <div className="w-1.5 h-1.5 bg-primary rounded-full" />}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               {/* Time */}

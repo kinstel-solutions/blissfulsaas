@@ -5,12 +5,16 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
 
-export default function ApproveButton({ id }: { id: string }) {
+export default function ApproveButton({ id, isUpdate }: { id: string, isUpdate?: boolean }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleApprove = async () => {
-    if (!confirm("Confirm practioner verification? This will grant them full access to the medical marketplace.")) return;
+    const msg = isUpdate 
+      ? "Confirm approval of these profile updates? They will go live immediately."
+      : "Confirm practioner verification? This will grant them full access to the medical marketplace.";
+      
+    if (!confirm(msg)) return;
     
     setLoading(true);
     try {
@@ -34,7 +38,7 @@ export default function ApproveButton({ id }: { id: string }) {
         <Loader2 className="w-4 h-4 animate-spin" />
       ) : (
         <>
-          <CheckCircle2 className="w-4 h-4" /> Verify Credentials
+          <CheckCircle2 className="w-4 h-4" /> {isUpdate ? "Approve Edits" : "Verify Credentials"}
         </>
       )}
     </button>

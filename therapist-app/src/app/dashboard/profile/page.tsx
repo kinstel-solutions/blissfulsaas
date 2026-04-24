@@ -55,13 +55,16 @@ export default function ProfilePage() {
   const [specialityInput, setSpecialityInput] = useState("");
   const [languageInput, setLanguageInput] = useState("");
   const [isVerified, setIsVerified] = useState(false);
+  const [hasPendingEdits, setHasPendingEdits] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
       try {
         const data = await api.therapists.getProfile();
+        const profileData = { ...data, ...(data.pendingFields || {}) };
+        
         reset({
-          firstName: data.firstName || "",
+          firstName: profileData.firstName || "",
           lastName: data.lastName || "",
           bio: data.bio || "",
           qualifications: data.qualifications || "",
@@ -71,10 +74,11 @@ export default function ProfilePage() {
           languages: data.languages || [],
           videoUrl: data.videoUrl || "",
           clinicAddress: data.clinicAddress || "",
-          profileImageUrl: data.profileImageUrl || "",
-          phone: data.phone || "",
+          profileImageUrl: profileData.profileImageUrl || "",
+          phone: profileData.phone || "",
         });
         setIsVerified(data.isVerified);
+        setHasPendingEdits(!!data.pendingFields);
       } catch (err: any) {
         setError(err.message || "Failed to load profile");
       } finally {
@@ -108,9 +112,10 @@ export default function ProfilePage() {
     try {
       await api.therapists.updateProfile(data);
       setSuccessMessage(isVerified 
-        ? "Profile updated successfully. Changes are now live on the marketplace."
+        ? "Profile updates submitted successfully and are pending review by the admin board."
         : "Profile updated successfully. Changes will be visible once your application is approved."
       );
+      if (isVerified) setHasPendingEdits(true);
     } catch (err: any) {
       setError(err.message || "Failed to save profile");
     } finally {
@@ -165,6 +170,21 @@ export default function ProfilePage() {
                <p className="text-sm font-bold text-amber-900/80">Pending Clinical Verification</p>
                <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
                  Your credentials are currently being reviewed by our clinical board. Complete your profile now to expedite the process.
+               </p>
+             </div>
+          </div>
+        )}
+
+        {isVerified && hasPendingEdits && (
+          <div className="p-5 md:p-6 bg-amber-500/5 border border-amber-500/10 rounded-[2.5rem] flex items-center gap-5 md:gap-6 relative overflow-hidden group">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+             <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 shrink-0 shadow-inner border border-amber-500/5">
+               <Clock className="w-6 h-6" />
+             </div>
+             <div className="space-y-1">
+               <p className="text-sm font-bold text-amber-900/80">Pending Profile Edits</p>
+               <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
+                 You have submitted changes that are awaiting review by our clinical board. Your previously verified profile remains live until these are approved.
                </p>
              </div>
           </div>

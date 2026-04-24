@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsNumber, IsArray, IsUrl, Min, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsArray, IsUrl, Min, MaxLength, ValidateIf } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateTherapistProfileDto {
   @IsString()
@@ -42,6 +43,7 @@ export class UpdateTherapistProfileDto {
   @IsOptional()
   languages?: string[];
 
+  @ValidateIf(o => typeof o.videoUrl === 'string' && o.videoUrl.trim().length > 0)
   @IsUrl()
   @IsOptional()
   videoUrl?: string;
@@ -50,6 +52,7 @@ export class UpdateTherapistProfileDto {
   @IsOptional()
   clinicAddress?: string;
 
+  @ValidateIf(o => typeof o.profileImageUrl === 'string' && o.profileImageUrl.trim().length > 0)
   @IsUrl()
   @IsOptional()
   profileImageUrl?: string;
