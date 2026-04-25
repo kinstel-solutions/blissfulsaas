@@ -13,17 +13,20 @@ async function bootstrap() {
   }));
 
   // Enable CORS for frontend portals
-  const corsOrigins = process.env.CORS_ORIGINS?.split(',') || [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:3002',
-    'http://192.168.1.34:3000',
-    'http://192.168.1.34:3001',
-    'http://192.168.1.34:3002',
-  ];
+  const allowedOrigins = process.env.ALLOWED_ORIGINS 
+    ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+    : [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        // Placeholders for production Vercel domains
+        'https://patient-app-production.vercel.app', 
+        'https://therapist-app-production.vercel.app',
+        'https://admin-panel-production.vercel.app'
+      ];
 
   app.enableCors({
-    origin: corsOrigins,
+    origin: allowedOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
