@@ -10,7 +10,7 @@ A multi-role SaaS platform for an online mental health clinic with a patient app
 - **External Services**: Agora (Video), Razorpay (Payments), Resend (Emails)
 - **Deployment**: 
   - **Vercel**: Frontends (Patient, Therapist, Admin)
-  - **Koyeb**: Backend API (Containerized via Docker)
+  - **Render**: Backend API (Containerized via Docker)
   - **Oracle Cloud**: Potential future target for "Always Free" VPS hosting.
 
 ## Architecture
