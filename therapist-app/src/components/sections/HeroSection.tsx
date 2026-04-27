@@ -9,17 +9,15 @@ export function HeroSection() {
       className="relative overflow-hidden pt-[120px] md:pt-[190px] pb-[15vw] container mx-auto px-6 md:px-8 max-w-[1300px]">
       <div className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-[radial-gradient(circle,rgba(33,77,62,0.03)_0%,rgba(252,250,255,0)_70%)] -z-10"></div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] items-center gap-8 md:gap-16 text-center md:text-left">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] items-center gap-8 md:gap-16 text-center md:text-left">
         <div className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-left duration-1000">
           <div className="inline-flex items-center bg-[#E8F5E9] text-[var(--primary)] text-[10px] font-bold tracking-[1.2px] px-3 py-1 rounded-full uppercase mb-2 font-outfit">
             Premium Practice Management
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-[64px] leading-[1.1] mb-4 md:mb-8 font-cormorant font-bold text-[var(--text-dark)] tracking-[-1.5px]">
-            Elevate your practice with <br className="hidden lg:block" />
-            <span className="simmer-text italic font-bold">
-              ethical mastery.
-            </span>
+          <h1 className="text-4xl md:text-5xl lg:text-[64px] leading-[1.1] mb-4 md:mb-8 font-cormorant font-bold text-[var(--text-dark)] tracking-[-1.5px] max-w-[700px]">
+            Elevate your practice <br className="hidden md:block" />
+            with <span className="simmer-text italic font-bold">ethical mastery.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-[var(--text-light)] mb-4 md:mb-10 max-w-[540px] leading-relaxed">
