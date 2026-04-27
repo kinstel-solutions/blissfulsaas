@@ -55,7 +55,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                           {appt.patient?.firstName?.[0]}
                         </div>
                         <div>
-                          <div className="font-heading font-medium text-slate-900 flex items-center gap-2 group-hover/patient:text-primary transition-colors">
+                          <div className="font-sans font-bold text-slate-900 flex items-center gap-2 group-hover/patient:text-primary transition-colors">
                             {appt.patient?.firstName} {appt.patient?.lastName}
                             {hasNotes && (
                               <div className="flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md border border-blue-100">
@@ -147,7 +147,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                       {appt.patient?.firstName?.[0]}
                     </div>
                     <div>
-                      <div className="font-heading font-medium text-slate-900 line-clamp-1">
+                      <div className="font-sans font-bold text-slate-900 line-clamp-1">
                         {appt.patient?.firstName} {appt.patient?.lastName}
                       </div>
                       <div className="flex items-center gap-2 mt-1">

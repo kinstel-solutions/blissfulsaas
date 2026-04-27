@@ -93,7 +93,7 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
               {patient.firstName?.[0]}{patient.lastName?.[0]}
             </div>
             <div>
-              <h2 className="text-xl font-heading font-bold text-slate-900 leading-tight">
+              <h2 className="text-xl font-bold text-slate-900 leading-tight font-sans">
                 {patient.firstName} {patient.lastName}
               </h2>
               <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Patient Identity</p>
@@ -116,7 +116,7 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
                 <Calendar className="w-3.5 h-3.5" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Total Sessions</span>
               </div>
-              <p className="text-xl font-heading font-medium text-slate-900">{patient.sessionCount || 0}</p>
+              <p className="text-xl font-bold text-slate-900 font-sans">{patient.sessionCount || 0}</p>
             </div>
             <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
               <div className="flex items-center gap-2 text-slate-400 mb-1">

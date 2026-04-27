@@ -20,7 +20,7 @@ export default function Error({
         <AlertCircle className="w-10 h-10" />
       </div>
       <div className="text-center max-w-sm space-y-3">
-        <h2 className="text-2xl font-heading font-medium text-slate-900">Workstation Error</h2>
+        <h2 className="text-2xl font-bold text-slate-900 font-sans">Workstation Error</h2>
         <p className="text-sm text-slate-500 leading-relaxed">
           The clinical workstation encountered a temporary failure. Please reload to restore session data.
         </p>

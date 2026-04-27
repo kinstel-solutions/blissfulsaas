@@ -52,7 +52,7 @@ export default function PatientList({ roster }: { roster: Patient[] }) {
                         {p.firstName?.[0]}{p.lastName?.[0]}
                       </div>
                       <div>
-                        <p className="font-heading text-lg font-medium text-slate-900 leading-tight">
+                        <p className="font-sans text-lg font-bold text-slate-900 leading-tight">
                           {p.firstName} {p.lastName}
                         </p>
                         <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Ref: {p.id.slice(0, 8)}</p>

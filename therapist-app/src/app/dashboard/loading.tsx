@@ -12,7 +12,7 @@ export default function Loading() {
         <div className="absolute inset-0 w-16 h-16 rounded-3xl bg-slate-400/5 blur-xl animate-pulse -z-10" />
       </div>
       <div className="text-center space-y-2">
-        <h2 className="text-xl font-heading font-medium text-slate-900">Clinical Workstation</h2>
+        <h2 className="text-xl font-bold text-slate-900 font-sans">Clinical Workstation</h2>
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Loading Patient Records...</p>
       </div>
     </div>

@@ -106,7 +106,7 @@ export default async function DashboardPage() {
       {/* Appointments Section */}
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-2">
-          <h3 className="text-xl md:text-2xl font-heading font-normal text-foreground flex flex-wrap items-center gap-3">
+          <h3 className="text-xl md:text-2xl font-bold tracking-tight text-foreground flex flex-wrap items-center gap-3">
             {pendingSessions.length > 0 ? "Pending Sessions" : "Appointments"}
             {pendingSessions.length > 0 && (
               <span className="bg-amber-500/10 text-amber-600 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-500/20 uppercase tracking-wider whitespace-nowrap">
@@ -137,7 +137,7 @@ export default async function DashboardPage() {
                       />
                     </div>
                     <div>
-                      <h4 className="text-slate-900 font-bold text-lg leading-tight group-hover:text-primary transition-colors">
+                      <h4 className="text-slate-900 font-bold text-lg leading-tight group-hover:text-primary transition-colors font-sans">
                         {session.patient?.firstName} {session.patient?.lastName}
                       </h4>
                       <div className="flex items-center gap-2 mt-1.5">
@@ -201,7 +201,7 @@ export default async function DashboardPage() {
               <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60 mb-4">Clinical Performance</p>
               {avgRating !== null ? (
                 <>
-                  <div className="text-7xl md:text-8xl font-heading font-normal text-foreground drop-shadow-xl mb-2">
+                  <div className="text-7xl md:text-8xl font-bold font-sans text-foreground drop-shadow-xl mb-2">
                     {avgRating}
                   </div>
                   <div className="flex items-center gap-1 mb-4">
@@ -226,7 +226,7 @@ export default async function DashboardPage() {
               ) : (
                 <div className="py-8">
                   <div className="text-5xl mb-4">⭐</div>
-                  <h4 className="text-xl font-heading text-foreground/60 mb-2">No reviews yet</h4>
+                  <h4 className="text-xl font-bold text-foreground/60 mb-2">No reviews yet</h4>
                   <p className="text-xs text-muted-foreground/60 max-w-xs">
                     Complete your first session to start receiving feedback from your patients.
                   </p>
@@ -279,7 +279,7 @@ export default async function DashboardPage() {
                       />
                     </div>
                     <div>
-                      <p className="text-2xl font-heading font-medium text-foreground">{uniquePatientsCount}</p>
+                      <p className="text-2xl font-bold font-sans text-foreground">{uniquePatientsCount}</p>
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total Patients</p>
                     </div>
                   </div>
@@ -294,7 +294,7 @@ export default async function DashboardPage() {
                       />
                     </div>
                     <div>
-                      <p className="text-2xl font-heading font-medium text-foreground">{completedSessionsCount}</p>
+                      <p className="text-2xl font-bold font-sans text-foreground">{completedSessionsCount}</p>
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Sessions Completed</p>
                     </div>
                   </div>
