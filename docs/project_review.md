@@ -2,7 +2,7 @@
 
 > **Reviewer:** Antigravity AI  
 > **Date:** 2026-04-20  
-> **Scope:** Full codebase — backend (NestJS), patient-app, therapist-app, admin-panel (Next.js 15)
+> **Scope:** Full codebase — backend (NestJS), patient-app, therapist-app, admin-panel (Next.js 16)
 
 ---
 

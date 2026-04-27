@@ -48,7 +48,7 @@
 │  (App Router)│  │  (App Router)│  │  (App Router)│
 └──────────────┘  └──────────────┘  └──────────────┘
 
-The platform is a **multi-portal monorepo** with three independent Next.js 15 applications sharing a single Supabase project as the backend. Each app targets a specific user role:
+The platform is a **multi-portal monorepo** with three independent Next.js 16 applications sharing a single Supabase project as the backend. Each app targets a specific user role:
 
 | Portal | Port | Target User | Key Feature |
 |--------|------|-------------|-------------|
@@ -128,7 +128,7 @@ blissfulsaas/
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **Frontend** | Next.js 15 (App Router) | Server components, routing, SSR |
+| **Frontend** | Next.js 16 (App Router) | Server components, routing, SSR |
 | **Styling** | Tailwind CSS v4 | Utility-first CSS with design tokens |
 | **UI Components** | shadcn/ui (partial) | Button, Card, Input primitives |
 | **Icons** | Lucide React | Consistent, lightweight icon set |

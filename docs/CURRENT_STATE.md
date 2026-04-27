@@ -11,9 +11,9 @@ The platform is a **multi-portal monorepo** with the following structure:
 
 | Component | Technology | Port | Status |
 |-----------|-----------|------|--------|
-| Patient App | Next.js 15 (App Router) | `:3000` | ✅ Active |
-| Therapist App | Next.js 15 (App Router) | `:3001` | ✅ Active |
-| Admin Panel | Next.js 15 (App Router) | `:3002` | ✅ Active |
+| Patient App | Next.js 16 (App Router) | `:3000` | ✅ Active |
+| Therapist App | Next.js 16 (App Router) | `:3001` | ✅ Active |
+| Admin Panel | Next.js 16 (App Router) | `:3002` | ✅ Active |
 | Backend API | NestJS + Prisma 7 | `:5000` | ✅ Active |
 | Database | Supabase PostgreSQL | Cloud | ✅ Active |
 | Auth | Supabase Auth (ES256) | Cloud | ✅ Active |

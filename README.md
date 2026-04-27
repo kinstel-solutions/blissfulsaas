@@ -4,7 +4,7 @@
 A multi-role SaaS platform for an online mental health clinic with a patient app, therapist app, admin panel, and a central NestJS API backend.
 
 ## Tech Stack
-- **Frontends**: Next.js 15 (App Router), Tailwind CSS, Shadcn UI
+- **Frontends**: Next.js 16 (App Router), Tailwind CSS, Shadcn UI
 - **Backend**: NestJS, Prisma
 - **Database / Auth**: Supabase (Postgres, Auth, RLS, Realtime, Storage)
 - **External Services**: Agora (Video), Razorpay (Payments), Resend (Emails)
