@@ -120,44 +120,58 @@ export default async function DashboardPage() {
         </div>
 
         {pendingSessions.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {pendingSessions.map((session: any) => (
-              <div key={session.id} className="bg-white p-5 rounded-3xl border border-slate-100 hover:border-amber-200 hover:shadow-xl hover:shadow-amber-500/5 transition-all group relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-full blur-xl -translate-y-1/2 translate-x-1/2" />
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5">
-                    <Image 
-                      src={`https://ui-avatars.com/api/?name=${session.patient?.firstName}+${session.patient?.lastName}&background=EAF4F3&color=214D3E&size=100`}
-                      alt="Patient"
-                      width={40}
-                      height={40}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+              <div key={session.id} className="bg-white p-8 rounded-[2rem] border border-slate-100 hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-500/10 transition-all group relative overflow-hidden flex flex-col justify-between h-full">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+                
+                <div>
+                  <div className="flex items-center gap-5 mb-6">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary font-bold overflow-hidden p-1 shrink-0">
+                      <Image 
+                        src={`https://ui-avatars.com/api/?name=${session.patient?.firstName}+${session.patient?.lastName}&background=EAF4F3&color=214D3E&size=128`}
+                        alt="Patient"
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover rounded-xl"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="text-slate-900 font-bold text-lg leading-tight group-hover:text-primary transition-colors">
+                        {session.patient?.firstName} {session.patient?.lastName}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <span className={`px-2 py-0.5 rounded-full text-[8px] border font-bold uppercase tracking-widest ${
+                          session.mode === 'IN_CLINIC' 
+                            ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                            : 'bg-blue-50 text-blue-600 border-blue-100'
+                        }`}>
+                          {session.mode === 'IN_CLINIC' ? 'In-Clinic' : 'Online'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-slate-900 font-bold text-sm">{session.patient?.firstName} {session.patient?.lastName}</h4>
-                    <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-2">
-                      {new Date(session.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      <span className={`px-1.5 py-0.5 rounded-full text-[7px] border font-bold uppercase tracking-wider ${
-                        session.mode === 'IN_CLINIC' 
-                          ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                          : 'bg-blue-50 text-blue-600 border-blue-100'
-                      }`}>
-                        {session.mode === 'IN_CLINIC' ? 'In-Clinic' : 'Online'}
+
+                  <div className="space-y-3 mb-8">
+                    <div className="flex items-center gap-3 text-slate-500">
+                      <Calendar className="w-4 h-4 text-primary/40" />
+                      <span className="text-xs font-bold uppercase tracking-widest">
+                        {new Date(session.scheduledAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
                       </span>
-                    </p>
+                    </div>
+                    <div className="flex items-center gap-3 text-slate-500">
+                      <Clock className="w-4 h-4 text-primary/40" />
+                      <span className="text-xs font-bold uppercase tracking-widest">
+                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                  <div className="flex items-center gap-1.5 text-slate-400">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span className="text-[9px] font-bold uppercase tracking-widest">
-                      {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-                  <Link href={`/dashboard/appointments/${session.id}`}>
-                    <button className="text-[9px] font-bold uppercase tracking-widest text-primary hover:text-primary/70 transition-colors flex items-center gap-1">
-                      Review <ArrowRight className="w-3 h-3" />
+
+                <div className="pt-6 border-t border-slate-50">
+                  <Link href={`/dashboard/appointments/${session.id}`} className="block">
+                    <button className="w-full py-4 bg-slate-50 hover:bg-primary hover:text-white rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] text-primary transition-all flex items-center justify-center gap-2">
+                      Review Appointment <ArrowRight className="w-4 h-4" />
                     </button>
                   </Link>
                 </div>
