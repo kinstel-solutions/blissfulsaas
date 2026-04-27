@@ -44,16 +44,16 @@ export default function DiscoverPage() {
   };
 
   const filteredTherapists = therapists.filter((t) => {
-    if (!t) return false;
-    const searchLower = searchQuery.toLowerCase();
-    
-    const matchesSearch =
-      (t.firstName?.toLowerCase() || "").includes(searchLower) ||
-      (t.lastName?.toLowerCase() || "").includes(searchLower) ||
-      (t.bio?.toLowerCase() || "").includes(searchLower) ||
-      (t.specialities || []).some((s: string) => s?.toLowerCase().includes(searchLower));
+    const search = searchQuery.toLowerCase().trim();
+    if (!search) return true;
 
-    return matchesSearch;
+    const fullName = `${t.firstName} ${t.lastName}`.toLowerCase();
+    const bio = (t.bio || "").toLowerCase();
+    const specialities = (t.specialities || []).some((s: string) =>
+      s.toLowerCase().includes(search)
+    );
+
+    return fullName.includes(search) || bio.includes(search) || specialities;
   });
 
   if (loading) {
@@ -87,7 +87,6 @@ export default function DiscoverPage() {
             className="w-full h-16 bg-transparent pl-14 pr-6 text-sm font-medium outline-none placeholder:text-muted-foreground/50"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && loadTherapists(1)}
           />
         </div>
         <div className="w-px bg-outline-variant/20 hidden md:block" />
@@ -95,18 +94,9 @@ export default function DiscoverPage() {
           <Filter className="w-4 h-4" />
           Filters
         </button>
-        <button 
-          onClick={() => loadTherapists(1)}
-          className="h-16 bg-primary text-primary-foreground px-5 md:px-10 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all"
-        >
+        <button className="h-16 bg-primary text-primary-foreground px-5 md:px-10 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all">
           Search
         </button>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
-          Showing <span className="text-primary">{filteredTherapists.length}</span> of <span className="text-primary">{therapists.length}</span> Specialists
-        </p>
       </div>
 
       {/* Marketplace Grid */}
@@ -126,8 +116,8 @@ export default function DiscoverPage() {
             
             <div className="aspect-[4/3] overflow-hidden relative">
                <Image 
-                src={t.profileImageUrl || `https://ui-avatars.com/api/?name=${t.firstName || 'T'}+${t.lastName || 'S'}&background=f8f9fa&color=5f43b2&size=400`} 
-                alt={`${t.firstName || 'Therapist'}`}
+                src={t.profileImageUrl || `https://ui-avatars.com/api/?name=${t.firstName}+${t.lastName}&background=f8f9fa&color=5f43b2&size=400`} 
+                alt={`${t.firstName} ${t.lastName}`}
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-1000"
                />
@@ -137,7 +127,7 @@ export default function DiscoverPage() {
             <div className="p-4 md:p-8 flex flex-col flex-1">
                <div className="flex items-start justify-between mb-4">
                  <div>
-                    <h3 className="text-2xl font-heading font-medium text-foreground">{t.firstName || 'Verified'} {t.lastName || 'Specialist'}</h3>
+                    <h3 className="text-2xl font-heading font-medium text-foreground">{t.firstName} {t.lastName}</h3>
                     <p className="text-xs font-bold text-primary/60 uppercase tracking-widest flex items-center gap-2 mt-1">
                       <GraduationCap className="w-3 h-3" /> {t.qualifications || "Clinician Specialist"}
                     </p>
@@ -189,9 +179,9 @@ export default function DiscoverPage() {
             </div>
           </div>
         ))}
-        {filteredTherapists.length === 0 && (
+        {therapists.length === 0 && (
           <div className="col-span-1 md:col-span-3 py-20 text-center bg-surface-container-low/20 rounded-2xl border-2 border-dashed border-outline-variant/30">
-            <p className="text-muted-foreground italic">No specialists matching your criteria were found. Try adjusting your search.</p>
+            <p className="text-muted-foreground italic">No practitioners have joined this station yet. Check back soon.</p>
           </div>
         )}
       </div>
