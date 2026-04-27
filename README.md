@@ -11,7 +11,7 @@ A multi-role SaaS platform for an online mental health clinic with a patient app
 - **Deployment**: 
   - **Vercel**: Frontends (Patient, Therapist, Admin)
   - **Render**: Backend API (Containerized via Docker)
-  - **Oracle Cloud**: Potential future target for "Always Free" VPS hosting.
+  - **Oracle Cloud**: Potential future target for VPS hosting.
 
 ## Architecture
 Monorepo-style structure:
