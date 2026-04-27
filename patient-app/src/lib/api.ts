@@ -18,6 +18,7 @@ export async function fetchWithAuth(path: string, options: RequestInit = {}) {
   const response = await fetch(`${BACKEND_URL}${path}`, {
     ...options,
     headers,
+    cache: 'no-store'
   });
 
   if (!response.ok) {

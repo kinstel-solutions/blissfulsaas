@@ -44,16 +44,16 @@ export default function DiscoverPage() {
   };
 
   const filteredTherapists = therapists.filter((t) => {
-    const search = searchQuery.toLowerCase().trim();
-    if (!search) return true;
+    if (!t) return false;
+    const searchLower = searchQuery.toLowerCase();
+    
+    const matchesSearch =
+      (t.firstName?.toLowerCase() || "").includes(searchLower) ||
+      (t.lastName?.toLowerCase() || "").includes(searchLower) ||
+      (t.bio?.toLowerCase() || "").includes(searchLower) ||
+      (t.specialities || []).some((s: string) => s?.toLowerCase().includes(searchLower));
 
-    const fullName = `${t.firstName} ${t.lastName}`.toLowerCase();
-    const bio = (t.bio || "").toLowerCase();
-    const specialities = (t.specialities || []).some((s: string) =>
-      s.toLowerCase().includes(search)
-    );
-
-    return fullName.includes(search) || bio.includes(search) || specialities;
+    return matchesSearch;
   });
 
   if (loading) {
