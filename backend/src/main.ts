@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Enable global validation pipe
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -13,17 +13,17 @@ async function bootstrap() {
   }));
 
   // Enable CORS for frontend portals
-  const allowedOrigins = process.env.ALLOWED_ORIGINS 
-    ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim().replace(/\/$/, ''))
     : [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:3002',
-        // Placeholders for production Vercel domains
-        'https://patient-app-production.vercel.app', 
-        'https://therapist-app-production.vercel.app',
-        'https://admin-panel-production.vercel.app'
-      ];
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      // Actual Production Vercel domains
+      'https://blissful-patient.vercel.app',
+      'https://blissful-therapist.vercel.app',
+      'https://blissful-admin.vercel.app'
+    ];
 
   app.enableCors({
     origin: allowedOrigins,
