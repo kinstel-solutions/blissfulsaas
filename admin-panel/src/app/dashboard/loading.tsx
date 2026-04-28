@@ -1,22 +1,43 @@
 "use client";
 
-import { Loader2, ShieldCheck } from "lucide-react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function Loading() {
+  const [isBreathingIn, setIsBreathingIn] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsBreathingIn((prev) => !prev);
+    }, 4000); // 4 seconds per breath phase
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 animate-in fade-in duration-700">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 animate-in fade-in duration-1000">
       <div className="relative">
-        <div className="w-16 h-16 rounded-3xl bg-primary/5 border border-primary/10 flex items-center justify-center">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <div className={`w-24 h-24 transition-all duration-[4000ms] ease-in-out transform ${isBreathingIn ? 'scale-110' : 'scale-90'}`}>
+          <Image
+            src="/breathing.png"
+            alt="Breathing illustration"
+            width={96}
+            height={96}
+            className="rounded-full object-cover shadow-xl"
+          />
         </div>
-        <div className="absolute -top-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-4 border-surface flex items-center justify-center">
-          <ShieldCheck className="w-3 h-3 text-white" />
-        </div>
+        <div className={`absolute inset-0 w-24 h-24 rounded-full bg-primary/20 blur-2xl -z-10 transition-all duration-[4000ms] ease-in-out transform ${isBreathingIn ? 'scale-150 opacity-60' : 'scale-75 opacity-20'}`} />
       </div>
-      <div className="text-center space-y-2">
-        <h2 className="text-xl font-heading font-medium text-foreground">Registry Access</h2>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Fetching System Telemetry...</p>
+
+      
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-heading font-medium text-foreground transition-all duration-1000 ease-in-out min-h-[2rem]">
+          {isBreathingIn ? "Breathing in..." : "Breathing out..."}
+        </h2>
+        <p className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground/40 animate-pulse">
+          Accessing Secure Registry
+        </p>
       </div>
     </div>
   );
 }
+

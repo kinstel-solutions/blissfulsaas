@@ -5,6 +5,7 @@ import { ArrowRight, Search, Filter, Star, Sparkles, Loader2, GraduationCap, Glo
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { BreathingLoader } from "@/components/BreathingLoader";
 
 export default function DiscoverPage() {
   const [therapists, setTherapists] = useState<any[]>([]);
@@ -57,13 +58,9 @@ export default function DiscoverPage() {
   });
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Loader2 className="w-12 h-12 text-primary animate-spin" />
-        <p className="text-muted-foreground font-medium uppercase tracking-widest text-xs">Curating your station...</p>
-      </div>
-    );
+    return <BreathingLoader subtext="Curating specialists..." />;
   }
+
 
   return (
     <div className="space-y-12 pb-24">

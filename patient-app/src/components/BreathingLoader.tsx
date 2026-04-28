@@ -3,7 +3,15 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-export default function Loading() {
+interface BreathingLoaderProps {
+  text?: string;
+  subtext?: string;
+}
+
+export function BreathingLoader({ 
+  text, 
+  subtext = "Preparing your space" 
+}: BreathingLoaderProps) {
   const [isBreathingIn, setIsBreathingIn] = useState(false);
 
   useEffect(() => {
@@ -25,19 +33,18 @@ export default function Loading() {
             className="rounded-full object-cover shadow-xl"
           />
         </div>
-        <div className={`absolute inset-0 w-24 h-24 rounded-full bg-slate-200 blur-2xl -z-10 transition-all duration-[4000ms] ease-in-out transform ${isBreathingIn ? 'scale-150 opacity-60' : 'scale-75 opacity-20'}`} />
+        <div className={`absolute inset-0 w-24 h-24 rounded-full bg-primary/20 blur-2xl -z-10 transition-all duration-[4000ms] ease-in-out transform ${isBreathingIn ? 'scale-150 opacity-60' : 'scale-75 opacity-20'}`} />
       </div>
 
       
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900 transition-all duration-1000 ease-in-out min-h-[2rem]">
-          {isBreathingIn ? "Breathing in..." : "Breathing out..."}
+        <h2 className="text-2xl font-heading font-medium text-primary transition-all duration-1000 ease-in-out min-h-[2rem]">
+          {text ? text : (isBreathingIn ? "Breathing in..." : "Breathing out...")}
         </h2>
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-400 animate-pulse">
-          Setting up your workstation
+        <p className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground/40 animate-pulse">
+          {subtext}
         </p>
       </div>
     </div>
   );
 }
-
