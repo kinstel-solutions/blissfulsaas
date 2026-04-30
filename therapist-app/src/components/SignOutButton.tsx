@@ -1,23 +1,19 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-
 export default function SignOutButton() {
-  const router = useRouter();
 
   const handleSignOut = async () => {
     try {
-      const response = await fetch("/auth/signout", {
+      await fetch("/auth/signout", {
         method: "POST",
       });
 
-      if (response.ok) {
-        router.push("/login");
-        router.refresh();
-      }
+      // Force a hard reload/redirect to clear all state and ensure session is gone
+      window.location.href = "/login";
     } catch (error) {
       console.error("Error signing out:", error);
+      window.location.href = "/login";
     }
   };
 

@@ -6,7 +6,9 @@ import {
   Clock, 
   ChevronUp, 
   FileText,
-  MessageSquare
+  MessageSquare,
+  MapPin,
+  Video
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -65,10 +67,14 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                             )}
                           </div>
                           <div className="flex items-center gap-2">
-                            <p className={`text-xs font-bold uppercase tracking-widest mt-1 ${
+                            <p className={`text-xs font-bold uppercase tracking-widest mt-1 flex items-center gap-1.5 ${
                               appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
                             }`}>
-                              {appt.mode === 'IN_CLINIC' ? '🏥 In-Clinic Visit' : '🖥️ Video Consultation'}
+                              {appt.mode === 'IN_CLINIC' ? (
+                                <><MapPin className="w-3 h-3" /> In-Clinic Visit</>
+                              ) : (
+                                <><Video className="w-3 h-3" /> Video Consultation</>
+                              )}
                             </p>
                             <div className="w-1 h-1 rounded-full bg-slate-300 mt-1" />
                             <Link href={`/dashboard/messages?sessionId=${appt.id}`} onClick={e => e.stopPropagation()}>
@@ -149,6 +155,15 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     <div>
                       <div className="font-sans font-bold text-slate-900 line-clamp-1">
                         {appt.patient?.firstName} {appt.patient?.lastName}
+                      </div>
+                      <div className={`text-[10px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1.5 ${
+                        appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
+                      }`}>
+                        {appt.mode === 'IN_CLINIC' ? (
+                          <><MapPin className="w-3 h-3" /> In-Clinic Visit</>
+                        ) : (
+                          <><Video className="w-3 h-3" /> Video Session</>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border shrink-0 ${

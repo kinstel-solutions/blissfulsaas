@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { therapistProfileSchema, type TherapistProfileValues } from "@/lib/validations";
 import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin, Shield, Video, AlertCircle } from "lucide-react";
 import { ImageUpload } from "@/components/ImageUpload";
+import { useRouter } from "next/navigation";
 
 const COMMON_SPECIALITIES = [
   "Anxiety", "Depression", "Trauma", "ADHD", "Couples Therapy", 
@@ -21,6 +22,7 @@ const COMMON_LANGUAGES = [
 ];
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +43,7 @@ export default function ProfilePage() {
       bio: "",
       qualifications: "",
       yearsOfExperience: 0,
-      hourlyRate: 150,
+      hourlyRate: 1500,
       specialities: [],
       languages: [],
       videoUrl: "",
@@ -69,7 +71,7 @@ export default function ProfilePage() {
           bio: data.bio || "",
           qualifications: data.qualifications || "",
           yearsOfExperience: data.yearsOfExperience || 0,
-          hourlyRate: data.hourlyRate || 150,
+          hourlyRate: data.hourlyRate || 1500,
           specialities: data.specialities || [],
           languages: data.languages || [],
           videoUrl: data.videoUrl || "",
@@ -115,7 +117,14 @@ export default function ProfilePage() {
         ? "Profile updates submitted successfully and are pending review by the admin board."
         : "Profile updated successfully. Changes will be visible once your application is approved."
       );
-      if (isVerified) setHasPendingEdits(true);
+      if (isVerified) {
+        setHasPendingEdits(true);
+      } else {
+        // Redirect new therapists to dashboard after a short delay
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1500);
+      }
     } catch (err: any) {
       setError(err.message || "Failed to save profile");
     } finally {
@@ -319,9 +328,9 @@ export default function ProfilePage() {
           {/* Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Hourly Rate (USD)</label>
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Hourly Rate (INR)</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">₹</span>
                 <input
                   type="number"
                   {...register("hourlyRate", { valueAsNumber: true })}

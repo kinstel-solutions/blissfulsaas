@@ -63,7 +63,7 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden relative pb-20 lg:pb-0">
+      <main className="flex-1 flex flex-col overflow-hidden relative">
         <div className="absolute top-0 right-0 w-full h-[30vh] bg-linear-to-b from-primary/5 to-transparent -z-10 pointer-events-none" />
         
         <header className="h-16 md:h-20 flex items-center justify-between px-6 md:px-10 bg-white border-b border-outline-variant/20 z-30 shrink-0">
@@ -90,7 +90,7 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <div className="flex-1 overflow-auto p-6 md:p-10 relative">
+        <div className="flex-1 overflow-auto p-6 pb-24 md:p-10 relative">
           <div className="max-w-5xl mx-auto">
             {children}
           </div>

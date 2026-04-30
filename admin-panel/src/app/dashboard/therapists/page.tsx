@@ -127,7 +127,7 @@ export default async function TherapistsPage() {
                       </div>
                     </td>
                     <td className="px-4 md:px-8 py-4 md:py-8">
-                      <p className="text-sm font-bold text-primary">${therapist.hourlyRate || 0}/hr</p>
+                      <p className="text-sm font-bold text-primary">₹{therapist.hourlyRate || 0}/hr</p>
                       <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-tighter">Market Value</p>
                     </td>
                     <td className="px-4 md:px-8 py-4 md:py-8">

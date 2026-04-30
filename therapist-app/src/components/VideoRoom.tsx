@@ -90,9 +90,9 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
   };
 
   return (
-    <div className="h-full flex flex-col lg:flex-row gap-8 pb-10 animate-in fade-in duration-1000">
-      <div className="flex flex-col flex-1 relative gap-6">
-        <div className="flex-1 bg-slate-950 rounded-[3.5rem] border border-white/5 overflow-hidden relative shadow-2xl flex flex-col group">
+    <div className="h-full min-h-[600px] lg:h-[calc(100vh-220px)] flex flex-col lg:flex-row gap-4 lg:gap-8 pb-10 lg:pb-0 animate-in fade-in duration-1000">
+      <div className="flex flex-col flex-[2] relative gap-4 lg:gap-6 min-h-[400px]">
+        <div className="flex-1 bg-slate-950 rounded-3xl lg:rounded-[3.5rem] border border-white/5 overflow-hidden relative shadow-2xl flex flex-col group">
           {/* Background Overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 pointer-events-none z-10" />
 
@@ -116,7 +116,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
           </div>
 
           {/* Self-Feed (Local Video) */}
-          <div className="absolute top-10 right-10 w-48 aspect-video rounded-xl border border-white/20 shadow-2xl overflow-hidden z-20 group/pip hover:scale-105 transition-transform bg-slate-800">
+          <div className="absolute top-4 right-4 md:top-10 md:right-10 w-28 md:w-48 aspect-video rounded-xl border border-white/20 shadow-2xl overflow-hidden z-20 group/pip hover:scale-105 transition-transform bg-slate-800">
             {localCameraTrack ? (
                <div className={`w-full h-full relative ${!cameraOn ? 'hidden' : 'block'}`}>
                   <LocalVideoTrack track={localCameraTrack} play style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -133,49 +133,49 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
           </div>
 
           {/* Session Header Overlay */}
-          <div className="absolute top-10 left-10 z-20 flex flex-col gap-2">
-            <p className="text-xs font-bold uppercase tracking-widest text-white/60">
+          <div className="absolute top-4 left-4 md:top-10 md:left-10 z-20 flex flex-col gap-0.5 md:gap-2 max-w-[60%] md:max-w-none">
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60">
               Active Consultation
             </p>
-            <h2 className="text-3xl font-heading text-white">
+            <h2 className="text-lg md:text-3xl font-heading text-white truncate leading-none">
               {patientName || "Joint Session"}
             </h2>
-            <div className="flex items-center gap-3 bg-black/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/10 w-fit">
-              <span className="text-xs font-bold uppercase tracking-widest text-white/70">Private Consultation Room</span>
+            <div className="flex items-center gap-2 md:gap-3 bg-black/20 backdrop-blur-xl px-2.5 py-1 md:px-4 md:py-2 rounded-full border border-white/10 w-fit">
+              <span className="text-[8px] md:text-xs font-bold uppercase tracking-widest text-white/70">Private Consultation Room</span>
             </div>
           </div>
 
           {/* Call Controls HUD */}
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4">
+          <div className="absolute bottom-6 md:bottom-12 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 md:gap-4">
             <button 
               onClick={() => setMic(p => !p)}
-              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${
+              className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${
                 micOn ? "bg-white/10 text-white border-white/20 hover:bg-white/20" : "bg-red-500 text-white border-red-400"
               }`}
             >
-              {micOn ? <Mic className="w-6 h-6" /> : <MicOff className="w-6 h-6" />}
+              {micOn ? <Mic className="w-5 h-5 md:w-6 md:h-6" /> : <MicOff className="w-5 h-5 md:w-6 md:h-6" />}
             </button>
             <button 
               onClick={() => setCamera(p => !p)}
-              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${
+              className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${
                 cameraOn ? "bg-white/10 text-white border-white/20 hover:bg-white/20" : "bg-red-500 text-white border-red-400"
               }`}
             >
-              {cameraOn ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
+              {cameraOn ? <Video className="w-5 h-5 md:w-6 md:h-6" /> : <VideoOff className="w-5 h-5 md:w-6 md:h-6" />}
             </button>
             <button 
               onClick={handleDisconnect}
-              className="w-16 h-16 rounded-2xl bg-red-600 text-white border border-red-400/50 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all mx-4"
+              className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-red-600 text-white border border-red-400/50 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all mx-2 md:mx-4"
             >
-              <PhoneOff className="w-7 h-7" />
+              <PhoneOff className="w-6 h-6 md:w-7 md:h-7" />
             </button>
           </div>
         </div>
       </div>
 
       {/* Persistence / Sidebar (Integrated Chat & Notes) */}
-      <aside className="w-full lg:w-96 flex flex-col gap-8 h-full min-h-0 max-h-[calc(100vh-180px)]">
-        <div className="flex-1 bg-white rounded-2xl border border-slate-200 p-5 md:p-10 flex flex-col shadow-sm min-h-0 overflow-hidden">
+      <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 h-auto lg:h-full min-h-0 lg:max-h-[calc(100vh-220px)]">
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-10 flex flex-col shadow-sm lg:overflow-hidden min-h-0">
           
           <div className="flex p-1 bg-slate-100 rounded-2xl mb-6">
             <button 
@@ -196,30 +196,18 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
             </button>
           </div>
 
-          <div className="flex-1 relative min-h-0">
-            <div className={`absolute inset-0 transition-opacity duration-300 ${activeTab === 'chat' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+          <div className="flex-1 flex flex-col min-h-[400px] lg:min-h-0">
+            {activeTab === 'chat' ? (
               <ChatSidebar 
                 appointmentId={appointmentId}
                 currentUserId={currentUserId}
               />
-            </div>
-            <div className={`absolute inset-0 transition-opacity duration-300 ${activeTab === 'notes' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+            ) : (
               <NotesSidebar appointmentId={appointmentId} />
-            </div>
+            )}
           </div>
 
-          <div className="mt-10 pt-10 border-t border-slate-100 space-y-4">
-            <div className="p-5 bg-green-50 rounded-2xl border border-green-100 flex items-center gap-4">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <div className="text-left">
-                <p className="text-xs font-bold uppercase tracking-widest text-green-700">
-                  Ready to Finalize
-                </p>
-                <p className="text-xs font-medium text-green-600 opacity-60">
-                  Session status: In Progress
-                </p>
-              </div>
-            </div>
+          <div className="mt-6 md:mt-10 pt-6 md:pt-10 border-t border-slate-100">
             <button 
               onClick={handleComplete}
               className="w-full h-14 bg-slate-900 text-white font-bold uppercase tracking-widest text-xs rounded-2xl shadow-lg hover:bg-primary transition-all"

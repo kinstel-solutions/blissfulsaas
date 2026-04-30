@@ -35,7 +35,7 @@ export const availabilitySchema = z.object({
   dayOfWeek: z.number().min(0).max(6),
   startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid start time"),
   endTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid end time"),
-  mode: z.enum(["ONLINE", "IN_CLINIC"]),
+  mode: z.enum(["ONLINE", "IN_CLINIC", "BOTH"]),
 }).refine((data) => {
   const [startH, startM] = data.startTime.split(":").map(Number);
   const [endH, endM] = data.endTime.split(":").map(Number);

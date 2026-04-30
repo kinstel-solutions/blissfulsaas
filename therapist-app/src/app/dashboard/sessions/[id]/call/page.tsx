@@ -42,17 +42,17 @@ export default async function SessionRoomPage({ params }: { params: Promise<{ id
     : "Patient Session";
 
   return (
-    <div className="h-[calc(100vh-120px)] flex flex-col gap-6">
-      <header className="flex justify-between items-center bg-white/50 backdrop-blur-md p-4 px-1 rounded-xl z-10 border border-slate-100 shadow-sm">
+    <div className="h-full lg:h-[calc(100vh-120px)] flex flex-col gap-4 lg:gap-6">
+      <header className="flex justify-between items-center bg-white/70 backdrop-blur-xl p-3 md:p-4 rounded-2xl z-10 border border-slate-100 shadow-sm mx-1">
         <Link
           href="/dashboard"
-          className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors pl-4">
-          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+          className="group flex items-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-primary transition-colors pl-2 md:pl-4">
+          <ArrowLeft className="w-3 h-3 md:w-3.5 md:h-3.5 group-hover:-translate-x-1 transition-transform" />
           Dashboard
         </Link>
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mr-4 flex items-center gap-2">
+          <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-red-500 animate-pulse" />
+          <p className="text-[9px] md:text-xs font-bold uppercase tracking-widest text-slate-400 mr-2 md:mr-4 flex items-center gap-2">
             Private & Encrypted Session
           </p>
         </div>

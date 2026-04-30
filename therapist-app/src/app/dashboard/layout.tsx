@@ -81,7 +81,7 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col overflow-hidden relative bg-surface-container-lowest/30 pb-20 lg:pb-0">
+      <main className="flex-1 flex flex-col overflow-hidden relative bg-surface-container-lowest/30">
         <div className="absolute top-0 right-0 w-full h-[40vh] bg-linear-to-b from-primary/5 via-transparent to-transparent -z-10 pointer-events-none" />
         
         <header className="h-20 lg:h-24 flex items-center justify-between px-6 lg:px-12 bg-white border-b border-outline-variant/20 z-30 shrink-0">
@@ -108,7 +108,7 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <div id="main-content-area" className="flex-1 overflow-auto p-6 lg:p-12 relative">
+        <div id="main-content-area" className="flex-1 overflow-auto p-6 pb-24 lg:p-12 relative">
           <div className="max-w-6xl mx-auto">
             {children}
           </div>

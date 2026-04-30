@@ -45,8 +45,8 @@ export default function NotesSidebar({ appointmentId }: NotesSidebarProps) {
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex flex-col bg-slate-50 border border-slate-200 rounded-2xl animate-in slide-in-from-right duration-300">
-      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 bg-white rounded-t-[3rem]">
+    <div className="flex flex-col flex-1 bg-slate-50 border border-slate-200 rounded-2xl animate-in slide-in-from-right duration-300">
+      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 bg-white rounded-t-2xl">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
             <FileText className="w-4 h-4" />
@@ -67,11 +67,11 @@ export default function NotesSidebar({ appointmentId }: NotesSidebarProps) {
           ) : (
             <Save className="w-3.5 h-3.5" />
           )}
-          {saved ? "Saved" : "Save Changes"}
+          {saved ? "Saved" : "Save"}
         </button>
       </div>
 
-      <div className="flex-1 p-5 relative overflow-hidden">
+      <div className="flex-1 flex flex-col relative overflow-hidden">
         {loading ? (
           <div className="w-full h-full flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-slate-200 border-t-amber-500 rounded-full animate-spin flex-shrink-0" />
@@ -83,7 +83,7 @@ export default function NotesSidebar({ appointmentId }: NotesSidebarProps) {
             placeholder="Start typing your clinical notes here... 
 
 These notes are strictly private and will only be visible to you for future reference."
-            className="w-full h-full p-5 rounded-2xl border-2 border-slate-100 resize-none outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/10 text-slate-800 text-sm leading-relaxed transition-all shadow-inner"
+            className="flex-1 w-full p-6 lg:p-8 bg-transparent resize-none outline-none text-slate-800 text-sm leading-relaxed transition-all min-h-[300px]"
           />
         )}
       </div>

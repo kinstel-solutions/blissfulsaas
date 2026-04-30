@@ -9,7 +9,7 @@ import { availabilitySchema, type AvailabilityValues } from "@/lib/validations";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-type ConsultationMode = "ONLINE" | "IN_CLINIC";
+type ConsultationMode = "ONLINE" | "IN_CLINIC" | "BOTH";
 
 export default function AvailabilityPage() {
   const [slots, setSlots] = useState<any[]>([]);
@@ -57,7 +57,14 @@ export default function AvailabilityPage() {
     setAdding(true);
     setError(null);
     try {
-      await api.availability.createSlot(data);
+      if (data.mode === "BOTH") {
+        await Promise.all([
+          api.availability.createSlot({ ...data, mode: "ONLINE" } as any),
+          api.availability.createSlot({ ...data, mode: "IN_CLINIC" } as any)
+        ]);
+      } else {
+        await api.availability.createSlot(data as any);
+      }
       reset({ ...data }); // Reset but keep the mode/day for convenience
       fetchSlots();
     } catch (err: any) {
@@ -144,6 +151,26 @@ export default function AvailabilityPage() {
                     )}
                     <Building2 className={`w-8 h-8 transition-transform group-hover:scale-110 ${selectedMode === "IN_CLINIC" ? "text-primary" : "text-slate-300"}`} />
                     <span className="text-[10px] font-bold uppercase tracking-[0.2em]">In-Clinic</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setValue("mode", "BOTH", { shouldValidate: true })}
+                    className={`col-span-2 flex items-center justify-center gap-4 py-4 rounded-2xl border-2 transition-all duration-300 relative group ${
+                      selectedMode === "BOTH"
+                        ? "bg-primary/5 border-primary text-primary shadow-lg shadow-primary/10"
+                        : "bg-white border-slate-100 text-slate-400 hover:border-primary/30 hover:text-primary/60"
+                    }`}
+                  >
+                    {selectedMode === "BOTH" && (
+                      <div className="absolute top-3 right-3 w-2 h-2 bg-primary rounded-full" />
+                    )}
+                    <div className="flex items-center gap-2">
+                      <Monitor className={`w-5 h-5 ${selectedMode === "BOTH" ? "text-primary" : "text-slate-300"}`} />
+                      <Plus className={`w-3 h-3 ${selectedMode === "BOTH" ? "text-primary" : "text-slate-300"}`} />
+                      <Building2 className={`w-5 h-5 ${selectedMode === "BOTH" ? "text-primary" : "text-slate-300"}`} />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Both (Online & In-Clinic)</span>
                   </button>
                 </div>
               </div>
@@ -246,7 +273,11 @@ export default function AvailabilityPage() {
                 ) : (
                   <>
                     <Save className="w-4 h-4" />
-                    {selectedMode === "IN_CLINIC" ? "Save In-Clinic Slot" : "Save Online Slot"}
+                    {selectedMode === "BOTH" 
+                      ? "Save Both Slots" 
+                      : selectedMode === "IN_CLINIC" 
+                        ? "Save In-Clinic Slot" 
+                        : "Save Online Slot"}
                   </>
                 )}
               </button>
