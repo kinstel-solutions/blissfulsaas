@@ -37,6 +37,7 @@ export const api = {
   sessions: {
     upcoming: () => fetchWithAuth("/sessions/upcoming"),
     cancel: (id: string) => fetchWithAuth(`/sessions/${id}/cancel`, { method: "PATCH" }),
+    confirm: (id: string) => fetchWithAuth(`/sessions/${id}/confirm`, { method: "PATCH" }),
     complete: (id: string) => fetchWithAuth(`/sessions/${id}/complete`, { method: "PATCH" }),
     getToken: (id: string) => fetchWithAuth(`/sessions/${id}/token`),
     getNotes: (id: string) => fetchWithAuth(`/sessions/${id}/notes`),

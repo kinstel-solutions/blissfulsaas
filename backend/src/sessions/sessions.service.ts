@@ -74,8 +74,8 @@ export class SessionsService {
         this.notifications.create({
           userId: patientUserId,
           type: NotificationType.BOOKING_CONFIRMED,
-          title: 'Appointment Booked ✓',
-          body: `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} is confirmed for ${dateStr} at ${timeStr}${locationNote}.`,
+          title: 'Appointment Received',
+          body: `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} has been received for ${dateStr} at ${timeStr}${locationNote}. It is now pending therapist confirmation.`,
           metadata: { appointmentId: appointment.id, therapistName, scheduledAt: data.date, mode },
         }).catch(err => this.logger.error(err));
 
@@ -353,6 +353,45 @@ export class SessionsService {
         type: NotificationType.FEEDBACK_REQUEST,
         title: 'How was your session?',
         body: `Please take a moment to rate your experience with ${therapistName}.`,
+        metadata: { appointmentId, therapistName },
+      }).catch(err => this.logger.error(err));
+    });
+
+    return updated;
+  }
+
+  async confirmSession(therapistUserId: string, appointmentId: string) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        therapist: true,
+        patient: { include: { user: true } },
+      }
+    });
+
+    if (!appointment || appointment.therapist.userId !== therapistUserId) {
+      throw new ForbiddenException('Not your appointment to confirm');
+    }
+
+    if (appointment.status !== AppointmentStatus.PENDING) {
+      throw new ConflictException('Only pending appointments can be confirmed');
+    }
+
+    const updated = await this.prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { status: AppointmentStatus.CONFIRMED }
+    });
+
+    // Notify patient session is confirmed
+    const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    
+    setImmediate(() => {
+      this.notifications.create({
+        userId: appointment.patient.userId,
+        type: NotificationType.BOOKING_CONFIRMED,
+        title: 'Appointment Confirmed',
+        body: `Your session with ${therapistName} on ${dateStr} has been confirmed.`,
         metadata: { appointmentId, therapistName },
       }).catch(err => this.logger.error(err));
     });

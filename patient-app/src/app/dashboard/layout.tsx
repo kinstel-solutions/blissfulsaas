@@ -6,6 +6,7 @@ import SignOutButton from "@/components/SignOutButton";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import MobileNav from "@/components/MobileNav";
 import NotificationBell from "@/components/NotificationBell";
+import RealtimeAutoUpdater from "@/components/RealtimeAutoUpdater";
 
 export default async function DashboardLayout({
   children,
@@ -34,6 +35,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden relative">
+      <RealtimeAutoUpdater currentUserId={user.id} />
       <MobileNav currentUserId={user.id} />
       {/* Sidebar - Desktop Only */}
       <aside className="w-72 bg-surface-container-low border-r border-outline-variant/30 flex-col z-20 shadow-sm hidden lg:flex">

@@ -1,6 +1,8 @@
 import { fetchWithAuthContent } from "@/lib/api-server";
 import EnhancedAppointmentsList from "@/components/EnhancedAppointmentsList";
 
+export const dynamic = "force-dynamic";
+
 export default async function AppointmentsPage() {
   const sessions = await fetchWithAuthContent("/sessions/all");
   const appointments = Array.isArray(sessions) ? sessions : [];

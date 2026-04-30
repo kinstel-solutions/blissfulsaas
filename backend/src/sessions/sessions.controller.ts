@@ -48,6 +48,12 @@ export class SessionsController {
     return this.sessionsService.cancelSession(req.user.userId, id, req.user.role);
   }
 
+  @Patch(':id/confirm')
+  @Roles('THERAPIST')
+  confirm(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
+    return this.sessionsService.confirmSession(req.user.userId, id);
+  }
+
   @Patch(':id/complete')
   @Roles('THERAPIST')
   complete(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {

@@ -120,6 +120,12 @@ export default function ProfilePage() {
       setError(err.message || "Failed to save profile");
     } finally {
       setSaving(false);
+      const scrollContainer = document.getElementById('main-content-area');
+      if (scrollContainer) {
+        scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 

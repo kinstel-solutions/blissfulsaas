@@ -3,6 +3,7 @@ import { Calendar, ArrowRight, Shield, Star, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const supabase = await createClient();

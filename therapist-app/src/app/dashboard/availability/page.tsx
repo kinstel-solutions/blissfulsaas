@@ -64,6 +64,12 @@ export default function AvailabilityPage() {
       setError(err.message || "Failed to add slot");
     } finally {
       setAdding(false);
+      const scrollContainer = document.getElementById('main-content-area');
+      if (scrollContainer) {
+        scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
