@@ -14,6 +14,7 @@ import { signupSchema, type SignupValues } from "@/lib/validations";
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
   const router = useRouter();
 
   const {
@@ -44,7 +45,8 @@ export default function SignupPage() {
           first_name: data.firstName,
           last_name: data.lastName,
           role: "PATIENT" 
-        }
+        },
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
     
@@ -52,9 +54,43 @@ export default function SignupPage() {
       setError(authError.message);
       setLoading(false);
     } else {
-      router.push("/dashboard/discover");
+      setIsEmailSent(true);
+      setLoading(false);
     }
   };
+
+  if (isEmailSent) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#F8FAF9] font-outfit text-[#1A2F28] overflow-hidden antialiased relative">
+        <LandingNavbar hideLinks />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#E3F2ED] rounded-full blur-[120px] -z-10 pointer-events-none transform translate-x-1/3 -translate-y-1/3 opacity-60" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#EEF5F2] rounded-full blur-[100px] -z-10 pointer-events-none transform -translate-x-1/4 translate-y-1/4 opacity-80" />
+        
+        <main className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10 pt-32 pb-20">
+          <div className="w-full max-w-xl">
+            <div className="bg-white/60 backdrop-blur-xl p-8 md:p-14 rounded-[2.5rem] shadow-[0_20px_50px_rgba(26,47,40,0.05)] border border-white/40 text-center space-y-8">
+              <div className="w-20 h-20 bg-[#E3F2ED] rounded-full flex items-center justify-center mx-auto mb-6">
+                <Mail className="w-10 h-10 text-[#2D4F43]" />
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-4xl font-cormorant font-medium text-[#1A2F28]">Check your <span className="italic">inbox</span></h2>
+                <p className="text-[#1A2F28]/60 text-lg leading-relaxed">
+                  We've sent a verification link to your email. Please click the link to activate your account and start your journey.
+                </p>
+              </div>
+              <div className="pt-4">
+                <Link href="/login">
+                  <AlexButton variant="outline" className="px-12 text-sm uppercase tracking-[0.2em]">
+                    Back to Login
+                  </AlexButton>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAF9] font-outfit text-[#1A2F28] overflow-hidden antialiased relative">

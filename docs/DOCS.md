@@ -544,13 +544,10 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 ### Current Limitations
 
-| Area | Issue | Workaround |
-|------|-------|-----------|
 | **Email Verification** | Supabase email confirmation not enforced | Users access dashboards immediately after signup |
 | **Password Recovery** | `/forgot` route linked in login pages but pages don't exist | No self-service password reset available |
 | **Payments** | No payment integration | — |
 | **Emails** | No transactional emails (confirmations, reminders) | — |
-| **Dashboard Metrics** | Hardcoded "fake" growth metrics on main dashboards | Dashboards pending real data integration |
 
 ### Planned Features (Roadmap)
 
@@ -600,8 +597,6 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 | # | Bug | File | Impact | Status |
 |---|-----|------|--------|-----|
 | 1 | **`getSession()` used instead of `getUser()`** | `admin-panel/src/lib/api.ts` | Security issue (JWT forgery) | 🔴 PENDING |
-| 2 | **Hydration errors in MobileNav** | `MobileNav.tsx` | Order of hooks/mounted state issues | ✅ FIXED |
-| 3 | **Discover page maps static therapist lists** | `patient-app/dashboard/discover/page.tsx` | UI doesn't match API data | ✅ FIXED |
 
 ### 🟡 Code Quality Issues
 
@@ -611,8 +606,6 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 | `catch (err: any)` pattern | Multiple files | Low |
 | No loading state on login submit button | Patient + Therapist login pages | Low |
 | No error boundaries | All 3 Next.js apps | Low — unhandled fetch errors crash the page |
-| Unused imports (`Filter`, `MoreHorizontal`) | Admin therapists list page | Trivial |
-| Patient + Therapist dashboards are fully hardcoded | Dashboard home pages | Low — expected at this stage, will be replaced with live data |
 
 ---
 
@@ -654,6 +647,7 @@ Communication is strictly prohibited for appointments with a `CANCELLED` status.
 To eliminate React hydration mismatches across different environments:
 - **Locale Locking**: All date/time strings are formatted using the `en-US` locale explicitly.
 - **Fixed Visual Attributes**: Derived attributes (like random avatar backgrounds) were removed and replaced with deterministic theme colors.
+- **Breathing Loading Animation**: Implemented a calming "breathing" animation for all loading states to improve UX and prevent hydration flicker.
 - **Component Suppression**: Used `suppressHydrationWarning` exclusively for dynamic time-of-day greetings.
 
 ### 17.2 Specialized Privacy Branding
@@ -664,4 +658,4 @@ The platform has undergone a full branding scrub to remove "HIPAA" and "Secured"
 
 ---
 
-*Documentation generated for The Blissful Station platform. Last updated: April 15, 2026.*
+*Documentation generated for The Blissful Station platform. Last updated: May 1, 2026.*

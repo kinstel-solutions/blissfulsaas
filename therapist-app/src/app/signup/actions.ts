@@ -1,9 +1,11 @@
 "use server";
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
 
 export async function signUpTherapist(formData: any) {
   const { email, password, firstName, lastName } = formData;
+  const origin = (await headers()).get("origin");
   
   const supabase = await createClient();
   const adminClient = await createAdminClient();
@@ -17,7 +19,8 @@ export async function signUpTherapist(formData: any) {
         first_name: firstName,
         last_name: lastName,
         role: "THERAPIST"
-      }
+      },
+      emailRedirectTo: `${origin}/auth/callback`
     }
   });
 
@@ -41,11 +44,6 @@ export async function signUpTherapist(formData: any) {
     return { error: "Created account, but failed to sync user record. Admin will need to sync." };
   }
 
-  // 1.5 Auto-confirm the email using Admin Client (for immediate access)
-  await adminClient.auth.admin.updateUserById(authData.user.id, {
-    email_confirm: true
-  });
-
   // 2. Create the Therapist profile using the ADMIN client (bypasses RLS)
   const { error: profileError } = await adminClient
     .from("Therapist")
@@ -62,15 +60,5 @@ export async function signUpTherapist(formData: any) {
     return { error: "Created account, but failed to create profile. Admin will need to sync." };
   }
 
-  // 3. Perform immediate login to establish session
-  const { error: loginError } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (loginError) {
-    return { error: "Account created, but failed to auto-login: " + loginError.message };
-  }
-
-  return { success: true };
+  return { success: true, emailVerificationRequired: true };
 }

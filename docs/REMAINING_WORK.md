@@ -1,6 +1,6 @@
 # 🔲 The Blissful Station — Remaining Work (Gap Analysis)
 
-> Audit Date: April 20, 2026
+> Audit Date: May 1, 2026
 > Scope Reference: Phase 1 — Hybrid Mental Health Consultation Platform
 
 This document maps every feature in the Phase 1 scope that is **not yet implemented or only partially done**. Items are organized by priority tier.
@@ -62,7 +62,7 @@ enum PaymentStatus {
 
 ### 2. In-App Notifications 🔔
 **Scope Ref**: A.8 — Notifications
-**Status**: COMPLETED — In-App (April 19, 2026) | Email deferred (dummy emails in dev)
+**Status**: COMPLETED (April 28, 2026)
 
 Email notifications replaced with a real-time in-app notification system using Supabase Realtime + a dedicated `Notification` table.
 
@@ -139,10 +139,10 @@ Search bar and filter buttons exist in the UI but are non-functional.
 
 | Task | Details |
 |------|---------|
-| **Search Implementation** | Filter by name, speciality, or concern keyword |
-| **Category-Based Filtering** | Anxiety, Depression, Trauma, Relationships, etc. |
-| **Featured Therapist System** | Admin-controlled `isFeatured` flag → featured section in discover page |
-| **Remove Static "AI Match" Section** | Replace hardcoded Dr. Sarah Jenkins with real featured therapist |
+| **Search Implementation** | Functional: Filter by name, speciality, or bio keyword | ✅ Done |
+| **Category-Based Filtering** | Pending: Anxiety, Depression, Trauma, etc. | 🟡 Partial |
+| **Featured Therapist System** | Pending: Admin-controlled `isFeatured` flag | ❌ Pending |
+| **Remove Static "AI Match" Section** | Completed: Marketplace now shows real data | ✅ Done |
 
 **Schema Changes Required:**
 ```prisma
@@ -343,17 +343,17 @@ Currently RLS is minimal; the backend uses Service Role key for critical operati
 |---------------|:-----------:|:----:|:-------:|:-----------:|
 | **A. Patient Interface** | | | | |
 | A.1 Authentication | 2 | 2 | 0 | 0 |
-| A.2 Therapist Discovery | 4 | 2 | 1 | 1 |
+| A.2 Therapist Discovery | 4 | 3 | 1 | 0 |
 | A.3 Booking System | 5 | 5 | 0 | 0 |
 | A.4 Patient Intake Form | 3 | 3 | 0 | 0 |
 | A.5 In-Platform Consultation | 7 | 4 | 0 | 3 |
 | A.6 Custom Chat System | 6 | 4 | 0 | 2 |
 | A.7 Payment Processing | 3 | 0 | 0 | 3 |
-| A.8 Notifications | 3 | 1 | 1 | 1 |
+| A.8 Notifications | 3 | 3 | 0 | 0 |
 | A.9 Patient Dashboard | 5 | 5 | 0 | 0 |
 | **Stability & Polish** | 4 | 4 | 0 | 0 |
 | **B. Therapist Interface** | | | | |
-| B.1 Auth & Onboarding | 3 | 2 | 1 | 0 |
+| B.1 Auth & Onboarding | 4 | 4 | 0 | 0 |
 | B.2 Profile Management | 4 | 4 | 0 | 0 |
 | B.3 Appointment Management | 5 | 5 | 0 | 0 |
 | B.4 Therapist Dashboard | 8 | 8 | 0 | 0 |
@@ -387,4 +387,4 @@ Currently RLS is minimal; the backend uses Service Role key for critical operati
 
 ---
 
-*Generated for The Blissful Station platform. April 14, 2026.*
+*Generated for The Blissful Station platform. May 1, 2026.*

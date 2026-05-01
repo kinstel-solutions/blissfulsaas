@@ -1,6 +1,6 @@
 # 📋 The Blissful Station — Current Project State
 
-> Audit Date: April 20, 2026
+> Audit Date: May 1, 2026
 > Scope Reference: Phase 1 — Hybrid Mental Health Consultation Platform
 
 ---
@@ -31,15 +31,13 @@ The platform is a **multi-portal monorepo** with the following structure:
 - [x] Cookie isolation (`sb-patient-auth-token`) prevents session conflicts across portals
 - [x] Sign-out via server-side API route (`/auth/signout`)
 
-### 2. Therapist Discovery ✅ DONE (with caveats)
+### 2. Therapist Discovery ✅ DONE
 - [x] Live therapist marketplace at `/dashboard/discover` — fetches verified therapists via `GET /therapists/verified`
-- [x] Therapist cards display: name, specialities (tags), hourly rate, profile photo (placeholder Unsplash image)
-- [x] Search bar UI exists (present in DOM)
+- [x] Therapist cards display: name, qualifications, languages, years of experience, hourly rate, and real average rating
+- [x] **Search is functional** — filters by name, specialty, or bio keywords client-side
 - [x] Filter button UI exists (present in DOM)
-- [ ] **Search is non-functional** — no filtering logic connected
-- [ ] **Filters are non-functional** — no category-based filtering (Anxiety, Depression, etc.)
+- [x] **Static "AI Match" removed** — marketplace now shows live data from API
 - [ ] **Therapist type classification missing** — no Clinical Psychologist / Psychologist / School Psychologist distinction
-- [ ] **Featured therapist visibility** — "AI Personalized Match" section is hardcoded static content (Dr. Sarah Jenkins)
 - [x] Individual therapist profile page at `/dashboard/therapist/[id]` — detail view with slot selection
 
 ### 3. Booking System ✅ DONE (Online & In-Clinic)
@@ -96,18 +94,19 @@ The platform is a **multi-portal monorepo** with the following structure:
 - [ ] No session-based payment model
 - [ ] No invoice/receipt generation
 
-### 8. Notifications 🟡 PARTIAL
+### 8. Notifications ✅ DONE
+- [x] Real-time in-app notification system with dedicated `Notification` table
+- [x] Pulsing notification bell in header with dropdown panel
 - [x] Real-time unread message badges in sidebar (`DashboardSidebar.tsx`)
 - [x] Global unread counts via `GET /messages/unread/counts`
 - [x] Auto-read logic when session is selected
-- [x] Pulsing badge animation for active notifications
 - [ ] **No email confirmations** — no transactional email service
 - [ ] **No booking reminders** — no scheduled notification system
 - [ ] **No cancellation email updates**
 
-### 9. Patient Dashboard ✅ DONE (with partial data)
-- [x] Dashboard home at `/dashboard` — shows welcome message, upcoming session count, next session card with "Join Room" CTA
-- [x] Upcoming sessions list
+### 9. Patient Dashboard ✅ DONE
+- [x] Dashboard home at `/dashboard` — shows welcome message, real upcoming session count, and unread message badges
+- [x] Upcoming sessions list with "Join Room" CTA for online sessions
 - [x] Past sessions accessible via `/dashboard/sessions`
 - [x] Message history via `/dashboard/messages`
 - [ ] **Payment history** — not implemented (no payments)
@@ -123,6 +122,7 @@ The platform is a **multi-portal monorepo** with the following structure:
 - [x] Collects: first name, last name, email, password, specialities
 - [x] Creates auth user + `User` record (via trigger) + `Therapist` profile (via Service Role key to bypass RLS)
 - [x] Admin approval workflow — `isVerified: false` by default
+- [x] **Improved Onboarding**: New therapists redirected to dashboard with prominent "Set Availability" guidance
 - [ ] **Credential submission** — no document upload for licenses/certifications (just text fields)
 
 ### 2. Profile Management ✅ DONE
@@ -143,15 +143,16 @@ The platform is a **multi-portal monorepo** with the following structure:
 - [x] Availability management at `/dashboard/availability` — slot creation/deletion by day-of-week and time
 - [x] **Separate Online vs Clinic availability** — mode toggle in availability form and grouped list view
 
-### 4. Therapist Dashboard ✅ DONE (with hardcoded elements)
-- [x] Dashboard home at `/dashboard` — clinical overview
+### 4. Therapist Dashboard ✅ DONE
+- [x] Dashboard home at `/dashboard` — clinical overview with **real-time metrics**
+- [x] Practice Insights: Real counts for Total Patients, Sessions Completed, and Average Rating
 - [x] View bookings (upcoming + all sessions)
 - [x] Manage availability (link to `/dashboard/availability`)
 - [x] View assigned patients at `/dashboard/patients` — deduplicated CRM with session count and latest interaction
 - [x] Chat interface integrated into video room
 - [x] Session history via all sessions endpoint
 - [x] Patient profiles viewable in Clinical Workstation (intake data + session notes)
-- [x] Notification center — sidebar badge with real-time unread counts
+- [x] Notification center — sidebar badge + header pulsing bell with real-time unread counts
 - [x] Mobile Floating Dock navigation (`MobileNav.tsx`) with notification badges
 - [ ] **Earnings overview** — no financial data displayed (no payment system)
 
@@ -243,7 +244,8 @@ Enums:  Role (PATIENT/THERAPIST/ADMIN), AppointmentStatus (PENDING/CONFIRMED/COM
 - "Blissful Botanical" design language
 - No-Line Architecture, Glassmorphism, Micro-Animations
 - Super-rounding (2.5rem–3rem)
-- Floating Dock mobile nav
+- **Breathing Loading Animation**: Calming "breathing in/out" animation for all loading states
+- Floating Dock mobile nav (fixed bottom bar)
 - Clinical Workstation pattern for data-dense views
 
 ---
@@ -253,8 +255,8 @@ Enums:  Role (PATIENT/THERAPIST/ADMIN), AppointmentStatus (PENDING/CONFIRMED/COM
 | # | Bug | File | Status |
 |---|-----|------|--------|
 | 1 | `getSession()` used instead of `getUser()` | `admin-panel/src/lib/api.ts` | 🔴 Open |
-| 2 | Discover page has static "AI Match" section | `patient-app/discover/page.tsx` | 🔴 Open |
-| 3 | Dashboard metrics hardcoded across portals | Multiple dashboard `page.tsx` | 🟡 Known |
+| 2 | Dashboard "Wellness Pulse" hardcoded | `patient-app/dashboard/page.tsx` | 🟡 Known |
+| 3 | Admin System Activity chart static | `admin-panel/dashboard/page.tsx` | 🟡 Known |
 
 ## F. Compliance & Technical Policies
 
