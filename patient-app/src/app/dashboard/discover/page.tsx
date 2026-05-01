@@ -169,7 +169,10 @@ export default function DiscoverPage() {
                     <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Session Fee</span>
                     <span className="text-2xl font-heading text-primary">₹{t.hourlyRate || "1,500"}<span className="text-xs font-normal text-muted-foreground">/hr</span></span>
                   </div>
-                  <Link href={`/dashboard/therapist/${t.id}`} className="px-6 py-3 rounded-2xl bg-slate-900 text-white text-xs font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-primary transition-all duration-300">
+                  <Link 
+                    href={`/dashboard/therapist/${t.id}`} 
+                    className="px-6 py-3 rounded-2xl bg-slate-900 text-white text-xs font-bold uppercase tracking-widest flex items-center gap-3 group-hover:bg-primary transition-all duration-300 after:absolute after:inset-0 after:z-[1]"
+                  >
                     Book Now <ArrowRight className="w-4 h-4" />
                   </Link>
                </div>

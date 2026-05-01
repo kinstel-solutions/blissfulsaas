@@ -40,7 +40,7 @@ export default async function BookingPage() {
           </div>
         ) : (
           therapistList.map((therapist) => (
-            <div key={therapist.id} className="bg-surface-container-low/50 backdrop-blur-md border border-outline-variant/30 rounded-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 hover:border-primary/20 transition-all duration-500 group flex flex-col">
+            <div key={therapist.id} className="bg-surface-container-low/50 backdrop-blur-md border border-outline-variant/30 rounded-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 hover:border-primary/20 transition-all duration-500 group flex flex-col relative">
               <div className="p-4 md:p-8 flex-1">
                 <div className="flex items-start justify-between mb-6">
                   <div className="w-20 h-20 rounded-[2rem] bg-surface-container-lowest border border-outline-variant/50 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5 shadow-inner">
@@ -98,8 +98,8 @@ export default async function BookingPage() {
                       <span className="text-xs font-bold uppercase tracking-widest">Confidential</span>
                    </div>
                 </div>
-                <Link href={`/dashboard/sessions/book/${therapist.id}`}>
-                  <button className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group/btn">
+                <Link href={`/dashboard/sessions/book/${therapist.id}`} className="after:absolute after:inset-0 after:z-[1]">
+                  <button className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 group-hover:shadow-2xl group-hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group/btn">
                     Check Availability
                     <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                   </button>
