@@ -79,7 +79,7 @@ export default function SignupPage() {
               </div>
               <div className="pt-4">
                 <Link href="/login">
-                  <AlexButton variant="outline" className="px-12 text-sm uppercase tracking-[0.2em]">
+                  <AlexButton className="px-12 text-sm uppercase tracking-[0.2em]">
                     Back to Login
                   </AlexButton>
                 </Link>
