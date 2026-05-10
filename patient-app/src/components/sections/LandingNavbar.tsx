@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { AlexButton } from "@/components/ui/AlexButton";
@@ -49,10 +50,8 @@ export function LandingNavbar({
           }}
           className="text-[1.3rem] md:text-[1.6rem] font-cormorant font-bold text-[var(--primary)] flex items-center gap-2 md:gap-3 no-underline cursor-pointer"
         >
-          <div className="w-10 h-10 md:w-11 md:h-11 bg-[var(--primary)] rounded-full flex items-center justify-center text-white font-heading text-xl md:text-2xl shadow-lg shadow-primary/20">
-            B
-          </div>
-          <span className="hidden md:block">Blissful Station</span>
+          <Image src="/iconLogo.jpeg" alt="Icon" width={44} height={44} className="w-10 h-10 md:w-11 md:h-11 rounded-full object-cover shadow-lg shadow-primary/20" />
+          <span className="hidden md:block">The Blissful Station</span>
         </Link>
 
         {!hideLinks && (
@@ -88,9 +87,7 @@ export function LandingNavbar({
         <div className="flex flex-col h-full p-8">
           <div className="flex justify-between items-center mb-10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[var(--primary)] rounded-full flex items-center justify-center text-white font-heading text-xl shadow-lg shadow-primary/20">
-                B
-              </div>
+              <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-full object-cover shadow-lg shadow-primary/20" />
               <span className="text-lg font-cormorant font-bold text-[var(--primary)]">
                 Blissful Station
               </span>

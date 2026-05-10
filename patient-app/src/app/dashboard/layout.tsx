@@ -1,5 +1,6 @@
 import { Home } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
@@ -41,10 +42,8 @@ export default async function DashboardLayout({
       <aside className="w-72 bg-surface-container-low border-r border-outline-variant/30 flex-col z-20 shadow-sm hidden lg:flex">
         <div className="h-20 flex items-center px-4 md:px-8 border-b border-outline-variant/20">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="text-primary-foreground font-heading font-bold text-lg">B</span>
-            </div>
-            <span className="font-heading font-bold text-xl text-primary tracking-tight">Blissful Station</span>
+            <Image src="/iconLogo.jpeg" alt="Icon" width={32} height={32} className="w-8 h-8 rounded-2xl object-cover shadow-lg shadow-primary/20" />
+            <span className="font-heading font-bold text-xl text-primary tracking-tight">The Blissful Station</span>
           </Link>
         </div>
         
@@ -68,9 +67,7 @@ export default async function DashboardLayout({
         
         <header className="h-16 md:h-20 flex items-center justify-between px-6 md:px-10 bg-white border-b border-outline-variant/20 z-30 shrink-0">
           <div className="flex items-center gap-3 lg:hidden">
-            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-heading font-bold text-lg">B</span>
-            </div>
+            <Image src="/iconLogo.jpeg" alt="Icon" width={32} height={32} className="w-8 h-8 rounded-xl object-cover" />
           </div>
           <div className="hidden md:block">
             <h2 className="text-xl md:text-2xl font-heading font-normal text-foreground">Patient Portal</h2>

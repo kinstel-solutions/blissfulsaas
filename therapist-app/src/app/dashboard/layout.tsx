@@ -1,5 +1,6 @@
 import { Home, Activity } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
@@ -46,11 +47,9 @@ export default async function DashboardLayout({
       <aside className="w-72 bg-surface-container-low border-r border-outline-variant/30 flex-col z-20 shadow-sm hidden lg:flex">
         <div className="h-24 flex items-center px-5 md:px-10 border-b border-outline-variant/20">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="text-primary-foreground font-heading font-bold text-xl">B</span>
-            </div>
+            <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-2xl object-cover shadow-lg shadow-primary/20" />
             <div className="flex flex-col leading-none">
-               <span className="font-heading font-bold text-lg text-primary tracking-tight">Blissful</span>
+               <span className="font-heading font-bold text-lg text-primary tracking-tight">The Blissful Station</span>
                <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Provider</span>
             </div>
           </Link>
@@ -86,9 +85,7 @@ export default async function DashboardLayout({
         
         <header className="h-20 lg:h-24 flex items-center justify-between px-6 lg:px-12 bg-white border-b border-outline-variant/20 z-30 shrink-0">
           <div className="flex items-center gap-3 lg:hidden">
-            <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="text-primary-foreground font-heading font-bold text-xl">B</span>
-            </div>
+            <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-2xl object-cover shadow-lg shadow-primary/20" />
           </div>
           <div className="hidden md:block">
             <h2 className="text-xl lg:text-2xl font-heading font-normal text-foreground">Provider Dashboard</h2>
