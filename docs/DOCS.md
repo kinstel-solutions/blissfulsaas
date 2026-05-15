@@ -20,6 +20,11 @@
 12. [Known Limitations & Future Work](#12-known-limitations--future-work)
 13. [Pre-Production Optimizations](#13-pre-production-optimizations)
 14. [Audit Findings](#14-audit-findings)
+15. [Notification Architecture](#15-notification-architecture-deep-dive)
+16. [Clinical Messaging Policies](#16-clinical-messaging-policies)
+17. [Deterministic Hydration & Compliance](#17-deterministic-hydration--compliance)
+18. [Payment Architecture](#18-payment-architecture)
+19. [Session Feedback System](#19-session-feedback-system)
 
 ---
 
@@ -68,56 +73,102 @@ blissfulsaas/
 │   │   │   ├── dashboard/
 │   │   │   │   ├── sessions/
 │   │   │   │   │   ├── [id]/call/page.tsx  # Video consultation room
-│   │   │   │   │   ├── book/[id]/page.tsx  # Slot selection flow
+│   │   │   │   │   ├── book/[id]/page.tsx  # Slot selection + payment flow
 │   │   │   │   │   └── page.tsx            # Appointment history
+│   │   │   │   ├── therapist/[id]/page.tsx # Therapist detail profile view
 │   │   │   │   ├── messages/page.tsx       # Message History archive
 │   │   │   │   ├── intake/page.tsx         # Clinical Intake Form
 │   │   │   │   ├── discover/page.tsx       # Live therapist marketplace
-│   │   │   │   └── page.tsx                # Dashboard summary
-│   │   │   ├── middleware.ts               # Auth session refresh
+│   │   │   │   ├── error.tsx               # Error boundary
+│   │   │   │   ├── loading.tsx             # Breathing loader
+│   │   │   │   └── page.tsx                # Redirects to /discover
+│   │   │   ├── forgot/page.tsx             # Password reset request
+│   │   │   ├── update-password/page.tsx    # New password entry
+│   │   │   ├── api/feedback/              # Feedback proxy API route
+│   │   │   ├── auth/                      # Auth callback + signout
 │   │   ├── components/
+│   │   │   ├── BreathingLoader.tsx         # Calming loading animation
 │   │   │   ├── DashboardSidebar.tsx        # Real-time reactive sidebar
+│   │   │   ├── MobileNav.tsx              # Fixed bottom nav (mobile)
+│   │   │   ├── NotificationBell.tsx        # Real-time notification center
 │   │   │   ├── ChatSidebar.tsx             # Real-time chat UI
 │   │   │   ├── IntakeFormClient.tsx        # Multi-step patient intake UI
+│   │   │   ├── FeedbackForm.tsx            # Post-session star rating form
+│   │   │   ├── SessionFeedbackButton.tsx   # Contextual "Rate Session" CTA
+│   │   │   ├── RealtimeAutoUpdater.tsx     # Auto-refresh on DB changes
 │   │   │   ├── VideoRoom.tsx               # Agora conference logic
 │   │   │   └── VideoRoomWrapper.tsx        # SSR safety wrapper
 │   │   └── lib/
 │   │       ├── api.ts                      # Backend API client (Browser)
-│   │       └── api-server.ts               # Backend API client (Server)
+│   │       ├── api-server.ts               # Backend API client (Server)
+│   │       └── validations.ts              # Form validation schemas
 │
 ├── therapist-app/            # Therapist-facing portal
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── dashboard/
 │   │   │   │   ├── appointments/page.tsx   # Schedule + Clinical Workstation
-│   │   │   │   ├── availability/page.tsx   # Slot management
+│   │   │   │   ├── availability/page.tsx   # Slot management (Online + In-Clinic)
 │   │   │   │   ├── patients/page.tsx       # Patient Roster (CRM)
+│   │   │   │   ├── profile/page.tsx        # Therapist profile editor
 │   │   │   │   ├── messages/page.tsx       # Message History archive
-│   │   │   │   ├── sessions/[id]/call/page.tsx # Video room & chat
-│   │   │   │   └── page.tsx                # Clinical overview
-│   │   │   ├── middleware.ts               # Auth session refresh
+│   │   │   │   ├── sessions/[id]/call/     # Video room & chat
+│   │   │   │   ├── error.tsx               # Error boundary
+│   │   │   │   ├── loading.tsx             # Breathing loader
+│   │   │   │   └── page.tsx                # Clinical overview dashboard
+│   │   │   ├── forgot/page.tsx             # Password reset request
+│   │   │   ├── update-password/page.tsx    # New password entry
+│   │   │   ├── auth/                      # Auth callback + signout
 │   │   ├── components/
 │   │   │   ├── AppointmentActions.tsx      # State management buttons
 │   │   │   ├── EnhancedAppointmentsList.tsx# 3-Column Clinical Workstation
-│   │   │   ├── MobileNav.tsx               # Premium Floating Dock (Mobile)
+│   │   │   ├── PatientDetailPanel.tsx      # Deep-dive patient info view
+│   │   │   ├── PatientList.tsx             # Patient roster component
+│   │   │   ├── ClinicalNotesPopover.tsx    # Quick notes overlay
+│   │   │   ├── ImageUpload.tsx             # Profile photo upload (Supabase Storage)
+│   │   │   ├── MobileNav.tsx              # Fixed bottom dock (mobile)
 │   │   │   ├── DashboardSidebar.tsx        # Branded Clinical Sidebar (Desktop)
+│   │   │   ├── NotificationBell.tsx        # Real-time notification center
 │   │   │   ├── ChatSidebar.tsx             # In-call messaging UI
 │   │   │   ├── NotesSidebar.tsx            # Private clinical notes
+│   │   │   ├── RealtimeAutoUpdater.tsx     # Auto-refresh on DB changes
 │   │   │   └── VideoRoomWrapper.tsx
 │   │   └── lib/
-│   │       └── api.ts                      # Unified API service
+│   │       ├── api.ts                      # Unified API service
+│   │       ├── api-server.ts               # Server-side API client
+│   │       └── validations.ts              # Form validation schemas
+│
+├── admin-panel/              # Administrative portal
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── dashboard/
+│   │   │   │   ├── therapists/             # Provider network management
+│   │   │   │   ├── appointments/page.tsx   # Platform-wide session oversight
+│   │   │   │   ├── financials/page.tsx     # Revenue & payment tracking
+│   │   │   │   ├── error.tsx               # Error boundary
+│   │   │   │   ├── loading.tsx             # Breathing loader
+│   │   │   │   └── page.tsx                # Platform stats overview
+│   │   │   ├── auth/                      # Auth callback + signout
+│   │   ├── components/
+│   │   │   ├── MobileNav.tsx              # Admin mobile nav
+│   │   │   └── SignOutButton.tsx
+│   │   ├── middleware.ts                  # Auth session refresh
 │
 ├── backend/                  # NestJS API (Primary Business Logic)
 │   ├── prisma/
 │   │   └── schema.prisma           # Database schema (source of truth)
 │   └── src/
-│       ├── availability/           # Slot generation & management
-│       ├── messages/               # Chat persistence & history
-│       ├── sessions/               # Appointment lifecycle & notes
-│       ├── patients/               # Intake forms & roster logic
 │       ├── auth/                   # RBAC & JWT validation
+│       ├── availability/           # Slot generation & management
+│       ├── feedback/               # Session ratings & reviews
+│       ├── messages/               # Chat persistence & history
+│       ├── notifications/          # In-app notification system
+│       ├── patients/               # Intake forms & roster logic
+│       ├── payments/               # Razorpay integration (mock + live)
+│       ├── sessions/               # Appointment lifecycle & notes
 │       └── therapists/             # Registry management
 │
+├── package.json              # Monorepo scripts (concurrently)
 ├── promote_admin.sql         # SQL script to promote user to admin
 └── README.md
 ```
@@ -136,11 +187,14 @@ blissfulsaas/
 | **Database** | Supabase PostgreSQL | Managed Postgres with RLS |
 | **ORM** | Prisma | Schema definition and migrations |
 | **Backend API** | NestJS | Multi-module REST API with guards |
+| **Rate Limiting** | @nestjs/throttler | 60 req/min per client |
+| **Payments** | Razorpay (+ mock mode) | Pre-session payment with HMAC verification |
 | **Video Platform** | Agora RTC | SDK for low-latency clinical video |
-| **Real-time Engine** | Supabase Realtime | WebSocket-driven chat delivery |
+| **Real-time Engine** | Supabase Realtime | WebSocket-driven chat & notification delivery |
+| **Storage** | Supabase Storage | Therapist profile image uploads |
 | **Fonts** | Outfit + Cormorant | Modern sans-serif + high-end serif |
 | **Currency** | INR (₹) | Standardized for all financial displays |
-| **Encyption** | AES-256 / TLS 1.3 | Industry-standard security (Non-HIPAA) |
+| **Encryption** | AES-256 / TLS 1.3 | Industry-standard security (Non-HIPAA) |
 
 ---
 
@@ -156,6 +210,7 @@ erDiagram
     User ||--o| Therapist : "has profile"
     User ||--o| Admin : "has profile"
     User ||--o{ Message : "sends"
+    User ||--o{ Notification : "receives"
 
     User {
         UUID id PK "Matches auth.users.id"
@@ -184,9 +239,11 @@ erDiagram
     }
 
     Therapist ||--o{ AvailabilitySlot : "manages"
+    Therapist ||--o{ SessionFeedback : "receives"
     AvailabilitySlot ||--o{ Appointment : "fills"
     Patient ||--o{ Appointment : "books"
     Appointment ||--o{ Message : "contains"
+    Appointment ||--o| SessionFeedback : "rated by"
 
     Appointment {
         UUID id PK
@@ -196,9 +253,14 @@ erDiagram
         DateTime scheduledAt
         Int duration
         AppointmentStatus status "PENDING | CONFIRMED | COMPLETED | CANCELLED | NO_SHOW"
+        ConsultationMode mode "ONLINE | IN_CLINIC"
         String videoRoomId UK
         String patientNotes
         String therapistNotes
+        PaymentStatus paymentStatus "UNPAID | PENDING | PAID | REFUNDED"
+        String paymentId
+        Float amountPaid
+        DateTime paidAt
     }
 
     AvailabilitySlot {
@@ -207,7 +269,29 @@ erDiagram
         Int dayOfWeek "0-6"
         String startTime "HH:mm"
         String endTime "HH:mm"
+        ConsultationMode mode "ONLINE | IN_CLINIC"
         Boolean isActive
+    }
+
+    SessionFeedback {
+        UUID id PK
+        UUID appointmentId FK UK
+        UUID therapistId FK
+        Int rating "1-5"
+        String comment
+        Boolean isPublic
+        DateTime createdAt
+    }
+
+    Notification {
+        UUID id PK
+        UUID userId FK
+        NotificationType type
+        String title
+        String body
+        Boolean isRead
+        Json metadata
+        DateTime createdAt
     }
 
     Message {
@@ -231,7 +315,11 @@ erDiagram
         Int yearsOfExperience
         String videoUrl
         Float hourlyRate
+        String clinicAddress
+        String profileImageUrl
         Boolean isVerified
+        String rejectionReason
+        Json pendingFields
     }
 ```
 
@@ -239,7 +327,11 @@ erDiagram
 
 - **1:1 Role Profiles**: Each `User` has exactly one profile (`Patient`, `Therapist`, or `Admin`). This is enforced by unique constraints on `userId`.
 - **UUID Primary Keys**: All IDs use `gen_random_uuid()` and match Supabase's `auth.users.id` format.
-- **Clinical Documentation (Phase 5)**: Patient intake forms pre-fill `Patient` columns, while `Appointment` holds private `therapistNotes` per session. This ensures continuity of care across multiple appointments with different therapists if needed.
+- **Clinical Documentation**: Patient intake forms pre-fill `Patient` columns, while `Appointment` holds private `therapistNotes` per session.
+- **Dual Consultation Modes**: `ConsultationMode` enum (`ONLINE | IN_CLINIC`) on both `AvailabilitySlot` and `Appointment`. Composite unique constraint allows the same time slot as both online and in-clinic.
+- **Payment Lifecycle**: `PaymentStatus` enum (`UNPAID | PENDING | PAID | REFUNDED`) on `Appointment` with Razorpay `paymentId` for traceability.
+- **Feedback System**: `SessionFeedback` is 1:1 with `Appointment` (unique constraint), denormalized `therapistId` for fast aggregate rating queries.
+- **Notification Types**: `NotificationType` enum covers: `BOOKING_CONFIRMED`, `BOOKING_CANCELLED`, `SESSION_COMPLETED`, `PAYMENT_SUCCESS`, `THERAPIST_APPROVED`, `NEW_MESSAGE`, `FEEDBACK_REQUEST`, `GENERAL`.
 
 ---
 
@@ -376,10 +468,13 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Landing | `/` | Marketing page with hero, features, CTAs |
 | Login | `/login` | Email/password login |
 | Signup | `/signup` | Patient registration with name fields |
-| Dashboard | `/dashboard` | Protected patient home |
+| Forgot Password | `/forgot` | Password reset email request |
+| Update Password | `/update-password` | New password entry after reset |
+| Dashboard | `/dashboard` | Redirects to `/dashboard/discover` |
 | Discover | `/dashboard/discover` | Browse therapist marketplace (Live API) |
-| Book Session | `/dashboard/sessions/book` | Live therapist availability & slot booking |
-| My Sessions | `/dashboard/sessions` | Upcoming and past appointments |
+| Therapist Profile | `/dashboard/therapist/[id]` | Detailed therapist view with slot selection |
+| Book Session | `/dashboard/sessions/book/[id]` | Slot selection + Razorpay payment flow |
+| My Sessions | `/dashboard/sessions` | Upcoming/past appointments + feedback buttons |
 | My Messages | `/dashboard/messages` | Transcripts of past session chats |
 | Account | `/dashboard/account` | Profile, settings, and sign-out |
 | Intake Form | `/dashboard/intake` | Multi-step clinical pre-session data |
@@ -391,10 +486,13 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Landing | `/` | Provider-focused marketing page |
 | Login | `/login` | Professional login |
 | Signup | `/signup` | Application form → creates auth user + Therapist profile |
+| Forgot Password | `/forgot` | Password reset email request |
+| Update Password | `/update-password` | New password entry after reset |
 | Dashboard | `/dashboard` | Protected provider workspace |
-| Availability | `/dashboard/availability` | Drag-and-drop 3-week slot generation |
-| Appointments | `/dashboard/appointments` | Schedule management & Clinical Workstation (Intake + Notes) |
-| Patient Roster | `/dashboard/patients` | Deduped CRM viewer of past patients and interaction history |
+| Profile | `/dashboard/profile` | Edit bio, specialities, hourly rate, profile image |
+| Availability | `/dashboard/availability` | Slot management (Online + In-Clinic modes) |
+| Appointments | `/dashboard/appointments` | Clinical Workstation (Session Details, Intake, Notes) |
+| Patient Roster | `/dashboard/patients` | Deduped CRM with session count & interaction history |
 | Message Archive| `/dashboard/messages` | Secure transcripts of past session chats |
 | Account | `/dashboard/account` | Profile, settings, and sign-out |
 | Session Room | `/dashboard/sessions/[id]/call` | Professional video & chat workspace |
@@ -406,6 +504,8 @@ DELETE FROM public."Therapist" WHERE "userId" = '<user-uuid>';
 | Login | `/login` | Admin-only terminal login |
 | Overview | `/dashboard` | Platform stats: total users, patients, therapists, pending |
 | Account | `/dashboard/account` | Profile and global admin settings |
+| Appointments | `/dashboard/appointments` | Platform-wide session oversight |
+| Financials | `/dashboard/financials` | Revenue per therapist, payment tracking |
 | Provider Network | `/dashboard/therapists` | Table of all therapist applications |
 | Therapist Detail | `/dashboard/therapists/[id]` | Deep-dive into individual practitioner |
 | **Backend** | `PATCH /therapists/:id/verify` | Master endpoint for verification |
@@ -472,8 +572,10 @@ The platform uses the **"Blissful Botanical"** design system — a muted dark-gr
 3. **Micro-Animations**: Hover states with `translate-y`, `scale`, and `rotate` transforms on interactive elements.
 4. **Editorial Typography**: Oversized headings (`text-4xl`+), ultra-wide tracking (`tracking-widest`), uppercase labels.
 5. **Super-rounding**: Cards use `rounded-[2.5rem]` to `rounded-[3rem]` for a premium organic feel.
-6. **Floating Dock Architecture**: Mobile navigation uses a centralized "Floating Dock" pattern (`rounded-[2.5rem]`, `backdrop-blur-3xl`) with high-contrast notification badges (`bg-primary`, `animate-pulse`).
+6. **Fixed Bottom Dock**: Mobile navigation uses a fixed bottom bar with rounded top corners and notification badges.
 7. **Clinical Workstations**: The therapist portal treats data displays as full "workstations" (expandable table rows replacing older modal patterns).
+8. **Breathing Loading Animation**: Calming "breathing in/out" animation for all loading states, improving perceived performance.
+9. **Error Recovery UX**: Branded error boundaries with retry capability, matching the botanical design language.
 
 ---
 
@@ -481,22 +583,28 @@ The platform uses the **"Blissful Botanical"** design system — a muted dark-gr
 
 Each app requires a `.env.local` file in its root:
 
-### Patient App & Therapist App
+### Patient App
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxx
 NEXT_PUBLIC_AGORA_APP_ID=your_agora_app_id
+NEXT_PUBLIC_API_URL=http://localhost:5000    # Backend API base URL
 ```
 
-### Therapist App (additional)
+### Therapist App
 ```env
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6...  # For profile creation
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxx
+NEXT_PUBLIC_AGORA_APP_ID=your_agora_app_id
+NEXT_PUBLIC_API_URL=http://localhost:5000
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6...  # For profile creation (bypasses RLS)
 ```
 
 ### Admin Panel
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxx
+NEXT_PUBLIC_API_URL=http://localhost:5000
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6...  # For admin operations
 ```
 
@@ -508,6 +616,10 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_JWT_SECRET=your_jwt_secret
 AGORA_APP_ID=your_agora_app_id
 AGORA_APP_CERTIFICATE=your_agora_cert
+MOCK_PAYMENT=true                            # Set to 'true' for local dev (skips Razorpay)
+RAZORPAY_KEY_ID=rzp_test_xxxxx               # Required when MOCK_PAYMENT=false
+RAZORPAY_KEY_SECRET=your_razorpay_secret      # Required when MOCK_PAYMENT=false
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:3002
 ```
 
 ---
@@ -521,21 +633,21 @@ AGORA_APP_CERTIFICATE=your_agora_cert
 git clone https://github.com/dethrtrns/blissfulsaas.git
 cd blissfulsaas
 
-# 2. Install dependencies for each app & backend
-cd patient-app && npm install && cd ..
-cd therapist-app && npm install && cd ..
-cd admin-panel && npm install && cd ..
-cd backend && npm install && cd ..
+# 2. Install ALL dependencies (monorepo script)
+npm run install-all
+# Or manually: npm install && npm install --prefix backend && npm install --prefix patient-app && ...
 
-# 3. Create .env.local files in each app (see §10)
+# 3. Create .env.local files in each app + .env in backend (see §10)
 
 # 4. Start the backend
 cd backend && npx prisma migrate deploy && npm run dev  # → http://localhost:5000
 
-# 5. Start all three portals (in separate terminals)
-cd patient-app && npm run dev        # → http://localhost:3000
-cd therapist-app && npm run dev      # → http://localhost:3001  
-cd admin-panel && npm run dev        # → http://localhost:3002
+# 5. Start everything at once (from root)
+npm run dev
+# Or start individually in separate terminals:
+# cd patient-app && npm run dev        # → http://localhost:3000
+# cd therapist-app && npm run dev      # → http://localhost:3001  
+# cd admin-panel && npm run dev        # → http://localhost:3002
 ```
 
 ---
@@ -544,34 +656,48 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 ### Current Limitations
 
+| Limitation | Details | Impact |
+|-----------|---------|--------|
 | **Email Verification** | Supabase email confirmation not enforced | Users access dashboards immediately after signup |
-| **Password Recovery** | `/forgot` route linked in login pages but pages don't exist | No self-service password reset available |
-| **Payments** | No payment integration | — |
-| **Emails** | No transactional emails (confirmations, reminders) | — |
+| **Transactional Emails** | No email service (Resend/Postmark) integrated | No booking confirmations, reminders, or cancellation emails |
+| **Session Duration Control** | No in-call timer or forced session end | No actual start/end timestamps tracked |
+| **Document Sharing** | Chat is text-only | No file/image uploads within sessions |
+| **Admin Analytics** | System Activity chart uses hardcoded data | Growth metrics are static placeholders |
 
 ### Planned Features (Roadmap)
 
 **✅ Completed**
-- [x] **Monorepo Scaffold**: Three Next.js portals
-- [x] **NestJS Backend**: REST API with Prisma ORM
+- [x] **Monorepo Scaffold**: Three Next.js portals + root monorepo scripts
+- [x] **NestJS Backend**: REST API with Prisma ORM + rate limiting (`@nestjs/throttler`)
 - [x] **Supabase Auth**: Email/password signup with DB triggers
-- [x] **Booking System**: Slot-based availability & patient flow
+- [x] **Booking System**: Slot-based availability with Online + In-Clinic modes
+- [x] **Payment Processing**: Razorpay integration with mock mode for dev
 - [x] **Video Consultations**: Agora SDK integration with token security
 - [x] **Real-Time Chat**: Full real-time support with polling fallbacks
 - [x] **Role Guards**: Layout-level CSR/SSR auth protection
 - [x] **Clinical Messaging**: 7-day extended chat window after consultations
+- [x] **In-App Notifications**: Real-time notification bell with Supabase Realtime subscription
 - [x] **Notification Workspace**: Global unread badges in sidebars with real-time reactive sync
 - [x] **Messaging Security**: Hard-block on communication for cancelled appointments
 - [x] **Clinical Workstation**: Appointments view with Session Details, Patient Intake Form, and Private Clinical Notes
+- [x] **Session Feedback**: Post-session star rating (1–5) + written review system
+- [x] **Password Recovery**: `/forgot` + `/update-password` routes in patient-app and therapist-app
+- [x] **Admin Panel**: Appointment oversight, financial tracking, therapist verification
+- [x] **Profile Image Upload**: Supabase Storage integration for therapist photos
+- [x] **Error Boundaries**: `error.tsx` in all three apps with retry capability
+- [x] **Breathing Loading Animation**: Calming loading states across all portals
 
 **🔲 Pending (by priority)**
-- [ ] **Admin Panel & Analytics**: Revenue tracking, platform stats, management
-- [ ] **Payments (Razorpay)**: Session-based payment & invoicing
-- [ ] **Email Notifications**: Transactional emails via Resend
-- [ ] **Password Recovery**: `/forgot` + `/update-password` routes
+- [ ] **Email Notifications**: Transactional emails via Resend/Postmark
+- [ ] **Scheduled Reminders**: 24h/1h pre-session reminders (requires cron or Edge Functions)
+- [ ] **Session Timer**: In-call countdown with actual start/end timestamps
+- [ ] **Document & Media Sharing**: Chat attachments via Supabase Storage
+- [ ] **Therapist Suspension**: Admin suspend/unsuspend toggle (beyond approve/reject)
 - [ ] **Public/Institutional Pages**: Schools, Corporate, Universities program pages
-- [ ] **Storage**: Supabase Storage for profiles/docs
+- [ ] **Dynamic Pricing Packages**: Multi-session packages per therapist
 - [ ] **Comprehensive RLS**: Fine-grained PostgreSQL policies
+- [ ] **Email Verification**: Enforce Supabase email confirmation before dashboard access
+- [ ] **Live Admin Analytics**: Real analytics charts replacing static data
 
 ---
 
@@ -590,38 +716,46 @@ cd admin-panel && npm run dev        # → http://localhost:3002
 
 ## 14. Audit Findings
 
-> Code audit performed April 10, 2026. These are bugs and quality issues found during a full review of all source files.
+> Code audit performed April 10, 2026. Updated May 14, 2026.
 
 ### 🔴 Bugs
 
 | # | Bug | File | Impact | Status |
 |---|-----|------|--------|-----|
-| 1 | **`getSession()` used instead of `getUser()`** | `admin-panel/src/lib/api.ts` | Security issue (JWT forgery) | 🔴 PENDING |
+| 1 | **`getSession()` used instead of `getUser()`** | `admin-panel/src/lib/api.ts` | Security issue (JWT forgery) | 🔴 OPEN |
 
 ### 🟡 Code Quality Issues
 
-| Issue | Location | Severity |
-|-------|----------|----------|
-| `(therapist.user as any)?.email` type casting | Admin therapist pages | Low — should use Supabase generated types |
-| `catch (err: any)` pattern | Multiple files | Low |
-| No loading state on login submit button | Patient + Therapist login pages | Low |
-| No error boundaries | All 3 Next.js apps | Low — unhandled fetch errors crash the page |
+| Issue | Location | Severity | Status |
+|-------|----------|----------|--------|
+| `(therapist.user as any)?.email` type casting | Admin therapist pages | Low | 🟡 Open |
+| `catch (err: any)` pattern | Multiple files | Low | 🟡 Open |
+| Dashboard "Wellness Pulse" hardcoded score | `patient-app/dashboard/page.tsx` | Low | 🟡 Known |
+| Admin System Activity chart static | `admin-panel/dashboard/page.tsx` | Low | 🟡 Known |
+| ~~No loading state on login submit button~~ | ~~Patient + Therapist login pages~~ | ~~Low~~ | ✅ Fixed |
+| ~~No error boundaries~~ | ~~All 3 Next.js apps~~ | ~~Low~~ | ✅ Fixed — `error.tsx` added to all apps |
 
 ---
 
 ## 15. Notification Architecture (Deep Dive)
 
-The platform implements a **Reactive Notification System** to track unread messages without constant polling.
+The platform implements a **dual notification system**: unread message badges + a dedicated in-app notification center.
 
-### Backend Strategy
-- **Manual Aggregation**: To avoid Prisma `groupBy` performance and filtering quirks with deep nested relations (User -> Therapist -> Appointment), the backend `MessagesService` now fetches unread message targets and aggregates counts in-memory.
-- **Endpoint**: `GET /messages/unread/counts` returns a map of `{ [appointmentId]: count }`.
+### In-App Notification System
+- **Dedicated `Notification` Model**: Stores typed notifications with metadata (JSON) for deep-linking.
+- **`NotificationType` Enum**: `BOOKING_CONFIRMED`, `BOOKING_CANCELLED`, `SESSION_COMPLETED`, `PAYMENT_SUCCESS`, `THERAPIST_APPROVED`, `NEW_MESSAGE`, `FEEDBACK_REQUEST`, `GENERAL`.
+- **`NotificationBell` Component**: Header bell icon with animated unread count badge + dropdown panel. Present in both patient and therapist apps.
+- **Real-time via Supabase Realtime**: INSERT subscription on `Notification` table filtered by `userId` for instant badge updates.
+- **NestJS Module**: `notifications/` with endpoints: `GET /notifications`, `GET /notifications/unread/count`, `PATCH /:id/read`, `PATCH /read-all`, `DELETE /:id`.
+- **Cross-service Integration**: `SessionsService`, `PaymentsService`, `FeedbackService`, and `TherapistsService` all inject `NotificationsService` to fire notifications automatically.
 
-### Frontend Synchronization
-- **Global Multi-Portal Listening**: The `DashboardSidebar` (Client Component) maintains a global Supabase Realtime channel to track unread counts across all sessions. It features a pulsing badge for the "Messages" tab.
-- **Hydration Safety**: Messaging components include a `mounted` guard to prevent hydration mismatches caused by locale-dependent date formatting or server-client state drift.
-- **Auto-Read Logic**: Messages are marked as read via a dedicated `POST /messages/:id/read` endpoint triggered automatically when a session is selected or a message arrives in the active view.
-- **API Aggregation**: The `MessagesService` in the backend manually aggregates counts from the database to ensure high performance and strict role-based filtering.
+### Unread Message Badges
+- **Manual Aggregation**: Backend `MessagesService` fetches unread message targets and aggregates counts in-memory (avoids Prisma `groupBy` quirks).
+- **Endpoint**: `GET /messages/unread/counts` returns `{ [appointmentId]: count }`.
+- **Global Multi-Portal Listening**: `DashboardSidebar` maintains a Supabase Realtime channel for pulsing badges.
+- **Auto-Read Logic**: Messages marked as read via `POST /messages/:id/read` triggered automatically when a session is selected.
+
+> **Manual Step Required**: Enable Realtime on the `Notification` table in Supabase Dashboard → Database → Replication → Tables.
 
 ---
 
@@ -638,6 +772,7 @@ To facilitate follow-up care without requiring additional bookings for minor que
 Communication is strictly prohibited for appointments with a `CANCELLED` status.
 - **Security**: The backend `sendMessage` operation explicitly rejects requests for cancelled IDs with a `403 Forbidden` error.
 - **UI**: The chat input is hidden and replaced with a **Ban** icon and a clinical notice for cancelled sessions.
+
 
 ---
 
@@ -658,4 +793,60 @@ The platform has undergone a full branding scrub to remove "HIPAA" and "Secured"
 
 ---
 
-*Documentation generated for The Blissful Station platform. Last updated: May 1, 2026.*
+## 18. Payment Architecture
+
+The platform implements a **Razorpay-powered payment system** with a mock mode for local development.
+
+### 18.1 Payment Flow
+
+```mermaid
+sequenceDiagram
+    actor Patient
+    participant Frontend as Patient App
+    participant Backend as NestJS API
+    participant Razorpay as Razorpay API
+
+    Patient->>Frontend: Select slot + click "Book & Pay"
+    Frontend->>Backend: POST /payments/create-order
+    Backend->>Razorpay: Create Razorpay Order (amount in paise)
+    Razorpay-->>Backend: { orderId, amount, currency }
+    Backend-->>Frontend: Order details + Razorpay key
+    Frontend->>Razorpay: Open Razorpay Checkout modal
+    Patient->>Razorpay: Complete payment
+    Razorpay-->>Frontend: { razorpay_order_id, razorpay_payment_id, razorpay_signature }
+    Frontend->>Backend: POST /payments/verify
+    Backend->>Backend: HMAC signature verification
+    Backend->>Backend: Atomic $transaction (create Appointment + set PAID)
+    Backend->>Backend: Fire notifications (patient + therapist)
+    Backend-->>Frontend: Appointment record
+```
+
+### 18.2 Mock Mode
+When `MOCK_PAYMENT=true`, the backend:
+- Returns a fake `MOCK_ORDER_xxx` ID without calling Razorpay.
+- Skips HMAC signature verification during `verifyAndBook`.
+- Still creates real appointments with `PaymentStatus.PAID`.
+
+### 18.3 Idempotency
+The `verifyAndBook` method checks for an existing appointment with the same `paymentId` before creating a new one, preventing double-booking on client retries.
+
+---
+
+## 19. Session Feedback System
+
+The platform includes a post-session feedback system with star ratings and optional written reviews.
+
+### Components
+- **Patient UI**: `SessionFeedbackButton.tsx` shows a "Rate Session" CTA on completed appointments. Clicking opens the `FeedbackForm.tsx` modal with 1–5 star rating + optional text review.
+- **Backend**: `feedback/` NestJS module with endpoints:
+  - `POST /feedback/:appointmentId` — Patient submits rating (1–5) + optional comment
+  - `GET /feedback/appointment/:appointmentId` — Get feedback for an appointment
+  - `GET /feedback/therapist/:therapistId/stats` — Public aggregate rating stats
+  - `GET /feedback/admin/all` — Admin: all feedback
+  - `PATCH /feedback/admin/:id/toggle` — Admin: toggle feedback visibility
+- **Schema**: `SessionFeedback` model with 1:1 relation to `Appointment`, denormalized `therapistId`, and `isPublic` flag for admin moderation.
+- **Integration**: Average ratings displayed on therapist cards in the patient marketplace.
+
+---
+
+*Documentation generated for The Blissful Station platform. Last updated: May 14, 2026.*
