@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ShieldAlert, Loader2, Mail, Lock, ShieldCheck } from "lucide-react";
+import { ShieldAlert, Loader2, Mail, Lock, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { adminLoginSchema, type AdminLoginValues } from "@/lib/validations";
@@ -14,6 +14,7 @@ import { adminLoginSchema, type AdminLoginValues } from "@/lib/validations";
 export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const {
@@ -112,13 +113,20 @@ export default function AdminLoginPage() {
                     <Lock size={20} />
                   </div>
                   <input 
-                    type="password" 
+                    type={showPassword ? "text" : "password"} 
                     {...register("password")}
                     placeholder="••••••••" 
                     className={`w-full h-16 bg-white/5 border focus:bg-white/10 px-14 outline-none transition-all rounded-2xl text-white font-medium placeholder:text-white/10 shadow-inner ${
                       errors.password ? 'border-red-500' : 'border-white/10 focus:border-[#2D4F43]/30'
                     }`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 hover:text-[#2D4F43] transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
                 {errors.password && <p className="text-[10px] text-red-500 font-bold uppercase tracking-[0.2em] mt-1 ml-4">{errors.password.message}</p>}
               </div>

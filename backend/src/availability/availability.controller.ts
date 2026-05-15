@@ -14,6 +14,19 @@ export class AvailabilityController {
     const therapist = await this.availabilityService.getTherapistByUserId(req.user.userId);
     return this.availabilityService.createSlot(therapist.id, data);
   }
+
+  @Post('bulk')
+  @Roles('THERAPIST')
+  async bulkUpdate(
+    @Request() req: any,
+    @Body() data: { 
+      create: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }[];
+      delete: string[];
+    }
+  ) {
+    const therapist = await this.availabilityService.getTherapistByUserId(req.user.userId);
+    return this.availabilityService.bulkUpdateSlots(therapist.id, data);
+  }
   @Get()
   @Roles('THERAPIST')
   async getMySlots(@Request() req: any) {

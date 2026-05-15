@@ -51,6 +51,67 @@ export class AvailabilityService {
     });
   }
 
+  async bulkUpdateSlots(
+    therapistId: string, 
+    data: { 
+      create: { dayOfWeek: number; startTime: string; endTime: string; mode?: ConsultationMode }[];
+      delete: string[];
+    }
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      if (data.delete.length > 0) {
+        await tx.availabilitySlot.updateMany({
+          where: {
+            id: { in: data.delete },
+            therapistId,
+          },
+          data: { isActive: false },
+        });
+      }
+
+      const results = [];
+      for (const item of data.create) {
+        const mode = item.mode ?? ConsultationMode.ONLINE;
+        
+        const existing = await tx.availabilitySlot.findUnique({
+          where: {
+            therapistId_dayOfWeek_startTime_mode: {
+              therapistId,
+              dayOfWeek: item.dayOfWeek,
+              startTime: item.startTime,
+              mode,
+            },
+          },
+        });
+
+        if (existing) {
+          if (!existing.isActive) {
+            const updated = await tx.availabilitySlot.update({
+              where: { id: existing.id },
+              data: { isActive: true, endTime: item.endTime },
+            });
+            results.push(updated);
+          } else {
+            throw new ConflictException(`Slot already exists for ${item.startTime} on day ${item.dayOfWeek}`);
+          }
+        } else {
+          const created = await tx.availabilitySlot.create({
+            data: {
+              dayOfWeek: item.dayOfWeek,
+              startTime: item.startTime,
+              endTime: item.endTime,
+              mode,
+              therapistId,
+            },
+          });
+          results.push(created);
+        }
+      }
+
+      return { success: true, createdCount: results.length, deletedCount: data.delete.length };
+    });
+  }
+
   async getMySlots(therapistId: string) {
     return this.prisma.availabilitySlot.findMany({
       where: { therapistId, isActive: true },
