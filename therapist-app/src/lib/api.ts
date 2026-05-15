@@ -33,6 +33,10 @@ export const api = {
     getMySlots: () => fetchWithAuth("/availability"),
     createSlot: (data: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }) => fetchWithAuth("/availability", { method: "POST", body: JSON.stringify(data) }),
     deleteSlot: (id: string) => fetchWithAuth(`/availability/${id}`, { method: "DELETE" }),
+    bulkUpdate: (data: { 
+      create: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }[];
+      delete: string[];
+    }) => fetchWithAuth("/availability/bulk", { method: "POST", body: JSON.stringify(data) }),
   },
   sessions: {
     upcoming: () => fetchWithAuth("/sessions/upcoming"),

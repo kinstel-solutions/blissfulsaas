@@ -3,7 +3,20 @@ import { Calendar, ArrowRight, Shield, Star, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
+import MiniCalendar from "@/components/MiniCalendar";
 export const dynamic = "force-dynamic";
+
+interface Session {
+  id: string;
+  status: string;
+  patientId: string;
+  scheduledAt: string;
+  mode: string;
+  patient?: {
+    firstName: string;
+    lastName: string;
+  };
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -12,22 +25,21 @@ export default async function DashboardPage() {
   const firstName = data?.user?.user_metadata?.first_name || "Doctor";
 
   // Fetch real upcoming sessions from the backend
-  const upcomingSessions = await fetchWithAuthContent("/sessions/upcoming");
-  const nextSession = Array.isArray(upcomingSessions) && upcomingSessions.length > 0 ? upcomingSessions[0] : null;
+  const upcomingSessions = await fetchWithAuthContent("/sessions/upcoming") as Session[];
 
   // Fetch all sessions for filtering and insights
-  const allSessions = await fetchWithAuthContent("/sessions/all");
+  const allSessions = await fetchWithAuthContent("/sessions/all") as Session[];
   const pendingSessions = Array.isArray(allSessions)
-    ? allSessions.filter((s: any) => s.status === 'PENDING')
+    ? allSessions.filter((s: Session) => s.status === 'PENDING')
     : [];
 
   // Calculate insights
   const completedSessionsCount = Array.isArray(allSessions)
-    ? allSessions.filter((s: any) => s.status === 'COMPLETED').length
+    ? allSessions.filter((s: Session) => s.status === 'COMPLETED').length
     : 0;
 
   const uniquePatientsCount = Array.isArray(allSessions)
-    ? new Set(allSessions.map((s: any) => s.patientId)).size
+    ? new Set(allSessions.map((s: Session) => s.patientId)).size
     : 0;
 
   // Fetch therapist profile to get their ID for rating stats
@@ -108,122 +120,18 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Appointments Section */}
+      {/* Appointments Section (Calendar) */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg md:text-2xl font-bold tracking-tight text-foreground">
-              Pending
-            </h3>
-            {pendingSessions.length > 0 && (
-              <span className="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm animate-pulse">
-                {pendingSessions.length}
-              </span>
-            )}
-          </div>
+          <h3 className="text-lg md:text-2xl font-bold tracking-tight text-foreground">
+            Schedule
+          </h3>
           <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-all flex items-center group">
-            Schedule <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+            All Appointments <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        {pendingSessions.length > 0 ? (
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible sm:pb-0">
-            {pendingSessions.map((session: any) => (
-              <div 
-                key={session.id} 
-                className="min-w-[40vw] sm:min-w-0 flex-1 flex-shrink-0 snap-center bg-white p-4 md:p-8 rounded-[2rem] border border-slate-100 hover:border-amber-200 transition-all group relative overflow-hidden flex flex-col justify-between h-full shadow-sm"
-              >
-                <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-                
-                <div>
-                  <div className="flex items-center gap-3 mb-5 md:mb-8">
-                    <div className="w-12 h-12 md:w-20 md:h-20 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5 shrink-0 shadow-inner">
-                      <Image 
-                        src={`https://ui-avatars.com/api/?name=${session.patient?.firstName}+${session.patient?.lastName}&background=EAF4F3&color=214D3E&size=128`}
-                        alt="Patient"
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover rounded-xl"
-                      />
-                    </div>
-                    <div className="overflow-hidden">
-                      <h4 className="text-slate-900 font-bold text-xs md:text-xl leading-tight group-hover:text-primary transition-colors font-sans truncate capitalize">
-                        {session.patient?.firstName} {session.patient?.lastName}
-                      </h4>
-                      <div className="flex items-center gap-1 mt-1">
-                        <span className={`px-2 py-0.5 rounded-md text-[7px] md:text-[10px] border font-black uppercase tracking-widest ${
-                          session.mode === 'IN_CLINIC' 
-                            ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                            : 'bg-blue-50 text-blue-600 border-blue-100'
-                        }`}>
-                          {session.mode === 'IN_CLINIC' ? 'Clinic' : 'Online'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2.5 mb-5 md:mb-10">
-                    <div className="flex items-center gap-3 text-slate-500">
-                      <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
-                        <Calendar className="w-4 h-4 text-primary/40" />
-                      </div>
-                      <span className="text-[10px] md:text-sm font-bold uppercase tracking-wider text-slate-600">
-                        {new Date(session.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-slate-500">
-                      <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
-                        <Clock className="w-4 h-4 text-primary/40" />
-                      </div>
-                      <span className="text-[10px] md:text-sm font-bold uppercase tracking-wider text-slate-600">
-                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 md:pt-8 border-t border-slate-50">
-                  <Link href={`/dashboard/appointments/${session.id}`} className="block">
-                    <button className="w-full py-3 md:py-5 bg-primary/5 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary/20 rounded-2xl text-[9px] md:text-xs font-bold uppercase tracking-widest text-primary transition-all flex items-center justify-center gap-2">
-                      Review <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          !hasSchedule ? (
-            <div className="bg-slate-900 border border-slate-800 p-8 md:p-12 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
-              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div className="space-y-4 text-center md:text-left">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 rounded-lg border border-primary/30">
-                    <Clock className="w-3.5 h-3.5 text-primary-foreground" />
-                    <span className="text-[10px] font-bold text-primary-foreground uppercase tracking-widest">Action Required</span>
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-heading font-medium text-white tracking-tight">Set your practice hours</h3>
-                  <p className="text-white/60 text-sm md:text-base max-w-md leading-relaxed">
-                    You haven't added your clinical availability yet. Set your working hours so patients can start booking sessions with you.
-                  </p>
-                </div>
-                <Link href="/dashboard/availability">
-                  <button className="px-8 py-4 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-[0.2em] rounded-2xl hover:bg-white hover:text-slate-900 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
-                    Configure Schedule <ArrowRight className="w-4 h-4" />
-                  </button>
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-surface/50 p-12 rounded-[2rem] border border-dashed border-outline-variant/30 text-center">
-              <Calendar className="w-10 h-10 text-primary/20 mx-auto mb-4" />
-              <p className="text-sm text-muted-foreground font-medium">All caught up! No pending sessions at the moment.</p>
-              <Link href="/dashboard/appointments" className="text-primary font-bold text-[10px] uppercase tracking-widest mt-4 inline-block hover:underline">
-                View your schedule
-              </Link>
-            </div>
-          )
-        )}
+        <MiniCalendar sessions={upcomingSessions} />
       </div>
 
       {/* Metrics Section */}
@@ -346,6 +254,124 @@ export default async function DashboardPage() {
           </div>
         </div>
 
+      </div>
+
+      {/* Pending Sessions (Moved to bottom) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg md:text-2xl font-bold tracking-tight text-foreground">
+              Pending
+            </h3>
+            {pendingSessions.length > 0 && (
+              <span className="bg-amber-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm animate-pulse">
+                {pendingSessions.length}
+              </span>
+            )}
+          </div>
+          <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-all flex items-center group">
+            Schedule <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
+        {pendingSessions.length > 0 ? (
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible sm:pb-0">
+            {pendingSessions.map((session: Session) => (
+              <div 
+                key={session.id} 
+                className="min-w-[40vw] sm:min-w-0 flex-1 flex-shrink-0 snap-center bg-white p-4 md:p-8 rounded-[2rem] border border-slate-100 hover:border-amber-200 transition-all group relative overflow-hidden flex flex-col justify-between h-full shadow-sm"
+              >
+                <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+                
+                <div>
+                  <div className="flex items-center gap-3 mb-5 md:mb-8">
+                    <div className="w-12 h-12 md:w-20 md:h-20 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5 shrink-0 shadow-inner">
+                      <Image 
+                        src={`https://ui-avatars.com/api/?name=${session.patient?.firstName}+${session.patient?.lastName}&background=EAF4F3&color=214D3E&size=128`}
+                        alt="Patient"
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover rounded-xl"
+                      />
+                    </div>
+                    <div className="overflow-hidden">
+                      <h4 className="text-slate-900 font-bold text-xs md:text-xl leading-tight group-hover:text-primary transition-colors font-sans truncate capitalize">
+                        {session.patient?.firstName} {session.patient?.lastName}
+                      </h4>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className={`px-2 py-0.5 rounded-md text-[7px] md:text-[10px] border font-black uppercase tracking-widest ${
+                          session.mode === 'IN_CLINIC' 
+                            ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                            : 'bg-blue-50 text-blue-600 border-blue-100'
+                        }`}>
+                          {session.mode === 'IN_CLINIC' ? 'Clinic' : 'Online'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2.5 mb-5 md:mb-10">
+                    <div className="flex items-center gap-3 text-slate-500">
+                      <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                        <Calendar className="w-4 h-4 text-primary/40" />
+                      </div>
+                      <span className="text-[10px] md:text-sm font-bold uppercase tracking-wider text-slate-600">
+                        {new Date(session.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 text-slate-500">
+                      <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                        <Clock className="w-4 h-4 text-primary/40" />
+                      </div>
+                      <span className="text-[10px] md:text-sm font-bold uppercase tracking-wider text-slate-600">
+                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 md:pt-8 border-t border-slate-50">
+                  <Link href={`/dashboard/appointments/${session.id}`} className="block">
+                    <button className="w-full py-3 md:py-5 bg-primary/5 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary/20 rounded-2xl text-[9px] md:text-xs font-bold uppercase tracking-widest text-primary transition-all flex items-center justify-center gap-2 gap-2">
+                      Review <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          !hasSchedule ? (
+            <div className="bg-slate-900 border border-slate-800 p-8 md:p-12 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="space-y-4 text-center md:text-left">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/20 rounded-lg border border-primary/30">
+                    <Clock className="w-3.5 h-3.5 text-primary-foreground" />
+                    <span className="text-[10px] font-bold text-primary-foreground uppercase tracking-widest">Action Required</span>
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-heading font-medium text-white tracking-tight">Set your practice hours</h3>
+                  <p className="text-white/60 text-sm md:text-base max-w-md leading-relaxed">
+                    You haven&apos;t added your clinical availability yet. Set your working hours so patients can start booking sessions with you.
+                  </p>
+                </div>
+                <Link href="/dashboard/availability">
+                  <button className="px-8 py-4 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-[0.2em] rounded-2xl hover:bg-white hover:text-slate-900 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
+                    Configure Schedule <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-surface/50 p-12 rounded-[2rem] border border-dashed border-outline-variant/30 text-center">
+              <Calendar className="w-10 h-10 text-primary/20 mx-auto mb-4" />
+              <p className="text-sm text-muted-foreground font-medium">All caught up! No pending sessions at the moment.</p>
+              <Link href="/dashboard/appointments" className="text-primary font-bold text-[10px] uppercase tracking-widest mt-4 inline-block hover:underline">
+                View your schedule
+              </Link>
+            </div>
+          )
+        )}
       </div>
     </div>
   );
