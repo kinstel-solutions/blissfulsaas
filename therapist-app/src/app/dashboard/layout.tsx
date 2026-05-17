@@ -1,4 +1,4 @@
-import { Home, Activity } from "lucide-react";
+import { Home, Activity, Calendar } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
@@ -54,25 +54,59 @@ export default async function DashboardLayout({
       <RealtimeAutoUpdater currentUserId={user.id} />
       <MobileNav currentUserId={user.id} />
       {/* Sidebar - Desktop Only */}
-      <aside className="w-72 bg-surface-container-low border-r border-outline-variant/30 flex-col z-20 shadow-sm hidden lg:flex">
-        <div className="h-24 flex items-center px-5 md:px-10 border-b border-outline-variant/20">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-2xl object-cover shadow-lg shadow-primary/20" />
-            <div className="flex flex-col leading-none">
-               <span className="font-heading font-bold text-lg text-primary tracking-tight">The Blissful Station</span>
-               <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Provider</span>
+      <aside className="w-60 bg-surface-container-low border-r border-outline-variant/30 flex-col z-20 shadow-sm hidden lg:flex animate-fade-in">
+        {/* Brand Block */}
+        <div className="px-6 py-6 border-b border-outline-variant/10 flex flex-col gap-3 shrink-0">
+          <Link href="/dashboard" className="flex items-start gap-4">
+            <Image src="/iconLogo.jpeg" alt="Icon" width={56} height={56} className="w-14 h-14 rounded-full object-cover shrink-0 mt-0.5" />
+            <div className="flex flex-col text-left font-heading font-black text-xl text-primary leading-[1.0] tracking-tight">
+               <span>The</span>
+               <span>Blissful</span>
+               <span>Station</span>
             </div>
           </Link>
+          <span className="text-xs font-bold text-primary/85 leading-normal text-left block">
+            Express. Connect.<br />
+            Understand. Transform.
+          </span>
+        </div>
+
+        {/* Profile Widget in Sidebar */}
+        <div className="px-6 py-4 border-b border-outline-variant/10 flex items-center justify-between group hover:bg-slate-50/50 transition-colors shrink-0">
+          <div className="flex items-center gap-3.5 overflow-hidden">
+            <div className="w-12 h-12 rounded-full bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary text-base font-bold shadow-inner overflow-hidden shrink-0">
+              {profileImageUrl ? (
+                <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user.user_metadata?.first_name?.[0] || "D"
+              )}
+            </div>
+            <div className="flex flex-col overflow-hidden text-left leading-tight">
+              <span className="text-[13.5px] font-bold text-foreground truncate">
+                Dr. {user.user_metadata?.first_name || "Riya"} {user.user_metadata?.last_name || "Sharma"}
+              </span>
+              <span className="text-xs font-medium text-muted-foreground/80 mt-0.5 truncate">
+                Clinical Psychologist
+              </span>
+            </div>
+          </div>
+          <Image 
+            src="https://api.iconify.design/heroicons:chevron-down-solid.svg?color=%2364748b" 
+            alt="Dropdown" 
+            width={12} 
+            height={12} 
+            className="shrink-0 group-hover:translate-y-0.5 transition-transform"
+          />
         </div>
         
         <DashboardSidebar currentUserId={user.id} />
 
-        <div className="p-4 md:p-8 border-t border-outline-variant/20 space-y-3">
+        <div className="px-6 py-5 border-t border-outline-variant/20 space-y-3 shrink-0">
           {bottomNavItems.map((item) => (
             <Link 
               key={item.href}
               href={item.href} 
-              className="flex items-center px-4 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-xl transition-colors group"
+              className="flex items-center px-4 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-lg transition-colors group"
             >
               <item.icon className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform" />
               {item.label}
@@ -80,7 +114,7 @@ export default async function DashboardLayout({
           ))}
           <Link 
             href="/" 
-            className="flex items-center px-4 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-xl transition-colors group"
+            className="flex items-center px-4 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-lg transition-colors group"
           >
             <Home className="w-4 h-4 mr-3" />
             Home
@@ -93,15 +127,29 @@ export default async function DashboardLayout({
       <main className="flex-1 flex flex-col overflow-hidden relative bg-surface-container-lowest/30">
         <div className="absolute top-0 right-0 w-full h-[40vh] bg-linear-to-b from-primary/5 via-transparent to-transparent -z-10 pointer-events-none" />
         
-        <header className="h-20 lg:h-24 flex items-center justify-between px-6 lg:px-12 bg-white border-b border-outline-variant/20 z-30 shrink-0">
+        <header className="h-20 lg:h-24 flex items-center justify-between px-8 lg:px-12 bg-transparent z-30 shrink-0 w-full">
           <div className="flex items-center gap-3 lg:hidden">
-            <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-2xl object-cover shadow-lg shadow-primary/20" />
+            <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-lg object-cover shadow-lg shadow-primary/20 animate-fade-in" />
           </div>
           <div className="hidden md:block">
-            <h2 className="text-xl lg:text-2xl font-heading font-normal text-foreground">Provider Dashboard</h2>
+            <h1 className="text-xl lg:text-2xl font-heading font-bold text-foreground flex items-center gap-2">
+              Welcome back, Dr. {user.user_metadata?.first_name || "Riya"} 👋
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1 font-medium">
+              Here&apos;s what&apos;s happening in your practice today.
+            </p>
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
             <NotificationBell currentUserId={user.id} />
+            
+            {/* Calendar Icon next to Notification Bell */}
+            <Link 
+              href="/dashboard/appointments" 
+              className="w-10 h-10 rounded-xl bg-white border border-outline-variant/20 flex items-center justify-center text-muted-foreground hover:bg-slate-50 transition-all shadow-xs hover:scale-105 shrink-0"
+              title="View Calendar"
+            >
+              <Calendar className="w-5 h-5 text-muted-foreground" />
+            </Link>
 
             {/* Mobile Profile Icon (only visible on screens smaller than sm) */}
             <Link 
@@ -114,30 +162,11 @@ export default async function DashboardLayout({
                 user.user_metadata?.first_name?.[0] || "D"
               )}
             </Link>
-
-            <div className="hidden sm:flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm font-bold text-foreground leading-none">{user.user_metadata?.first_name || "Doctor"}</p>
-                <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest font-bold">LCSW • Active Practitioner</p>
-              </div>
-              <Link 
-                href="/dashboard/profile" 
-                className="w-12 h-12 rounded-2xl bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary font-bold shadow-inner hover:bg-primary-container/40 transition-colors overflow-hidden shrink-0"
-              >
-                {profileImageUrl ? (
-                  <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  user.user_metadata?.first_name?.[0] || "D"
-                )}
-              </Link>
-            </div>
           </div>
         </header>
 
-        <div id="main-content-area" className="flex-1 overflow-auto p-6 pb-24 lg:p-12 relative">
-          <div className="max-w-6xl mx-auto">
-            {children}
-          </div>
+        <div id="main-content-area" className="flex-1 overflow-auto px-6 py-6 lg:px-8 lg:py-8 pb-24 relative">
+          {children}
         </div>
       </main>
     </div>
