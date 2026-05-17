@@ -5,6 +5,7 @@ import { ServicesSection } from "@/components/sections/ServicesSection";
 import { WhyChooseUsSection } from "@/components/sections/WhyChooseUsSection";
 import { StatsSection } from "@/components/sections/StatsSection";
 import Link from "next/link";
+import Image from "next/image";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
 
@@ -24,7 +25,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col items-center gap-8">
             <div className="text-2xl font-cormorant font-bold text-[var(--primary)] flex items-center gap-3">
-              <div className="w-10 h-10 bg-[var(--primary)] rounded-full flex items-center justify-center text-white font-heading text-xl">B</div>
+              <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-full object-cover shadow-sm" />
               <span>Blissful Station</span>
             </div>
             <p className="text-[var(--text-light)] max-w-md">

@@ -1,6 +1,7 @@
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   Users, 
   LayoutDashboard, 
@@ -58,9 +59,7 @@ export default async function DashboardLayout({
       <aside className="w-72 bg-surface-container-low border-r border-outline-variant/20 flex-col z-20 shadow-sm hidden lg:flex">
         <div className="h-20 flex items-center px-4 md:px-8 border-b border-outline-variant/20">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="text-primary-foreground font-heading font-bold text-lg">B</span>
-            </div>
+            <Image src="/iconLogo.jpeg" alt="Icon" width={32} height={32} className="w-8 h-8 rounded-2xl object-cover shadow-lg shadow-primary/20" />
             <span className="font-heading font-bold text-xl text-primary tracking-tight">Admin OS</span>
           </Link>
         </div>
@@ -96,9 +95,7 @@ export default async function DashboardLayout({
         
         <header className="h-20 flex items-center justify-between px-6 lg:px-10 bg-surface/30 backdrop-blur-3xl border-b border-outline-variant/10 z-10 shrink-0">
           <div className="flex items-center gap-3 lg:hidden">
-            <div className="w-8 h-8 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="text-primary-foreground font-heading font-bold text-lg">B</span>
-            </div>
+            <Image src="/iconLogo.jpeg" alt="Icon" width={32} height={32} className="w-8 h-8 rounded-2xl object-cover shadow-lg shadow-primary/20" />
           </div>
           <div className="hidden sm:flex flex-col">
             <h2 className="text-xl font-heading font-medium text-primary">Admin Control Center</h2>

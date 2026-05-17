@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ShieldAlert, Loader2, Mail, Lock, ShieldCheck, Eye, EyeOff } from "lucide-react";
@@ -54,9 +55,7 @@ export default function AdminLoginPage() {
       {/* Header */}
       <header className="p-6 md:p-10 md:px-16 flex justify-between items-center z-10">
         <div className="flex items-center gap-4 group cursor-default">
-          <div className="w-10 h-10 rounded-xl bg-[#2D4F43] flex items-center justify-center shadow-lg shadow-[#2D4F43]/20 rotate-0 group-hover:rotate-12 transition-transform">
-            <span className="text-white font-heading font-bold text-sm">B</span>
-          </div>
+          <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-[#2D4F43]/20 rotate-0 group-hover:rotate-12 transition-transform" />
           <div className="flex flex-col">
             <span className="font-cormorant font-bold text-xl text-white tracking-tight leading-none">Blissful Station</span>
             <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#2D4F43]">System Admin</span>
