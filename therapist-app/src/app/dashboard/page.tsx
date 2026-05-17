@@ -78,39 +78,39 @@ export default async function DashboardPage() {
           </div>
           <Link href="/dashboard/profile">
             <button className="px-6 py-3 bg-amber-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-amber-700 transition-colors shadow-lg shadow-amber-600/20">
-              Complete Your Profile
+              View Profile
             </button>
           </Link>
         </div>
       )}
 
       {/* Welcome Banner */}
-      <div className="relative group bg-primary border border-primary/20 p-4 md:p-8 md:p-12 rounded-[2rem] shadow-2xl shadow-primary/20 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-container/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000" />
-        <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+      <div className="relative group bg-primary border border-primary/20 p-5 md:p-8 rounded-[1.5rem] shadow-xl shadow-primary/10 overflow-hidden">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-primary-container/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000" />
+        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 md:gap-8">
           {/* Profile Image */}
           <div className="shrink-0">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-[3rem] border-4 border-white/10 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500 bg-white/5 p-1">
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-[1.5rem] border-2 border-white/10 shadow-lg overflow-hidden group-hover:scale-105 transition-transform duration-500 bg-white/5 p-0.5">
               <Image
                 src={profile?.profileImageUrl || `https://ui-avatars.com/api/?name=${firstName}&background=EAF4F3&color=214D3E&size=400`}
                 alt="Therapist Profile"
-                width={160}
-                height={160}
-                className="w-full h-full object-cover rounded-[2.5rem]"
+                width={96}
+                height={96}
+                className="w-full h-full object-cover rounded-[1.25rem]"
               />
             </div>
           </div>
 
-          <div className="max-w-xl text-center md:text-left">
-            <h1 className="text-3xl md:text-[2.75rem] font-heading font-medium text-primary-foreground mb-4 md:mb-6 leading-tight" suppressHydrationWarning>
+          <div className="max-w-xl text-center sm:text-left">
+            <h1 className="text-xl md:text-2xl font-heading font-medium text-primary-foreground mb-1 leading-tight" suppressHydrationWarning>
               {greeting}, {firstName}
             </h1>
-            <p className="text-primary-foreground/70 text-base md:text-lg leading-relaxed mb-6 md:mb-8">
+            <p className="text-primary-foreground/70 text-xs md:text-sm leading-relaxed mb-3">
               You have <span className="text-primary-foreground font-bold">{upcomingSessions?.length || 0} session(s)</span> scheduled for today.
             </p>
-            <div className="mb-0 flex justify-center md:justify-start">
-              <div className={`px-4 py-2 rounded-xl border text-white/90 text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${profile?.isVerified ? 'bg-white/10 border-white/20' : 'bg-amber-500/20 border-amber-500/30'}`}>
-                <Shield className={`w-4 h-4 ${profile?.isVerified ? 'text-green-300' : 'text-amber-300 animate-pulse'}`} />
+            <div className="flex justify-center sm:justify-start">
+              <div className={`px-3 py-1 rounded-lg border text-white/95 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5 ${profile?.isVerified ? 'bg-white/10 border-white/20' : 'bg-amber-500/20 border-amber-500/30'}`}>
+                <Shield className={`w-3.5 h-3.5 ${profile?.isVerified ? 'text-green-300' : 'text-amber-300 animate-pulse'}`} />
                 Clinic Status: <span>
                   {profile?.isVerified ? 'Verified & Public' : 'Private & Pending'}
                 </span>

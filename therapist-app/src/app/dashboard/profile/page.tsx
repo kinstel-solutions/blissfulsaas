@@ -48,6 +48,7 @@ export default function ProfilePage() {
       languages: [],
       videoUrl: "",
       clinicAddress: "",
+      mapLink: "",
       profileImageUrl: "",
       phone: "",
     },
@@ -76,6 +77,7 @@ export default function ProfilePage() {
           languages: data.languages || [],
           videoUrl: data.videoUrl || "",
           clinicAddress: data.clinicAddress || "",
+          mapLink: profileData.mapLink || "",
           profileImageUrl: profileData.profileImageUrl || "",
           phone: profileData.phone || "",
         });
@@ -209,7 +211,7 @@ export default function ProfilePage() {
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="w-full md:w-2/5">
               <ImageUpload
-                label="Profile Photo"
+                label="Profile Photo (Optional)"
                 value={formData.profileImageUrl}
                 onChange={(url) => setValue("profileImageUrl", url, { shouldDirty: true })}
                 description="Professional headshot."
@@ -258,7 +260,7 @@ export default function ProfilePage() {
             </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Editorial Bio</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Editorial Bio (Optional)</label>
             <textarea
               {...register("bio")}
               rows={5}
@@ -287,7 +289,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Introduction Video URL</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Introduction Video URL (Optional)</label>
             <div className="relative">
               <Video className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
               <input
@@ -322,6 +324,26 @@ export default function ProfilePage() {
             </div>
             <p className="text-[10px] text-muted-foreground/50 font-medium">
               Only shown to patients who book an in-clinic appointment with you.
+            </p>
+          </div>
+
+          {/* Map Link */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Google Maps Link</label>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+              <input
+                type="url"
+                {...register("mapLink")}
+                placeholder="e.g. https://maps.google.com/?q=..."
+                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                  errors.mapLink ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-emerald-500/50'
+                }`}
+              />
+              {errors.mapLink && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.mapLink.message}</p>}
+            </div>
+            <p className="text-[10px] text-muted-foreground/50 font-medium">
+              Optional link to your clinic location on Google Maps.
             </p>
           </div>
 

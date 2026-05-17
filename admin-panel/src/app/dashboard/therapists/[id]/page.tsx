@@ -87,6 +87,7 @@ export default async function TherapistDetailPage({
   const yearsOfExperienceInfo = getFieldInfo("yearsOfExperience");
   const languagesInfo = getFieldInfo("languages");
   const clinicAddressInfo = getFieldInfo("clinicAddress");
+  const mapLinkInfo = getFieldInfo("mapLink");
   const specialitiesInfo = getFieldInfo("specialities");
 
   const PendingLabel = () => (
@@ -366,6 +367,38 @@ export default async function TherapistDetailPage({
                    {clinicAddressInfo.hasPending && (
                     <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
                       Original: {clinicAddressInfo.originalValue || "Empty"}
+                    </div>
+                   )}
+                 </div>
+               </div>
+            </div>
+
+            {/* Google Maps Link */}
+            <div className="space-y-2">
+               <div className="flex items-center">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Google Maps Link</label>
+                {mapLinkInfo.hasPending && <PendingLabel />}
+               </div>
+               <div className="relative group">
+                 <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
+                   <ExternalLink className="w-5 h-5" />
+                 </div>
+                 <div className={`w-full border rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                   {mapLinkInfo.value ? (
+                     <a href={mapLinkInfo.value} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1.5 font-bold">
+                       {mapLinkInfo.value}
+                       <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                     </a>
+                   ) : (
+                     "No map link provided."
+                   )}
+                   {mapLinkInfo.hasPending && (
+                    <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
+                      Original: {mapLinkInfo.originalValue ? (
+                        <a href={mapLinkInfo.originalValue} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                          {mapLinkInfo.originalValue}
+                        </a>
+                      ) : "Empty"}
                     </div>
                    )}
                  </div>

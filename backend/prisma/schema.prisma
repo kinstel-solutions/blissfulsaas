@@ -86,6 +86,7 @@ model Therapist {
   videoUrl      String?
   hourlyRate    Float?
   clinicAddress String?  // Physical address for in-clinic appointments
+  mapLink       String?  // Google Maps link for the clinic location
   profileImageUrl String? // URL for therapist profile image
   isVerified    Boolean  @default(false)
   rejectionReason String?

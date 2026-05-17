@@ -82,7 +82,19 @@ export default async function SessionsPage() {
             {isClinic && clinicAddress && (
               <div className="flex items-center gap-1.5 mt-1.5 text-xs text-primary/70 font-medium">
                 <MapPin className="w-3 h-3 flex-shrink-0" />
-                {clinicAddress}
+                {session.therapist?.mapLink ? (
+                  <a 
+                    href={session.therapist.mapLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:underline hover:text-primary flex items-center gap-1 font-bold"
+                  >
+                    {clinicAddress}
+                    <span className="text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded uppercase font-bold tracking-widest ml-1">Open Map</span>
+                  </a>
+                ) : (
+                  <span>{clinicAddress}</span>
+                )}
               </div>
             )}
             {/* Existing feedback stars inline */}

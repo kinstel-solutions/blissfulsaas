@@ -12,6 +12,7 @@ export const therapistProfileSchema = z.object({
   languages: z.array(z.string()).default([]),
   videoUrl: z.string().url("Invalid video URL").optional().or(z.literal("")),
   clinicAddress: z.string().optional().or(z.literal("")),
+  mapLink: z.string().url("Invalid map URL").optional().or(z.literal("")),
   profileImageUrl: z.string().url("Invalid profile image URL").optional().or(z.literal("")),
 });
 

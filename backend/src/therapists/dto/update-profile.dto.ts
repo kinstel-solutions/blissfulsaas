@@ -52,6 +52,11 @@ export class UpdateTherapistProfileDto {
   @IsOptional()
   clinicAddress?: string;
 
+  @ValidateIf(o => typeof o.mapLink === 'string' && o.mapLink.trim().length > 0)
+  @IsUrl()
+  @IsOptional()
+  mapLink?: string;
+
   @ValidateIf(o => typeof o.profileImageUrl === 'string' && o.profileImageUrl.trim().length > 0)
   @IsUrl()
   @IsOptional()

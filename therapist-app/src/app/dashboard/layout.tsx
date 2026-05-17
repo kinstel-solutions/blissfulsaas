@@ -34,6 +34,16 @@ export default async function DashboardLayout({
     redirect("/login?error=Unauthorized: Therapist access required");
   }
 
+  // Fetch Therapist Profile Image
+  const { data: therapistProfile } = await adminSupabase
+    .from("Therapist")
+    .select("profileImageUrl, pendingFields")
+    .eq("userId", user.id)
+    .single();
+
+  const pendingImage = (therapistProfile?.pendingFields as any)?.profileImageUrl;
+  const profileImageUrl = therapistProfile?.profileImageUrl || pendingImage || null;
+
   const bottomNavItems = [
     { label: "My Profile", icon: Activity, href: "/dashboard/profile" },
   ];
@@ -96,14 +106,33 @@ export default async function DashboardLayout({
           <div className="flex items-center gap-3 sm:gap-4">
             <NotificationBell currentUserId={user.id} />
 
+            {/* Mobile Profile Icon (only visible on screens smaller than sm) */}
+            <Link 
+              href="/dashboard/profile" 
+              className="flex sm:hidden w-10 h-10 rounded-xl bg-primary-container/20 border border-primary/20 items-center justify-center text-primary font-bold shadow-inner hover:bg-primary-container/40 transition-colors overflow-hidden shrink-0"
+            >
+              {profileImageUrl ? (
+                <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                user.user_metadata?.first_name?.[0] || "D"
+              )}
+            </Link>
+
             <div className="hidden sm:flex items-center gap-4">
               <div className="text-right">
                 <p className="text-sm font-bold text-foreground leading-none">{user.user_metadata?.first_name || "Doctor"}</p>
                 <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest font-bold">LCSW • Active Practitioner</p>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary font-bold shadow-inner">
-                {user.user_metadata?.first_name?.[0] || "D"}
-              </div>
+              <Link 
+                href="/dashboard/profile" 
+                className="w-12 h-12 rounded-2xl bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary font-bold shadow-inner hover:bg-primary-container/40 transition-colors overflow-hidden shrink-0"
+              >
+                {profileImageUrl ? (
+                  <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  user.user_metadata?.first_name?.[0] || "D"
+                )}
+              </Link>
             </div>
           </div>
         </header>
