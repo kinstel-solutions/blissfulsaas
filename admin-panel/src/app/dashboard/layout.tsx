@@ -15,6 +15,7 @@ import {
 
 import SignOutButton from "@/components/SignOutButton";
 import MobileNav from "@/components/MobileNav";
+import SidebarNav from "@/components/SidebarNav";
 
 export default async function DashboardLayout({
   children,
@@ -45,13 +46,6 @@ export default async function DashboardLayout({
     redirect("/login?error=Unauthorized: Admin access required");
   }
 
-  const navItems = [
-    { label: "Overview", icon: LayoutDashboard, href: "/dashboard", active: true },
-    { label: "Appointments", icon: CalendarDays, href: "/dashboard/appointments", active: true },
-    { label: "Financials", icon: DollarSign, href: "/dashboard/financials", active: true },
-    { label: "Providers", icon: ShieldCheck, href: "/dashboard/therapists", active: true },
-  ];
-
   return (
     <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden relative">
       <MobileNav currentUserId={user.id} />
@@ -64,25 +58,7 @@ export default async function DashboardLayout({
           </Link>
         </div>
         
-        <div className="px-6 py-5 md:py-10 flex flex-col flex-1 gap-2">
-          <p className="px-4 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Systems</p>
-          {navItems.map((item) => (
-            <Link 
-              key={item.label}
-              href={item.href} 
-              className={`flex items-center px-4 py-3.5 rounded-2xl transition-all duration-300 group ${
-                item.active 
-                  ? "text-foreground/60 hover:bg-surface-container-lowest hover:text-primary" 
-                  : "text-muted-foreground/30 cursor-not-allowed pointer-events-none"
-              }`}
-            >
-              <item.icon className={`w-5 h-5 mr-3 transition-transform ${
-                item.active ? "group-hover:scale-110 group-hover:rotate-3" : ""
-              }`} />
-              <span className="font-medium text-sm">{item.label}</span>
-            </Link>
-          ))}
-        </div>
+        <SidebarNav />
 
         <div className="p-6 border-t border-outline-variant/20 space-y-2">
           <SignOutButton />

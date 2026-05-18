@@ -37,25 +37,58 @@ export default async function DashboardPage() {
   const completedSessionsCount = Array.isArray(allSessions)
     ? allSessions.filter((s: Session) => s.status === 'COMPLETED').length
     : 0;
+  const uniquePatients = Array.isArray(allSessions)
+    ? Array.from(new Set(allSessions.map((s: Session) => s.patientId)))
+    : [];
 
-  const uniquePatientsCount = Array.isArray(allSessions)
-    ? new Set(allSessions.map((s: Session) => s.patientId)).size
-    : 0;
+  const uniquePatientsCount = uniquePatients.length;
 
-  const activeCount = uniquePatientsCount ? Math.max(1, Math.round(uniquePatientsCount * 0.7)) : 22;
-  const atRiskCount = uniquePatientsCount ? Math.max(0, Math.round(uniquePatientsCount * 0.1)) : 3;
-  const onBreakCount = uniquePatientsCount ? Math.max(0, Math.round(uniquePatientsCount * 0.125)) : 4;
-  const completedCount = uniquePatientsCount ? Math.max(0, uniquePatientsCount - activeCount - atRiskCount - onBreakCount) : 3;
-  const totalCount = activeCount + atRiskCount + onBreakCount + completedCount;
+  let activeCount = 0;
+  let pendingCount = 0;
+  let completedCount = 0;
+  let cancelledCount = 0;
 
-  const activePct = totalCount > 0 ? (activeCount / totalCount) * 100 : 68.75;
-  const atRiskPct = totalCount > 0 ? (atRiskCount / totalCount) * 100 : 9.375;
-  const onBreakPct = totalCount > 0 ? (onBreakCount / totalCount) * 100 : 12.5;
-  const completedPct = totalCount > 0 ? (completedCount / totalCount) * 100 : 9.375;
+  if (Array.isArray(allSessions)) {
+    uniquePatients.forEach((patientId) => {
+      const patientSessions = allSessions.filter((s: Session) => s.patientId === patientId);
+      const hasConfirmed = patientSessions.some((s: Session) => s.status === 'CONFIRMED');
+      const hasPending = patientSessions.some((s: Session) => s.status === 'PENDING');
+      const hasCompleted = patientSessions.some((s: Session) => s.status === 'COMPLETED');
+
+      if (hasConfirmed) {
+        activeCount++;
+      } else if (hasPending) {
+        pendingCount++;
+      } else if (hasCompleted) {
+        completedCount++;
+      } else {
+        cancelledCount++;
+      }
+    });
+  }
+
+  // Strictly dynamic client statuses based on real database entries:
+  const finalActiveCount = activeCount;
+  const finalPendingCount = pendingCount;
+  const finalCompletedCount = completedCount;
+  const finalCancelledCount = cancelledCount;
+  const totalCount = finalActiveCount + finalPendingCount + finalCompletedCount + finalCancelledCount;
+
+  const activePct = totalCount > 0 ? (finalActiveCount / totalCount) * 100 : 0;
+  const pendingPct = totalCount > 0 ? (finalPendingCount / totalCount) * 100 : 0;
+  const completedPct = totalCount > 0 ? (finalCompletedCount / totalCount) * 100 : 0;
 
   const seg1 = activePct;
-  const seg2 = seg1 + atRiskPct;
-  const seg3 = seg2 + onBreakPct;
+  const seg2 = seg1 + pendingPct;
+  const seg3 = seg2 + completedPct;
+
+  // Calculate dynamic follow-ups count (patients with more than 1 session history):
+  const followUpsCount = Array.isArray(allSessions)
+    ? Array.from(new Set(allSessions.map((s: Session) => s.patientId))).filter((patientId) => {
+      const patientSessions = allSessions.filter((s: Session) => s.patientId === patientId);
+      return patientSessions.length > 1;
+    }).length
+    : 0;
 
   // Fetch therapist profile to get their ID for rating stats
   const profile = await fetchWithAuthContent("/therapists/profile");
@@ -78,7 +111,17 @@ export default async function DashboardPage() {
   const distribution = ratingStats?.distribution ?? {};
 
   return (
-    <div className="space-y-8 md:space-y-12 pb-24 px-4 md:px-0">
+    <div className="space-y-8 md:space-y-6 pb-24 px-4 md:px-0">
+      {/* Welcome Heading */}
+      <div className="space-y-1 py-2">
+        <h1 className="text-2xl md:text-3xl font-heading font-medium tracking-tight flex items-center gap-2">
+          {greeting}, {firstName} 👋
+        </h1>
+        <p className="text-muted-foreground text-sm font-medium">
+          Here&apos;s what&apos;s happening in your practice today.
+        </p>
+      </div>
+
       {/* Verification Notice */}
       {!profile?.isVerified && (
         <div className="bg-amber-500/10 border border-amber-500/20 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
@@ -103,7 +146,7 @@ export default async function DashboardPage() {
         {/* Today's Sessions */}
         <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col justify-between h-36 hover:shadow-md transition-shadow group relative overflow-hidden">
           <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
-          <p className="text-xs font-bold text-primary/85 tracking-wide uppercase">Today&apos;s Sessions</p>
+          <p className="text-xs font-bold text-primary tracking-wide uppercase">Today&apos;s Sessions</p>
           <p className="text-4xl md:text-5xl font-bold font-sans text-foreground py-2 leading-none">
             {upcomingSessions?.length || 0}
           </p>
@@ -114,22 +157,22 @@ export default async function DashboardPage() {
 
         {/* Pending Notes / Requests */}
         <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col justify-between h-36 hover:shadow-md transition-shadow group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
-          <p className="text-xs font-bold text-primary/85 tracking-wide uppercase">Pending Requests</p>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
+          <p className="text-xs font-bold text-primary tracking-wide uppercase">Pending Requests</p>
           <p className="text-4xl md:text-5xl font-bold font-sans text-foreground py-2 leading-none">
             {pendingSessions?.length || 0}
           </p>
           <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold text-primary hover:text-primary-hover hover:underline transition-colors mt-auto flex items-center gap-1 group/link">
-            Complete Notes <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
+            Review Requests <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
         {/* Follow-ups */}
         <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col justify-between h-36 hover:shadow-md transition-shadow group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
-          <p className="text-xs font-bold text-primary/85 tracking-wide uppercase">Follow-ups</p>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
+          <p className="text-xs font-bold text-primary tracking-wide uppercase">Follow-ups</p>
           <p className="text-4xl md:text-5xl font-bold font-sans text-foreground py-2 leading-none">
-            6
+            {followUpsCount}
           </p>
           <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold text-primary hover:text-primary-hover hover:underline transition-colors mt-auto flex items-center gap-1 group/link">
             View All <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
@@ -138,8 +181,8 @@ export default async function DashboardPage() {
 
         {/* New Clients */}
         <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col justify-between h-36 hover:shadow-md transition-shadow group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
-          <p className="text-xs font-bold text-primary/85 tracking-wide uppercase">New Clients</p>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
+          <p className="text-xs font-bold text-primary tracking-wide uppercase">New Clients</p>
           <p className="text-4xl md:text-5xl font-bold font-sans text-foreground py-2 leading-none">
             {uniquePatientsCount || 0}
           </p>
@@ -151,16 +194,16 @@ export default async function DashboardPage() {
 
       {/* 2-Column Main Content Grid matching Reference Image */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Left 2 Columns: Schedule (Calendar) */}
         <div className="lg:col-span-2">
           <MiniCalendar sessions={upcomingSessions} />
         </div>
 
         {/* Right 1 Column: Client Overview & Clinical Performance */}
-        <div className="lg:col-span-1 space-y-8">
+        <div className="lg:col-span-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8 lg:space-y-8 lg:gap-0">
           {/* Client Overview Card */}
-          <div className="h-[280px] bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col relative overflow-hidden group">
+          <div className="min-h-[280px] lg:h-[280px] h-auto bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col relative overflow-hidden group justify-between">
             <div className="flex items-center justify-between mb-2 shrink-0">
               <p className="text-xs font-bold text-slate-800 uppercase tracking-widest">Client Overview</p>
               <Link href="/dashboard/patients" className="text-[10px] font-black text-primary hover:underline uppercase tracking-wider">
@@ -168,17 +211,17 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            <div className="flex-1 flex items-center justify-center">
-              <div className="flex items-center gap-6 w-full">
+            <div className="flex-1 flex items-center justify-center py-4 lg:py-0">
+              <div className="flex flex-col sm:flex-row items-center gap-6 w-full justify-center">
                 {/* Doughnut Chart */}
-                <div 
+                <div
                   className="relative w-32 h-32 rounded-full flex items-center justify-center shrink-0 shadow-xs border border-slate-100/30"
                   style={{
-                    background: `conic-gradient(#5f43b2 0% ${seg1}%, #f43f5e ${seg1}% ${seg2}%, #f59e0b ${seg2}% ${seg3}%, #10b981 ${seg3}% 100%)`
+                    background: `conic-gradient(#5f43b2 0% ${seg1}%, #f59e0b ${seg1}% ${seg2}%, #10b981 ${seg2}% ${seg3}%, #94a3b8 ${seg3}% 100%)`
                   }}
                 >
-                  {/* Center cutout */}
-                  <div className="w-[90px] h-[90px] rounded-full bg-white flex flex-col items-center justify-center text-center p-2 shadow-xs">
+                  {/* Center cutout (smaller cutout w-20 h-20 increases doughnut ring thickness) */}
+                  <div className="w-20 h-20 rounded-full bg-white flex flex-col items-center justify-center text-center p-2 shadow-xs animate-in zoom-in duration-300">
                     <span className="text-3xl font-black font-sans text-slate-900 leading-none">
                       {totalCount}
                     </span>
@@ -189,29 +232,21 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Legend */}
-                <div className="flex-1 space-y-2.5">
+                <div className="flex-1 space-y-2.5 w-full max-w-[200px] sm:max-w-none">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#5f43b2] shrink-0" />
                       <span className="text-[11px] font-bold text-slate-500">Active</span>
                     </div>
-                    <span className="text-xs font-black text-slate-850">{activeCount}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#f43f5e] shrink-0" />
-                      <span className="text-[11px] font-bold text-slate-500">At Risk</span>
-                    </div>
-                    <span className="text-xs font-black text-slate-850">{atRiskCount}</span>
+                    <span className="text-xs font-black text-slate-850">{finalActiveCount}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b] shrink-0" />
-                      <span className="text-[11px] font-bold text-slate-500">On Break</span>
+                      <span className="text-[11px] font-bold text-slate-500">Pending</span>
                     </div>
-                    <span className="text-xs font-black text-slate-850">{onBreakCount}</span>
+                    <span className="text-xs font-black text-slate-850">{finalPendingCount}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -219,7 +254,15 @@ export default async function DashboardPage() {
                       <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] shrink-0" />
                       <span className="text-[11px] font-bold text-slate-500">Completed</span>
                     </div>
-                    <span className="text-xs font-black text-slate-850">{completedCount}</span>
+                    <span className="text-xs font-black text-slate-850">{finalCompletedCount}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#94a3b8] shrink-0" />
+                      <span className="text-[11px] font-bold text-slate-500">Cancelled</span>
+                    </div>
+                    <span className="text-xs font-black text-slate-850">{finalCancelledCount}</span>
                   </div>
                 </div>
               </div>
@@ -227,7 +270,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Patient Reviews Widget */}
-          <div className="h-[280px] bg-surface-container-low rounded-2xl p-5 border border-outline-variant/20 flex flex-col relative overflow-hidden group shadow-sm">
+          <div className="min-h-[280px] lg:h-[280px] h-auto bg-surface-container-low rounded-2xl p-5 border border-outline-variant/20 flex flex-col relative overflow-hidden group shadow-sm justify-between">
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="z-10 flex flex-col h-full justify-between">
@@ -308,16 +351,16 @@ export default async function DashboardPage() {
 
           <div className="flex flex-wrap gap-6 w-full">
             {pendingSessions.map((session: Session) => (
-              <div 
-                key={session.id} 
+              <div
+                key={session.id}
                 className="w-full md:w-[300px] bg-white p-5 rounded-2xl border border-slate-100 hover:border-amber-200 transition-all group relative overflow-hidden flex flex-col justify-between h-48 shadow-sm"
               >
                 <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-                
+
                 <div>
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary font-bold overflow-hidden p-0.5 shrink-0 shadow-inner">
-                      <Image 
+                      <Image
                         src={`https://ui-avatars.com/api/?name=${session.patient?.firstName}+${session.patient?.lastName}&background=EAF4F3&color=214D3E&size=128`}
                         alt="Patient"
                         width={48}
@@ -330,11 +373,10 @@ export default async function DashboardPage() {
                         {session.patient?.firstName} {session.patient?.lastName}
                       </h4>
                       <div className="flex items-center gap-1 mt-1">
-                        <span className={`px-2 py-0.5 rounded-md text-[9px] border font-black uppercase tracking-widest ${
-                          session.mode === 'IN_CLINIC' 
-                            ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                            : 'bg-blue-50 text-blue-600 border-blue-100'
-                        }`}>
+                        <span className={`px-2 py-0.5 rounded-md text-[9px] border font-black uppercase tracking-widest ${session.mode === 'IN_CLINIC'
+                          ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                          : 'bg-blue-50 text-blue-600 border-blue-100'
+                          }`}>
                           {session.mode === 'IN_CLINIC' ? 'Clinic' : 'Online'}
                         </span>
                       </div>
