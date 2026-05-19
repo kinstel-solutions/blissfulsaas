@@ -659,7 +659,6 @@ npm run dev
 | Limitation | Details | Impact |
 |-----------|---------|--------|
 | **Email Verification** | Supabase email confirmation not enforced | Users access dashboards immediately after signup |
-| **Transactional Emails** | No email service (Resend/Postmark) integrated | No booking confirmations, reminders, or cancellation emails |
 | **Session Duration Control** | No in-call timer or forced session end | No actual start/end timestamps tracked |
 | **Document Sharing** | Chat is text-only | No file/image uploads within sessions |
 | **Admin Analytics** | System Activity chart uses hardcoded data | Growth metrics are static placeholders |
@@ -686,9 +685,9 @@ npm run dev
 - [x] **Profile Image Upload**: Supabase Storage integration for therapist photos
 - [x] **Error Boundaries**: `error.tsx` in all three apps with retry capability
 - [x] **Breathing Loading Animation**: Calming loading states across all portals
+- [x] **Email Notifications**: Transactional emails via Resend integrated with NotificationsService
 
 **🔲 Pending (by priority)**
-- [ ] **Email Notifications**: Transactional emails via Resend/Postmark
 - [ ] **Scheduled Reminders**: 24h/1h pre-session reminders (requires cron or Edge Functions)
 - [ ] **Session Timer**: In-call countdown with actual start/end timestamps
 - [ ] **Document & Media Sharing**: Chat attachments via Supabase Storage

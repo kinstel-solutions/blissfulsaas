@@ -78,7 +78,7 @@ Email notifications replaced with a real-time in-app notification system using S
 | **`NotificationBell` UI Component** | Bell icon in both dashboard headers, animated badge, dropdown panel | ✅ Done |
 | **Real-time badge via Supabase** | INSERT subscription on `Notification` table filters by `userId` | ✅ Done |
 | **Mark as read / mark all read** | Per-notification and bulk read actions in dropdown | ✅ Done |
-| **Email Notifications** | Requires Resend/Postmark + real emails. Deferred until post-launch. | ❌ Deferred |
+| **Email Notifications** | Requires Resend/Postmark + real emails. Deferred until post-launch. | ✅ Done |
 | **Scheduled Reminders (24h/1h)** | Requires cron or Supabase Edge Functions. Phase 2. | ❌ Phase 2 |
 
 > [!IMPORTANT]

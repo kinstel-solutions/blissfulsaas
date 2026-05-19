@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { EmailService } from '../email/email.service';
 import { NotificationType, Prisma } from '@prisma/client';
 
 @Injectable()
@@ -10,7 +11,25 @@ export class TherapistsService {
   constructor(
     private prisma: PrismaService,
     private notifications: NotificationsService,
+    private emailService: EmailService,
   ) {}
+
+  private async getAdminEmails(): Promise<string[]> {
+    const admins = await this.prisma.user.findMany({ 
+      where: { role: 'ADMIN' }, 
+      select: { email: true } 
+    });
+    return admins.map(a => a.email);
+  }
+
+  async handleOnboardEmail(email: string, firstName: string, lastName: string) {
+    const therapistName = `${firstName} ${lastName}`.trim();
+    // 1. Send welcome to therapist
+    await this.emailService.sendTherapistApplicationReceived(email, therapistName);
+    // 2. Alert admins
+    const adminEmails = await this.getAdminEmails();
+    await this.emailService.sendAdminNewApplication(adminEmails, therapistName);
+  }
 
   async getPending() {
     return this.prisma.therapist.findMany({
@@ -107,7 +126,7 @@ export class TherapistsService {
     
     if (profile.isVerified) {
       const existingPending = (profile.pendingFields as object) || {};
-      return this.prisma.therapist.update({
+      const updated = await this.prisma.therapist.update({
         where: { id: profile.id },
         data: {
           pendingFields: {
@@ -116,6 +135,13 @@ export class TherapistsService {
           },
         },
       });
+
+      // Alert admins about pending updates
+      const adminEmails = await this.getAdminEmails();
+      const therapistName = `${profile.firstName} ${profile.lastName}`.trim();
+      this.emailService.sendAdminProfileUpdatesAlert(adminEmails, therapistName).catch(err => this.logger.error(err));
+
+      return updated;
     }
 
     return this.prisma.therapist.update({
@@ -178,7 +204,10 @@ export class TherapistsService {
     const updated = await this.prisma.therapist.update({
       where: { id },
       data: updatedData,
+      include: { user: { select: { email: true } } }
     });
+
+    const therapistName = `${updated.firstName} ${updated.lastName}`.trim();
 
     // Notify the therapist of their approval
     setImmediate(() => {
@@ -191,6 +220,14 @@ export class TherapistsService {
           : 'Congratulations! Your therapist application has been reviewed and approved. You can now start accepting patients.',
         metadata: { therapistId: id },
       }).catch(console.error);
+
+      if (updated.user?.email) {
+        if (hasPendingEdits) {
+          this.emailService.sendTherapistProfileUpdatesApproved(updated.user.email, therapistName).catch(console.error);
+        } else {
+          this.emailService.sendTherapistWelcomeEmail(updated.user.email, therapistName).catch(console.error);
+        }
+      }
     });
 
     return updated;
@@ -199,11 +236,14 @@ export class TherapistsService {
   async reject(id: string, reason?: string) {
     const therapist = await this.prisma.therapist.findUnique({
       where: { id },
+      include: { user: { select: { email: true } } }
     });
 
     if (!therapist) {
       throw new NotFoundException('Therapist not found');
     }
+
+    const therapistName = `${therapist.firstName} ${therapist.lastName}`.trim();
 
     if (therapist.isVerified && therapist.pendingFields) {
       const updated = await this.prisma.therapist.update({
@@ -218,19 +258,32 @@ export class TherapistsService {
           title: 'Profile Updates Rejected',
           body: 'Your recent profile updates were not approved. Please contact support for more details.',
         }).catch(err => this.logger.error(err));
+
+        if (therapist.user?.email) {
+          this.emailService.sendTherapistProfileUpdatesRejected(therapist.user.email, therapistName).catch(err => this.logger.error(err));
+        }
       });
 
       return updated;
     }
 
-    return this.prisma.therapist.update({
+    const finalReason = reason || 'Application did not meet clinical requirements.';
+    const updated = await this.prisma.therapist.update({
       where: { id },
       data: {
         isVerified: false,
-        rejectionReason: reason || 'Application did not meet clinical requirements.',
+        rejectionReason: finalReason,
         pendingFields: Prisma.DbNull,
       },
     });
+
+    setImmediate(() => {
+      if (therapist.user?.email) {
+        this.emailService.sendTherapistRejectionEmail(therapist.user.email, therapistName, finalReason).catch(err => this.logger.error(err));
+      }
+    });
+
+    return updated;
   }
 
   async getMyPatients(therapistUserId: string) {

@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AppointmentStatus, NotificationType, ConsultationMode, PaymentStatus } from '@prisma/client';
 import { RtcTokenBuilder, RtcRole } from 'agora-token';
 import { NotificationsService } from '../notifications/notifications.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class SessionsService {
@@ -11,13 +12,15 @@ export class SessionsService {
   constructor(
     private prisma: PrismaService,
     private notifications: NotificationsService,
+    private emailService: EmailService,
   ) {}
 
   async book(patientUserId: string, data: { slotId: string; date: string; notes?: string; mode?: ConsultationMode }) {
     return this.prisma.$transaction(async (tx) => {
       // 1. Get the patient profile
       const patient = await tx.patient.findUnique({
-        where: { userId: patientUserId }
+        where: { userId: patientUserId },
+        include: { user: { select: { email: true } } }
       });
       if (!patient) throw new NotFoundException('Patient profile not found');
 
@@ -69,25 +72,39 @@ export class SessionsService {
         ? ` (In-Clinic${slot.therapist.clinicAddress ? ` at ${slot.therapist.clinicAddress}` : ''})`
         : ' (Online)';
 
-      // Patient: booking confirmed
+        // Patient: booking confirmed
       setImmediate(() => {
+        const patientTitle = 'Appointment Received';
+        const patientBody = `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} has been received for ${dateStr} at ${timeStr}${locationNote}. It is now pending therapist confirmation.`;
+
         this.notifications.create({
           userId: patientUserId,
           type: NotificationType.BOOKING_CONFIRMED,
-          title: 'Appointment Received',
-          body: `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} has been received for ${dateStr} at ${timeStr}${locationNote}. It is now pending therapist confirmation.`,
+          title: patientTitle,
+          body: patientBody,
           metadata: { appointmentId: appointment.id, therapistName, scheduledAt: data.date, mode },
         }).catch(err => this.logger.error(err));
+        
+        if (patient.user?.email) {
+          this.emailService.sendAppointmentNotification(patient.user.email, patientTitle, patientBody).catch(err => this.logger.error(err));
+        }
 
         // Therapist: new appointment
         if (slot.therapist.userId) {
+          const therapistTitle = 'New Appointment Request';
+          const therapistBody = `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr}.`;
+
           this.notifications.create({
             userId: slot.therapist.userId,
             type: NotificationType.BOOKING_CONFIRMED,
-            title: 'New Appointment Request',
-            body: `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr}.`,
+            title: therapistTitle,
+            body: therapistBody,
             metadata: { appointmentId: appointment.id, scheduledAt: data.date, mode },
           }).catch(err => this.logger.error(err));
+
+          if (slot.therapist.user?.email) {
+            this.emailService.sendAppointmentNotification(slot.therapist.user.email, therapistTitle, therapistBody).catch(err => this.logger.error(err));
+          }
         }
       });
 
@@ -296,22 +313,36 @@ export class SessionsService {
     setImmediate(() => {
       if (role === 'PATIENT') {
         // Patient cancelled → notify therapist
+        const title = 'Appointment Cancelled';
+        const body = `A patient has cancelled their session scheduled for ${dateStr}.`;
+
         this.notifications.create({
           userId: appointment.therapist.userId,
           type: NotificationType.BOOKING_CANCELLED,
-          title: 'Appointment Cancelled',
-          body: `A patient has cancelled their session scheduled for ${dateStr}.`,
+          title,
+          body,
           metadata: { appointmentId },
         }).catch(err => this.logger.error(err));
+
+        if (appointment.therapist.user?.email) {
+          this.emailService.sendAppointmentNotification(appointment.therapist.user.email, title, body).catch(err => this.logger.error(err));
+        }
       } else {
         // Therapist cancelled → notify patient
+        const title = 'Appointment Cancelled';
+        const body = `Your session with ${therapistName} on ${dateStr} has been cancelled.`;
+
         this.notifications.create({
           userId: appointment.patient.userId,
           type: NotificationType.BOOKING_CANCELLED,
-          title: 'Appointment Cancelled',
-          body: `Your session with ${therapistName} on ${dateStr} has been cancelled.`,
+          title,
+          body,
           metadata: { appointmentId, therapistName },
         }).catch(err => this.logger.error(err));
+
+        if (appointment.patient.user?.email) {
+          this.emailService.sendAppointmentNotification(appointment.patient.user.email, title, body).catch(err => this.logger.error(err));
+        }
       }
     });
 
@@ -339,13 +370,20 @@ export class SessionsService {
     // Notify patient session is complete + request feedback
     const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
     setImmediate(() => {
+      const title = 'Session Completed';
+      const body = `Your session with ${therapistName} has been marked as complete. We hope it went well!`;
+
       this.notifications.create({
         userId: appointment.patient.userId,
         type: NotificationType.SESSION_COMPLETED,
-        title: 'Session Completed',
-        body: `Your session with ${therapistName} has been marked as complete. We hope it went well!`,
+        title,
+        body,
         metadata: { appointmentId, therapistName },
       }).catch(err => this.logger.error(err));
+
+      if (appointment.patient.user?.email) {
+        this.emailService.sendAppointmentNotification(appointment.patient.user.email, title, body).catch(err => this.logger.error(err));
+      }
 
       // Prompt patient to leave a review
       this.notifications.create({
@@ -387,13 +425,20 @@ export class SessionsService {
     const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     
     setImmediate(() => {
+      const title = 'Appointment Confirmed';
+      const body = `Your session with ${therapistName} on ${dateStr} has been confirmed.`;
+
       this.notifications.create({
         userId: appointment.patient.userId,
         type: NotificationType.BOOKING_CONFIRMED,
-        title: 'Appointment Confirmed',
-        body: `Your session with ${therapistName} on ${dateStr} has been confirmed.`,
+        title,
+        body,
         metadata: { appointmentId, therapistName },
       }).catch(err => this.logger.error(err));
+
+      if (appointment.patient.user?.email) {
+        this.emailService.sendAppointmentNotification(appointment.patient.user.email, title, body).catch(err => this.logger.error(err));
+      }
     });
 
     return updated;

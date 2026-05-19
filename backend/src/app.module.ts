@@ -12,6 +12,7 @@ import { PatientsModule } from './patients/patients.module';
 import { PaymentsModule } from './payments/payments.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FeedbackModule } from './feedback/feedback.module';
+import { EmailModule } from './email/email.module';
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -33,6 +34,7 @@ import { APP_GUARD } from '@nestjs/core';
     PaymentsModule,
     NotificationsModule,
     FeedbackModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [

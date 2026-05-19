@@ -60,5 +60,18 @@ export async function signUpTherapist(formData: any) {
     return { error: "Created account, but failed to create profile. Admin will need to sync." };
   }
 
+  // 3. Trigger onboarding email via backend webhook
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    await fetch(`${apiUrl}/public/therapists/onboard-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, firstName, lastName }),
+    });
+  } catch (err) {
+    console.error("Failed to trigger onboarding email:", err);
+    // Non-fatal, proceed with success
+  }
+
   return { success: true, emailVerificationRequired: true };
 }
