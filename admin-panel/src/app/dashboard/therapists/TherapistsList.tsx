@@ -83,7 +83,7 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
   return (
     <div className="space-y-6">
       {/* Integrated Search and Filter Controls */}
-      <div className="relative flex items-center bg-surface-container-lowest border border-outline-variant/15 p-2 rounded-2xl shadow-xs md:shadow-sm">
+      <div className="relative flex items-center bg-surface-container-lowest border border-outline-variant/15 p-2 rounded-xl shadow-xs md:shadow-sm">
         
         {/* Search Bar Input */}
         <div className="relative flex-1 flex items-center">
@@ -145,7 +145,7 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                 className="fixed inset-0 z-40 bg-transparent" 
                 onClick={() => setIsDropdownOpen(false)}
               />
-              <div className="absolute right-0 mt-2 w-56 bg-surface-container-lowest border border-outline-variant/25 rounded-2xl shadow-xl z-50 py-1.5 animate-in fade-in slide-in-from-top-2 duration-200 origin-top-right">
+              <div className="absolute right-0 mt-2 w-56 bg-surface-container-lowest border border-outline-variant/25 rounded-xl shadow-xl z-50 py-1.5 animate-in fade-in slide-in-from-top-2 duration-200 origin-top-right">
                 <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 border-b border-outline-variant/10 mb-1">
                   Filter by Status
                 </div>
@@ -250,7 +250,7 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                   <tr key={therapist.id} className="group/row hover:bg-primary/[0.01] transition-colors animate-in fade-in duration-200">
                     <td className="px-5 md:px-10 py-4 md:py-8">
                       <div className="flex items-center gap-5">
-                        <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-lg overflow-hidden shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-lg overflow-hidden shrink-0">
                           {therapist.profileImageUrl ? (
                             <img src={therapist.profileImageUrl} alt={therapist.firstName || "Practitioner"} className="w-full h-full object-cover" />
                           ) : (
@@ -296,7 +296,7 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                     <td className="px-4 md:px-8 py-4 md:py-8 text-right">
                       <Link 
                         href={`/dashboard/therapists/${therapist.id}`}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-surface hover:bg-primary hover:text-white rounded-xl border border-outline-variant/30 hover:border-primary transition-all text-xs font-bold uppercase tracking-widest group/btn"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-surface hover:bg-primary hover:text-white rounded-lg border border-outline-variant/30 hover:border-primary transition-all text-xs font-bold uppercase tracking-widest group/btn"
                       >
                         Inspect <ChevronRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                       </Link>

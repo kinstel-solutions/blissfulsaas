@@ -3,6 +3,7 @@ import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
 import CancelSessionButton from "@/components/CancelSessionButton";
 import SessionFeedbackButton from "@/components/SessionFeedbackButton";
+import { AlexButton } from "@/components/ui/AlexButton";
 
 export default async function SessionsPage() {
   // Fetch ALL sessions (upcoming + past) so patients can review completed ones
@@ -143,19 +144,19 @@ export default async function SessionsPage() {
             <>
               <CancelSessionButton id={session.id} />
               <Link href={`/dashboard/messages?sessionId=${session.id}`}>
-                <button className="bg-primary/5 text-primary border border-primary/20 px-4 py-3 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-primary/10 transition-all flex items-center gap-1.5">
+                <button className="bg-primary/5 text-primary border border-primary/20 px-4 py-3 rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-primary/10 transition-all flex items-center gap-1.5">
                   <MessageSquare className="w-3.5 h-3.5" />
                   Chat
                 </button>
               </Link>
               {!isClinic ? (
                 <Link href={`/dashboard/sessions/${session.id}/call`}>
-                  <button className="bg-foreground text-surface px-5 py-3 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-md hover:bg-primary transition-all">
+                  <button className="bg-foreground text-surface px-5 py-3 rounded-lg font-bold uppercase tracking-widest text-[10px] shadow-md hover:bg-primary transition-all">
                     Join Call
                   </button>
                 </Link>
               ) : (
-                <div className="px-4 py-3 rounded-2xl font-bold uppercase tracking-widest text-[10px] bg-primary/5 text-primary border border-primary/20 flex items-center gap-1.5">
+                <div className="px-4 py-3 rounded-lg font-bold uppercase tracking-widest text-[10px] bg-primary/5 text-primary border border-primary/20 flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5" />
                   In-Person
                 </div>
@@ -181,12 +182,9 @@ export default async function SessionsPage() {
             Track, join, and review your consultations.
           </p>
         </div>
-        <Link href="/dashboard/sessions/book">
-          <button className="bg-primary text-primary-foreground px-4 md:px-8 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Book New Session
-          </button>
-        </Link>
+        <AlexButton href="/dashboard/sessions/book" size="md" className="shadow-lg">
+          Book New Session
+        </AlexButton>
       </header>
 
       {allSessions.length === 0 ? (

@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
-import { Calendar, ArrowRight, Shield, Star, Clock } from "lucide-react";
+import { Calendar, ArrowRight, Shield, Star, Clock, Users, Activity } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
 import MiniCalendar from "@/components/MiniCalendar";
+import { AlexButton } from "@/components/ui/AlexButton";
 export const dynamic = "force-dynamic";
 
 interface Session {
@@ -114,7 +115,7 @@ export default async function DashboardPage() {
     <div className="space-y-8 md:space-y-6 pb-24 px-4 md:px-0">
       {/* Welcome Heading */}
       <div className="space-y-1 py-2">
-        <h1 className="text-2xl md:text-3xl font-heading font-medium tracking-tight flex items-center gap-2">
+        <h1 className="text-2xl md:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
           {greeting}, {firstName} 👋
         </h1>
         <p className="text-muted-foreground text-sm font-medium">
@@ -134,62 +135,60 @@ export default async function DashboardPage() {
               <p className="text-xs text-amber-800/60 font-medium mt-1">Your profile is currently private. An administrator will review your credentials before publishing you to the marketplace.</p>
             </div>
           </div>
-          <Link href="/dashboard/profile">
-            <button className="px-6 py-3 bg-amber-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-amber-700 transition-colors shadow-lg shadow-amber-600/20">
-              View Profile
-            </button>
-          </Link>
+          <AlexButton href="/dashboard/profile" size="md" className="shadow-lg shadow-amber-600/20 bg-amber-600 border-amber-600 hover:bg-amber-700 hover:border-amber-700">
+            View Profile
+          </AlexButton>
         </div>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         {/* Today's Sessions */}
-        <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col justify-between h-36 hover:shadow-md transition-shadow group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
-          <p className="text-xs font-bold text-primary tracking-wide uppercase">Today&apos;s Sessions</p>
-          <p className="text-4xl md:text-5xl font-bold font-sans text-foreground py-2 leading-none">
-            {upcomingSessions?.length || 0}
-          </p>
-          <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold text-primary hover:text-primary-hover hover:underline transition-colors mt-auto flex items-center gap-1 group/link">
-            View Schedule <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
+        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-6 md:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
+          <div className="w-12 h-12 md:w-14 md:h-14 bg-primary/5 text-primary rounded-xl flex items-center justify-center mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
+            <Calendar className="w-6 h-6 md:w-7 md:h-7" />
+          </div>
+          <div>
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Today&apos;s Sessions</p>
+            <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{upcomingSessions?.length || 0}</h3>
+          </div>
+        </Link>
 
-        {/* Pending Notes / Requests */}
-        <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col justify-between h-36 hover:shadow-md transition-shadow group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
-          <p className="text-xs font-bold text-primary tracking-wide uppercase">Pending Requests</p>
-          <p className="text-4xl md:text-5xl font-bold font-sans text-foreground py-2 leading-none">
-            {pendingSessions?.length || 0}
-          </p>
-          <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold text-primary hover:text-primary-hover hover:underline transition-colors mt-auto flex items-center gap-1 group/link">
-            Review Requests <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
+        {/* Pending Requests */}
+        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-6 md:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
+          <div className="w-12 h-12 md:w-14 md:h-14 bg-amber-500/5 text-amber-600 rounded-xl flex items-center justify-center mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
+            <Clock className="w-6 h-6 md:w-7 md:h-7" />
+          </div>
+          <div>
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Pending Requests</p>
+            <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{pendingSessions?.length || 0}</h3>
+          </div>
+        </Link>
 
         {/* Follow-ups */}
-        <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col justify-between h-36 hover:shadow-md transition-shadow group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
-          <p className="text-xs font-bold text-primary tracking-wide uppercase">Follow-ups</p>
-          <p className="text-4xl md:text-5xl font-bold font-sans text-foreground py-2 leading-none">
-            {followUpsCount}
-          </p>
-          <Link href="/dashboard/appointments" className="text-[10px] md:text-xs font-bold text-primary hover:text-primary-hover hover:underline transition-colors mt-auto flex items-center gap-1 group/link">
-            View All <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
+        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-6 md:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
+          <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-500/5 text-blue-600 rounded-xl flex items-center justify-center mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
+            <Activity className="w-6 h-6 md:w-7 md:h-7" />
+          </div>
+          <div>
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Follow-ups</p>
+            <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{followUpsCount}</h3>
+          </div>
+        </Link>
 
         {/* New Clients */}
-        <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col justify-between h-36 hover:shadow-md transition-shadow group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-full blur-xl -translate-y-1/3 translate-x-1/3" />
-          <p className="text-xs font-bold text-primary tracking-wide uppercase">New Clients</p>
-          <p className="text-4xl md:text-5xl font-bold font-sans text-foreground py-2 leading-none">
-            {uniquePatientsCount || 0}
-          </p>
-          <Link href="/dashboard/patients" className="text-[10px] md:text-xs font-bold text-primary hover:text-primary-hover hover:underline transition-colors mt-auto flex items-center gap-1 group/link">
-            View All <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
+        <Link href="/dashboard/patients" className="group bg-surface-container-lowest border border-outline-variant/20 p-6 md:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
+          <div className="w-12 h-12 md:w-14 md:h-14 bg-emerald-500/5 text-emerald-600 rounded-xl flex items-center justify-center mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
+            <Users className="w-6 h-6 md:w-7 md:h-7" />
+          </div>
+          <div>
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">New Clients</p>
+            <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{uniquePatientsCount || 0}</h3>
+          </div>
+        </Link>
       </div>
 
       {/* 2-Column Main Content Grid matching Reference Image */}
@@ -203,7 +202,7 @@ export default async function DashboardPage() {
         {/* Right 1 Column: Client Overview & Clinical Performance */}
         <div className="lg:col-span-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8 lg:space-y-8 lg:gap-0">
           {/* Client Overview Card */}
-          <div className="min-h-[280px] lg:h-[280px] h-auto bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-xs flex flex-col relative overflow-hidden group justify-between">
+          <div className="min-h-[280px] lg:h-[280px] h-auto bg-white border border-outline-variant/30 rounded-xl p-5 shadow-xs flex flex-col relative overflow-hidden group justify-between">
             <div className="flex items-center justify-between mb-2 shrink-0">
               <p className="text-xs font-bold text-slate-800 uppercase tracking-widest">Client Overview</p>
               <Link href="/dashboard/patients" className="text-[10px] font-black text-primary hover:underline uppercase tracking-wider">
@@ -270,10 +269,10 @@ export default async function DashboardPage() {
           </div>
 
           {/* Patient Reviews Widget */}
-          <div className="min-h-[280px] lg:h-[280px] h-auto bg-surface-container-low rounded-2xl p-5 border border-outline-variant/20 flex flex-col relative overflow-hidden group shadow-sm justify-between">
+          <div className="min-h-[280px] lg:h-[280px] h-auto bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 flex flex-col relative overflow-hidden group shadow-sm justify-between">
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="z-10 flex flex-col h-full justify-between">
+            <div className="z-10 flex flex-col flex-1 justify-between">
               <p className="text-xs font-bold text-slate-800 uppercase tracking-widest shrink-0">Clinical Performance</p>
               {avgRating !== null ? (
                 <div className="flex-1 flex flex-col justify-center space-y-4">
@@ -353,7 +352,7 @@ export default async function DashboardPage() {
             {pendingSessions.map((session: Session) => (
               <div
                 key={session.id}
-                className="w-full md:w-[300px] bg-white p-5 rounded-2xl border border-slate-100 hover:border-amber-200 transition-all group relative overflow-hidden flex flex-col justify-between h-48 shadow-sm"
+                className="w-full md:w-[300px] bg-white p-5 rounded-xl border border-slate-100 hover:border-amber-200 transition-all group relative overflow-hidden flex flex-col justify-between h-48 shadow-sm"
               >
                 <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
 
@@ -401,7 +400,7 @@ export default async function DashboardPage() {
 
                 <div className="pt-3 border-t border-slate-50">
                   <Link href={`/dashboard/appointments/${session.id}`} className="block">
-                    <button className="w-full py-2 bg-primary/5 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary/20 rounded-xl text-[10px] font-bold uppercase tracking-widest text-primary transition-all flex items-center justify-center gap-2">
+                    <button className="w-full py-2 bg-primary/5 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary/20 rounded-lg text-[10px] font-bold uppercase tracking-widest text-primary transition-all flex items-center justify-center gap-2">
                       Review Request <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </Link>
@@ -413,7 +412,7 @@ export default async function DashboardPage() {
       ) : (
         !hasSchedule ? (
           <div className="pt-4 shrink-0">
-            <div className="bg-slate-900 border border-slate-800 p-5 md:p-8 rounded-2xl shadow-2xl relative overflow-hidden group">
+            <div className="bg-slate-900 border border-slate-800 p-5 md:p-8 rounded-xl shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="space-y-4 text-center md:text-left">
@@ -426,11 +425,9 @@ export default async function DashboardPage() {
                     You haven&apos;t added your clinical availability yet. Set your working hours so patients can start booking sessions.
                   </p>
                 </div>
-                <Link href="/dashboard/availability">
-                  <button className="px-8 py-4 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-slate-900 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
-                    Configure Schedule <ArrowRight className="w-4 h-4" />
-                  </button>
-                </Link>
+                  <AlexButton href="/dashboard/availability" size="lg" className="shadow-xl">
+                    Configure Schedule
+                  </AlexButton>
               </div>
             </div>
           </div>

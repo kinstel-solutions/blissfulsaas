@@ -14,6 +14,7 @@ import Link from "next/link";
 import AppointmentActions from "@/components/AppointmentActions";
 import AppointmentNotesClient from "./AppointmentNotesClient";
 import { notFound } from "next/navigation";
+import { AlexButton } from "@/components/ui/AlexButton";
 
 export default async function AppointmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -75,7 +76,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
           
           <div className="flex items-center gap-2 lg:gap-3">
              <Link href={`/dashboard/messages?sessionId=${appointment.id}`} className="flex-1 lg:flex-none">
-                <button className="w-full lg:w-auto px-5 lg:px-6 py-3 bg-white text-slate-700 rounded-2xl border border-slate-200 font-bold text-[10px] lg:text-xs uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm">
+                <button className="w-full lg:w-auto px-5 lg:px-6 py-3 bg-white text-slate-700 rounded-lg border border-slate-200 font-bold text-[10px] lg:text-xs uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm">
                    <MessageSquare className="w-4 h-4 text-primary" />
                    Message
                 </button>
@@ -124,16 +125,16 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
         <div className="flex items-center gap-4 pr-2">
            {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
              appointment.mode === 'IN_CLINIC' ? (
-               <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 border border-emerald-100">
+               <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 border border-emerald-100">
                  🏥 In-Clinic
                </div>
              ) : (
-               <Link href={`/dashboard/sessions/${appointment.id}/call`}>
-                 <button className="px-5 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-primary transition-all flex items-center gap-2">
-                   <Video className="w-3.5 h-3.5" />
-                   Join Call
-                 </button>
-               </Link>
+                <Link href={`/dashboard/sessions/${appointment.id}/call`}>
+                  <button className="px-5 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-primary transition-all flex items-center gap-2">
+                    <Video className="w-3.5 h-3.5" />
+                    Join Call
+                  </button>
+                </Link>
              )
            )}
         </div>

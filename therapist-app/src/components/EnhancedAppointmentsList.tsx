@@ -199,7 +199,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                 <div className="px-5 pb-5 flex items-center justify-between gap-3 border-t border-slate-50 pt-4">
                    <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                       <Link href={`/dashboard/messages?sessionId=${appt.id}`}>
-                        <button className="p-2.5 bg-primary/5 text-primary rounded-xl border border-primary/10">
+                        <button className="p-2.5 bg-primary/5 text-primary rounded-lg border border-primary/10">
                           <MessageSquare className="w-4 h-4" />
                         </button>
                       </Link>

@@ -2,6 +2,7 @@ import { Star, Shield, ArrowRight, User, Clock, GraduationCap } from "lucide-rea
 import Image from "next/image";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
+import { AlexButton } from "@/components/ui/AlexButton";
 
 interface Therapist {
   id: string;
@@ -98,12 +99,9 @@ export default async function BookingPage() {
                       <span className="text-xs font-bold uppercase tracking-widest">Confidential</span>
                    </div>
                 </div>
-                <Link href={`/dashboard/sessions/book/${therapist.id}`} className="after:absolute after:inset-0 after:z-[1]">
-                  <button className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 group-hover:shadow-2xl group-hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group/btn">
-                    Check Availability
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
-                </Link>
+                <AlexButton href={`/dashboard/sessions/book/${therapist.id}`} size="md" className="w-full after:absolute after:inset-0 after:z-[1] shadow-lg shadow-primary/20">
+                  Check Availability
+                </AlexButton>
               </div>
             </div>
           ))

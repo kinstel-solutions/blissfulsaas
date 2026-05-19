@@ -99,7 +99,7 @@ export default async function TherapistDetailPage({
   return (
     <div className="space-y-12 pb-24 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
       {/* Header Slot */}
-      <div className="bg-surface-container-lowest border border-outline-variant/10 rounded-[2.5rem] p-6 md:p-10 shadow-sm relative overflow-hidden">
+      <div className="bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-6 md:p-10 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         
         <div className="flex flex-col gap-8 relative z-10">
@@ -113,7 +113,7 @@ export default async function TherapistDetailPage({
 
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
-              <div className={`w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] md:rounded-[3rem] bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/10 text-4xl md:text-5xl overflow-hidden shrink-0 transition-all`}>
+              <div className={`w-24 h-24 md:w-32 md:h-32 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/10 text-4xl md:text-5xl overflow-hidden shrink-0 transition-all`}>
                 {profileImageInfo.value ? (
                   <img src={profileImageInfo.value} alt={firstNameInfo.value} className="w-full h-full object-cover" />
                 ) : (
@@ -171,7 +171,7 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-primary/5 text-primary/40 group-hover:text-primary group-hover:bg-primary/10`}>
                     <GraduationCap className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
                     {qualificationsInfo.value || "No qualifications listed."}
                     {qualificationsInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
@@ -188,7 +188,7 @@ export default async function TherapistDetailPage({
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary/40 group-hover:text-primary group-hover:bg-primary/10 transition-all">
                     <Mail className="w-5 h-5" />
                   </div>
-                  <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
+                  <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-xl pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
                     {(therapist.user as any)?.email}
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-primary/5 text-primary/40 group-hover:text-primary group-hover:bg-primary/10`}>
                     <Phone className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
                     {phoneInfo.value || "Not provided"}
                     {phoneInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
@@ -220,7 +220,7 @@ export default async function TherapistDetailPage({
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Clinical Biography</label>
               {bioInfo.hasPending && <PendingLabel />}
             </div>
-            <div className={`border rounded-[2rem] px-8 py-8 text-lg italic serif leading-relaxed shadow-sm relative overflow-hidden transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground/80`}>
+            <div className={`border rounded-xl px-8 py-8 text-lg italic serif leading-relaxed shadow-sm relative overflow-hidden transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground/80`}>
                <div className={`absolute top-0 right-0 w-32 h-32 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2`} />
                <FileText className={`w-8 h-8 mb-4 text-primary/10`} />
                "{bioInfo.value || "No biography provided by the practitioner."}"
@@ -239,7 +239,7 @@ export default async function TherapistDetailPage({
               {videoUrlInfo.hasPending && <PendingLabel />}
             </div>
             {videoUrlInfo.value ? (
-              <div className={`w-full max-w-2xl aspect-video rounded-3xl overflow-hidden border shadow-lg transition-all border-outline-variant/20 bg-surface-container-low`}>
+              <div className={`w-full max-w-2xl aspect-video rounded-xl overflow-hidden border shadow-lg transition-all border-outline-variant/20 bg-surface-container-low`}>
                 {(() => {
                   const url = videoUrlInfo.value;
                   let embedUrl = url;
@@ -269,7 +269,7 @@ export default async function TherapistDetailPage({
                 })()}
               </div>
             ) : (
-              <div className={`w-full border rounded-[1.5rem] px-6 py-5 text-sm font-medium italic shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-muted-foreground/40`}>
+              <div className={`w-full border rounded-xl px-6 py-5 text-sm font-medium italic shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-muted-foreground/40`}>
                 No introduction video provided.
               </div>
             )}
@@ -285,9 +285,9 @@ export default async function TherapistDetailPage({
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Hourly Rate</label>
                   {hourlyRateInfo.hasPending && <PendingLabel />}
                 </div>
-                <div className={`border rounded-[1.5rem] p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-emerald-500/20`}>
+                <div className={`border rounded-xl p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-emerald-500/20`}>
                    <div className="flex items-center gap-5">
-                     <div className={`w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-emerald-600 border-emerald-500/5`}>
+                     <div className={`w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-emerald-600 border-emerald-500/5`}>
                         <IndianRupee className="w-7 h-7" />
                      </div>
                      <div>
@@ -302,15 +302,14 @@ export default async function TherapistDetailPage({
                    )}
                 </div>
              </div>
-
              <div className="space-y-2">
                 <div className="flex items-center">
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Experience</label>
                   {yearsOfExperienceInfo.hasPending && <PendingLabel />}
                 </div>
-                <div className={`border rounded-[1.5rem] p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-primary/20`}>
+                <div className={`border rounded-xl p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-primary/20`}>
                    <div className="flex items-center gap-5">
-                     <div className={`w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-primary border-primary/5`}>
+                     <div className={`w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-primary border-primary/5`}>
                         <Clock className="w-7 h-7" />
                      </div>
                      <div>
@@ -331,14 +330,14 @@ export default async function TherapistDetailPage({
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Languages</label>
                   {languagesInfo.hasPending && <PendingLabel />}
                 </div>
-                <div className={`border rounded-[1.5rem] p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-primary/20`}>
+                <div className={`border rounded-xl p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-primary/20`}>
                    <div className="flex items-center gap-5">
-                     <div className={`w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-primary border-primary/5`}>
+                     <div className={`w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-primary border-primary/5`}>
                         <Globe className="w-7 h-7" />
                      </div>
                      <div className="flex flex-wrap gap-1.5 max-w-[150px]">
                         {languagesInfo.value?.map((lang: string, i: number) => (
-                          <span key={i} className={`text-[10px] font-bold uppercase text-primary/60`}>{lang}{i < languagesInfo.value.length - 1 ? ',' : ''}</span>
+                           <span key={i} className={`text-[10px] font-bold uppercase text-primary/60`}>{lang}{i < languagesInfo.value.length - 1 ? ',' : ''}</span>
                         )) || <span className="text-[10px] font-bold uppercase text-muted-foreground/40">English</span>}
                      </div>
                    </div>
@@ -362,7 +361,7 @@ export default async function TherapistDetailPage({
                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
                    <MapPin className="w-5 h-5" />
                  </div>
-                 <div className={`w-full border rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                 <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
                    {clinicAddressInfo.value || "No clinic address provided."}
                    {clinicAddressInfo.hasPending && (
                     <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
@@ -383,7 +382,7 @@ export default async function TherapistDetailPage({
                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
                    <ExternalLink className="w-5 h-5" />
                  </div>
-                 <div className={`w-full border rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                 <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
                    {mapLinkInfo.value ? (
                      <a href={mapLinkInfo.value} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1.5 font-bold">
                        {mapLinkInfo.value}
@@ -412,7 +411,7 @@ export default async function TherapistDetailPage({
                  <div className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary/40 group-hover:text-primary group-hover:bg-primary/10 transition-all">
                    <Calendar className="w-5 h-5" />
                  </div>
-                 <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-[1.5rem] pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
+                 <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-xl pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
                    {new Date((therapist.user as any)?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                  </div>
                </div>
@@ -425,12 +424,12 @@ export default async function TherapistDetailPage({
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Clinical Focus Areas</label>
               {specialitiesInfo.hasPending && <PendingLabel />}
              </div>
-             <div className={`p-8 border rounded-[2.5rem] flex flex-wrap gap-3 shadow-inner transition-all bg-surface-container-lowest border-outline-variant/20`}>
+             <div className={`p-8 border rounded-xl flex flex-wrap gap-3 shadow-inner transition-all bg-surface-container-lowest border-outline-variant/20`}>
                 <Tag className={`w-5 h-5 mt-1 mr-2 text-primary/20`} />
                 <div className="flex-1">
                   <div className="flex flex-wrap gap-3 mb-4">
                     {specialitiesInfo.value?.map((spec: string, i: number) => (
-                      <span key={i} className={`px-5 py-2.5 rounded-2xl text-xs font-bold tracking-tight border transition-all cursor-default bg-primary/5 text-primary border-primary/10 hover:bg-primary hover:text-white`}>
+                      <span key={i} className={`px-5 py-2.5 rounded-xl text-xs font-bold tracking-tight border transition-all cursor-default bg-primary/5 text-primary border-primary/10 hover:bg-primary hover:text-white`}>
                         {spec}
                       </span>
                     )) || <span className="text-sm text-muted-foreground italic">General Practice Provider</span>}

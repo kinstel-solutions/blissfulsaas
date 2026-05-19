@@ -52,7 +52,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
           Marketplace
         </Link>
         <div className="flex gap-4">
-          <button className="p-3 bg-surface-container-low/50 rounded-2xl hover:bg-surface-container-low transition-colors text-primary/60 hover:text-primary">
+          <button className="p-3 bg-surface-container-low/50 rounded-lg hover:bg-surface-container-low transition-colors text-primary/60 hover:text-primary">
             <Heart className="w-4 h-4" />
           </button>
         </div>
@@ -92,7 +92,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
              <div className="flex flex-col gap-3 w-full">
                 <Link 
                   href={`/dashboard/sessions/book/${specialist.id}`} 
-                  className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold uppercase tracking-[0.15em] text-[10px] shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-1 transition-all text-center flex items-center justify-center gap-2"
+                  className="w-full bg-primary text-primary-foreground py-4 rounded-lg font-bold uppercase tracking-[0.15em] text-[10px] shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-1 transition-all text-center flex items-center justify-center gap-2"
                 >
                   <Video className="w-3.5 h-3.5" />
                   Book Instant Session

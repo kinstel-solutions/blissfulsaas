@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, Save, Check, StickyNote } from "lucide-react";
+import { FileText, Save, Check, StickyNote, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { AlexButton } from "@/components/ui/AlexButton";
 
 interface AppointmentNotesClientProps {
   appointmentId: string;

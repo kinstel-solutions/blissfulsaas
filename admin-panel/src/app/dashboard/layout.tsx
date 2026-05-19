@@ -10,7 +10,8 @@ import {
   Settings,
   Bell,
   CalendarDays,
-  DollarSign
+  DollarSign,
+  Home
 } from "lucide-react";
 
 import SignOutButton from "@/components/SignOutButton";
@@ -50,17 +51,43 @@ export default async function DashboardLayout({
     <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden relative">
       <MobileNav currentUserId={user.id} />
       {/* Sidebar - Desktop Only */}
-      <aside className="w-72 bg-surface-container-low border-r border-outline-variant/20 flex-col z-20 shadow-sm hidden lg:flex">
-        <div className="h-20 flex items-center px-4 md:px-8 border-b border-outline-variant/20">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            <Image src="/iconLogo.jpeg" alt="Icon" width={32} height={32} className="w-8 h-8 rounded-2xl object-cover shadow-lg shadow-primary/20" />
-            <span className="font-heading font-bold text-xl text-primary tracking-tight">Admin OS</span>
+      <aside className="w-80 bg-surface-container-low border-r border-outline-variant/30 flex-col z-20 shadow-sm hidden lg:flex">
+        {/* Brand Block */}
+        <div className="px-6 py-6 border-b border-outline-variant/10 flex flex-col gap-3 shrink-0">
+          <Link href="/dashboard" className="flex items-start gap-4">
+            <Image src="/iconLogo.jpeg" alt="Icon" width={56} height={56} className="w-14 h-14 rounded-full object-cover shrink-0 mt-0.5" />
+            <div className="flex flex-col text-left font-heading font-black text-xl text-primary leading-[1.0] tracking-tight">
+              <span>The</span>
+              <span>Blissful</span>
+              <span>Station</span>
+            </div>
           </Link>
+          <span className="text-xs font-bold text-primary leading-normal text-left block">
+            Express. Connect.<br />
+            Understand. Transform.
+          </span>
         </div>
-        
+
+        {/* Profile Widget in Sidebar */}
+        <Link href="/dashboard/account" className="px-6 py-4 border-b border-outline-variant/10 flex items-center justify-between group hover:bg-slate-50/50 transition-colors shrink-0 cursor-pointer">
+          <div className="flex items-center gap-3.5 overflow-hidden">
+            <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-base font-bold shadow-inner overflow-hidden shrink-0">
+              {user.user_metadata?.first_name?.[0]?.toUpperCase() || "A"}
+            </div>
+            <div className="flex flex-col overflow-hidden text-left leading-tight">
+              <span className="text-[13.5px] font-bold truncate">
+                {user.user_metadata?.first_name ? `${user.user_metadata.first_name} ${user.user_metadata.last_name || ''}` : user.email?.split('@')[0] || "Admin"}
+              </span>
+              <span className="text-xs font-medium text-muted-foreground/80 mt-0.5 truncate">
+                Super Admin
+              </span>
+            </div>
+          </div>
+        </Link>
+
         <SidebarNav />
 
-        <div className="p-6 border-t border-outline-variant/20 space-y-2">
+        <div className="px-6 py-5 border-t border-outline-variant/20 space-y-3 shrink-0">
           <SignOutButton />
         </div>
       </aside>
@@ -76,18 +103,6 @@ export default async function DashboardLayout({
           <div className="hidden sm:flex flex-col">
             <h2 className="text-xl font-heading font-medium text-primary">Admin Control Center</h2>
             <p className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest mt-0.5">The Blissful Station Internal OS</p>
-          </div>
-          
-          <div className="flex items-center gap-4 lg:gap-6">
-            <div className="flex items-center gap-4">
-              <div className="text-right hidden md:block">
-                <p className="text-xs font-bold text-foreground leading-none">{dbUser?.role === 'ADMIN' ? 'Super User' : 'Standard User'}</p>
-                <p className="text-xs text-primary/60 mt-1 uppercase tracking-tighter font-bold">Root Access</p>
-              </div>
-              <div className="w-10 h-10 rounded-2xl bg-primary shadow-lg shadow-primary/20 flex items-center justify-center text-primary-foreground font-bold border border-primary/20">
-                A
-              </div>
-            </div>
           </div>
         </header>
 

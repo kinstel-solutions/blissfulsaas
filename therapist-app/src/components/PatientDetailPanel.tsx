@@ -260,14 +260,14 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
         {/* Footer Actions */}
         <footer className="p-6 border-t border-slate-100 bg-white grid grid-cols-2 gap-4 shrink-0">
           <button 
-            className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 text-white rounded-2xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all shadow-md"
+            className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 text-white rounded-lg text-xs font-bold uppercase tracking-[0.2em] hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 transition-all shadow-md"
             onClick={() => {}}
           >
             <Video className="w-4 h-4" />
             Start Session
           </button>
           <button 
-            className="w-full flex items-center justify-center gap-2 py-4 bg-white border border-slate-200 text-slate-900 rounded-2xl text-xs font-bold uppercase tracking-[0.2em] hover:bg-slate-50 hover:shadow-sm hover:-translate-y-0.5 transition-all shadow-sm"
+            className="w-full flex items-center justify-center gap-2 py-4 bg-white border border-slate-200 text-slate-900 rounded-lg text-xs font-bold uppercase tracking-[0.2em] hover:bg-slate-50 hover:shadow-sm hover:-translate-y-0.5 transition-all shadow-sm"
             onClick={() => setActiveTab('messages')}
           >
             <MessageSquare className="w-4 h-4" />

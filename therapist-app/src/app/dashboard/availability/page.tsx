@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, Calendar, Save, Monitor, Building2, Check, X, Lock } from "lucide-react";
+import { Clock, Calendar, Save, Monitor, Building2, Check, X, Lock, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { AlexButton } from "@/components/ui/AlexButton";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const HOURS = [
@@ -207,24 +208,15 @@ export default function AvailabilityPage() {
           >
             Clear All
           </button>
-          <button
+          <AlexButton
             onClick={handleSave}
             disabled={saving || !hasChanges}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none ${
-              hasChanges 
-                ? "bg-primary text-white shadow-primary/20 hover:bg-primary/90" 
-                : "bg-slate-100 text-slate-400 shadow-none"
-            }`}
+            size="md"
+            icon={saving ? <Loader2 className="w-4 h-4 animate-spin text-primary group-hover:text-white" /> : undefined}
+            className="shadow-xl"
           >
-            {saving ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                Save Changes
-              </>
-            )}
-          </button>
+            Save Changes
+          </AlexButton>
         </div>
       </div>
 

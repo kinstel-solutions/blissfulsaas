@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { therapistProfileSchema, type TherapistProfileValues } from "@/lib/validations";
 import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin, Shield, Video, AlertCircle } from "lucide-react";
 import { ImageUpload } from "@/components/ImageUpload";
+import { AlexButton } from "@/components/ui/AlexButton";
 import { useRouter } from "next/navigation";
 
 const COMMON_SPECIALITIES = [
@@ -483,15 +484,16 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="flex justify-end pt-10 border-t border-outline-variant/20">
-          <button
+        <div className="flex justify-end pt-6 border-t border-outline-variant/20">
+          <AlexButton
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 bg-slate-900 text-white px-5 md:px-10 py-5 rounded-[2rem] text-xs font-bold uppercase tracking-widest disabled:opacity-50 hover:bg-primary transition-all shadow-xl hover:-translate-y-1"
+            size="md"
+            icon={saving ? <Loader2 className="w-4 h-4 animate-spin text-primary group-hover:text-white" /> : undefined}
+            className="shadow-xl"
           >
-            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-            {isVerified ? "Publish Updates" : "Submit for Approval"}
-          </button>
+            {isVerified ? "Submit" : "Submit for Approval"}
+          </AlexButton>
         </div>
       </form>
     </div>

@@ -74,7 +74,6 @@ export default function DashboardSidebar({
 
   return (
     <div className="px-6 py-6 flex flex-col flex-1 gap-2">
-      <p className="px-4 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Workspace</p>
       {NAV_ITEMS.map((item) => {
         const isActive = pathname === item.href;
         const isMessages = item.href === "/dashboard/messages";

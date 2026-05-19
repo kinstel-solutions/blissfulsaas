@@ -116,10 +116,10 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col overflow-hidden relative bg-surface-container-lowest/30">
+      <main className="flex-1 flex flex-col overflow-hidden relative bg-surface-container-lowest/30 pb-20 lg:pb-0">
         <div className="absolute top-0 right-0 w-full h-[40vh] bg-linear-to-b from-primary/5 via-transparent to-transparent -z-10 pointer-events-none" />
 
-        <header className="h-20 lg:h-24 flex items-center justify-between px-8 lg:px-12 bg-transparent z-30 shrink-0 w-full">
+        <header className="h-20 flex items-center justify-between px-6 lg:px-10 bg-transparent z-30 shrink-0 w-full">
           <div className="flex items-center gap-3 lg:hidden">
             <Image src="/iconLogo.jpeg" alt="Icon" width={40} height={40} className="w-10 h-10 rounded-lg object-cover shadow-lg shadow-primary/20 animate-fade-in" />
           </div>
@@ -143,8 +143,10 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <div id="main-content-area" className="flex-1 overflow-auto px-6 py-6 lg:px-8 lg:py-8 pb-24 relative">
-          {children}
+        <div id="main-content-area" className="flex-1 overflow-auto p-6 lg:p-12 relative">
+          <div className="max-w-6xl mx-auto h-full">
+            {children}
+          </div>
         </div>
       </main>
     </div>
