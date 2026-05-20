@@ -1,4 +1,3 @@
-import { Home } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
@@ -76,13 +75,6 @@ export default async function DashboardLayout({
         <DashboardSidebar currentUserId={user.id} />
 
         <div className="px-6 py-5 border-t border-outline-variant/20 space-y-3 shrink-0">
-          <Link 
-            href="/" 
-            className="flex items-center px-4 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-lg transition-colors group"
-          >
-            <Home className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform" />
-            Return to Station
-          </Link>
           <SignOutButton />
         </div>
       </aside>

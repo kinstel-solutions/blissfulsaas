@@ -19,10 +19,26 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     setError(null);
-    const supabase = createClient();
+    const { createBrowserClient } = await import('@supabase/ssr');
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        auth: {
+          flowType: "implicit",
+          persistSession: false,
+        },
+        cookieOptions: {
+          name: 'sb-therapist-auth-token',
+          path: '/',
+          sameSite: 'lax',
+          secure: false
+        }
+      }
+    );
     
     const { error: authError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/update-password`,
+      redirectTo: `${window.location.origin}/update-password`,
     });
 
     if (authError) {

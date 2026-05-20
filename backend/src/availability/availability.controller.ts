@@ -2,6 +2,7 @@ import { Controller, Get, Post, Delete, Param, Body, UseGuards, Request, ParseUU
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
 import { AvailabilityService } from './availability.service';
+import { CreateSlotDto, BulkUpdateSlotsDto } from './dto/availability.dto';
 
 @Controller('availability')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -10,7 +11,7 @@ export class AvailabilityController {
 
   @Post()
   @Roles('THERAPIST')
-  async create(@Request() req: any, @Body() data: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }) {
+  async create(@Request() req: any, @Body() data: CreateSlotDto) {
     const therapist = await this.availabilityService.getTherapistByUserId(req.user.userId);
     return this.availabilityService.createSlot(therapist.id, data);
   }
@@ -19,10 +20,7 @@ export class AvailabilityController {
   @Roles('THERAPIST')
   async bulkUpdate(
     @Request() req: any,
-    @Body() data: { 
-      create: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }[];
-      delete: string[];
-    }
+    @Body() data: BulkUpdateSlotsDto
   ) {
     const therapist = await this.availabilityService.getTherapistByUserId(req.user.userId);
     return this.availabilityService.bulkUpdateSlots(therapist.id, data);

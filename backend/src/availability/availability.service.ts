@@ -1,6 +1,7 @@
 import { Injectable, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConsultationMode } from '@prisma/client';
+import { BulkUpdateSlotsDto } from './dto/availability.dto';
 
 @Injectable()
 export class AvailabilityService {
@@ -53,16 +54,16 @@ export class AvailabilityService {
 
   async bulkUpdateSlots(
     therapistId: string, 
-    data: { 
-      create: { dayOfWeek: number; startTime: string; endTime: string; mode?: ConsultationMode }[];
-      delete: string[];
-    }
+    data: BulkUpdateSlotsDto
   ) {
+    const createData = data.create ?? [];
+    const deleteIds = data.delete ?? [];
+
     return this.prisma.$transaction(async (tx) => {
-      if (data.delete.length > 0) {
+      if (deleteIds.length > 0) {
         await tx.availabilitySlot.updateMany({
           where: {
-            id: { in: data.delete },
+            id: { in: deleteIds },
             therapistId,
           },
           data: { isActive: false },
@@ -70,7 +71,7 @@ export class AvailabilityService {
       }
 
       const results = [];
-      for (const item of data.create) {
+      for (const item of createData) {
         const mode = item.mode ?? ConsultationMode.ONLINE;
         
         const existing = await tx.availabilitySlot.findUnique({
@@ -108,7 +109,7 @@ export class AvailabilityService {
         }
       }
 
-      return { success: true, createdCount: results.length, deletedCount: data.delete.length };
+      return { success: true, createdCount: results.length, deletedCount: deleteIds.length };
     });
   }
 

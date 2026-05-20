@@ -1,4 +1,4 @@
-import { Home, Activity, Calendar } from "lucide-react";
+import { Activity, Calendar } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
@@ -104,13 +104,6 @@ export default async function DashboardLayout({
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/"
-            className="flex items-center px-4 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-lg transition-colors group"
-          >
-            <Home className="w-4 h-4 mr-3" />
-            Home
-          </Link>
           <SignOutButton />
         </div>
       </aside>

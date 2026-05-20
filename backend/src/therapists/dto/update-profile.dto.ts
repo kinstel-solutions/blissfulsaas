@@ -43,7 +43,7 @@ export class UpdateTherapistProfileDto {
   @IsOptional()
   languages?: string[];
 
-  @ValidateIf(o => typeof o.videoUrl === 'string' && o.videoUrl.trim().length > 0)
+  @Transform(({ value }) => value === '' || value === null ? null : value)
   @IsUrl()
   @IsOptional()
   videoUrl?: string;
@@ -52,12 +52,12 @@ export class UpdateTherapistProfileDto {
   @IsOptional()
   clinicAddress?: string;
 
-  @ValidateIf(o => typeof o.mapLink === 'string' && o.mapLink.trim().length > 0)
+  @Transform(({ value }) => value === '' || value === null ? null : value)
   @IsUrl()
   @IsOptional()
   mapLink?: string;
 
-  @ValidateIf(o => typeof o.profileImageUrl === 'string' && o.profileImageUrl.trim().length > 0)
+  @Transform(({ value }) => value === '' || value === null ? null : value)
   @IsUrl()
   @IsOptional()
   profileImageUrl?: string;
