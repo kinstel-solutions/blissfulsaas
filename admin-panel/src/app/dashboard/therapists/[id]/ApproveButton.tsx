@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 import { api } from "@/lib/api";
-import { AlexButton } from "@/components/ui/AlexButton";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function ApproveButton({ id, isUpdate }: { id: string, isUpdate?: boolean }) {
   const [loading, setLoading] = useState(false);
@@ -30,14 +31,22 @@ export default function ApproveButton({ id, isUpdate }: { id: string, isUpdate?:
   };
 
   return (
-    <AlexButton 
+    <button 
       onClick={handleApprove}
       disabled={loading}
-      size="lg"
-      icon={loading ? <Loader2 className="w-4 h-4 animate-spin text-primary group-hover:text-white" /> : undefined}
-      className="shadow-xl shadow-primary/20 w-full sm:w-auto"
+      className={cn(
+        buttonVariants({ variant: "default" }),
+        "w-full sm:w-auto rounded-lg py-2.5 px-5 h-auto text-xs font-bold uppercase tracking-widest shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 gap-2"
+      )}
     >
-      {isUpdate ? "Approve Edits" : "Verify Credentials"}
-    </AlexButton>
+      {loading ? (
+        <Loader2 className="w-4 h-4 animate-spin text-primary-foreground" />
+      ) : (
+        <>
+          <CheckCircle2 className="w-4 h-4" />
+          {isUpdate ? "Approve Edits" : "Verify Credentials"}
+        </>
+      )}
+    </button>
   );
 }

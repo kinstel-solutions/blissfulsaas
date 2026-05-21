@@ -147,7 +147,7 @@ export default async function TherapistDetailPage({
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                {(!therapist.isVerified || therapist.pendingFields) && (
                  <ApproveButton id={therapist.id} isUpdate={!!therapist.pendingFields} />
                )}

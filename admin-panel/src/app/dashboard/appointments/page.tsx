@@ -176,14 +176,14 @@ export default async function AppointmentsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 md:px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-3.5 h-3.5 text-muted-foreground/50" />
+                    <td className="px-4 md:px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-start gap-2.5">
+                        <Calendar className="w-3.5 h-3.5 text-muted-foreground/50 mt-0.5 shrink-0" />
                         <div>
-                          <p className="text-xs font-medium text-foreground/80">
+                          <p className="text-xs font-medium text-foreground/80 whitespace-nowrap">
                             {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </p>
-                          <p className="text-[10px] text-muted-foreground mt-0.5">
+                          <p className="text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap">
                             {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} ({appt.duration}m)
                           </p>
                         </div>

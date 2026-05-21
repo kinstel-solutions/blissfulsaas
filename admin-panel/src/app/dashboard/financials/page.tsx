@@ -59,17 +59,17 @@ export default async function FinancialsPage() {
         {/* Export Report removed */}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {topLevelMetrics.map((metric, idx) => (
-          <div key={idx} className="bg-surface-container-lowest border border-outline-variant/20 p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
-            <div className={`w-12 h-12 ${metric.bg} ${metric.color} rounded-2xl flex items-center justify-center mb-5 border border-current/10 shadow-inner group-hover:scale-110 transition-transform`}>
-              <metric.icon className="w-6 h-6" />
+          <div key={idx} className="bg-surface-container-lowest border border-outline-variant/20 p-4 md:p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 ${metric.bg} ${metric.color} rounded-2xl flex items-center justify-center mb-4 md:mb-5 border border-current/10 shadow-inner group-hover:scale-110 transition-transform`}>
+              <metric.icon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">{metric.label}</p>
-              <h3 className="text-3xl font-heading font-medium text-foreground">{metric.value}</h3>
+              <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1">{metric.label}</p>
+              <h3 className="text-2xl sm:text-3xl font-heading font-medium text-foreground">{metric.value}</h3>
             </div>
-            <div className="mt-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+            <div className="mt-3 md:mt-4 text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                {metric.subtext}
             </div>
           </div>

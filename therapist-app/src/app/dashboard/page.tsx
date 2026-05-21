@@ -141,52 +141,52 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         {/* Today's Sessions */}
-        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-6 md:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
-          <div className="w-12 h-12 md:w-14 md:h-14 bg-primary/5 text-primary rounded-xl flex items-center justify-center mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
-            <Calendar className="w-6 h-6 md:w-7 md:h-7" />
+        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-4 md:p-6 lg:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-primary/5 text-primary rounded-xl flex items-center justify-center mb-4 lg:mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
+            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
           </div>
           <div>
-            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Today&apos;s Sessions</p>
-            <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{upcomingSessions?.length || 0}</h3>
+            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Today&apos;s Sessions</p>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{upcomingSessions?.length || 0}</h3>
           </div>
         </Link>
 
         {/* Pending Requests */}
-        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-6 md:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
-          <div className="w-12 h-12 md:w-14 md:h-14 bg-amber-500/5 text-amber-600 rounded-xl flex items-center justify-center mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
-            <Clock className="w-6 h-6 md:w-7 md:h-7" />
+        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-4 md:p-6 lg:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-amber-500/5 text-amber-600 rounded-xl flex items-center justify-center mb-4 lg:mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
+            <Clock className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
           </div>
           <div>
-            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Pending Requests</p>
-            <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{pendingSessions?.length || 0}</h3>
+            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Pending Requests</p>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{pendingSessions?.length || 0}</h3>
           </div>
         </Link>
 
         {/* Follow-ups */}
-        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-6 md:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
-          <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-500/5 text-blue-600 rounded-xl flex items-center justify-center mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
-            <Activity className="w-6 h-6 md:w-7 md:h-7" />
+        <Link href="/dashboard/appointments" className="group bg-surface-container-lowest border border-outline-variant/20 p-4 md:p-6 lg:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-blue-500/5 text-blue-600 rounded-xl flex items-center justify-center mb-4 lg:mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
+            <Activity className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
           </div>
           <div>
-            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Follow-ups</p>
-            <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{followUpsCount}</h3>
+            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Follow-ups</p>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{followUpsCount}</h3>
           </div>
         </Link>
 
         {/* New Clients */}
-        <Link href="/dashboard/patients" className="group bg-surface-container-lowest border border-outline-variant/20 p-6 md:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
-          <div className="w-12 h-12 md:w-14 md:h-14 bg-emerald-500/5 text-emerald-600 rounded-xl flex items-center justify-center mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
-            <Users className="w-6 h-6 md:w-7 md:h-7" />
+        <Link href="/dashboard/patients" className="group bg-surface-container-lowest border border-outline-variant/20 p-4 md:p-6 lg:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer relative overflow-hidden block">
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-emerald-500/5 text-emerald-600 rounded-xl flex items-center justify-center mb-4 lg:mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform">
+            <Users className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
           </div>
           <div>
-            <p className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">New Clients</p>
-            <h3 className="text-3xl md:text-4xl font-heading font-normal text-primary">{uniquePatientsCount || 0}</h3>
+            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">New Clients</p>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{uniquePatientsCount || 0}</h3>
           </div>
         </Link>
       </div>

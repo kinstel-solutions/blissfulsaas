@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldX, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function RejectButton({ id, isUpdate }: { id: string, isUpdate?: boolean }) {
   const [loading, setLoading] = useState(false);
@@ -41,10 +43,13 @@ export default function RejectButton({ id, isUpdate }: { id: string, isUpdate?: 
     <button 
       onClick={handleReject}
       disabled={loading}
-      className="h-14 px-8 bg-surface border border-destructive/20 text-destructive rounded-full font-bold uppercase tracking-widest text-[10px] md:text-xs shadow-sm hover:shadow-destructive/10 hover:bg-destructive/5 hover:-translate-y-1 active:translate-y-0.5 flex items-center justify-center gap-3 transition-all disabled:opacity-50 w-full sm:w-auto"
+      className={cn(
+        buttonVariants({ variant: "destructive" }),
+        "w-full sm:w-auto rounded-lg py-2.5 px-5 h-auto text-xs font-bold uppercase tracking-widest shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 gap-2"
+      )}
     >
       {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader2 className="w-4 h-4 animate-spin text-destructive-foreground" />
       ) : (
         <>
           <ShieldX className="w-4 h-4" /> {isUpdate ? "Reject Edits" : "Eject from Registry"}
