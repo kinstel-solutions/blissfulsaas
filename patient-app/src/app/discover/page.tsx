@@ -5,6 +5,7 @@ import { ArrowRight, Search, Filter, Star, Sparkles, Loader2, GraduationCap, Glo
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { BreathingLoader } from "@/components/BreathingLoader";
 import { AlexButton } from "@/components/ui/AlexButton";
 
@@ -64,8 +65,10 @@ export default function DiscoverPage() {
 
 
   return (
-    <div className="space-y-12 pb-24">
-      {/* Editorial Header */}
+    <div className="min-h-screen bg-[#F8FAF9]">
+      <LandingNavbar portal="patient" />
+      <div className="space-y-12 pb-24 max-w-7xl mx-auto px-6 pt-32">
+        {/* Editorial Header */}
       <div className="relative pt-8 pb-4">
         <h1 className="text-5xl font-heading font-normal text-foreground mb-4 tracking-tight">
           Find Your <span className="text-primary italic">Specialist.</span>
@@ -176,7 +179,7 @@ export default function DiscoverPage() {
                   <span className="text-2xl font-heading text-primary">₹{t.hourlyRate || "1,500"}<span className="text-xs font-normal text-muted-foreground">/hr</span></span>
                 </div>
                 <Link
-                  href={`/dashboard/therapist/${t.id}`}
+                  href={`/therapist/${t.id}`}
                   className="px-6 py-3 rounded-xl bg-slate-900 text-white text-xs font-bold uppercase tracking-widest flex items-center gap-3 group-hover:bg-primary transition-all duration-300 after:absolute after:inset-0 after:z-[1]"
                 >
                   Book Now <ArrowRight className="w-4 h-4" />
@@ -206,7 +209,8 @@ export default function DiscoverPage() {
             )}
           </button>
         </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

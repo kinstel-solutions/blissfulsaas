@@ -19,7 +19,12 @@ import {
   Tag,
   Video,
   Phone,
-  ExternalLink
+  ExternalLink,
+  FileCheck,
+  Landmark,
+  CreditCard,
+  Fingerprint,
+  Image as ImageIcon
 } from "lucide-react";
 import ApproveButton from "./ApproveButton";
 import RejectButton from "./RejectButton";
@@ -79,6 +84,7 @@ export default async function TherapistDetailPage({
   const firstNameInfo = getFieldInfo("firstName");
   const lastNameInfo = getFieldInfo("lastName");
   const profileImageInfo = getFieldInfo("profileImageUrl");
+  const genderInfo = getFieldInfo("gender");
   const qualificationsInfo = getFieldInfo("qualifications");
   const phoneInfo = getFieldInfo("phone");
   const bioInfo = getFieldInfo("bio");
@@ -89,6 +95,14 @@ export default async function TherapistDetailPage({
   const clinicAddressInfo = getFieldInfo("clinicAddress");
   const mapLinkInfo = getFieldInfo("mapLink");
   const specialitiesInfo = getFieldInfo("specialities");
+  const rciNumberInfo = getFieldInfo("rciNumber");
+  const licenceCertificateUrlInfo = getFieldInfo("licenceCertificateUrl");
+  const bankNameInfo = getFieldInfo("bankName");
+  const bankAccountNumberInfo = getFieldInfo("bankAccountNumber");
+  const bankIfscCodeInfo = getFieldInfo("bankIfscCode");
+  const bankAccountHolderNameInfo = getFieldInfo("bankAccountHolderName");
+  const panNumberInfo = getFieldInfo("panNumber");
+  const aadhaarNumberInfo = getFieldInfo("aadhaarNumber");
 
   const PendingLabel = () => (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-md text-[9px] font-bold uppercase tracking-[0.1em] border border-yellow-200 ml-2 shadow-sm">
@@ -161,7 +175,7 @@ export default async function TherapistDetailPage({
         {/* Core Profile Info */}
         <div className="space-y-10">
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
              <div className="space-y-2">
                 <div className="flex items-center">
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Professional Qualifications</label>
@@ -190,6 +204,26 @@ export default async function TherapistDetailPage({
                   </div>
                   <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-xl pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
                     {(therapist.user as any)?.email}
+                  </div>
+                </div>
+             </div>
+
+             <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Gender</label>
+                  {genderInfo.hasPending && <PendingLabel />}
+                </div>
+                <div className="relative group">
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-primary/5 text-primary/40 group-hover:text-primary group-hover:bg-primary/10`}>
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                    {genderInfo.value || "Not provided"}
+                    {genderInfo.hasPending && (
+                      <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
+                        Original: {genderInfo.originalValue || "Empty"}
+                      </div>
+                    )}
                   </div>
                 </div>
              </div>
@@ -441,6 +475,195 @@ export default async function TherapistDetailPage({
                   )}
                 </div>
              </div>
+          </div>
+
+          {/* ─── Registration & Credentials ─── */}
+          <div className="space-y-6 pt-4">
+            <div className="flex items-center gap-4 border-b border-outline-variant/20 pb-5">
+              <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500 shadow-inner border border-indigo-500/10">
+                <FileCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-heading font-medium text-foreground">Registration & Credentials</h2>
+                <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5">Regulatory licence information.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">RCI / MCI Registration Number</label>
+                  {rciNumberInfo.hasPending && <PendingLabel />}
+                </div>
+                <div className="relative group">
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-indigo-500/5 text-indigo-600/40 group-hover:text-indigo-600 group-hover:bg-indigo-500/10`}>
+                    <FileCheck className="w-5 h-5" />
+                  </div>
+                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                    {rciNumberInfo.value || "Not provided"}
+                    {rciNumberInfo.hasPending && (
+                      <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
+                        Original: {rciNumberInfo.originalValue || "Empty"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Licence / Certificate</label>
+                  {licenceCertificateUrlInfo.hasPending && <PendingLabel />}
+                </div>
+                {licenceCertificateUrlInfo.value ? (
+                  <div className="relative w-full max-w-sm aspect-[4/3] rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm group">
+                    <img src={licenceCertificateUrlInfo.value} alt="Licence Certificate" className="w-full h-full object-cover" />
+                    <a
+                      href={licenceCertificateUrlInfo.value}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute inset-0 bg-black/0 group-hover:bg-black/40 flex items-center justify-center transition-all duration-300"
+                    >
+                      <ExternalLink className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  </div>
+                ) : (
+                  <div className={`w-full border rounded-xl px-6 py-5 text-sm font-medium italic shadow-sm bg-surface-container-lowest border-outline-variant/20 text-muted-foreground/40`}>
+                    No certificate uploaded.
+                  </div>
+                )}
+                {licenceCertificateUrlInfo.hasPending && (
+                  <p className="text-[10px] text-muted-foreground/40 font-medium mt-1 ml-2">Original: {licenceCertificateUrlInfo.originalValue ? "Had certificate" : "Empty"}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ─── Bank & Identity Details ─── */}
+          <div className="space-y-6 pt-4">
+            <div className="flex items-center gap-4 border-b border-outline-variant/20 pb-5">
+              <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500 shadow-inner border border-emerald-500/10">
+                <Landmark className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-heading font-medium text-foreground">Bank & Identity Verification</h2>
+                <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5">Payout and compliance details (admin-only).</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Bank Name</label>
+                  {bankNameInfo.hasPending && <PendingLabel />}
+                </div>
+                <div className="relative group">
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
+                    <Landmark className="w-5 h-5" />
+                  </div>
+                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                    {bankNameInfo.value || "Not provided"}
+                    {bankNameInfo.hasPending && (
+                      <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
+                        Original: {bankNameInfo.originalValue || "Empty"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Account Holder</label>
+                  {bankAccountHolderNameInfo.hasPending && <PendingLabel />}
+                </div>
+                <div className={`w-full border rounded-xl px-6 py-5 text-sm font-medium shadow-sm bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                  {bankAccountHolderNameInfo.value || "Not provided"}
+                  {bankAccountHolderNameInfo.hasPending && (
+                    <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
+                      Original: {bankAccountHolderNameInfo.originalValue || "Empty"}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Account Number</label>
+                  {bankAccountNumberInfo.hasPending && <PendingLabel />}
+                </div>
+                <div className="relative group">
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
+                    <CreditCard className="w-5 h-5" />
+                  </div>
+                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground font-mono`}>
+                    {bankAccountNumberInfo.value || "Not provided"}
+                    {bankAccountNumberInfo.hasPending && (
+                      <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic font-sans">
+                        Original: {bankAccountNumberInfo.originalValue || "Empty"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">IFSC Code</label>
+                  {bankIfscCodeInfo.hasPending && <PendingLabel />}
+                </div>
+                <div className={`w-full border rounded-xl px-6 py-5 text-sm font-medium shadow-sm bg-surface-container-lowest border-outline-variant/20 text-foreground font-mono uppercase`}>
+                  {bankIfscCodeInfo.value || "Not provided"}
+                  {bankIfscCodeInfo.hasPending && (
+                    <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic font-sans">
+                      Original: {bankIfscCodeInfo.originalValue || "Empty"}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">PAN Card Number</label>
+                  {panNumberInfo.hasPending && <PendingLabel />}
+                </div>
+                <div className="relative group">
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-amber-500/5 text-amber-600/40 group-hover:text-amber-600 group-hover:bg-amber-500/10`}>
+                    <CreditCard className="w-5 h-5" />
+                  </div>
+                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground font-mono uppercase`}>
+                    {panNumberInfo.value || "Not provided"}
+                    {panNumberInfo.hasPending && (
+                      <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic font-sans">
+                        Original: {panNumberInfo.originalValue || "Empty"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Aadhaar Number</label>
+                  {aadhaarNumberInfo.hasPending && <PendingLabel />}
+                </div>
+                <div className="relative group">
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-amber-500/5 text-amber-600/40 group-hover:text-amber-600 group-hover:bg-amber-500/10`}>
+                    <Fingerprint className="w-5 h-5" />
+                  </div>
+                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground font-mono`}>
+                    {aadhaarNumberInfo.value || "Not provided"}
+                    {aadhaarNumberInfo.hasPending && (
+                      <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic font-sans">
+                        Original: {aadhaarNumberInfo.originalValue || "Empty"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Compliance Footer */}

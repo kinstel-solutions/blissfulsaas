@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { AlexButton } from "@/components/ui/AlexButton";
-import { CloudRain, Brain, ClipboardCheck, Compass, Infinity, Baby, Zap, MessageSquare, Heart } from "lucide-react";
+import { CloudRain, Brain, ClipboardCheck, Compass, Infinity, Baby, Zap, MessageSquare, Heart, ChevronDown } from "lucide-react";
 
 const services = [
   {
@@ -61,9 +61,41 @@ const services = [
   },
 ];
 
-export function ServicesSection() {
-  const [isExpanded, setIsExpanded] = useState(false);
+function ServiceCard({ service }: { service: any }) {
+  const [isOpen, setIsOpen] = useState(false);
 
+  return (
+    <div
+      onClick={() => setIsOpen(!isOpen)}
+      className="bg-white p-6 md:p-8 rounded-[25px] transition-all duration-300 border border-[rgba(33,77,62,0.05)] shadow-[0_5px_15px_rgba(33,77,62,0.02)] hover:border-[var(--accent)] hover:shadow-[0_10px_40px_rgba(33,77,62,0.08)] hover:-translate-y-1 cursor-pointer flex flex-col group select-none"
+    >
+      {/* 
+      <div className="text-[var(--primary)] mb-6 block transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+        {service.icon}
+      </div> 
+      */}
+
+      <div className="flex justify-between items-center w-full">
+        <h3 className="font-cormorant font-semibold text-xl md:text-2xl text-[var(--primary)]">
+          {service.title}
+        </h3>
+        <span className={`text-[var(--primary)] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>
+          <ChevronDown className="w-5 h-5" />
+        </span>
+      </div>
+
+      <div className={`grid transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"}`}>
+        <div className="overflow-hidden">
+          <p className="text-[var(--text-light)] text-sm md:text-base leading-relaxed">
+            {service.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ServicesSection() {
   return (
     <section id="services" className="bg-[#F8FAF9] py-[100px] md:py-[140px]">
       <div className="container mx-auto px-6 md:px-8 max-w-[1200px]">
@@ -78,33 +110,13 @@ export function ServicesSection() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, idx) => (
-            <div
-              key={idx}
-              className={`bg-white p-10 rounded-[25px] transition-all duration-400 border border-[rgba(33,77,62,0.05)] shadow-[0_5px_15px_rgba(33,77,62,0.02)] hover:border-[var(--accent)] hover:shadow-[0_10px_40px_rgba(33,77,62,0.08)] hover:-translate-y-2.5 group ${
-                !isExpanded && idx >= 3 ? "hidden md:block" : "block"
-              }`}>
-              <div className="text-[var(--primary)] mb-6 block transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                {service.icon}
-              </div>
-              <h3 className="font-cormorant font-semibold text-2xl text-[var(--primary)] mb-4">
-                {service.title}
-              </h3>
-              <p className="text-[var(--text-light)]">{service.description}</p>
-            </div>
+            <ServiceCard key={idx} service={service} />
           ))}
-        </div>
-
-        <div className="mt-8 flex justify-center md:hidden">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-[var(--primary)] font-medium border-b border-[var(--primary)] pb-0.5 hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors">
-            {isExpanded ? "Show Less" : "View All Services"}
-          </button>
         </div>
 
         <div className="mt-12 md:mt-16 flex justify-center">
           <AlexButton
-            href="/signup"
+            href="/discover"
             size="md">
             Find Your Specialist
           </AlexButton>

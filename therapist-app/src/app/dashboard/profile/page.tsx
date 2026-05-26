@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/lib/api";
 import { therapistProfileSchema, type TherapistProfileValues } from "@/lib/validations";
-import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin, Shield, Video, AlertCircle } from "lucide-react";
+import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin, Shield, Video, AlertCircle, ChevronDown, FileCheck, Landmark, CreditCard, Fingerprint } from "lucide-react";
 import { ImageUpload } from "@/components/ImageUpload";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { useRouter } from "next/navigation";
@@ -41,6 +41,7 @@ export default function ProfilePage() {
     defaultValues: {
       firstName: "",
       lastName: "",
+      gender: "",
       bio: "",
       qualifications: "",
       yearsOfExperience: 0,
@@ -52,6 +53,14 @@ export default function ProfilePage() {
       mapLink: "",
       profileImageUrl: "",
       phone: "",
+      rciNumber: "",
+      licenceCertificateUrl: "",
+      bankName: "",
+      bankAccountNumber: "",
+      bankIfscCode: "",
+      bankAccountHolderName: "",
+      panNumber: "",
+      aadhaarNumber: "",
     },
   });
 
@@ -60,6 +69,7 @@ export default function ProfilePage() {
   const [languageInput, setLanguageInput] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [hasPendingEdits, setHasPendingEdits] = useState(false);
+  const [genderOpen, setGenderOpen] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
@@ -70,6 +80,7 @@ export default function ProfilePage() {
         reset({
           firstName: profileData.firstName || "",
           lastName: data.lastName || "",
+          gender: data.gender || "",
           bio: data.bio || "",
           qualifications: data.qualifications || "",
           yearsOfExperience: data.yearsOfExperience || 0,
@@ -81,6 +92,14 @@ export default function ProfilePage() {
           mapLink: profileData.mapLink || "",
           profileImageUrl: profileData.profileImageUrl || "",
           phone: profileData.phone || "",
+          rciNumber: profileData.rciNumber || "",
+          licenceCertificateUrl: profileData.licenceCertificateUrl || "",
+          bankName: profileData.bankName || "",
+          bankAccountNumber: profileData.bankAccountNumber || "",
+          bankIfscCode: profileData.bankIfscCode || "",
+          bankAccountHolderName: profileData.bankAccountHolderName || "",
+          panNumber: profileData.panNumber || "",
+          aadhaarNumber: profileData.aadhaarNumber || "",
         });
         setIsVerified(data.isVerified);
         setHasPendingEdits(!!data.pendingFields);
@@ -242,6 +261,50 @@ export default function ProfilePage() {
                   }`}
                 />
                 {errors.lastName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.lastName.message}</p>}
+              </div>
+
+              <div className="space-y-2 relative">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Gender</label>
+                <div 
+                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm transition-all duration-300 cursor-pointer flex justify-between items-center group hover:border-primary/40 focus-within:ring-4 focus-within:ring-primary/10 ${
+                    errors.gender ? 'border-red-500' : 'border-outline-variant/30'
+                  }`}
+                  onClick={() => setGenderOpen(!genderOpen)}
+                >
+                  <span className={formData.gender ? "text-foreground font-medium" : "text-muted-foreground"}>
+                    {formData.gender || "Select Gender"}
+                  </span>
+                  <div className={`w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-muted-foreground/50 transition-all duration-300 border border-outline-variant/10 ${
+                    genderOpen ? 'rotate-180 text-primary border-primary/20 bg-primary/5' : 'group-hover:text-primary'
+                  }`}>
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </div>
+
+                {genderOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setGenderOpen(false)} />
+                    <div className="absolute top-full left-0 w-full z-50 mt-2 bg-surface-container-lowest border border-outline-variant/20 rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                      {["Male", "Female", "Non-binary", "Other", "Prefer not to say"].map(option => (
+                        <div
+                          key={option}
+                          className={`px-5 py-3.5 text-sm cursor-pointer transition-all duration-200 hover:bg-primary/5 hover:text-primary border-b border-outline-variant/5 last:border-0 ${
+                            formData.gender === option ? 'bg-primary/10 font-bold text-primary' : 'text-foreground/80 font-medium'
+                          }`}
+                          onClick={() => {
+                            setValue("gender", option, { shouldDirty: true, shouldValidate: true });
+                            setGenderOpen(false);
+                          }}
+                        >
+                          {option}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {/* Hidden input to keep react-hook-form integration intact */}
+                <input type="hidden" {...register("gender")} />
+                {errors.gender && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.gender.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -481,6 +544,156 @@ export default function ProfilePage() {
               </div>
               <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-widest">Or type your own above</p>
             </div>
+          </div>
+        </div>
+
+        {/* ─── Registration & Credentials ─── */}
+        <div className="space-y-8 pt-4">
+          <div className="flex items-center gap-4 border-b border-outline-variant/20 pb-5">
+            <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500 shadow-inner border border-indigo-500/10">
+              <FileCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-heading font-medium text-foreground">Registration & Credentials</h2>
+              <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5">Regulatory licence information required for clinical verification.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">RCI / MCI Registration Number</label>
+              <div className="relative">
+                <FileCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                <input
+                  type="text"
+                  {...register("rciNumber")}
+                  placeholder="e.g. A12345"
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.rciNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
+                />
+                {errors.rciNumber && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.rciNumber.message}</p>}
+              </div>
+              <p className="text-[10px] text-muted-foreground/50 font-medium">
+                Your Rehabilitation Council of India or Medical Council of India registration number.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <ImageUpload
+                label="Licence / Certificate Upload"
+                value={formData.licenceCertificateUrl}
+                onChange={(url) => setValue("licenceCertificateUrl", url, { shouldDirty: true })}
+                description="Upload a scanned copy of your clinical licence or degree certificate (PNG, JPG)."
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ─── Bank / Payout & Identity Details ─── */}
+        <div className="space-y-8 pt-4">
+          <div className="flex items-center gap-4 border-b border-outline-variant/20 pb-5">
+            <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-500 shadow-inner border border-emerald-500/10">
+              <Landmark className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-heading font-medium text-foreground">Bank & Identity Verification</h2>
+              <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5">Required for payouts and regulatory compliance. This data is securely stored and never shared publicly.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Bank Name</label>
+              <div className="relative">
+                <Landmark className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                <input
+                  type="text"
+                  {...register("bankName")}
+                  placeholder="e.g. State Bank of India"
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.bankName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Account Holder Name</label>
+              <input
+                type="text"
+                {...register("bankAccountHolderName")}
+                placeholder="Full name as on bank account"
+                className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
+                  errors.bankAccountHolderName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                }`}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Account Number</label>
+              <div className="relative">
+                <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                <input
+                  type="text"
+                  {...register("bankAccountNumber")}
+                  placeholder="e.g. 1234567890123456"
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.bankAccountNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">IFSC Code</label>
+              <input
+                type="text"
+                {...register("bankIfscCode")}
+                placeholder="e.g. SBIN0001234"
+                className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors uppercase ${
+                  errors.bankIfscCode ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                }`}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">PAN Card Number</label>
+              <div className="relative">
+                <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                <input
+                  type="text"
+                  {...register("panNumber")}
+                  placeholder="e.g. ABCDE1234F"
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors uppercase ${
+                    errors.panNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Aadhaar Number</label>
+              <div className="relative">
+                <Fingerprint className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                <input
+                  type="text"
+                  {...register("aadhaarNumber")}
+                  placeholder="e.g. 1234 5678 9012"
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
+                    errors.aadhaarNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl">
+            <p className="text-[10px] text-emerald-700/60 font-bold uppercase tracking-widest">
+              🔒 All financial and identity data is encrypted at rest and in transit. It is only accessible to verified admins for payout processing.
+            </p>
           </div>
         </div>
 

@@ -6,18 +6,23 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { createClient } from "@/lib/supabase";
+import MobileNav from "@/components/MobileNav";
 
 export function LandingNavbar({ 
   portal = "patient", 
-  hideLinks = false 
+  hideLinks = false,
+  initialUser = null
 }: { 
   portal?: "patient" | "therapist",
-  hideLinks?: boolean
+  hideLinks?: boolean,
+  initialUser?: any
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const [user, setUser] = useState<any>(initialUser);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +31,23 @@ export function LandingNavbar({
     window.addEventListener("scroll", handleScroll);
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -56,15 +78,26 @@ export function LandingNavbar({
 
         {!hideLinks && (
           <div className="flex items-center gap-2 md:gap-4">
-            <Link href="/login" className="hidden md:block text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--primary)]/60 hover:text-[var(--primary)] transition-colors">
-              {portal === "therapist" ? "Portal Login" : "Login"}
-            </Link>
-            <AlexButton
-              href="/signup"
-              size="sm"
-              className="text-[14px] md:text-base">
-              {portal === "therapist" ? "Join Network" : "Get Started"}
-            </AlexButton>
+            {user ? (
+              <AlexButton
+                href="/dashboard"
+                size="sm"
+                className="text-[14px] md:text-base">
+                Dashboard
+              </AlexButton>
+            ) : (
+              <>
+                <Link href="/login" className="hidden md:block text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--primary)]/60 hover:text-[var(--primary)] transition-colors">
+                  {portal === "therapist" ? "Portal Login" : "Login"}
+                </Link>
+                <AlexButton
+                  href="/signup"
+                  size="sm"
+                  className="text-[14px] md:text-base">
+                  {portal === "therapist" ? "Join Network" : "Get Started"}
+                </AlexButton>
+              </>
+            )}
 
             {/* Mobile Toggle */}
             <button
@@ -103,9 +136,15 @@ export function LandingNavbar({
 
           <ul className="flex flex-col gap-6 list-none p-0 mb-10 text-center">
             <li>
-              <Link href="/login" onClick={closeMenu} className="text-2xl font-cormorant font-semibold text-[var(--primary)] italic border-b-2 border-[var(--primary)] inline-block">
-                {portal === "therapist" ? "Portal Login" : "Login"}
-              </Link>
+              {user ? (
+                <Link href="/dashboard" onClick={closeMenu} className="text-2xl font-cormorant font-semibold text-[var(--primary)] italic border-b-2 border-[var(--primary)] inline-block">
+                  Dashboard
+                </Link>
+              ) : (
+                <Link href="/login" onClick={closeMenu} className="text-2xl font-cormorant font-semibold text-[var(--primary)] italic border-b-2 border-[var(--primary)] inline-block">
+                  {portal === "therapist" ? "Portal Login" : "Login"}
+                </Link>
+              )}
             </li>
           </ul>
 
@@ -113,18 +152,29 @@ export function LandingNavbar({
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4 font-outfit">
               Clinical Workspace
             </p>
-            <AlexButton
-              href="/signup"
-              size="sm"
-              className="shadow-lg text-base">
-              {portal === "therapist" ? "Join Network" : "Get Started"}
-            </AlexButton>
+            {user ? (
+              <AlexButton
+                href="/dashboard"
+                size="sm"
+                className="shadow-lg text-base">
+                Go to Dashboard
+              </AlexButton>
+            ) : (
+              <AlexButton
+                href="/signup"
+                size="sm"
+                className="shadow-lg text-base">
+                {portal === "therapist" ? "Join Network" : "Get Started"}
+              </AlexButton>
+            )}
             <p className="text-[13px] text-gray-500 mt-4 italic font-cormorant">
               Verified Ethical Clinical Therapy & Counseling
             </p>
           </div>
         </div>
       </div>
+
+      {user && <MobileNav currentUserId={user.id} />}
     </>
   );
 }

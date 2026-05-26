@@ -38,7 +38,9 @@ export async function middleware(request: NextRequest) {
 
   // 1. Protected routes - must be logged in
   if (!user && url.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('next', url.pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   // 2. Auth routes - must NOT be logged in (login, signup)

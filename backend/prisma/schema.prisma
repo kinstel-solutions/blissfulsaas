@@ -77,6 +77,7 @@ model Therapist {
   
   firstName     String?
   lastName      String?
+  gender        String?
   phone         String?
   bio           String?
   qualifications String?  // e.g. "M.Phil Clinical Psychology"
@@ -88,6 +89,14 @@ model Therapist {
   clinicAddress String?  // Physical address for in-clinic appointments
   mapLink       String?  // Google Maps link for the clinic location
   profileImageUrl String? // URL for therapist profile image
+  rciNumber       String?  // RCI or MCI Registration Number
+  licenceCertificateUrl String? // Uploaded licence/certificate image URL
+  bankName        String?
+  bankAccountNumber String?
+  bankIfscCode    String?
+  bankAccountHolderName String?
+  panNumber       String?
+  aadhaarNumber   String?
   isVerified    Boolean  @default(false)
   rejectionReason String?
   pendingFields Json?    // To store updates awaiting admin approval

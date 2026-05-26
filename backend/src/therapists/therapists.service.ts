@@ -59,6 +59,7 @@ export class TherapistsService {
           id: true,
           firstName: true,
           lastName: true,
+          gender: true,
           bio: true,
           hourlyRate: true,
           specialities: true,
@@ -149,6 +150,7 @@ export class TherapistsService {
       data: {
         firstName: data.firstName,
         lastName: data.lastName,
+        gender: data.gender,
         bio: data.bio,
         specialities: data.specialities,
         languages: data.languages,
@@ -160,6 +162,14 @@ export class TherapistsService {
         mapLink: data.mapLink,
         profileImageUrl: data.profileImageUrl,
         phone: data.phone,
+        rciNumber: data.rciNumber,
+        licenceCertificateUrl: data.licenceCertificateUrl,
+        bankName: data.bankName,
+        bankAccountNumber: data.bankAccountNumber,
+        bankIfscCode: data.bankIfscCode,
+        bankAccountHolderName: data.bankAccountHolderName,
+        panNumber: data.panNumber,
+        aadhaarNumber: data.aadhaarNumber,
       },
     });
   }
