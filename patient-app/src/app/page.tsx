@@ -8,11 +8,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { createClient } from "@/lib/supabase/server";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
+
   return (
     <main className="min-h-screen bg-[#F8FAF9]">
-      <LandingNavbar portal="patient" />
+      <LandingNavbar portal="patient" initialUser={user} />
 
       <HeroSection />
       <ServicesSection />

@@ -15,12 +15,12 @@ import { SubmitFeedbackDto } from './dto/submit-feedback.dto';
 import { FeedbackService } from './feedback.service';
 
 @Controller('feedback')
-@UseGuards(AuthGuard('jwt'), RolesGuard)
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}
 
   /** POST /feedback/:appointmentId — Patient submits feedback */
   @Post(':appointmentId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('PATIENT')
   submit(
     @Request() req: any,
@@ -37,6 +37,7 @@ export class FeedbackController {
 
   /** GET /feedback/appointment/:appointmentId — Get feedback for one appointment */
   @Get('appointment/:appointmentId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   getForAppointment(
     @Request() req: any,
     @Param('appointmentId', ParseUUIDPipe) appointmentId: string,
@@ -57,6 +58,7 @@ export class FeedbackController {
 
   /** GET /feedback/admin/all — Admin: all feedback */
   @Get('admin/all')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN')
   getAllAdmin() {
     return this.feedbackService.getAllFeedbackAdmin();
@@ -64,6 +66,7 @@ export class FeedbackController {
 
   /** PATCH /feedback/admin/:id/toggle — Admin: toggle visibility */
   @Patch('admin/:id/toggle')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN')
   toggleVisibility(@Param('id', ParseUUIDPipe) id: string) {
     return this.feedbackService.toggleFeedbackVisibility(id);

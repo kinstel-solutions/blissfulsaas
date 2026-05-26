@@ -12,6 +12,10 @@ export class UpdateTherapistProfileDto {
 
   @IsString()
   @IsOptional()
+  gender?: string;
+
+  @IsString()
+  @IsOptional()
   phone?: string;
 
   @IsString()
@@ -61,4 +65,37 @@ export class UpdateTherapistProfileDto {
   @IsUrl()
   @IsOptional()
   profileImageUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  rciNumber?: string;
+
+  @Transform(({ value }) => value === '' || value === null ? null : value)
+  @IsUrl()
+  @IsOptional()
+  licenceCertificateUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  bankName?: string;
+
+  @IsString()
+  @IsOptional()
+  bankAccountNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  bankIfscCode?: string;
+
+  @IsString()
+  @IsOptional()
+  bankAccountHolderName?: string;
+
+  @IsString()
+  @IsOptional()
+  panNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  aadhaarNumber?: string;
 }

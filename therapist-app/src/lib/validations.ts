@@ -3,6 +3,7 @@ import * as z from "zod";
 export const therapistProfileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
+  gender: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
   bio: z.string().max(2000, "Bio must be less than 2000 characters").optional().or(z.literal("")),
   qualifications: z.string().optional().or(z.literal("")),
@@ -14,6 +15,14 @@ export const therapistProfileSchema = z.object({
   clinicAddress: z.string().optional().or(z.literal("")),
   mapLink: z.string().url("Invalid map URL").optional().or(z.literal("")),
   profileImageUrl: z.string().url("Invalid profile image URL").optional().or(z.literal("")),
+  rciNumber: z.string().optional().or(z.literal("")),
+  licenceCertificateUrl: z.string().url("Invalid certificate URL").optional().or(z.literal("")),
+  bankName: z.string().optional().or(z.literal("")),
+  bankAccountNumber: z.string().optional().or(z.literal("")),
+  bankIfscCode: z.string().optional().or(z.literal("")),
+  bankAccountHolderName: z.string().optional().or(z.literal("")),
+  panNumber: z.string().optional().or(z.literal("")),
+  aadhaarNumber: z.string().optional().or(z.literal("")),
 });
 
 export const loginSchema = z.object({

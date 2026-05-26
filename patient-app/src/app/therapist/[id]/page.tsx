@@ -3,17 +3,26 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { api, fetchWithAuthContent } from "@/lib/api-server";
+import { LandingNavbar } from "@/components/sections/LandingNavbar";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function TherapistProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
+
   const dbTherapist = await api.therapists.getById(id);
   const ratingStats = await fetchWithAuthContent(`/feedback/therapist/${id}/stats`).catch(() => null);
 
   if (!dbTherapist) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <h2 className="text-2xl font-heading text-foreground">Therapist Not Found</h2>
-        <Link href="/dashboard/discover" className="text-primary hover:underline">Return to Marketplace</Link>
+      <div className="min-h-screen bg-[#F8FAF9]">
+        <LandingNavbar portal="patient" initialUser={user} />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 pt-32">
+          <h2 className="text-2xl font-heading text-foreground">Therapist Not Found</h2>
+          <Link href="/discover" className="text-primary hover:underline">Return to Marketplace</Link>
+        </div>
       </div>
     );
   }
@@ -44,10 +53,12 @@ export default async function TherapistProfilePage({ params }: { params: Promise
   };
 
   return (
-    <div className="space-y-12 pb-24">
-      {/* Navigation Header */}
+    <div className="min-h-screen bg-[#F8FAF9]">
+      <LandingNavbar portal="patient" initialUser={user} />
+      <div className="space-y-12 pb-24 max-w-7xl mx-auto px-6 pt-32">
+        {/* Navigation Header */}
       <header className="flex justify-between items-center bg-surface/50 backdrop-blur-md p-4 px-1 rounded-xl z-10 sticky top-0 border-b border-outline-variant/10">
-        <Link href="/dashboard/discover" className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-colors">
+        <Link href="/discover" className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-colors">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Marketplace
         </Link>
@@ -258,8 +269,9 @@ export default async function TherapistProfilePage({ params }: { params: Promise
                   </Link>
                </div>
             </div>
-         </div>
-       </div>
-     </div>
-   );
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
