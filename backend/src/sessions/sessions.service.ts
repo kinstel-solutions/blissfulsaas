@@ -4,6 +4,7 @@ import { AppointmentStatus, NotificationType, ConsultationMode, PaymentStatus } 
 import { RtcTokenBuilder, RtcRole } from 'agora-token';
 import { NotificationsService } from '../notifications/notifications.service';
 import { EmailService } from '../email/email.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class SessionsService {
@@ -15,47 +16,66 @@ export class SessionsService {
     private emailService: EmailService,
   ) {}
 
-  async book(patientUserId: string, data: { slotId: string; date: string; notes?: string; mode?: ConsultationMode }) {
+  async book(
+    patientUserId: string,
+    data: {
+      therapistId: string;
+      scheduledAt: string; // UTC ISO string e.g. "2026-10-14T09:00:00.000Z"
+      notes?: string;
+      mode?: ConsultationMode;
+    },
+  ) {
     return this.prisma.$transaction(async (tx) => {
       // 1. Get the patient profile
       const patient = await tx.patient.findUnique({
         where: { userId: patientUserId },
-        include: { user: { select: { email: true } } }
+        include: { user: { select: { email: true } } },
       });
       if (!patient) throw new NotFoundException('Patient profile not found');
 
-      // 2. Check if the slot is already booked for this specific date
-      const scheduledAt = new Date(data.date);
+      // 2. Parse the scheduledAt datetime (UTC)
+      const scheduledAt = new Date(data.scheduledAt);
+
+      // 3. Conflict check: therapist already has a booking that overlaps this slot
+      //    (sessions are 50 min; buffer is 10 min → 1-hour block total)
+      const slotEnd = new Date(scheduledAt.getTime() + 50 * 60 * 1000);
       
-      const existing = await tx.appointment.findFirst({
+      // Fetch potential overlapping appointments (within 60 min lookback and lookforward to slotEnd)
+      const candidates = await tx.appointment.findMany({
         where: {
-          slotId: data.slotId,
-          scheduledAt,
+          therapistId: data.therapistId,
           status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
+          scheduledAt: {
+            gte: new Date(scheduledAt.getTime() - 60 * 60 * 1000),
+            lt: slotEnd,
+          },
         },
       });
 
-      if (existing) {
-        throw new ConflictException('This slot is already booked for the selected date');
-      }
-
-      // 3. Get the slot details
-      const slot = await tx.availabilitySlot.findUnique({
-        where: { id: data.slotId, isActive: true },
-        include: { therapist: { include: { user: true } } }
+      const hasConflict = candidates.some((appt) => {
+        const apptStart = appt.scheduledAt;
+        const apptEnd = new Date(apptStart.getTime() + appt.duration * 60 * 1000);
+        return apptStart < slotEnd && apptEnd > scheduledAt;
       });
 
-      if (!slot) throw new NotFoundException('Availability slot not found or inactive');
+      if (hasConflict) {
+        throw new ConflictException('This time slot is no longer available');
+      }
 
-      // Inherit mode from slot if not explicitly provided
-      const mode = data.mode ?? slot.mode ?? ConsultationMode.ONLINE;
+      // 4. Get the therapist details for notifications
+      const therapist = await tx.therapist.findUnique({
+        where: { id: data.therapistId },
+        include: { user: { select: { email: true } } },
+      });
+      if (!therapist) throw new NotFoundException('Therapist not found');
 
-      // 4. Create the appointment
+      const mode = data.mode ?? ConsultationMode.ONLINE;
+
+      // 5. Create the appointment
       const appointment = await tx.appointment.create({
         data: {
           patientId: patient.id,
-          therapistId: slot.therapistId,
-          slotId: data.slotId,
+          therapistId: data.therapistId,
           scheduledAt,
           patientNotes: data.notes,
           status: AppointmentStatus.PENDING,
@@ -63,47 +83,57 @@ export class SessionsService {
         },
       });
 
-      // 5. Emit notifications (fire-and-forget after tx)
-      const therapistName = `Dr. ${slot.therapist.firstName ?? ''} ${slot.therapist.lastName ?? ''}`.trim();
-      const dateStr = scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-      const timeStr = `${slot.startTime} – ${slot.endTime}`;
+      // 6. Emit notifications (fire-and-forget after tx)
+      const therapistName = `Dr. ${therapist.firstName ?? ''} ${therapist.lastName ?? ''}`.trim();
+      const dateStr = scheduledAt.toLocaleDateString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC',
+      });
+      const timeStr = scheduledAt.toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+      });
       const isClinic = mode === ConsultationMode.IN_CLINIC;
       const locationNote = isClinic
-        ? ` (In-Clinic${slot.therapist.clinicAddress ? ` at ${slot.therapist.clinicAddress}` : ''})`
+        ? ` (In-Clinic${therapist.clinicAddress ? ` at ${therapist.clinicAddress}` : ''})`
         : ' (Online)';
 
-        // Patient: booking confirmed
       setImmediate(() => {
         const patientTitle = 'Appointment Received';
-        const patientBody = `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} has been received for ${dateStr} at ${timeStr}${locationNote}. It is now pending therapist confirmation.`;
+        const patientBody = `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} has been received for ${dateStr} at ${timeStr} UTC${locationNote}. Pending therapist confirmation.`;
 
-        this.notifications.create({
-          userId: patientUserId,
-          type: NotificationType.BOOKING_CONFIRMED,
-          title: patientTitle,
-          body: patientBody,
-          metadata: { appointmentId: appointment.id, therapistName, scheduledAt: data.date, mode },
-        }).catch(err => this.logger.error(err));
-        
+        this.notifications
+          .create({
+            userId: patientUserId,
+            type: NotificationType.BOOKING_CONFIRMED,
+            title: patientTitle,
+            body: patientBody,
+            metadata: { appointmentId: appointment.id, therapistName, scheduledAt: data.scheduledAt, mode },
+          })
+          .catch((err) => this.logger.error(err));
+
         if (patient.user?.email) {
-          this.emailService.sendAppointmentNotification(patient.user.email, patientTitle, patientBody).catch(err => this.logger.error(err));
+          this.emailService
+            .sendAppointmentNotification(patient.user.email, patientTitle, patientBody)
+            .catch((err) => this.logger.error(err));
         }
 
-        // Therapist: new appointment
-        if (slot.therapist.userId) {
+        if (therapist.userId) {
           const therapistTitle = 'New Appointment Request';
-          const therapistBody = `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr}.`;
+          const therapistBody = `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr} UTC.`;
 
-          this.notifications.create({
-            userId: slot.therapist.userId,
-            type: NotificationType.BOOKING_CONFIRMED,
-            title: therapistTitle,
-            body: therapistBody,
-            metadata: { appointmentId: appointment.id, scheduledAt: data.date, mode },
-          }).catch(err => this.logger.error(err));
+          this.notifications
+            .create({
+              userId: therapist.userId,
+              type: NotificationType.BOOKING_CONFIRMED,
+              title: therapistTitle,
+              body: therapistBody,
+              metadata: { appointmentId: appointment.id, scheduledAt: data.scheduledAt, mode },
+            })
+            .catch((err) => this.logger.error(err));
 
-          if (slot.therapist.user?.email) {
-            this.emailService.sendAppointmentNotification(slot.therapist.user.email, therapistTitle, therapistBody).catch(err => this.logger.error(err));
+          if (therapist.user?.email) {
+            this.emailService
+              .sendAppointmentNotification(therapist.user.email, therapistTitle, therapistBody)
+              .catch((err) => this.logger.error(err));
           }
         }
       });
@@ -123,7 +153,7 @@ export class SessionsService {
       if (!patient) return [];
       return this.prisma.appointment.findMany({
         where: { patientId: patient.id, ...filter },
-        include: { therapist: true, slot: true },
+        include: { therapist: true },
         orderBy: { scheduledAt: 'asc' }
       });
     } else if (role === 'THERAPIST') {
@@ -131,7 +161,7 @@ export class SessionsService {
       if (!therapist) return [];
       return this.prisma.appointment.findMany({
         where: { therapistId: therapist.id, ...filter },
-        include: { patient: true, slot: true },
+        include: { patient: true },
         orderBy: { scheduledAt: 'asc' }
       });
     }
@@ -144,7 +174,7 @@ export class SessionsService {
       if (!patient) return [];
       return this.prisma.appointment.findMany({
         where: { patientId: patient.id },
-        include: { therapist: true, slot: true, feedback: true },
+        include: { therapist: true, feedback: true },
         orderBy: { scheduledAt: 'desc' }
       });
     } else if (role === 'THERAPIST') {
@@ -157,8 +187,7 @@ export class SessionsService {
             include: { 
               user: { select: { email: true } }
             } 
-          }, 
-          slot: true 
+          },
         },
         orderBy: { scheduledAt: 'desc' }
       });
@@ -203,7 +232,6 @@ export class SessionsService {
             user: { select: { email: true } }
           }
         },
-        slot: true,
         feedback: true,
       }
     });
@@ -225,7 +253,6 @@ export class SessionsService {
             user: { select: { email: true } },
           },
         },
-        slot: true,
       },
       orderBy: { scheduledAt: 'desc' },
     });
@@ -291,7 +318,6 @@ export class SessionsService {
       include: {
         patient: { include: { user: true } },
         therapist: { include: { user: true } },
-        slot: true,
       }
     });
 
@@ -307,7 +333,7 @@ export class SessionsService {
     });
 
     // Notify the other party
-    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
     const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
 
     setImmediate(() => {
@@ -422,7 +448,7 @@ export class SessionsService {
 
     // Notify patient session is confirmed
     const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
-    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
     
     setImmediate(() => {
       const title = 'Appointment Confirmed';
@@ -515,5 +541,116 @@ export class SessionsService {
       appId,
       uid
     };
+  }
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  async handleAppointmentExpiryAndReminders() {
+    const now = new Date();
+    
+    // 1. Send reminders 10 minutes before the session starts
+    const tenMinutesFromNow = new Date(now.getTime() + 10 * 60 * 1000);
+    const upcomingSessions = await this.prisma.appointment.findMany({
+      where: {
+        status: AppointmentStatus.CONFIRMED,
+        scheduledAt: {
+          gte: now,
+          lte: tenMinutesFromNow,
+        },
+        reminderSent: false,
+      },
+      include: {
+        patient: {
+          include: {
+            user: { select: { email: true } },
+          },
+        },
+        therapist: {
+          include: {
+            user: { select: { email: true } },
+          },
+        },
+      },
+    });
+
+    for (const session of upcomingSessions) {
+      try {
+        const therapistName = `Dr. ${session.therapist.firstName ?? ''} ${session.therapist.lastName ?? ''}`.trim();
+        const patientName = `${session.patient.firstName ?? ''} ${session.patient.lastName ?? ''}`.trim() || 'Patient';
+        
+        const patientTitle = 'Upcoming Session Reminder';
+        const patientBody = `Your session with ${therapistName} is starting in 10 minutes.`;
+
+        const therapistTitle = 'Upcoming Session Reminder';
+        const therapistBody = `Your session with ${patientName} is starting in 10 minutes.`;
+
+        // Create notification for patient
+        await this.notifications.create({
+          userId: session.patient.userId,
+          type: NotificationType.GENERAL,
+          title: patientTitle,
+          body: patientBody,
+          metadata: { appointmentId: session.id, therapistName, scheduledAt: session.scheduledAt },
+        });
+
+        if (session.patient.user?.email) {
+          await this.emailService.sendAppointmentNotification(
+            session.patient.user.email,
+            patientTitle,
+            patientBody,
+          );
+        }
+
+        // Create notification for therapist
+        if (session.therapist.userId) {
+          await this.notifications.create({
+            userId: session.therapist.userId,
+            type: NotificationType.GENERAL,
+            title: therapistTitle,
+            body: therapistBody,
+            metadata: { appointmentId: session.id, scheduledAt: session.scheduledAt },
+          });
+
+          if (session.therapist.user?.email) {
+            await this.emailService.sendAppointmentNotification(
+              session.therapist.user.email,
+              therapistTitle,
+              therapistBody,
+            );
+          }
+        }
+
+        // Mark as sent
+        await this.prisma.appointment.update({
+          where: { id: session.id },
+          data: { reminderSent: true },
+        });
+      } catch (err) {
+        this.logger.error(`Failed to send reminder for appointment ${session.id}:`, err);
+      }
+    }
+
+    // 2. Update status to EXPIRED for ended appointments
+    const activeAppointments = await this.prisma.appointment.findMany({
+      where: {
+        status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
+        scheduledAt: { lt: now },
+      },
+    });
+
+    const expiredAppts = activeAppointments.filter(
+      (appt) => appt.scheduledAt.getTime() + appt.duration * 60 * 1000 <= now.getTime()
+    );
+
+    for (const appt of expiredAppts) {
+      try {
+        await this.prisma.appointment.update({
+          where: { id: appt.id },
+          data: { status: AppointmentStatus.EXPIRED },
+        });
+        this.logger.log(`Appointment ${appt.id} status updated to EXPIRED`);
+      } catch (err) {
+        this.logger.error(`Failed to update status to EXPIRED for appointment ${appt.id}:`, err);
+      }
+    }
   }
 }

@@ -21,6 +21,24 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
     router.push(`/dashboard/appointments/${id}`);
   };
 
+  const appointments = [...initialAppointments].sort((a, b) => {
+    const timeA = new Date(a.scheduledAt).getTime();
+    const timeB = new Date(b.scheduledAt).getTime();
+    const now = Date.now();
+
+    const isUpcomingA = ['PENDING', 'CONFIRMED'].includes(a.status) && timeA > now;
+    const isUpcomingB = ['PENDING', 'CONFIRMED'].includes(b.status) && timeB > now;
+
+    if (isUpcomingA && !isUpcomingB) return -1;
+    if (!isUpcomingA && isUpcomingB) return 1;
+
+    if (isUpcomingA && isUpcomingB) {
+      return timeA - timeB; // Nearest upcoming first
+    } else {
+      return timeB - timeA; // Most recent past first
+    }
+  });
+
   return (
     <div className="bg-white lg:border border-slate-200 lg:rounded-xl overflow-hidden lg:shadow-sm">
       <div className="hidden lg:block overflow-x-auto">
@@ -34,7 +52,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
             </tr>
           </thead>
           <tbody className="">
-            {initialAppointments.length === 0 ? (
+            {appointments.length === 0 ? (
               <tr>
                 <td colSpan={4} className="px-4 md:px-8 py-32 text-center text-slate-300">
                   <CalendarIcon className="w-16 h-16 mx-auto mb-4 opacity-10" />
@@ -42,14 +60,14 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                 </td>
               </tr>
             ) : (
-              initialAppointments.map((appt) => {
+              appointments.map((appt) => {
                 const hasNotes = appt.therapistNotes && appt.therapistNotes.length > 0;
 
                 return (
                   <tr 
                     key={appt.id}
                     onClick={() => navigateToDetail(appt.id)}
-                    className={`group transition-all cursor-pointer hover:bg-slate-50/50 ${['CANCELLED', 'COMPLETED'].includes(appt.status) ? 'opacity-70 grayscale-[0.2]' : ''}`}
+                    className={`group transition-all cursor-pointer hover:bg-slate-50/50 ${['CANCELLED', 'COMPLETED', 'EXPIRED'].includes(appt.status) ? 'opacity-70 grayscale-[0.2]' : ''}`}
                   >
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50">
                       <div className="flex items-center gap-4 group/patient">
@@ -91,11 +109,11 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50">
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                          {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}
                         </div>
                         <div className="flex items-center gap-2 text-xs text-slate-400 font-bold uppercase">
                           <Clock className="w-3 h-3" />
-                          {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
                         </div>
                       </div>
                     </td>
@@ -104,6 +122,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                           appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
                           appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                           appt.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                          appt.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
                           'bg-slate-50 text-slate-500 border-slate-100'
                         }`}>
                           {appt.status}
@@ -129,13 +148,13 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
 
       {/* Mobile Card Layout */}
       <div className="lg:hidden space-y-4 p-4">
-        {initialAppointments.length === 0 ? (
+        {appointments.length === 0 ? (
           <div className="py-20 text-center text-slate-300">
             <CalendarIcon className="w-12 h-12 mx-auto mb-4 opacity-10" />
             <p className="text-sm font-medium">Your schedule is clear.</p>
           </div>
         ) : (
-          initialAppointments.map((appt) => {
+          appointments.map((appt) => {
             const hasNotes = appt.therapistNotes && appt.therapistNotes.length > 0;
 
             return (
@@ -143,7 +162,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                 key={appt.id}
                 onClick={() => navigateToDetail(appt.id)}
                 className={`flex flex-col rounded-xl border transition-all duration-300 overflow-hidden bg-white border-slate-100 active:bg-slate-50 active:scale-[0.98] ${
-                  ['CANCELLED', 'COMPLETED'].includes(appt.status) ? 'opacity-70' : ''
+                  ['CANCELLED', 'COMPLETED', 'EXPIRED'].includes(appt.status) ? 'opacity-70' : ''
                 }`}
               >
                 {/* Header Info */}
@@ -170,6 +189,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                           appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
                           appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                           appt.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                          appt.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
                           'bg-slate-50 text-slate-500 border-slate-100'
                         }`}>
                           {appt.status}
@@ -186,10 +206,10 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                   <div className="flex flex-col items-end gap-2">
                     <div className="text-right">
                       <div className="text-xs font-bold text-slate-900">
-                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}
                       </div>
                       <div className="text-[10px] text-slate-400 font-bold uppercase mt-1">
-                        {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
                       </div>
                     </div>
                   </div>

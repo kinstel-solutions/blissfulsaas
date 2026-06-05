@@ -29,11 +29,13 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
     weekday: 'long', 
     month: 'long', 
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
+    timeZone: 'UTC'
   });
   const timeStr = scheduledAt.toLocaleTimeString('en-US', { 
     hour: '2-digit', 
-    minute: '2-digit' 
+    minute: '2-digit',
+    timeZone: 'UTC'
   });
 
   return (
@@ -62,6 +64,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                   appointment.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
                   appointment.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                   appointment.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                  appointment.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
                   'bg-slate-50 text-slate-500 border-slate-100'
                 }`}>
                   {appointment.status}
@@ -97,7 +100,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
             </div>
             <div>
               <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Date</p>
-              <p className="text-[11px] font-semibold text-slate-900">{scheduledAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+              <p className="text-[11px] font-semibold text-slate-900">{scheduledAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</p>
             </div>
           </div>
           
@@ -123,7 +126,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
         </div>
 
         <div className="flex items-center gap-4 pr-2">
-           {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
+           {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && appointment.status !== 'EXPIRED' && (
              appointment.mode === 'IN_CLINIC' ? (
                <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 border border-emerald-100">
                  🏥 In-Clinic

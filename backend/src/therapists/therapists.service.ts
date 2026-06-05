@@ -178,9 +178,9 @@ export class TherapistsService {
     const therapist = await this.prisma.therapist.findUnique({
       where: { id },
       include: {
-        slots: {
+        weeklySchedule: {
           where: { isActive: true },
-        }
+        },
       }
     });
 

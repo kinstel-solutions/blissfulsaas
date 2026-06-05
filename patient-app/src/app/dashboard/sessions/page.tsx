@@ -4,47 +4,52 @@ import { fetchWithAuthContent } from "@/lib/api-server";
 import CancelSessionButton from "@/components/CancelSessionButton";
 import SessionFeedbackButton from "@/components/SessionFeedbackButton";
 import { AlexButton } from "@/components/ui/AlexButton";
+import JoinCallButton from "@/components/JoinCallButton";
 
 export default async function SessionsPage() {
   // Fetch ALL sessions (upcoming + past) so patients can review completed ones
   const sessions = await fetchWithAuthContent("/sessions/all");
   const allSessions = Array.isArray(sessions) ? sessions : [];
 
-  const upcoming = allSessions.filter(
-    (s) => s.status === "PENDING" || s.status === "CONFIRMED"
-  );
-  const completed = allSessions.filter((s) => s.status === "COMPLETED");
-  const cancelled = allSessions.filter((s) => s.status === "CANCELLED" || s.status === "NO_SHOW");
+  const upcoming = allSessions
+    .filter((s) => s.status === "PENDING" || s.status === "CONFIRMED")
+    .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime());
+
+  const completed = allSessions
+    .filter((s) => s.status === "COMPLETED")
+    .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime());
+
+  const cancelled = allSessions
+    .filter((s) => s.status === "CANCELLED" || s.status === "NO_SHOW" || s.status === "EXPIRED")
+    .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime());
 
   const SessionCard = ({ session }: { session: any }) => {
     const isClinic = session.mode === "IN_CLINIC";
     const clinicAddress = session.therapist?.clinicAddress;
     const isCompleted = session.status === "COMPLETED";
-    const isCancelled = session.status === "CANCELLED" || session.status === "NO_SHOW";
+    const isCancelled = session.status === "CANCELLED" || session.status === "NO_SHOW" || session.status === "EXPIRED";
 
     return (
       <div
-        className={`bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:shadow-lg transition-all group border-l-4 ${
-          isCompleted
+        className={`bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:shadow-lg transition-all group border-l-4 ${isCompleted
             ? "border-l-blue-400/50 bg-blue-50/10"
             : isCancelled
-            ? "border-l-destructive/30 opacity-60"
-            : isClinic
-            ? "border-l-primary/50"
-            : "border-l-primary/30"
-        }`}
+              ? "border-l-destructive/30 opacity-60"
+              : isClinic
+                ? "border-l-primary/50"
+                : "border-l-primary/30"
+          }`}
       >
         <div className="flex items-start gap-5">
           <div
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
-              isCompleted
+            className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${isCompleted
                 ? "bg-blue-50 text-blue-500"
                 : isCancelled
-                ? "bg-destructive/5 text-destructive/40"
-                : isClinic
-                ? "bg-primary/5 text-primary"
-                : "bg-primary-container/20 text-primary"
-            }`}
+                  ? "bg-destructive/5 text-destructive/40"
+                  : isClinic
+                    ? "bg-primary/5 text-primary"
+                    : "bg-primary-container/20 text-primary"
+              }`}
           >
             {isClinic ? <Building2 className="w-6 h-6" /> : <Video className="w-6 h-6" />}
           </div>
@@ -54,11 +59,10 @@ export default async function SessionsPage() {
                 Dr. {session.therapist?.firstName} {session.therapist?.lastName}
               </h4>
               <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest border ${
-                  isClinic
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest border ${isClinic
                     ? "bg-primary/5 text-primary border-primary/20"
                     : "bg-primary/5 text-primary border-primary/20"
-                }`}
+                  }`}
               >
                 {isClinic ? "In-Clinic" : "Online"}
               </span>
@@ -70,6 +74,7 @@ export default async function SessionsPage() {
                   weekday: "long",
                   month: "short",
                   day: "numeric",
+                  timeZone: "UTC",
                 })}
               </span>
               <span className="flex items-center gap-1.5">
@@ -77,6 +82,7 @@ export default async function SessionsPage() {
                 {new Date(session.scheduledAt).toLocaleTimeString("en-US", {
                   hour: "2-digit",
                   minute: "2-digit",
+                  timeZone: "UTC",
                 })}
               </span>
             </div>
@@ -84,10 +90,10 @@ export default async function SessionsPage() {
               <div className="flex items-center gap-1.5 mt-1.5 text-xs text-primary/70 font-medium">
                 <MapPin className="w-3 h-3 flex-shrink-0" />
                 {session.therapist?.mapLink ? (
-                  <a 
-                    href={session.therapist.mapLink} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                  <a
+                    href={session.therapist.mapLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="hover:underline hover:text-primary flex items-center gap-1 font-bold"
                   >
                     {clinicAddress}
@@ -100,19 +106,20 @@ export default async function SessionsPage() {
             )}
             {/* Existing feedback stars inline */}
             {isCompleted && session.feedback && (
-              <div className="flex items-center gap-0.5 mt-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`w-3 h-3 ${
-                      star <= session.feedback.rating
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-outline-variant/30"
-                    }`}
-                  />
-                ))}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-3 p-3 bg-neutral-50 rounded-xl border border-neutral-100/50 w-full sm:w-auto">
+                <div className="flex items-center gap-0.5 shrink-0">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-3.5 h-3.5 ${star <= session.feedback.rating
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-neutral-200"
+                        }`}
+                    />
+                  ))}
+                </div>
                 {session.feedback.comment && (
-                  <span className="ml-2 text-xs text-muted-foreground italic truncate max-w-[200px]">
+                  <span className="text-xs text-muted-foreground italic break-words line-clamp-2 sm:line-clamp-none max-w-full sm:max-w-[400px]">
                     {`"${session.feedback.comment}"`}
                   </span>
                 )}
@@ -121,52 +128,57 @@ export default async function SessionsPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 ml-0 md:ml-auto shrink-0">
-          {/* Status badge */}
-          <span
-            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-              session.status === "CONFIRMED"
-                ? "bg-primary/10 text-primary"
-                : session.status === "PENDING"
-                ? "bg-amber-100 text-amber-700"
-                : session.status === "CANCELLED"
-                ? "bg-red-100 text-red-700"
-                : session.status === "COMPLETED"
-                ? "bg-blue-100 text-blue-700"
-                : "bg-primary/10 text-primary"
-            }`}
-          >
-            {session.status}
-          </span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto ml-0 md:ml-auto shrink-0 mt-4 md:mt-0">
+          <div className="flex items-center justify-between sm:justify-start gap-4">
+            {/* Status badge */}
+            <span
+              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${session.status === "CONFIRMED"
+                  ? "bg-primary/10 text-primary"
+                  : session.status === "PENDING"
+                    ? "bg-amber-100 text-amber-700"
+                    : session.status === "CANCELLED"
+                      ? "bg-red-100 text-red-700"
+                      : session.status === "COMPLETED"
+                        ? "bg-blue-100 text-blue-700"
+                        : session.status === "EXPIRED"
+                          ? "bg-neutral-100 text-neutral-600"
+                          : "bg-primary/10 text-primary"
+                }`}
+            >
+              {session.status}
+            </span>
+
+            {/* Cancel session button */}
+            {(session.status === "PENDING" || session.status === "CONFIRMED") && (
+              <CancelSessionButton id={session.id} />
+            )}
+          </div>
 
           {/* Active session actions */}
           {(session.status === "PENDING" || session.status === "CONFIRMED") && (
-            <>
-              <CancelSessionButton id={session.id} />
-              <Link href={`/dashboard/messages?sessionId=${session.id}`}>
-                <button className="bg-primary/5 text-primary border border-primary/20 px-4 py-3 rounded-lg font-bold uppercase tracking-widest text-[10px] hover:bg-primary/10 transition-all flex items-center gap-1.5">
-                  <MessageSquare className="w-3.5 h-3.5" />
+            <div className="flex flex-col sm:flex-row items-stretch gap-2.5 w-full sm:w-auto">
+              <Link href={`/dashboard/messages?sessionId=${session.id}`} className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto bg-primary/5 text-primary border border-primary/20 px-6 py-3.5 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/10 transition-all flex items-center justify-center gap-1.5">
+                  <MessageSquare className="w-4 h-4" />
                   Chat
                 </button>
               </Link>
               {!isClinic ? (
-                <Link href={`/dashboard/sessions/${session.id}/call`}>
-                  <button className="bg-foreground text-surface px-5 py-3 rounded-lg font-bold uppercase tracking-widest text-[10px] shadow-md hover:bg-primary transition-all">
-                    Join Call
-                  </button>
-                </Link>
+                <JoinCallButton sessionId={session.id} scheduledAt={session.scheduledAt} />
               ) : (
-                <div className="px-4 py-3 rounded-lg font-bold uppercase tracking-widest text-[10px] bg-primary/5 text-primary border border-primary/20 flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5" />
+                <div className="px-6 py-3.5 rounded-xl font-bold uppercase tracking-widest text-xs bg-primary/5 text-primary border border-primary/20 flex items-center justify-center gap-1.5">
+                  <Building2 className="w-4 h-4" />
                   In-Person
                 </div>
               )}
-            </>
+            </div>
           )}
 
           {/* Completed: feedback button */}
           {isCompleted && (
-            <SessionFeedbackButton session={session} />
+            <div className="w-full sm:w-auto">
+              <SessionFeedbackButton session={session} />
+            </div>
           )}
         </div>
       </div>
@@ -175,16 +187,23 @@ export default async function SessionsPage() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
-      <header className="flex items-center justify-between">
+      <header className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-heading font-medium text-foreground">My Sessions</h1>
-          <p className="text-muted-foreground mt-2 text-lg">
+          <h1 className="text-2xl sm:text-4xl font-heading font-medium text-foreground">My Sessions</h1>
+          <p className="text-muted-foreground mt-2 text-sm sm:text-lg">
             Track, join, and review your consultations.
           </p>
         </div>
-        <AlexButton href="/dashboard/sessions/book" size="md" className="shadow-lg">
-          Book New Session
-        </AlexButton>
+        <div className="hidden sm:block shrink-0">
+          <AlexButton href="/discover" size="md" className="shadow-lg">
+            Book New Session
+          </AlexButton>
+        </div>
+        <div className="sm:hidden shrink-0">
+          <AlexButton href="/discover" size="sm" className="shadow-lg">
+            Book New Session
+          </AlexButton>
+        </div>
       </header>
 
       {allSessions.length === 0 ? (
@@ -197,7 +216,7 @@ export default async function SessionsPage() {
             Take the first step towards your wellbeing by booking a session with one of our clinical experts.
           </p>
           <Link
-            href="/dashboard/sessions/book"
+            href="/discover"
             className="text-primary font-bold text-xs uppercase tracking-widest hover:underline"
           >
             Explore Therapists

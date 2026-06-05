@@ -11,8 +11,8 @@ interface OrderData {
   currency: string;
   key: string;
   therapistName: string;
-  slotId: string;
-  date: string;
+  therapistId: string;
+  scheduledAt: string;
   notes?: string;
   isMock: boolean;
   mode?: string;         // 'ONLINE' | 'IN_CLINIC'
@@ -54,10 +54,10 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
   }, [step, onClose]);
 
   const amountInRupees = (orderData.amount / 100).toLocaleString("en-IN");
-  const formattedDate = new Date(orderData.date).toLocaleDateString("en-US", {
+  const formattedDate = new Date(orderData.scheduledAt).toLocaleDateString("en-US", {
     weekday: "short", month: "short", day: "numeric"
   });
-  const formattedTime = new Date(orderData.date).toLocaleTimeString("en-US", {
+  const formattedTime = new Date(orderData.scheduledAt).toLocaleTimeString("en-US", {
     hour: "2-digit", minute: "2-digit"
   });
 
@@ -76,8 +76,8 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
         razorpay_order_id: orderData.orderId,
         razorpay_payment_id: mockPaymentId,
         razorpay_signature: mockSignature,
-        slotId: orderData.slotId,
-        date: orderData.date,
+        therapistId: orderData.therapistId,
+        scheduledAt: orderData.scheduledAt,
         notes: orderData.notes,
         mode: orderData.mode,
       });

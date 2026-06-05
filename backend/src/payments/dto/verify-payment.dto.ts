@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsISO8601, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsISO8601, IsOptional, IsEnum, IsUUID } from 'class-validator';
 import { ConsultationMode } from './create-order.dto';
 
 export class VerifyPaymentDto {
@@ -14,13 +14,18 @@ export class VerifyPaymentDto {
   @IsNotEmpty()
   razorpay_signature: string;
 
-  @IsString()
+  /** Therapist internal UUID */
+  @IsUUID()
   @IsNotEmpty()
-  slotId: string;
+  therapistId: string;
 
+  /**
+   * Exact UTC ISO 8601 datetime for the session.
+   * e.g. "2026-10-14T09:00:00.000Z"
+   */
   @IsISO8601()
   @IsNotEmpty()
-  date: string;
+  scheduledAt: string;
 
   @IsString()
   @IsOptional()

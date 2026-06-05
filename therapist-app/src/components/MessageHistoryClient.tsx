@@ -242,7 +242,7 @@ export default function MessageHistoryClient({
                     </div>
                     <div className={`flex items-center gap-1.5 text-[10px] md:text-xs font-medium ${unreadCount > 0 ? 'text-primary' : 'text-slate-400'}`}>
                       <Calendar className="w-3 h-3" />
-                      {mounted ? new Date(s.scheduledAt).toLocaleDateString() : '...'}
+                      {mounted ? new Date(s.scheduledAt).toLocaleDateString('en-US', { timeZone: 'UTC' }) : '...'}
                     </div>
                   </div>
                 </button>
@@ -282,7 +282,7 @@ export default function MessageHistoryClient({
                   <div className="flex flex-wrap items-center gap-2 mt-1.5">
                     <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {mounted ? new Date(selectedSession.scheduledAt).toLocaleDateString() : '...'}
+                      {mounted ? new Date(selectedSession.scheduledAt).toLocaleDateString('en-US', { timeZone: 'UTC' }) : '...'}
                     </p>
                     {isCancelled ? (
                       <span className="text-red-500 text-[9px] font-bold uppercase flex items-center gap-1 bg-red-50 px-1.5 py-0.5 rounded-full">

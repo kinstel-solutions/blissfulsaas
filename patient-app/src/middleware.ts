@@ -43,8 +43,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // 2. Auth routes - must NOT be logged in (login, signup)
-  if (user && (url.pathname === '/login' || url.pathname === '/signup')) {
+  // 2. Auth routes and landing page - must NOT be logged in (login, signup, root page)
+  if (user && (url.pathname === '/' || url.pathname === '/login' || url.pathname === '/signup')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

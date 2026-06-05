@@ -18,6 +18,7 @@ enum AppointmentStatus {
   COMPLETED
   CANCELLED
   NO_SHOW
+  EXPIRED
 }
 
 enum PaymentStatus {
@@ -101,9 +102,10 @@ model Therapist {
   rejectionReason String?
   pendingFields Json?    // To store updates awaiting admin approval
 
-  slots         AvailabilitySlot[]
-  appointments  Appointment[]
-  feedbacks     SessionFeedback[]
+  weeklySchedule    WeeklyAvailability[]
+  scheduleOverrides ScheduleOverride[]
+  appointments      Appointment[]
+  feedbacks         SessionFeedback[]
 }
 
 model Admin {
@@ -112,22 +114,45 @@ model Admin {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model AvailabilitySlot {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  therapistId  String    @db.Uuid
-  therapist    Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
-  dayOfWeek    Int              // 0=Sun, 1=Mon, ..., 6=Sat (recurring weekly)
-  startTime    String           // "09:00" (HH:mm, local time)
-  endTime      String           // "10:00" (HH:mm, local time)
-  mode         ConsultationMode @default(ONLINE) // ONLINE or IN_CLINIC
-  isActive     Boolean          @default(true)
+// ---------------------------------------------------------------------------
+// AVAILABILITY RULE MODELS — store the RULES, generate slots dynamically
+// ---------------------------------------------------------------------------
 
-  appointments Appointment[]
+model WeeklyAvailability {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  therapistId String   @db.Uuid
+  therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
 
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  dayOfWeek   Int              // 0 = Sunday … 6 = Saturday
+  startTime   String           // "09:00" HH:mm UTC
+  endTime     String           // "17:00" HH:mm UTC
+  mode        ConsultationMode // ONLINE | IN_CLINIC
+  isActive    Boolean @default(true)
 
-  @@unique([therapistId, dayOfWeek, startTime, mode]) // Allow same time as both ONLINE and IN_CLINIC
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([therapistId, dayOfWeek, mode])
+  @@index([therapistId])
+}
+
+model ScheduleOverride {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  therapistId String   @db.Uuid
+  therapist   Therapist @relation(fields: [therapistId], references: [id], onDelete: Cascade)
+
+  date        DateTime         // The specific calendar date (midnight UTC)
+  isAvailable Boolean          // false = full day off
+  startTime   String?          // "10:00" HH:mm UTC — only when isAvailable = true
+  endTime     String?          // "14:00" HH:mm UTC — only when isAvailable = true
+  mode        ConsultationMode? // null = applies to all modes
+  reason      String?          // Optional label e.g. "Holiday", "Conference"
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([therapistId, date, mode])
+  @@index([therapistId, date])
 }
 
 model Appointment {
@@ -136,14 +161,12 @@ model Appointment {
   patient       Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
   therapistId   String            @db.Uuid
   therapist     Therapist         @relation(fields: [therapistId], references: [id], onDelete: Cascade)
-  slotId        String            @db.Uuid
-  slot          AvailabilitySlot  @relation(fields: [slotId], references: [id])
 
-  scheduledAt   DateTime          // Exact date+time of this session
-  duration      Int               @default(60) // Duration in minutes
+  scheduledAt   DateTime          // Exact date+time of this session (UTC)
+  duration      Int               @default(50) // Duration in minutes (50 min session + 10 min buffer = 1 hour block)
 
   status        AppointmentStatus @default(PENDING)
-  mode          ConsultationMode  @default(ONLINE) // Inherited from slot at booking time
+  mode          ConsultationMode  @default(ONLINE)
   videoRoomId   String            @unique @default(dbgenerated("gen_random_uuid()"))
   patientNotes  String?
   therapistNotes String?
@@ -159,6 +182,8 @@ model Appointment {
 
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
+
+  reminderSent  Boolean           @default(false)
 
   @@index([patientId, scheduledAt])
   @@index([therapistId, scheduledAt])
