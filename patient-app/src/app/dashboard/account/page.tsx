@@ -8,7 +8,9 @@ import {
   ChevronRight, 
   ClipboardList,
   ShieldCheck,
-  CreditCard
+  CreditCard,
+  Calendar,
+  MessageSquare
 } from "lucide-react";
 import SignOutButton from "@/components/SignOutButton";
 
@@ -61,6 +63,38 @@ export default function AccountPage() {
               <div>
                 <p className="text-sm font-bold text-slate-900">My Intake Form</p>
                 <p className="text-[10px] text-slate-400 font-medium">Review your clinical assessment</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
+          </Link>
+
+          <Link 
+            href="/dashboard/sessions" 
+            className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-900">My Appointments</p>
+                <p className="text-[10px] text-slate-400 font-medium">View and manage your upcoming sessions</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
+          </Link>
+
+          <Link 
+            href="/dashboard/messages" 
+            className="flex items-center justify-between p-5 hover:bg-slate-50 transition-colors group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-500">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-900">Chat</p>
+                <p className="text-[10px] text-slate-400 font-medium">Message your practitioner</p>
               </div>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />

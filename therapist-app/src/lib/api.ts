@@ -2,6 +2,59 @@ import { createClient } from "./supabase";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
+// ─── Availability Type Definitions ───────────────────────────────────────────
+
+export type ConsultationMode = 'ONLINE' | 'IN_CLINIC';
+
+export interface WeeklyScheduleItem {
+  dayOfWeek: number;       // 0 = Sunday … 6 = Saturday
+  startTime: string;       // "HH:mm" UTC
+  endTime: string;         // "HH:mm" UTC
+  mode: ConsultationMode;
+  isActive?: boolean;
+}
+
+export interface WeeklyAvailabilityRule extends WeeklyScheduleItem {
+  id: string;
+  therapistId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ScheduleOverride {
+  id: string;
+  therapistId: string;
+  date: string;            // ISO 8601 UTC
+  isAvailable: boolean;
+  startTime?: string | null;
+  endTime?: string | null;
+  mode?: ConsultationMode | null;
+  reason?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateOverridePayload {
+  date: string;            // "YYYY-MM-DD"
+  isAvailable: boolean;
+  startTime?: string;
+  endTime?: string;
+  mode?: ConsultationMode;
+  reason?: string;
+}
+
+export interface TimeSlot {
+  startTime: string;       // "HH:mm" UTC
+  endTime: string;         // "HH:mm" UTC
+  startUtc: string;        // ISO 8601
+  endUtc: string;          // ISO 8601
+  mode: ConsultationMode;
+  available: boolean;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 export async function fetchWithAuth(path: string, options: RequestInit = {}) {
   const supabase = createClient();
   const { data: { session } } = await supabase.auth.getSession();
@@ -30,14 +83,47 @@ export async function fetchWithAuth(path: string, options: RequestInit = {}) {
 
 export const api = {
   availability: {
-    getMySlots: () => fetchWithAuth("/availability"),
-    createSlot: (data: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }) => fetchWithAuth("/availability", { method: "POST", body: JSON.stringify(data) }),
-    deleteSlot: (id: string) => fetchWithAuth(`/availability/${id}`, { method: "DELETE" }),
-    bulkUpdate: (data: { 
+    // ── Weekly Schedule (baseline working hours) ──────────────────────────
+    getSchedule: () => fetchWithAuth('/availability/schedule'),
+    upsertSchedule: (schedule: WeeklyScheduleItem[]) =>
+      fetchWithAuth('/availability/schedule', {
+        method: 'PUT',
+        body: JSON.stringify({ schedule }),
+      }),
+
+    // ── Date Overrides (exceptions) ───────────────────────────────────────
+    getOverrides: () => fetchWithAuth('/availability/overrides'),
+    createOverride: (data: CreateOverridePayload) =>
+      fetchWithAuth('/availability/overrides', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    deleteOverride: (id: string) =>
+      fetchWithAuth(`/availability/overrides/${id}`, { method: 'DELETE' }),
+
+    // ── Slot Preview (therapist sees their own available slots for a date) ─
+    getMySlots: (date: string, mode?: 'ONLINE' | 'IN_CLINIC') =>
+      fetchWithAuth(
+        `/availability/slots?date=${date}${mode ? `&mode=${mode}` : ''}`,
+      ),
+
+    // ── Public Slot Lookup (patient booking) ─────────────────────────────
+    getTherapistSlots: (
+      therapistId: string,
+      date: string,
+      mode?: 'ONLINE' | 'IN_CLINIC',
+    ) =>
+      fetchWithAuth(
+        `/availability/therapist/${therapistId}/slots?date=${date}${mode ? `&mode=${mode}` : ''}`,
+      ),
+
+    // ── Legacy bulk-update — kept for backward compatibility if needed ─────
+    bulkUpdate: (data: {
       create: { dayOfWeek: number; startTime: string; endTime: string; mode?: 'ONLINE' | 'IN_CLINIC' }[];
       delete: string[];
-    }) => fetchWithAuth("/availability/bulk", { method: "POST", body: JSON.stringify(data) }),
+    }) => fetchWithAuth('/availability/bulk', { method: 'POST', body: JSON.stringify(data) }),
   },
+
   sessions: {
     upcoming: () => fetchWithAuth("/sessions/upcoming"),
     cancel: (id: string) => fetchWithAuth(`/sessions/${id}/cancel`, { method: "PATCH" }),

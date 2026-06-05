@@ -10,9 +10,15 @@ import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { createClient } from "@/lib/supabase/server";
 
+import { redirect } from "next/navigation";
+
 export default async function Home() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser().catch(() => ({ data: { user: null } }));
+
+  if (user) {
+    redirect("/dashboard");
+  }
 
   return (
     <main className="min-h-screen bg-[#F8FAF9]">

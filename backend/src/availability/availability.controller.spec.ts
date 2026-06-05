@@ -45,7 +45,7 @@ describe('AvailabilityController (Unit)', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should run bulkUpdate with undefined data and succeed without throwing', async () => {
+  it('should get schedule and return weekly rules', async () => {
     const therapist = await prisma.therapist.findFirst();
     if (!therapist) {
       console.log('No therapist found in DB for test');
@@ -58,12 +58,25 @@ describe('AvailabilityController (Unit)', () => {
       },
     };
 
-    // Should succeed with empty body
-    const result1 = await controller.bulkUpdate(mockReq, {} as any);
-    expect(result1).toEqual({ success: true, createdCount: 0, deletedCount: 0 });
+    // Should succeed and return an array
+    const result = await controller.getSchedule(mockReq);
+    expect(Array.isArray(result)).toBe(true);
+  });
 
-    // Should succeed with explicit undefined fields
-    const result2 = await controller.bulkUpdate(mockReq, { create: undefined, delete: undefined } as any);
-    expect(result2).toEqual({ success: true, createdCount: 0, deletedCount: 0 });
+  it('should get overrides list', async () => {
+    const therapist = await prisma.therapist.findFirst();
+    if (!therapist) {
+      console.log('No therapist found in DB for test');
+      return;
+    }
+
+    const mockReq = {
+      user: {
+        userId: therapist.userId,
+      },
+    };
+
+    const result = await controller.getOverrides(mockReq);
+    expect(Array.isArray(result)).toBe(true);
   });
 });

@@ -18,20 +18,19 @@ export class PaymentsService {
   }
 
   /**
-   * Creates a payment order for a given slot.
+   * Creates a payment order for a given therapist + time slot.
    * In mock mode: returns a fake order without calling Razorpay.
    * In live mode: calls Razorpay API to create a real order.
    */
   async createOrder(
     patientUserId: string,
-    data: { slotId: string; date: string; notes?: string; mode?: string },
+    data: { therapistId: string; scheduledAt: string; notes?: string; mode?: string },
   ) {
-    // Validate the slot exists and is active
-    const slot = await this.prisma.availabilitySlot.findUnique({
-      where: { id: data.slotId, isActive: true },
-      include: { therapist: true },
+    // Validate therapist exists
+    const therapist = await this.prisma.therapist.findUnique({
+      where: { id: data.therapistId },
     });
-    if (!slot) throw new NotFoundException('Availability slot not found or inactive');
+    if (!therapist) throw new NotFoundException('Therapist not found');
 
     // Check if patient profile exists
     const patient = await this.prisma.patient.findUnique({
@@ -39,12 +38,16 @@ export class PaymentsService {
     });
     if (!patient) throw new NotFoundException('Patient profile not found');
 
-    // Check if the therapist is already booked for this date and time (any mode)
-    const scheduledAt = new Date(data.date);
+    // Check if the therapist is already booked at this exact time
+    const scheduledAt = new Date(data.scheduledAt);
+    const slotEnd = new Date(scheduledAt.getTime() + 50 * 60 * 1000);
     const existing = await this.prisma.appointment.findFirst({
       where: {
-        therapistId: slot.therapistId,
-        scheduledAt,
+        therapistId: data.therapistId,
+        scheduledAt: {
+          gte: new Date(scheduledAt.getTime() - 59 * 60 * 1000),
+          lt: slotEnd,
+        },
         status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
       },
     });
@@ -52,8 +55,8 @@ export class PaymentsService {
       throw new BadRequestException('This therapist is already booked for the selected date and time');
     }
 
-    const therapistName = `Dr. ${slot.therapist.firstName ?? ''} ${slot.therapist.lastName ?? ''}`.trim();
-    const amountInPaise = Math.round((slot.therapist.hourlyRate ?? 1500) * 100);
+    const therapistName = `Dr. ${therapist.firstName ?? ''} ${therapist.lastName ?? ''}`.trim();
+    const amountInPaise = Math.round((therapist.hourlyRate ?? 1500) * 100);
 
     if (this.isMock) {
       const mockOrderId = `MOCK_ORDER_${Date.now()}_${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
@@ -63,10 +66,10 @@ export class PaymentsService {
         currency: 'INR',
         key: 'MOCK_KEY',
         therapistName,
-        slotId: data.slotId,
-        date: data.date,
+        therapistId: data.therapistId,
+        scheduledAt: data.scheduledAt,
         notes: data.notes,
-        mode: data.mode ?? slot.mode ?? 'ONLINE',
+        mode: data.mode ?? 'ONLINE',
         isMock: true,
       };
     }
@@ -104,10 +107,10 @@ export class PaymentsService {
       currency: order.currency,
       key: keyId,
       therapistName,
-      slotId: data.slotId,
-      date: data.date,
+      therapistId: data.therapistId,
+      scheduledAt: data.scheduledAt,
       notes: data.notes,
-      mode: data.mode ?? slot.mode ?? 'ONLINE',
+      mode: data.mode ?? 'ONLINE',
       isMock: false,
     };
   }
@@ -123,8 +126,8 @@ export class PaymentsService {
       razorpay_order_id: string;
       razorpay_payment_id: string;
       razorpay_signature: string;
-      slotId: string;
-      date: string;
+      therapistId: string;
+      scheduledAt: string;
       notes?: string;
       mode?: string;
     },
@@ -143,11 +146,10 @@ export class PaymentsService {
       }
     }
 
-    // 0. Idempotency guard: Check if this payment ID has already been used for a booking
-    // This prevents double-booking if the client retries or refreshes during verification
+    // 0. Idempotency guard: Check if this payment ID has already been used
     const existingPayment = await this.prisma.appointment.findFirst({
       where: { paymentId: data.razorpay_payment_id },
-      include: { therapist: { include: { user: true } }, slot: true },
+      include: { therapist: { include: { user: true } } },
     });
     if (existingPayment) return existingPayment;
 
@@ -156,31 +158,31 @@ export class PaymentsService {
       const patient = await tx.patient.findUnique({ where: { userId: patientUserId } });
       if (!patient) throw new NotFoundException('Patient profile not found');
 
-      const scheduledAt = new Date(data.date);
+      const scheduledAt = new Date(data.scheduledAt);
+      const slotEnd = new Date(scheduledAt.getTime() + 50 * 60 * 1000);
 
-      const slot = await tx.availabilitySlot.findUnique({
-        where: { id: data.slotId, isActive: true },
-        include: { therapist: true },
-      });
-      if (!slot) throw new NotFoundException('Slot not found or inactive');
+      const therapist = await tx.therapist.findUnique({ where: { id: data.therapistId } });
+      if (!therapist) throw new NotFoundException('Therapist not found');
 
       // Final safety check: therapist availability for this time
       const existing = await tx.appointment.findFirst({
         where: {
-          therapistId: slot.therapistId,
-          scheduledAt,
+          therapistId: data.therapistId,
+          scheduledAt: {
+            gte: new Date(scheduledAt.getTime() - 59 * 60 * 1000),
+            lt: slotEnd,
+          },
           status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
         },
       });
       if (existing) throw new BadRequestException('Therapist is already booked for this date and time');
 
-      const amountPaid = slot.therapist.hourlyRate ?? 1500;
+      const amountPaid = therapist.hourlyRate ?? 1500;
 
       const appointment = await tx.appointment.create({
         data: {
           patientId: patient.id,
-          therapistId: slot.therapistId,
-          slotId: data.slotId,
+          therapistId: data.therapistId,
           scheduledAt,
           patientNotes: data.notes,
           status: AppointmentStatus.PENDING,
@@ -188,14 +190,18 @@ export class PaymentsService {
           paymentId: data.razorpay_payment_id,
           amountPaid,
           paidAt: new Date(),
-          mode: (data.mode as any) ?? slot.mode ?? 'ONLINE',
+          mode: (data.mode as any) ?? 'ONLINE',
         },
-        include: { therapist: { include: { user: true } }, slot: true },
+        include: { therapist: { include: { user: true } } },
       });
 
       const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
-      const dateStr = scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-      const timeStr = `${appointment.slot.startTime} – ${appointment.slot.endTime}`;
+      const dateStr = scheduledAt.toLocaleDateString('en-US', {
+        weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC',
+      });
+      const timeStr = scheduledAt.toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+      });
 
       // Fire-and-forget notifications after the tx commits
       setImmediate(() => {
@@ -204,8 +210,8 @@ export class PaymentsService {
           userId: patientUserId,
           type: NotificationType.PAYMENT_SUCCESS,
           title: 'Payment Successful 💳',
-          body: `Payment of ₹${amountPaid.toLocaleString('en-IN')} confirmed. Your session with ${therapistName} on ${dateStr} at ${timeStr} is booked.`,
-          metadata: { appointmentId: appointment.id, amount: amountPaid, therapistName, scheduledAt: data.date },
+          body: `Payment of ₹${amountPaid.toLocaleString('en-IN')} confirmed. Your session with ${therapistName} on ${dateStr} at ${timeStr} UTC is booked.`,
+          metadata: { appointmentId: appointment.id, amount: amountPaid, therapistName, scheduledAt: data.scheduledAt },
         }).catch(err => this.logger.error(err));
 
         // Therapist: new booking
@@ -214,8 +220,8 @@ export class PaymentsService {
             userId: appointment.therapist.userId,
             type: NotificationType.BOOKING_CONFIRMED,
             title: 'New Appointment Booked',
-            body: `A patient has booked a paid session with you on ${dateStr} at ${timeStr}.`,
-            metadata: { appointmentId: appointment.id, scheduledAt: data.date },
+            body: `A patient has booked a paid session with you on ${dateStr} at ${timeStr} UTC.`,
+            metadata: { appointmentId: appointment.id, scheduledAt: data.scheduledAt },
           }).catch(err => this.logger.error(err));
         }
       });

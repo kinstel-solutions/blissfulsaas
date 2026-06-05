@@ -41,38 +41,40 @@ export default function AppointmentActions({ id, status }: { id: string, status:
     }
   };
 
-  if (status === 'CANCELLED' || status === 'COMPLETED') return null;
+  if (status === 'CANCELLED' || status === 'COMPLETED' || status === 'EXPIRED') return null;
 
   return (
-    <div className="flex items-center justify-end gap-2">
+    <div className="flex items-center justify-end gap-2.5">
       {status === 'PENDING' && (
         <button 
           onClick={() => handleAction('confirm')}
           disabled={loading}
-          className="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
-          title="Confirm Appointment"
+          className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-[10px] rounded-xl shadow-sm transition-all hover:shadow active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
         >
-          <CheckCircle className="w-5 h-5 text-emerald-500" />
+          <CheckCircle className="w-3.5 h-3.5" />
+          Confirm
         </button>
       )}
-      <button 
-        onClick={() => handleAction('cancel')}
-        disabled={loading}
-        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-        title="Cancel Appointment"
-      >
-        <XCircle className="w-5 h-5" />
-      </button>
+      
       {status === 'CONFIRMED' && (
         <button 
           onClick={() => handleAction('complete')}
           disabled={loading}
-          className="p-2 text-slate-400 hover:text-green-500 hover:bg-green-50 rounded-lg transition-all"
-          title="Mark as Completed"
+          className="flex items-center gap-1.5 px-4 py-2.5 bg-primary text-white hover:bg-primary-dark font-bold uppercase tracking-widest text-[10px] rounded-xl shadow-sm transition-all hover:shadow active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
         >
-          <PlayCircle className="w-5 h-5" />
+          <PlayCircle className="w-3.5 h-3.5" />
+          Complete
         </button>
       )}
+
+      <button 
+        onClick={() => handleAction('cancel')}
+        disabled={loading}
+        className="flex items-center gap-1.5 px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+      >
+        <XCircle className="w-3.5 h-3.5" />
+        Cancel
+      </button>
     </div>
   );
 }

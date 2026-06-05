@@ -34,11 +34,27 @@ export const api = {
       fetchWithAuth(`/therapists/verified?page=${page}&limit=${limit}`),
   },
   availability: {
-    forTherapist: (therapistId: string) =>
-      fetchWithAuth(`/availability/therapist/${therapistId}`),
+    /**
+     * Get the weekly schedule (active days) for a therapist — used for
+     * rendering which days have availability on the calendar.
+     */
+    getTherapistSchedule: (therapistId: string) =>
+      fetchWithAuth(`/availability/therapist/${therapistId}/schedule`),
+    /**
+     * Get dynamically generated slots for a specific date.
+     * Returns available (non-booked) slots for the given therapistId + date.
+     */
+    getTherapistSlots: (
+      therapistId: string,
+      date: string,          // "YYYY-MM-DD"
+      mode?: 'ONLINE' | 'IN_CLINIC',
+    ) =>
+      fetchWithAuth(
+        `/availability/therapist/${therapistId}/slots?date=${date}${mode ? `&mode=${mode}` : ''}`,
+      ).then((res: any) => res.slots ?? res),
   },
   sessions: {
-    book: (data: { slotId: string; date: string; notes?: string }) =>
+    book: (data: { therapistId: string; scheduledAt: string; notes?: string; mode?: string }) =>
       fetchWithAuth("/sessions/book", { method: "POST", body: JSON.stringify(data) }),
     upcoming: () => fetchWithAuth("/sessions/upcoming"),
     all: () => fetchWithAuth("/sessions/all"),
@@ -47,14 +63,14 @@ export const api = {
     getToken: (id: string) => fetchWithAuth(`/sessions/${id}/token`),
   },
   payments: {
-    createOrder: (data: { slotId: string; date: string; notes?: string; mode?: string }) =>
+    createOrder: (data: { therapistId: string; scheduledAt: string; notes?: string; mode?: string }) =>
       fetchWithAuth("/payments/create-order", { method: "POST", body: JSON.stringify(data) }),
     verify: (data: {
       razorpay_order_id: string;
       razorpay_payment_id: string;
       razorpay_signature: string;
-      slotId: string;
-      date: string;
+      therapistId: string;
+      scheduledAt: string;
       notes?: string;
       mode?: string;
     }) => fetchWithAuth("/payments/verify", { method: "POST", body: JSON.stringify(data) }),
