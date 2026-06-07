@@ -62,11 +62,6 @@ export default async function TherapistProfilePage({ params }: { params: Promise
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Marketplace
         </Link>
-        <div className="flex gap-4">
-          <button className="p-3 bg-surface-container-low/50 rounded-lg hover:bg-surface-container-low transition-colors text-primary/60 hover:text-primary">
-            <Heart className="w-4 h-4" />
-          </button>
-        </div>
       </header>
 
       {/* Profile Editorial Section */}
@@ -80,10 +75,6 @@ export default async function TherapistProfilePage({ params }: { params: Promise
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-1000"
              />
-             <div className="absolute bottom-6 left-6 z-10 px-4 py-2 bg-white/90 backdrop-blur-md rounded-2xl border border-outline-variant/20 shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Available Today
-             </div>
           </div>
           <div className="mt-12 flex flex-col items-center text-center">
              {specialist.rating !== null ? (
@@ -109,7 +100,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
                   Book Instant Session
                 </Link>
                 <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest text-center">
-                  Secure & Confidential Tele-health
+                  Secure & Confidential
                 </p>
              </div>
           </div>
@@ -125,7 +116,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
               </div>
               <h1 className="text-5xl font-heading font-normal text-foreground leading-[1.1] tracking-tight">{specialist.name}</h1>
               <p className="text-sm font-medium text-muted-foreground italic flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5" /> Virtual Specialist • Tele-health Authorized
+                <MapPin className="w-3.5 h-3.5" /> Verified Therapist
               </p>
            </div>
 
@@ -232,43 +223,6 @@ export default async function TherapistProfilePage({ params }: { params: Promise
               </div>
             </div>
            )}
-
-            {/* Availability Ticker - Optimized Layout */}
-            <div className="p-8 bg-primary/[0.03] rounded-[2.5rem] border border-primary/10 group hover:shadow-2xl hover:shadow-primary/5 transition-all duration-700 overflow-hidden relative">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-               <div className="flex flex-col lg:flex-row items-center justify-between gap-10 z-10 relative">
-                  <div className="flex flex-col text-center lg:text-left">
-                     <div className="flex items-center justify-center lg:justify-start gap-2 mb-2">
-                       <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                       <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary/60">Live Availability</h3>
-                     </div>
-                     <h2 className="text-3xl font-heading font-normal text-primary">Next Open Sessions</h2>
-                     <p className="text-sm text-muted-foreground mt-2">Reserve your preferred time slot for a personalized consultation.</p>
-                  </div>
-                  
-                  <div className="flex-1 flex flex-wrap justify-center gap-3">
-                     {specialist.availability.map((slot: any) => (
-                       <Link 
-                        key={slot.id} 
-                        href={`/dashboard/sessions/book/${specialist.id}`}
-                        className="flex flex-col items-center bg-white border border-primary/10 px-8 py-4 rounded-[1.5rem] hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm hover:shadow-xl group/slot"
-                       >
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-primary/40 group-hover/slot:text-white/60 mb-1">{slot.day}</span>
-                          <span className="text-lg font-heading tracking-tight">{slot.time}</span>
-                       </Link>
-                     ))}
-                     {specialist.availability.length === 0 && (
-                       <div className="text-sm text-primary/60 italic bg-white/50 backdrop-blur-sm px-6 py-4 rounded-2xl border border-primary/10">
-                         No available sessions this week. Please check back later.
-                       </div>
-                     )}
-                  </div>
-
-                  <Link href={`/dashboard/sessions/book/${specialist.id}`} className="shrink-0 w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground group-hover:scale-110 transition-transform shadow-xl shadow-primary/20">
-                     <ArrowRight className="w-6 h-6" />
-                  </Link>
-               </div>
-            </div>
           </div>
         </div>
       </div>
