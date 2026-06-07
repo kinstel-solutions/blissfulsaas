@@ -1,8 +1,9 @@
 import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { PaymentStatus, AppointmentStatus, NotificationType } from '@prisma/client';
+import { PaymentStatus, AppointmentStatus, NotificationType, ConsultationMode } from '@prisma/client';
 import * as crypto from 'crypto';
 import { NotificationsService } from '../notifications/notifications.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class PaymentsService {
@@ -11,6 +12,7 @@ export class PaymentsService {
   constructor(
     private prisma: PrismaService,
     private notifications: NotificationsService,
+    private emailService: EmailService,
   ) {}
 
   private get isMock(): boolean {
@@ -155,7 +157,10 @@ export class PaymentsService {
 
     // ── Book the appointment atomically ──────────────────────────
     return this.prisma.$transaction(async (tx) => {
-      const patient = await tx.patient.findUnique({ where: { userId: patientUserId } });
+      const patient = await tx.patient.findUnique({
+        where: { userId: patientUserId },
+        include: { user: { select: { email: true } } },
+      });
       if (!patient) throw new NotFoundException('Patient profile not found');
 
       const scheduledAt = new Date(data.scheduledAt);
@@ -197,32 +202,65 @@ export class PaymentsService {
 
       const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
       const dateStr = scheduledAt.toLocaleDateString('en-US', {
-        weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC',
+        weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata',
       });
       const timeStr = scheduledAt.toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+        hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata',
       });
 
       // Fire-and-forget notifications after the tx commits
       setImmediate(() => {
-        // Patient: payment success
+        const isClinic = appointment.mode === ConsultationMode.IN_CLINIC;
+        const locationNote = isClinic
+          ? ` (In-Clinic${appointment.therapist.clinicAddress ? ` at ${appointment.therapist.clinicAddress}` : ''})`
+          : ' (Online)';
+
+        // Patient: payment success (in-app)
         this.notifications.create({
           userId: patientUserId,
           type: NotificationType.PAYMENT_SUCCESS,
           title: 'Payment Successful 💳',
-          body: `Payment of ₹${amountPaid.toLocaleString('en-IN')} confirmed. Your session with ${therapistName} on ${dateStr} at ${timeStr} UTC is booked.`,
+          body: `Payment of ₹${amountPaid.toLocaleString('en-IN')} confirmed. Your session with ${therapistName} on ${dateStr} at ${timeStr} IST is booked.`,
           metadata: { appointmentId: appointment.id, amount: amountPaid, therapistName, scheduledAt: data.scheduledAt },
         }).catch(err => this.logger.error(err));
 
-        // Therapist: new booking
+        // Patient: booking email notification
+        if (patient.user?.email) {
+          const patientAppUrl = process.env.PATIENT_APP_URL || 'http://localhost:3000';
+          const patientTitle = 'Appointment Received';
+          const patientBody = `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} has been received for ${dateStr} at ${timeStr} IST${locationNote}. Your payment has been confirmed. Pending therapist confirmation.`;
+          this.emailService.sendAppointmentNotification(
+            patient.user.email,
+            patientTitle,
+            patientBody,
+            'View Appointments',
+            `${patientAppUrl}/appointments`
+          ).catch(err => this.logger.error(err));
+        }
+
+        // Therapist: new booking (in-app)
         if (appointment.therapist.userId) {
           this.notifications.create({
             userId: appointment.therapist.userId,
             type: NotificationType.BOOKING_CONFIRMED,
             title: 'New Appointment Booked',
-            body: `A patient has booked a paid session with you on ${dateStr} at ${timeStr} UTC.`,
+            body: `A patient has booked a paid session with you on ${dateStr} at ${timeStr} IST.`,
             metadata: { appointmentId: appointment.id, scheduledAt: data.scheduledAt },
           }).catch(err => this.logger.error(err));
+
+          // Therapist: booking email notification
+          if (appointment.therapist.user?.email) {
+            const therapistAppUrl = process.env.THERAPIST_APP_URL || 'http://localhost:3001';
+            const therapistTitle = 'New Appointment Request';
+            const therapistBody = `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr} IST.`;
+            this.emailService.sendAppointmentNotification(
+              appointment.therapist.user.email,
+              therapistTitle,
+              therapistBody,
+              'Review Booking',
+              `${therapistAppUrl}/dashboard`
+            ).catch(err => this.logger.error(err));
+          }
         }
       });
 

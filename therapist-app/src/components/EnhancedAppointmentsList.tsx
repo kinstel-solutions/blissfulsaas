@@ -109,11 +109,11 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50">
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                          {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}
+                          {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </div>
                         <div className="flex items-center gap-2 text-xs text-slate-400 font-bold uppercase">
                           <Clock className="w-3 h-3" />
-                          {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
+                          {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </div>
                     </td>
@@ -206,10 +206,10 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                   <div className="flex flex-col items-end gap-2">
                     <div className="text-right">
                       <div className="text-xs font-bold text-slate-900">
-                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}
+                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </div>
                       <div className="text-[10px] text-slate-400 font-bold uppercase mt-1">
-                        {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
+                        {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
                   </div>

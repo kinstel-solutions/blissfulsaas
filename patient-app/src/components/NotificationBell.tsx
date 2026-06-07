@@ -126,6 +126,16 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
     setLoading(false);
   };
 
+  const deleteAll = async () => {
+    setLoading(true);
+    try {
+      await api.notifications.deleteAll();
+      setNotifications([]);
+      setUnread(0);
+    } catch (e) {}
+    setLoading(false);
+  };
+
   const deleteOne = async (id: string, wasRead: boolean) => {
     try {
       await api.notifications.delete(id);
@@ -155,7 +165,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
       {open && (
         <div
           id="notification-panel"
-          className="absolute right-0 top-12 w-[360px] max-w-[calc(100vw-2rem)] bg-surface border border-outline-variant/30 rounded-2xl shadow-2xl shadow-black/20 z-50 overflow-hidden"
+          className="fixed sm:absolute right-4 sm:right-0 top-20 sm:top-12 left-4 sm:left-auto w-auto sm:w-[360px] max-w-[calc(100vw-2rem)] sm:max-w-none bg-surface border border-outline-variant/30 rounded-2xl shadow-2xl shadow-black/20 z-50 overflow-hidden"
           style={{ animation: "slideDown 0.2s ease-out" }}
         >
           {/* Header */}
@@ -169,28 +179,39 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               {unread > 0 && (
                 <button
                   onClick={markAll}
                   disabled={loading}
                   title="Mark all as read"
-                  className="p-1.5 rounded-lg hover:bg-surface-container text-muted-foreground hover:text-primary transition-colors"
+                  className="flex items-center justify-center p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95 border border-primary/10"
                 >
-                  <CheckCheck className="w-3.5 h-3.5" />
+                  <CheckCheck className="w-4 h-4" />
+                </button>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  onClick={deleteAll}
+                  disabled={loading}
+                  title="Delete all"
+                  className="flex items-center justify-center p-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all active:scale-95 border border-red-500/10"
+                >
+                  <Trash2 className="w-4 h-4" />
                 </button>
               )}
               <button
                 onClick={() => setOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-surface-container text-muted-foreground transition-colors"
+                className="p-2 rounded-xl hover:bg-surface-container text-muted-foreground hover:text-foreground transition-all active:scale-95 border border-outline-variant/20 flex items-center justify-center"
+                aria-label="Close"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
 
           {/* List */}
-          <div className="overflow-y-auto max-h-[420px] divide-y divide-outline-variant/10">
+          <div className="overflow-y-auto max-h-[60vh] sm:max-h-[420px] divide-y divide-outline-variant/10">
             {notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
                 <div className="w-12 h-12 rounded-2xl bg-surface-container flex items-center justify-center mb-3">
@@ -235,22 +256,22 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
                   </div>
 
                   {/* Actions */}
-                  <div className="shrink-0 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="shrink-0 flex flex-col gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ml-1 self-center">
                     {!notif.isRead && (
                       <button
                         onClick={() => markOne(notif.id)}
                         title="Mark as read"
-                        className="p-1 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+                        className="p-2 rounded-xl bg-primary/5 hover:bg-primary/15 text-primary transition-all active:scale-95 border border-primary/10 flex items-center justify-center"
                       >
-                        <Check className="w-3 h-3" />
+                        <Check className="w-4 h-4" />
                       </button>
                     )}
                     <button
                       onClick={() => deleteOne(notif.id, notif.isRead)}
                       title="Delete"
-                      className="p-1 rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors"
+                      className="p-2 rounded-xl bg-red-500/5 hover:bg-red-500/15 text-red-500 transition-all active:scale-95 border border-red-500/10 flex items-center justify-center"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

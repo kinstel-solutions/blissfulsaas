@@ -160,5 +160,6 @@ export const api = {
     markRead: (id: string) => fetchWithAuth(`/notifications/${id}/read`, { method: 'PATCH' }),
     markAllRead: () => fetchWithAuth('/notifications/read-all', { method: 'PATCH' }),
     delete: (id: string) => fetchWithAuth(`/notifications/${id}`, { method: 'DELETE' }),
+    deleteAll: () => fetchWithAuth('/notifications', { method: 'DELETE' }),
   },
 };

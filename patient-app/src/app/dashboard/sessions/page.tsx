@@ -74,7 +74,6 @@ export default async function SessionsPage() {
                   weekday: "long",
                   month: "short",
                   day: "numeric",
-                  timeZone: "UTC",
                 })}
               </span>
               <span className="flex items-center gap-1.5">
@@ -82,7 +81,6 @@ export default async function SessionsPage() {
                 {new Date(session.scheduledAt).toLocaleTimeString("en-US", {
                   hour: "2-digit",
                   minute: "2-digit",
-                  timeZone: "UTC",
                 })}
               </span>
             </div>
