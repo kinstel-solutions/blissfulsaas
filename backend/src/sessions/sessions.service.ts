@@ -86,10 +86,10 @@ export class SessionsService {
       // 6. Emit notifications (fire-and-forget after tx)
       const therapistName = `Dr. ${therapist.firstName ?? ''} ${therapist.lastName ?? ''}`.trim();
       const dateStr = scheduledAt.toLocaleDateString('en-US', {
-        weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC',
+        weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata',
       });
       const timeStr = scheduledAt.toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+        hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata',
       });
       const isClinic = mode === ConsultationMode.IN_CLINIC;
       const locationNote = isClinic
@@ -98,7 +98,7 @@ export class SessionsService {
 
       setImmediate(() => {
         const patientTitle = 'Appointment Received';
-        const patientBody = `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} has been received for ${dateStr} at ${timeStr} UTC${locationNote}. Pending therapist confirmation.`;
+        const patientBody = `Your ${isClinic ? 'in-clinic visit' : 'session'} with ${therapistName} has been received for ${dateStr} at ${timeStr} IST${locationNote}. Your payment has been confirmed. Pending therapist confirmation.`;
 
         this.notifications
           .create({
@@ -111,14 +111,15 @@ export class SessionsService {
           .catch((err) => this.logger.error(err));
 
         if (patient.user?.email) {
+          const patientAppUrl = process.env.PATIENT_APP_URL || 'http://localhost:3000';
           this.emailService
-            .sendAppointmentNotification(patient.user.email, patientTitle, patientBody)
+            .sendAppointmentNotification(patient.user.email, patientTitle, patientBody, 'View Appointments', `${patientAppUrl}/appointments`)
             .catch((err) => this.logger.error(err));
         }
 
         if (therapist.userId) {
           const therapistTitle = 'New Appointment Request';
-          const therapistBody = `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr} UTC.`;
+          const therapistBody = `A patient has booked a ${isClinic ? 'in-clinic visit' : 'session'} with you on ${dateStr} at ${timeStr} IST.`;
 
           this.notifications
             .create({
@@ -131,8 +132,9 @@ export class SessionsService {
             .catch((err) => this.logger.error(err));
 
           if (therapist.user?.email) {
+            const therapistAppUrl = process.env.THERAPIST_APP_URL || 'http://localhost:3001';
             this.emailService
-              .sendAppointmentNotification(therapist.user.email, therapistTitle, therapistBody)
+              .sendAppointmentNotification(therapist.user.email, therapistTitle, therapistBody, 'Review Booking', `${therapistAppUrl}/dashboard`)
               .catch((err) => this.logger.error(err));
           }
         }
@@ -333,7 +335,7 @@ export class SessionsService {
     });
 
     // Notify the other party
-    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
+    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' });
     const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
 
     setImmediate(() => {
@@ -351,7 +353,8 @@ export class SessionsService {
         }).catch(err => this.logger.error(err));
 
         if (appointment.therapist.user?.email) {
-          this.emailService.sendAppointmentNotification(appointment.therapist.user.email, title, body).catch(err => this.logger.error(err));
+          const emailBody = `The session scheduled for ${dateStr} with your patient has been cancelled.`;
+          this.emailService.sendAppointmentNotification(appointment.therapist.user.email, title, emailBody, 'Contact Support', 'mailto:support@theblissfulstation.com').catch(err => this.logger.error(err));
         }
       } else {
         // Therapist cancelled → notify patient
@@ -367,7 +370,8 @@ export class SessionsService {
         }).catch(err => this.logger.error(err));
 
         if (appointment.patient.user?.email) {
-          this.emailService.sendAppointmentNotification(appointment.patient.user.email, title, body).catch(err => this.logger.error(err));
+          const emailBody = `Your session with ${therapistName} on ${dateStr} has been cancelled. If a payment was made, a refund will be processed in accordance with our cancellation policy.`;
+          this.emailService.sendAppointmentNotification(appointment.patient.user.email, title, emailBody, 'Contact Support', 'mailto:support@theblissfulstation.com').catch(err => this.logger.error(err));
         }
       }
     });
@@ -408,7 +412,10 @@ export class SessionsService {
       }).catch(err => this.logger.error(err));
 
       if (appointment.patient.user?.email) {
-        this.emailService.sendAppointmentNotification(appointment.patient.user.email, title, body).catch(err => this.logger.error(err));
+        const patientAppUrl = process.env.PATIENT_APP_URL || 'http://localhost:3000';
+        const emailTitle = 'Session Completed — Tell us how it went!';
+        const emailBody = `Dear Patient,\n\nYour session with **${therapistName}** has been completed. We hope you found it helpful!\n\nPlease take a brief moment to rate your experience and provide feedback. Your input helps us maintain high quality care.`;
+        this.emailService.sendAppointmentNotification(appointment.patient.user.email, emailTitle, emailBody, 'Leave Feedback', `${patientAppUrl}/appointments`).catch(err => this.logger.error(err));
       }
 
       // Prompt patient to leave a review
@@ -448,7 +455,7 @@ export class SessionsService {
 
     // Notify patient session is confirmed
     const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
-    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
+    const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' });
     
     setImmediate(() => {
       const title = 'Appointment Confirmed';
@@ -463,7 +470,9 @@ export class SessionsService {
       }).catch(err => this.logger.error(err));
 
       if (appointment.patient.user?.email) {
-        this.emailService.sendAppointmentNotification(appointment.patient.user.email, title, body).catch(err => this.logger.error(err));
+        const patientAppUrl = process.env.PATIENT_APP_URL || 'http://localhost:3000';
+        const emailBody = `Dear Patient,\n\nGood news! Your session with **${therapistName}** scheduled for **${dateStr}** has been confirmed by the therapist.\n\nFor online sessions, you can join the video consultation room directly from your dashboard 5 minutes prior to the start time.`;
+        this.emailService.sendAppointmentNotification(appointment.patient.user.email, title, emailBody, 'Go to Dashboard', `${patientAppUrl}/dashboard`).catch(err => this.logger.error(err));
       }
     });
 
@@ -593,10 +602,15 @@ export class SessionsService {
         });
 
         if (session.patient.user?.email) {
+          const patientAppUrl = process.env.PATIENT_APP_URL || 'http://localhost:3000';
+          const emailTitle = 'Your Blissful SaaS session starts in 10 minutes!';
+          const emailBody = `Your session with ${therapistName} is starting in 10 minutes. Please prepare your video connection and join when ready.`;
           await this.emailService.sendAppointmentNotification(
             session.patient.user.email,
-            patientTitle,
-            patientBody,
+            emailTitle,
+            emailBody,
+            'Join Video Room',
+            `${patientAppUrl}/dashboard`
           );
         }
 
@@ -611,10 +625,13 @@ export class SessionsService {
           });
 
           if (session.therapist.user?.email) {
+            const therapistAppUrl = process.env.THERAPIST_APP_URL || 'http://localhost:3001';
             await this.emailService.sendAppointmentNotification(
               session.therapist.user.email,
               therapistTitle,
               therapistBody,
+              'Join Video Room',
+              `${therapistAppUrl}/dashboard`
             );
           }
         }

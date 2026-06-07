@@ -51,4 +51,10 @@ export class NotificationsController {
   ) {
     return this.notificationsService.delete(req.user.userId, id);
   }
+
+  /** DELETE /notifications — delete all notifications */
+  @Delete()
+  deleteAll(@Request() req: any) {
+    return this.notificationsService.deleteAll(req.user.userId);
+  }
 }

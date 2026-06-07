@@ -137,10 +137,19 @@ export class TherapistsService {
         },
       });
 
-      // Alert admins about pending updates
-      const adminEmails = await this.getAdminEmails();
+      // Alert admins about pending updates via in-app notifications
+      const admins = await this.prisma.user.findMany({ where: { role: 'ADMIN' }, select: { id: true } });
       const therapistName = `${profile.firstName} ${profile.lastName}`.trim();
-      this.emailService.sendAdminProfileUpdatesAlert(adminEmails, therapistName).catch(err => this.logger.error(err));
+      
+      for (const admin of admins) {
+        this.notifications.create({
+          userId: admin.id,
+          type: NotificationType.GENERAL,
+          title: 'Action Required: Therapist Profile Updates',
+          body: `Verified therapist Dr. ${therapistName} has submitted updates to their profile. Please review in the admin panel.`,
+          metadata: { therapistId: profile.id }
+        }).catch(err => this.logger.error(err));
+      }
 
       return updated;
     }

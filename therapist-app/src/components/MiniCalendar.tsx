@@ -13,31 +13,31 @@ const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default function MiniCalendar({ sessions }: MiniCalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
-    d.setUTCHours(0, 0, 0, 0);
+    d.setHours(0, 0, 0, 0);
     return d;
   });
   const [selectedDay, setSelectedDay] = useState<number | null>(() => {
     const d = new Date();
-    return d.getUTCDate();
+    return d.getDate();
   });
 
-  const year = currentDate.getUTCFullYear();
-  const month = currentDate.getUTCMonth();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
-  const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-  const firstDayOfMonth = new Date(Date.UTC(year, month, 1)).getUTCDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
 
   const prevMonth = () => {
-    setCurrentDate(new Date(Date.UTC(year, month - 1, 1)));
+    setCurrentDate(new Date(year, month - 1, 1));
     setSelectedDay(null);
   };
 
   const nextMonth = () => {
-    setCurrentDate(new Date(Date.UTC(year, month + 1, 1)));
+    setCurrentDate(new Date(year, month + 1, 1));
     setSelectedDay(null);
   };
 
-  const monthName = currentDate.toLocaleString("default", { month: "long", timeZone: "UTC" });
+  const monthName = currentDate.toLocaleString("default", { month: "long" });
 
   const days = [];
   for (let i = 0; i < firstDayOfMonth; i++) {
@@ -51,9 +51,9 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
     return sessions.filter((session) => {
       const date = new Date(session.scheduledAt);
       return (
-        date.getUTCFullYear() === year &&
-        date.getUTCMonth() === month &&
-        date.getUTCDate() === day
+        date.getFullYear() === year &&
+        date.getMonth() === month &&
+        date.getDate() === day
       );
     });
   };
@@ -115,7 +115,7 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
               const sessionsForDay = day ? getSessionsForDay(day) : [];
               const hasSession = sessionsForDay.length > 0;
               const isSelected = selectedDay === day;
-              const isToday = day === new Date().getUTCDate() && month === new Date().getUTCMonth() && year === new Date().getUTCFullYear();
+              const isToday = day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
 
               return (
                 <div
@@ -158,7 +158,7 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Clock className="w-3.5 h-3.5" />
                       <span>
-                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
+                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${
                         session.mode === 'IN_CLINIC' 
