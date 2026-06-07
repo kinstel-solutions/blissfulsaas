@@ -70,7 +70,7 @@ function LoginForm() {
             <h1 className="text-5xl md:text-6xl font-cormorant font-medium text-[#1A2F28] mb-4 tracking-tight">
               Welcome <span className="italic font-normal">Back</span>
             </h1>
-            <p className="text-[#1A2F28]/60 text-sm font-medium uppercase tracking-[0.2em]">Secure Access to your Station</p>
+            <p className="text-[#1A2F28]/60 text-sm font-medium uppercase tracking-[0.2em]">Continue Your Healing Journey</p>
           </div>
 
           <div className="bg-white/60 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(26,47,40,0.05)] border border-white/40 relative overflow-hidden group">
@@ -151,7 +151,7 @@ function LoginForm() {
             </form>
 
             <div className="mt-10 pt-8 border-t border-[#1A2F28]/5 text-center">
-              <p className="text-xs text-[#1A2F28]/40 font-medium">
+              <p className="text-base text-[#1A2F28]/40 font-medium">
                 New to the Station?{" "}
                 <Link href="/signup" className="text-[#2D4F43] font-bold hover:underline decoration-[#2D4F43]/20 decoration-2 underline-offset-4">
                   Create an account
