@@ -30,8 +30,9 @@ export default async function SessionsPage() {
     const isCancelled = session.status === "CANCELLED" || session.status === "NO_SHOW" || session.status === "EXPIRED";
 
     return (
+      <Link href={`/dashboard/sessions/${session.id}`} className="block group">
       <div
-        className={`bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:shadow-lg transition-all group border-l-4 ${isCompleted
+        className={`bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:shadow-lg transition-all border-l-4 ${isCompleted
             ? "border-l-blue-400/50 bg-blue-50/10"
             : isCancelled
               ? "border-l-destructive/30 opacity-60"
@@ -180,6 +181,7 @@ export default async function SessionsPage() {
           )}
         </div>
       </div>
+      </Link>
     );
   };
 

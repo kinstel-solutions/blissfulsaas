@@ -83,6 +83,16 @@ export default async function DashboardPage() {
   const seg2 = seg1 + pendingPct;
   const seg3 = seg2 + completedPct;
 
+  // Calculate Today's Sessions count (sessions scheduled for today in Asia/Kolkata timezone, excluding cancelled)
+  const todayKolkata = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' });
+  const todaysSessionsCount = Array.isArray(allSessions)
+    ? allSessions.filter((s: Session) => {
+        if (s.status === 'CANCELLED') return false;
+        const sessionDateKolkata = new Date(s.scheduledAt).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' });
+        return sessionDateKolkata === todayKolkata;
+      }).length
+    : 0;
+
   // Calculate dynamic follow-ups count (patients with more than 1 session history):
   const followUpsCount = Array.isArray(allSessions)
     ? Array.from(new Set(allSessions.map((s: Session) => s.patientId))).filter((patientId) => {
@@ -90,6 +100,20 @@ export default async function DashboardPage() {
       return patientSessions.length > 1;
     }).length
     : 0;
+
+  // Calculate dynamic new clients count (patients with exactly 1 session history):
+  const newClientsCount = Array.isArray(allSessions)
+    ? Array.from(new Set(allSessions.map((s: Session) => s.patientId))).filter((patientId) => {
+      const patientSessions = allSessions.filter((s: Session) => s.patientId === patientId);
+      return patientSessions.length === 1;
+    }).length
+    : 0;
+
+  // Filter out cancelled sessions for the calendar
+  const calendarSessions = Array.isArray(allSessions)
+    ? allSessions.filter((s: Session) => s.status !== 'CANCELLED')
+    : [];
+
 
   // Fetch therapist profile to get their ID for rating stats
   const profile = await fetchWithAuthContent("/therapists/profile");
@@ -150,7 +174,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Today&apos;s Sessions</p>
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{upcomingSessions?.length || 0}</h3>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{todaysSessionsCount}</h3>
           </div>
         </Link>
 
@@ -186,7 +210,7 @@ export default async function DashboardPage() {
           </div>
           <div>
             <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">New Clients</p>
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{uniquePatientsCount || 0}</h3>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{newClientsCount}</h3>
           </div>
         </Link>
       </div>
@@ -196,7 +220,7 @@ export default async function DashboardPage() {
 
         {/* Left 2 Columns: Schedule (Calendar) */}
         <div className="lg:col-span-2">
-          <MiniCalendar sessions={upcomingSessions} />
+          <MiniCalendar sessions={calendarSessions} />
         </div>
 
         {/* Right 1 Column: Client Overview & Clinical Performance */}

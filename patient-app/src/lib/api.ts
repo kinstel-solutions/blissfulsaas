@@ -58,6 +58,7 @@ export const api = {
       fetchWithAuth("/sessions/book", { method: "POST", body: JSON.stringify(data) }),
     upcoming: () => fetchWithAuth("/sessions/upcoming"),
     all: () => fetchWithAuth("/sessions/all"),
+    getById: (id: string) => fetchWithAuth(`/sessions/${id}`),
     cancel: (id: string) =>
       fetchWithAuth(`/sessions/${id}/cancel`, { method: "PATCH" }),
     getToken: (id: string) => fetchWithAuth(`/sessions/${id}/token`),
