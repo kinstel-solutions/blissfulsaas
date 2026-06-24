@@ -1,14 +1,14 @@
-import { 
-  Controller, 
-  Get, 
-  Patch, 
-  Delete, 
-  Param, 
-  UseGuards, 
+import {
+  Controller,
+  Get,
+  Patch,
+  Delete,
+  Param,
+  UseGuards,
   ParseUUIDPipe,
   Req,
   Body,
-  Query
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
@@ -29,9 +29,12 @@ export class TherapistsController {
   @Get('verified')
   getVerified(
     @Query('page') page: string = '1',
-    @Query('limit') limit: string = '12'
+    @Query('limit') limit: string = '12',
   ) {
-    return this.therapistsService.getAllVerified(parseInt(page), parseInt(limit));
+    return this.therapistsService.getAllVerified(
+      parseInt(page),
+      parseInt(limit),
+    );
   }
 
   @Get('profile')

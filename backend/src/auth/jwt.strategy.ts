@@ -9,10 +9,12 @@ import { PrismaService } from '../prisma/prisma.service';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private config: ConfigService,
-    private prisma: PrismaService
+    private prisma: PrismaService,
   ) {
-    const supabaseUrl = config.get<string>('SUPABASE_URL') || config.getOrThrow<string>('NEXT_PUBLIC_SUPABASE_URL');
-    
+    const supabaseUrl =
+      config.get<string>('SUPABASE_URL') ||
+      config.getOrThrow<string>('NEXT_PUBLIC_SUPABASE_URL');
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -30,17 +32,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!payload.sub) {
       throw new UnauthorizedException();
     }
-    
+
     // Fetch the ground truth role from the database
     // This prevents "Forbidden resource" if the JWT claim is missing/stale
     const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub }
+      where: { id: payload.sub },
     });
-    
+
     return {
       userId: payload.sub,
       email: payload.email,
-      role: user?.role || payload.app_metadata?.role || 'PATIENT', 
+      role: user?.role || payload.app_metadata?.role || 'PATIENT',
     };
   }
 }

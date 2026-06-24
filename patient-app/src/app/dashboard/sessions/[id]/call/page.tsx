@@ -6,11 +6,11 @@ import VideoRoomWrapper from "@/components/VideoRoomWrapper";
 
 export default async function PatientCallPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  
+
   // Get the current user's ID for the chat sidebar
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  
+
   // Fetch Agora Token from backend
   const data = await fetchWithAuthContent(`/sessions/${id}/token`);
 
@@ -36,11 +36,11 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
   }
 
   return (
-    <div className="h-[85vh] flex flex-col gap-6 animate-in fade-in duration-1000">
-      <header className="flex items-center justify-between px-2">
+    <div className="h-[85vh] flex flex-col gap-12 animate-in fade-in duration-1000 md:-mx-12">
+      <header className="flex items-center justify-between px-2 lg:px-0">
         <div className="flex items-center gap-6">
-          <Link 
-            href="/dashboard/sessions" 
+          <Link
+            href="/dashboard/sessions"
             className="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center text-foreground/40 hover:text-primary hover:bg-primary/5 transition-all border border-outline-variant/30"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -57,7 +57,7 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
       </header>
 
       <div className="flex-1 min-h-0">
-        <VideoRoomWrapper 
+        <VideoRoomWrapper
           appId={data.appId}
           channel={data.channel}
           token={data.token}

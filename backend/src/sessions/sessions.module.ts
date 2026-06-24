@@ -9,5 +9,6 @@ import { EmailModule } from '../email/email.module';
   imports: [AuthModule, NotificationsModule, EmailModule],
   controllers: [SessionsController],
   providers: [SessionsService],
+  exports: [SessionsService],
 })
 export class SessionsModule {}

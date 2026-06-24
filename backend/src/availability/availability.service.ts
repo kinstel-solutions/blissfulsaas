@@ -45,9 +45,9 @@ function intervalsOverlap(s1: Date, e1: Date, s2: Date, e2: Date): boolean {
 
 export interface TimeSlot {
   startTime: string; // "HH:mm" UTC
-  endTime: string;   // "HH:mm" UTC
-  startUtc: string;  // ISO 8601
-  endUtc: string;    // ISO 8601
+  endTime: string; // "HH:mm" UTC
+  startUtc: string; // ISO 8601
+  endUtc: string; // ISO 8601
   mode: ConsultationMode;
   available: boolean;
 }

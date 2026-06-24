@@ -119,15 +119,12 @@ export default async function SessionDetailPage({
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* ── Back Navigation ──────────────────────────────────────── */}
       <Link
         href="/dashboard/sessions"
-        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group w-fit"
+        className="inline-flex items-center gap-2 px-4 py-2.5 text-[10px] lg:text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground bg-surface-container-low hover:bg-surface-container border border-outline-variant/30 rounded-xl transition-all shadow-sm hover:shadow group w-fit"
       >
-        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span className="text-[10px] lg:text-xs font-bold uppercase tracking-[0.15em] lg:tracking-widest">
-          My Sessions
-        </span>
+        <ChevronLeft className="w-4.5 h-4.5 group-hover:-translate-x-0.5 transition-transform" />
+        <span>Back to Sessions</span>
       </Link>
 
       {/* ── Status Banner ────────────────────────────────────────── */}
@@ -452,6 +449,7 @@ export default async function SessionDetailPage({
                       <JoinCallButton
                         sessionId={session.id}
                         scheduledAt={session.scheduledAt}
+                        status={session.status}
                       />
                     </div>
                   ) : (

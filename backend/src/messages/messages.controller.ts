@@ -1,4 +1,13 @@
-import { Controller, Post, Get, Body, Param, Request, UseGuards, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
+  Request,
+  UseGuards,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard';
 import { MessagesService } from './messages.service';
@@ -13,7 +22,11 @@ export class MessagesController {
     @Request() req: any,
     @Body() body: { appointmentId: string; content: string },
   ) {
-    return this.messagesService.sendMessage(req.user.userId, body.appointmentId, body.content);
+    return this.messagesService.sendMessage(
+      req.user.userId,
+      body.appointmentId,
+      body.content,
+    );
   }
 
   @Get('unread/counts')
@@ -42,6 +55,9 @@ export class MessagesController {
     @Request() req: any,
     @Param('patientId', ParseUUIDPipe) patientId: string,
   ) {
-    return this.messagesService.getMessagesByPatient(req.user.userId, patientId);
+    return this.messagesService.getMessagesByPatient(
+      req.user.userId,
+      patientId,
+    );
   }
 }

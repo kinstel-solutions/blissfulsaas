@@ -12,19 +12,13 @@ export class PaymentsController {
 
   @Post('create-order')
   @Roles('PATIENT')
-  createOrder(
-    @Request() req: any,
-    @Body() data: CreateOrderDto,
-  ) {
+  createOrder(@Request() req: any, @Body() data: CreateOrderDto) {
     return this.paymentsService.createOrder(req.user.userId, data);
   }
 
   @Post('verify')
   @Roles('PATIENT')
-  verifyAndBook(
-    @Request() req: any,
-    @Body() data: VerifyPaymentDto,
-  ) {
+  verifyAndBook(@Request() req: any, @Body() data: VerifyPaymentDto) {
     return this.paymentsService.verifyAndBook(req.user.userId, data);
   }
 }

@@ -183,7 +183,11 @@ model Appointment {
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
-  reminderSent  Boolean           @default(false)
+  reminderSent     Boolean           @default(false)
+
+  // Session tracking timestamps
+  actualStartedAt  DateTime?         // Set when the first participant joins the video room
+  actualEndedAt    DateTime?         // Set when the therapist marks the session as complete
 
   @@index([patientId, scheduledAt])
   @@index([therapistId, scheduledAt])

@@ -230,17 +230,18 @@ Only approve/reject exists. No ability to suspend an already-approved therapist.
 
 ---
 
-### 11. Consultation Feedback Form ⭐ 007
+### 11. Consultation Feedback Form ⭐ ✅ (PARTIAL)
 **Scope Ref**: A.5 — Custom In-Platform Consultation
+**Status**: PARTIAL (Audit June 20, 2026)
 
-No post-session feedback mechanism exists.
+Core feedback mechanism is implemented, but admin panel view integration is pending.
 
-| Task | Details |
-|------|---------|
-| **Feedback Schema** | New `SessionFeedback` model (rating, comments, appointmentId) |
-| **Patient Feedback Form** | Post-session form shown after video call ends or on session completion |
-| **Feedback Tied to Appointment** | One feedback per appointment per patient |
-| **Admin Feedback Review** | Visible in admin panel (feeds into C.3 — Appointment Oversight) |
+| Task | Details | Status |
+|------|---------|--------|
+| **Feedback Schema** | `SessionFeedback` model implemented in Prisma schema | ✅ Done |
+| **Patient Feedback Form** | `FeedbackForm.tsx` and `SessionFeedbackButton.tsx` implemented in patient-app | ✅ Done |
+| **Feedback Tied to Appointment** | Patient is prompted post-session, backed by the `feedback` module in backend | ✅ Done |
+| **Admin Feedback Review** | Display and review dashboard in the admin panel | ❌ Pending |
 
 ---
 
@@ -249,22 +250,28 @@ No post-session feedback mechanism exists.
 
 The scope specifically requires that therapist notifications **hide message content and sender information** to prevent read-pressure.
 
-| Task | Details |
-|------|---------|
-| **Anonymous Notification Badges** | Sidebar shows "1 new message" without revealing content or patient name |
-| **Content Hidden Until Opened** | Message preview in notification should be obscured |
-| **Therapist Retains Discretion** | Clear UI indication that responding is optional |
+> [!WARNING]
+> **Implementation Defect**: The current backend codebase violates this requirement. In `backend/src/messages/messages.service.ts`, `NEW_MESSAGE` notifications explicitly embed both the `senderName` and raw message `content` in the notification payload. This must be corrected.
+
+| Task | Details | Status |
+|------|---------|--------|
+| **Anonymous Notification Badges** | Sidebar shows "1 new message" without revealing content or patient name | ❌ Pending |
+| **Content Hidden Until Opened** | Message preview in notification should be obscured (Backend payload must not include content/sender) | ❌ Defect |
+| **Therapist Retains Discretion** | Clear UI indication that responding is optional | ❌ Pending |
 
 ---
 
 ### 13. Session Duration Control ⏱️
 **Scope Ref**: A.5 — Custom In-Platform Consultation
 
-| Task | Details |
-|------|---------|
-| **Session Timer** | Countdown timer visible during video call |
-| **Actual Start/End Timestamps** | Track `actualStartedAt` and `actualEndedAt` on Appointment |
-| **Auto-Complete Option** | Optional: warn and auto-complete when time expires |
+> [!CAUTION]
+> **Agora Integration Defect**: There is a critical token/UID mismatch between frontend and backend. The backend (`sessions.service.ts`) hardcodes `uid = 0` for Agora token generation, whereas the frontend apps generate and pass a custom numeric UID. This will cause authentication/joining failures in multi-party or strict token environments.
+
+| Task | Details | Status |
+|------|---------|--------|
+| **Session Timer** | Countdown timer visible during video call | ❌ Pending |
+| **Actual Start/End Timestamps** | Track `actualStartedAt` and `actualEndedAt` on Appointment | ❌ Pending |
+| **Auto-Complete Option** | Optional: warn and auto-complete when time expires | ❌ Pending |
 
 ---
 
@@ -346,7 +353,7 @@ Currently RLS is minimal; the backend uses Service Role key for critical operati
 | A.2 Therapist Discovery | 4 | 3 | 1 | 0 |
 | A.3 Booking System | 5 | 5 | 0 | 0 |
 | A.4 Patient Intake Form | 3 | 3 | 0 | 0 |
-| A.5 In-Platform Consultation | 7 | 4 | 0 | 3 |
+| A.5 In-Platform Consultation | 7 | 4 | 1 | 2 |
 | A.6 Custom Chat System | 6 | 4 | 0 | 2 |
 | A.7 Payment Processing | 3 | 0 | 0 | 3 |
 | A.8 Notifications | 3 | 3 | 0 | 0 |

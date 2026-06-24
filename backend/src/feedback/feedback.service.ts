@@ -25,7 +25,9 @@ export class FeedbackService {
   ) {
     // Validate rating
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-      throw new BadRequestException('Rating must be an integer between 1 and 5');
+      throw new BadRequestException(
+        'Rating must be an integer between 1 and 5',
+      );
     }
 
     // Find the appointment and verify ownership + completion
@@ -60,7 +62,8 @@ export class FeedbackService {
     });
 
     // Notify therapist (fire-and-forget)
-    const therapistName = `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+    const therapistName =
+      `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
     setImmediate(() => {
       if (appointment.therapist.userId) {
         this.notifications

@@ -1,4 +1,13 @@
-import { IsString, IsOptional, IsNumber, IsArray, IsUrl, Min, MaxLength, ValidateIf } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsArray,
+  IsUrl,
+  Min,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateTherapistProfileDto {
@@ -47,7 +56,7 @@ export class UpdateTherapistProfileDto {
   @IsOptional()
   languages?: string[];
 
-  @Transform(({ value }) => value === '' || value === null ? null : value)
+  @Transform(({ value }) => (value === '' || value === null ? null : value))
   @IsUrl()
   @IsOptional()
   videoUrl?: string;
@@ -56,12 +65,12 @@ export class UpdateTherapistProfileDto {
   @IsOptional()
   clinicAddress?: string;
 
-  @Transform(({ value }) => value === '' || value === null ? null : value)
+  @Transform(({ value }) => (value === '' || value === null ? null : value))
   @IsUrl()
   @IsOptional()
   mapLink?: string;
 
-  @Transform(({ value }) => value === '' || value === null ? null : value)
+  @Transform(({ value }) => (value === '' || value === null ? null : value))
   @IsUrl()
   @IsOptional()
   profileImageUrl?: string;
@@ -70,7 +79,7 @@ export class UpdateTherapistProfileDto {
   @IsOptional()
   rciNumber?: string;
 
-  @Transform(({ value }) => value === '' || value === null ? null : value)
+  @Transform(({ value }) => (value === '' || value === null ? null : value))
   @IsUrl()
   @IsOptional()
   licenceCertificateUrl?: string;

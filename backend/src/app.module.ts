@@ -22,12 +22,14 @@ import { APP_GUARD } from '@nestjs/core';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 60,
-    }]),
-    PrismaModule, 
-    AuthModule, 
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 60,
+      },
+    ]),
+    PrismaModule,
+    AuthModule,
     TherapistsModule,
     AvailabilityModule,
     SessionsModule,
