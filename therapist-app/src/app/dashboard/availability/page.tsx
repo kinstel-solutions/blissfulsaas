@@ -593,11 +593,7 @@ function AddOverrideDialog({ open, onClose, onSave }: AddOverrideDialogProps) {
             <div className="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl">
               <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <p className="text-xs text-amber-700 font-medium">
-                Times are stored in UTC. Your current timezone offset is{" "}
-                <strong>
-                  {Intl.DateTimeFormat().resolvedOptions().timeZone}
-                </strong>
-                . The backend converts times automatically.
+                Times are configured and stored in Indian Standard Time (IST / Asia/Kolkata).
               </p>
             </div>
 
@@ -862,7 +858,7 @@ export default function AvailabilityPage() {
 
   // ─── Timezone display ───────────────────────────────────────────────────
 
-  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const userTimezone = "Asia/Kolkata (IST)";
 
   // ─── Active working days count ──────────────────────────────────────────
 

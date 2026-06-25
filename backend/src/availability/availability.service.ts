@@ -33,9 +33,9 @@ function toDateString(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** Given a "YYYY-MM-DD" and "HH:mm", return UTC Date */
-function toUtcDate(dateStr: string, time: string): Date {
-  return new Date(`${dateStr}T${time}:00.000Z`);
+/** Given a "YYYY-MM-DD" and "HH:mm", return Date in Indian Standard Time (IST, UTC+05:30) */
+function toIstDate(dateStr: string, time: string): Date {
+  return new Date(`${dateStr}T${time}:00+05:30`);
 }
 
 /** Check whether two UTC intervals overlap [s1,e1) ∩ [s2,e2) ≠ ∅ */
@@ -248,8 +248,12 @@ export class AvailabilityService {
     if (activeBlocks.length === 0) return [];
 
     // --- Step 3: Load existing appointments (bookings) for the day ----------
-    const dayStart = new Date(`${dateStr}T00:00:00.000Z`);
-    const dayEnd = new Date(`${dateStr}T23:59:59.000Z`);
+    // Since we are operating in IST (+05:30), a date day starts at 00:00 IST and ends at 23:59:59 IST.
+    // In UTC, this corresponds to:
+    // Start: dateStr T 00:00:00+05:30 -> (previous day) 18:30 UTC
+    // End: dateStr T 23:59:59.999+05:30 -> (current day) 18:29:59.999 UTC
+    const dayStart = new Date(`${dateStr}T00:00:00+05:30`);
+    const dayEnd = new Date(`${dateStr}T23:59:59.999+05:30`);
 
     const bookings = await this.prisma.appointment.findMany({
       where: {
@@ -271,8 +275,8 @@ export class AvailabilityService {
       let cursor = block.startMin;
 
       while (cursor + this.SLOT_BLOCK <= block.endMin) {
-        const slotStart = toUtcDate(dateStr, formatTime(cursor));
-        const slotEnd = toUtcDate(
+        const slotStart = toIstDate(dateStr, formatTime(cursor));
+        const slotEnd = toIstDate(
           dateStr,
           formatTime(cursor + this.SESSION_DURATION),
         );

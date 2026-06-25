@@ -38,6 +38,21 @@ export default function VideoRoom({ appId, channel, token, appointmentId, curren
   );
 }
 
+const getEncoderConfig = (quality: "360p" | "480p" | "720p" | "1080p", fps: number) => {
+  switch (quality) {
+    case "360p":
+      return { width: 640, height: 360, frameRate: fps, bitrateMax: 600, bitrateMin: 150 };
+    case "480p":
+      return { width: 848, height: 480, frameRate: fps, bitrateMax: 1000, bitrateMin: 250 };
+    case "720p":
+      return { width: 1280, height: 720, frameRate: fps, bitrateMax: 1500, bitrateMin: 500 };
+    case "1080p":
+      return { width: 1920, height: 1080, frameRate: fps, bitrateMax: 2500, bitrateMin: 800 };
+    default:
+      return { width: 1280, height: 720, frameRate: fps, bitrateMax: 1500, bitrateMin: 500 };
+  }
+};
+
 function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUserId }: any) {
   const router = useRouter();
   const [micOn, setMic] = useState(true);
@@ -45,7 +60,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
   const [sessionEnded, setSessionEnded] = useState(false);
   const [showEndingWarning, setShowEndingWarning] = useState(false);
   const [videoQuality, setVideoQuality] = useState<"360p" | "480p" | "720p" | "1080p">("720p");
-  const [frameRate, setFrameRate] = useState<15 | 24 | 30>(15);
+  const [frameRate, setFrameRate] = useState<15 | 24 | 30>(30);
   const [showQualityMenu, setShowQualityMenu] = useState(false);
   const client = useRTCClient();
 
@@ -87,10 +102,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
   };
 
   const { localMicrophoneTrack, error: micError } = useLocalMicrophoneTrack(!sessionEnded);
-  // Build encoderConfig: custom object for 720p (allows frame rate control), preset string for others
-  const encoderConfig = videoQuality === "720p"
-    ? { width: 1280, height: 720, frameRate, bitrateMax: 1500, bitrateMin: 500 }
-    : videoQuality;
+  const encoderConfig = getEncoderConfig(videoQuality, frameRate);
   const { localCameraTrack, error: camError } = useLocalCameraTrack(!sessionEnded, {
     encoderConfig,
   });
@@ -137,11 +149,8 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
   // Live quality switching — no track recreation needed
   const handleQualityChange = async (quality: "360p" | "480p" | "720p" | "1080p") => {
     setVideoQuality(quality);
-    if (quality !== "720p") setShowQualityMenu(false);
     if (localCameraTrack) {
-      const config = quality === "720p"
-        ? { width: 1280, height: 720, frameRate, bitrateMax: 1500, bitrateMin: 500 }
-        : quality;
+      const config = getEncoderConfig(quality, frameRate);
       await localCameraTrack.setEncoderConfiguration(config as any).catch(console.error);
     }
   };
@@ -149,10 +158,16 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
   const handleFrameRateChange = async (fps: 15 | 24 | 30) => {
     setFrameRate(fps);
     setShowQualityMenu(false);
-    if (localCameraTrack && videoQuality === "720p") {
-      await localCameraTrack.setEncoderConfiguration(
-        { width: 1280, height: 720, frameRate: fps, bitrateMax: 1500, bitrateMin: 500 }
-      ).catch(console.error);
+    if (localCameraTrack) {
+      const config = getEncoderConfig(videoQuality, fps);
+      await localCameraTrack.setEncoderConfiguration(config as any).catch(console.error);
+      
+      const mediaStreamTrack = localCameraTrack.getMediaStreamTrack();
+      if (mediaStreamTrack) {
+        await mediaStreamTrack.applyConstraints({
+          frameRate: { ideal: fps }
+        }).catch(console.error);
+      }
     }
   };
 
@@ -303,7 +318,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
               >
                 <Settings2 className="w-4 h-4" />
                 <span className="text-[9px] font-bold uppercase tracking-wide opacity-80">
-                  {videoQuality === "720p" ? `720p·${frameRate}` : videoQuality}
+                  {videoQuality}·{frameRate}
                 </span>
               </button>
               {showQualityMenu && (
@@ -322,25 +337,21 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
                       {q === "720p" ? `${q} ★` : q}
                     </button>
                   ))}
-                  {videoQuality === "720p" && (
-                    <>
-                      <div className="border-t border-white/10 mt-1" />
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-white/40 px-4 pt-2 pb-1">Frame Rate</p>
-                      {([15, 24, 30] as const).map((fps) => (
-                        <button
-                          key={fps}
-                          onClick={() => handleFrameRateChange(fps)}
-                          className={`w-full px-4 py-2.5 text-left text-sm font-bold tracking-wide transition-colors ${
-                            frameRate === fps
-                              ? "text-primary bg-primary/10"
-                              : "text-white hover:bg-white/10"
-                          }`}
-                        >
-                          {fps} fps{fps === 15 ? " ★" : ""}
-                        </button>
-                      ))}
-                    </>
-                  )}
+                  <div className="border-t border-white/10 mt-1" />
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-white/40 px-4 pt-2 pb-1">Frame Rate</p>
+                  {([15, 24, 30] as const).map((fps) => (
+                    <button
+                      key={fps}
+                      onClick={() => handleFrameRateChange(fps)}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-bold tracking-wide transition-colors ${
+                        frameRate === fps
+                          ? "text-primary bg-primary/10"
+                          : "text-white hover:bg-white/10"
+                      }`}
+                    >
+                      {fps} fps{fps === 30 ? " ★" : ""}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>

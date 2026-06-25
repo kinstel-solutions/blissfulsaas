@@ -14,7 +14,8 @@ import { AppointmentStatus } from '@prisma/client';
 describe('SessionsService', () => {
   let service: SessionsService;
 
-  const mockPrisma = {
+  const mockPrisma: any = {
+    $transaction: jest.fn((cb) => cb(mockPrisma)),
     appointment: {
       findUnique: jest.fn(),
       update: jest.fn(),

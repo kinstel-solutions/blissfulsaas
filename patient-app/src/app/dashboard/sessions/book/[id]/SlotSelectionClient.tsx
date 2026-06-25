@@ -175,12 +175,13 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
       })
     : null;
 
-  // Convert UTC time to local for display
+  // Convert UTC time to IST for display
   const formatSlotTime = (utcIso: string) => {
     return new Date(utcIso).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
+      timeZone: "Asia/Kolkata",
     });
   };
 
