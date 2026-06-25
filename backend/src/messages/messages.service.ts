@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  Logger,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '@prisma/client';
@@ -9,16 +14,20 @@ export class MessagesService {
 
   constructor(
     private prisma: PrismaService,
-    private notifications: NotificationsService
+    private notifications: NotificationsService,
   ) {}
 
-  async sendMessage(senderUserId: string, appointmentId: string, content: string) {
+  async sendMessage(
+    senderUserId: string,
+    appointmentId: string,
+    content: string,
+  ) {
     // 1. Verify the appointment exists
     const appointment = await this.prisma.appointment.findUnique({
       where: { id: appointmentId },
-      include: { 
-        patient: { include: { user: true } }, 
-        therapist: { include: { user: true } } 
+      include: {
+        patient: { include: { user: true } },
+        therapist: { include: { user: true } },
       },
     });
 
@@ -33,15 +42,20 @@ export class MessagesService {
 
     // 2.2 Status check: cannot chat on cancelled appointments
     if (appointment.status === 'CANCELLED') {
-      throw new ForbiddenException('Cannot send messages to a cancelled appointment');
+      throw new ForbiddenException(
+        'Cannot send messages to a cancelled appointment',
+      );
     }
 
     // 2.5 Security: Ensure we are within the 7-day Post-Consultation Chat Window
     const duration = appointment.duration ?? 60;
-    const sessionEndTime = new Date(appointment.scheduledAt).getTime() + (duration * 60000);
+    const sessionEndTime =
+      new Date(appointment.scheduledAt).getTime() + duration * 60000;
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
     if (Date.now() > sessionEndTime + SEVEN_DAYS_MS) {
-      throw new ForbiddenException('Chat window has closed (7 days after consultation)');
+      throw new ForbiddenException(
+        'Chat window has closed (7 days after consultation)',
+      );
     }
 
     // 3. Insert the message
@@ -57,19 +71,23 @@ export class MessagesService {
     });
 
     // 4. Emit Notification to the recipient
-    const recipientUserId = isPatient ? appointment.therapist.userId : appointment.patient.userId;
-    const senderName = isPatient 
-      ? `${appointment.patient.firstName ?? 'Patient'}` 
+    const recipientUserId = isPatient
+      ? appointment.therapist.userId
+      : appointment.patient.userId;
+    const senderName = isPatient
+      ? `${appointment.patient.firstName ?? 'Patient'}`
       : `Dr. ${appointment.therapist.lastName ?? 'Therapist'}`;
 
     setImmediate(() => {
-      this.notifications.create({
-        userId: recipientUserId,
-        type: NotificationType.NEW_MESSAGE,
-        title: 'New Message',
-        body: `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`,
-        metadata: { appointmentId, senderId: senderUserId, senderName },
-      }).catch(err => this.logger.error(err));
+      this.notifications
+        .create({
+          userId: recipientUserId,
+          type: NotificationType.NEW_MESSAGE,
+          title: 'New Message',
+          body: `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`,
+          metadata: { appointmentId, senderId: senderUserId, senderName },
+        })
+        .catch((err) => this.logger.error(err));
     });
 
     return message;
@@ -120,8 +138,8 @@ export class MessagesService {
     });
 
     const targetNotifIds = unreadNotifs
-      .filter(n => (n.metadata as any)?.appointmentId === appointmentId)
-      .map(n => n.id);
+      .filter((n) => (n.metadata as any)?.appointmentId === appointmentId)
+      .map((n) => n.id);
 
     if (targetNotifIds.length > 0) {
       await this.prisma.notification.updateMany({
@@ -139,25 +157,22 @@ export class MessagesService {
     const unreadMessages = await this.prisma.message.findMany({
       where: {
         appointment: {
-          OR: [
-            { patient: { userId } },
-            { therapist: { userId } }
-          ]
+          OR: [{ patient: { userId } }, { therapist: { userId } }],
         },
         senderId: { not: userId },
         isRead: false,
       },
       select: {
-        appointmentId: true
-      }
+        appointmentId: true,
+      },
     });
-    
+
     // Transform to a map of appointmentId -> count
     const countMap: Record<string, number> = {};
     for (const msg of unreadMessages) {
       countMap[msg.appointmentId] = (countMap[msg.appointmentId] || 0) + 1;
     }
-    
+
     return countMap;
   }
 
@@ -175,7 +190,7 @@ export class MessagesService {
           lastName: '',
           isVerified: false,
           hourlyRate: 0,
-        }
+        },
       });
     }
 
@@ -185,7 +200,7 @@ export class MessagesService {
         appointment: {
           therapistId: therapist.id,
           patientId: patientId,
-          status: { not: 'CANCELLED' }
+          status: { not: 'CANCELLED' },
         },
       },
       include: {

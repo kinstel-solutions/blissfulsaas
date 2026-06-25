@@ -15,17 +15,20 @@ export class TherapistsService {
   ) {}
 
   private async getAdminEmails(): Promise<string[]> {
-    const admins = await this.prisma.user.findMany({ 
-      where: { role: 'ADMIN' }, 
-      select: { email: true } 
+    const admins = await this.prisma.user.findMany({
+      where: { role: 'ADMIN' },
+      select: { email: true },
     });
-    return admins.map(a => a.email);
+    return admins.map((a) => a.email);
   }
 
   async handleOnboardEmail(email: string, firstName: string, lastName: string) {
     const therapistName = `${firstName} ${lastName}`.trim();
     // 1. Send welcome to therapist
-    await this.emailService.sendTherapistApplicationReceived(email, therapistName);
+    await this.emailService.sendTherapistApplicationReceived(
+      email,
+      therapistName,
+    );
     // 2. Alert admins
     const adminEmails = await this.getAdminEmails();
     await this.emailService.sendAdminNewApplication(adminEmails, therapistName);
@@ -36,8 +39,8 @@ export class TherapistsService {
       where: {
         OR: [
           { isVerified: false, rejectionReason: null },
-          { pendingFields: { not: Prisma.DbNull } }
-        ]
+          { pendingFields: { not: Prisma.DbNull } },
+        ],
       },
       include: {
         user: {
@@ -80,14 +83,16 @@ export class TherapistsService {
         _avg: { rating: true },
         _count: { rating: true },
         where: { isPublic: true },
-      })
+      }),
     ]);
 
-    const enriched = therapists.map(t => {
-      const stats = ratingStats.find(s => s.therapistId === t.id);
+    const enriched = therapists.map((t) => {
+      const stats = ratingStats.find((s) => s.therapistId === t.id);
       return {
         ...t,
-        averageRating: stats?._avg?.rating ? Number(stats._avg.rating.toFixed(1)) : null,
+        averageRating: stats?._avg?.rating
+          ? Number(stats._avg.rating.toFixed(1))
+          : null,
         totalReviews: stats?._count?.rating || 0,
       };
     });
@@ -115,7 +120,7 @@ export class TherapistsService {
           lastName: 'Therapist',
           isVerified: false,
           hourlyRate: 0,
-        }
+        },
       });
     }
 
@@ -124,7 +129,7 @@ export class TherapistsService {
 
   async updateProfile(userId: string, data: any) {
     const profile = await this.getProfile(userId);
-    
+
     if (profile.isVerified) {
       const existingPending = (profile.pendingFields as object) || {};
       const updated = await this.prisma.therapist.update({
@@ -138,17 +143,22 @@ export class TherapistsService {
       });
 
       // Alert admins about pending updates via in-app notifications
-      const admins = await this.prisma.user.findMany({ where: { role: 'ADMIN' }, select: { id: true } });
+      const admins = await this.prisma.user.findMany({
+        where: { role: 'ADMIN' },
+        select: { id: true },
+      });
       const therapistName = `${profile.firstName} ${profile.lastName}`.trim();
-      
+
       for (const admin of admins) {
-        this.notifications.create({
-          userId: admin.id,
-          type: NotificationType.GENERAL,
-          title: 'Action Required: Therapist Profile Updates',
-          body: `Verified therapist Dr. ${therapistName} has submitted updates to their profile. Please review in the admin panel.`,
-          metadata: { therapistId: profile.id }
-        }).catch(err => this.logger.error(err));
+        this.notifications
+          .create({
+            userId: admin.id,
+            type: NotificationType.GENERAL,
+            title: 'Action Required: Therapist Profile Updates',
+            body: `Verified therapist Dr. ${therapistName} has submitted updates to their profile. Please review in the admin panel.`,
+            metadata: { therapistId: profile.id },
+          })
+          .catch((err) => this.logger.error(err));
       }
 
       return updated;
@@ -190,7 +200,7 @@ export class TherapistsService {
         weeklySchedule: {
           where: { isActive: true },
         },
-      }
+      },
     });
 
     if (!therapist || !therapist.isVerified) {
@@ -223,28 +233,39 @@ export class TherapistsService {
     const updated = await this.prisma.therapist.update({
       where: { id },
       data: updatedData,
-      include: { user: { select: { email: true } } }
+      include: { user: { select: { email: true } } },
     });
 
     const therapistName = `${updated.firstName} ${updated.lastName}`.trim();
 
     // Notify the therapist of their approval
     setImmediate(() => {
-      this.notifications.create({
-        userId: therapist.userId,
-        type: NotificationType.THERAPIST_APPROVED,
-        title: hasPendingEdits ? 'Profile Updates Approved 🎉' : 'Application Approved 🎉',
-        body: hasPendingEdits 
-          ? 'Your recent profile updates have been reviewed and approved.' 
-          : 'Congratulations! Your therapist application has been reviewed and approved. You can now start accepting patients.',
-        metadata: { therapistId: id },
-      }).catch(console.error);
+      this.notifications
+        .create({
+          userId: therapist.userId,
+          type: NotificationType.THERAPIST_APPROVED,
+          title: hasPendingEdits
+            ? 'Profile Updates Approved 🎉'
+            : 'Application Approved 🎉',
+          body: hasPendingEdits
+            ? 'Your recent profile updates have been reviewed and approved.'
+            : 'Congratulations! Your therapist application has been reviewed and approved. You can now start accepting patients.',
+          metadata: { therapistId: id },
+        })
+        .catch(console.error);
 
       if (updated.user?.email) {
         if (hasPendingEdits) {
-          this.emailService.sendTherapistProfileUpdatesApproved(updated.user.email, therapistName).catch(console.error);
+          this.emailService
+            .sendTherapistProfileUpdatesApproved(
+              updated.user.email,
+              therapistName,
+            )
+            .catch(console.error);
         } else {
-          this.emailService.sendTherapistWelcomeEmail(updated.user.email, therapistName).catch(console.error);
+          this.emailService
+            .sendTherapistWelcomeEmail(updated.user.email, therapistName)
+            .catch(console.error);
         }
       }
     });
@@ -255,7 +276,7 @@ export class TherapistsService {
   async reject(id: string, reason?: string) {
     const therapist = await this.prisma.therapist.findUnique({
       where: { id },
-      include: { user: { select: { email: true } } }
+      include: { user: { select: { email: true } } },
     });
 
     if (!therapist) {
@@ -271,22 +292,30 @@ export class TherapistsService {
       });
 
       setImmediate(() => {
-        this.notifications.create({
-          userId: therapist.userId,
-          type: NotificationType.GENERAL,
-          title: 'Profile Updates Rejected',
-          body: 'Your recent profile updates were not approved. Please contact support for more details.',
-        }).catch(err => this.logger.error(err));
+        this.notifications
+          .create({
+            userId: therapist.userId,
+            type: NotificationType.GENERAL,
+            title: 'Profile Updates Rejected',
+            body: 'Your recent profile updates were not approved. Please contact support for more details.',
+          })
+          .catch((err) => this.logger.error(err));
 
         if (therapist.user?.email) {
-          this.emailService.sendTherapistProfileUpdatesRejected(therapist.user.email, therapistName).catch(err => this.logger.error(err));
+          this.emailService
+            .sendTherapistProfileUpdatesRejected(
+              therapist.user.email,
+              therapistName,
+            )
+            .catch((err) => this.logger.error(err));
         }
       });
 
       return updated;
     }
 
-    const finalReason = reason || 'Application did not meet clinical requirements.';
+    const finalReason =
+      reason || 'Application did not meet clinical requirements.';
     const updated = await this.prisma.therapist.update({
       where: { id },
       data: {
@@ -298,7 +327,13 @@ export class TherapistsService {
 
     setImmediate(() => {
       if (therapist.user?.email) {
-        this.emailService.sendTherapistRejectionEmail(therapist.user.email, therapistName, finalReason).catch(err => this.logger.error(err));
+        this.emailService
+          .sendTherapistRejectionEmail(
+            therapist.user.email,
+            therapistName,
+            finalReason,
+          )
+          .catch((err) => this.logger.error(err));
       }
     });
 
@@ -317,20 +352,20 @@ export class TherapistsService {
       include: {
         patient: {
           include: {
-            user: { select: { email: true } }
-          }
-        }
+            user: { select: { email: true } },
+          },
+        },
       },
     });
 
     const patientMap = new Map();
-    appointments.forEach(appt => {
+    appointments.forEach((appt) => {
       if (!patientMap.has(appt.patientId)) {
         patientMap.set(appt.patientId, {
           ...appt.patient,
           sessionCount: 0,
           latestSession: appt.scheduledAt,
-          latestSessionNotes: appt.therapistNotes
+          latestSessionNotes: appt.therapistNotes,
         });
       }
       const p = patientMap.get(appt.patientId);

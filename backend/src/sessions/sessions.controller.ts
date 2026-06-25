@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Param, Body, UseGuards, Request, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Body,
+  UseGuards,
+  Request,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
 import { SessionsService } from './sessions.service';
@@ -18,7 +28,10 @@ export class SessionsController {
 
   @Get('upcoming')
   getUpcoming(@Request() req: any) {
-    return this.sessionsService.getUpcomingSessions(req.user.userId, req.user.role);
+    return this.sessionsService.getUpcomingSessions(
+      req.user.userId,
+      req.user.role,
+    );
   }
 
   @Get('admin/all')
@@ -40,12 +53,20 @@ export class SessionsController {
 
   @Get(':id')
   getSession(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
-    return this.sessionsService.getSessionById(req.user.userId, id, req.user.role);
+    return this.sessionsService.getSessionById(
+      req.user.userId,
+      id,
+      req.user.role,
+    );
   }
 
   @Patch(':id/cancel')
   cancel(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
-    return this.sessionsService.cancelSession(req.user.userId, id, req.user.role);
+    return this.sessionsService.cancelSession(
+      req.user.userId,
+      id,
+      req.user.role,
+    );
   }
 
   @Patch(':id/confirm')
@@ -73,7 +94,11 @@ export class SessionsController {
 
   @Patch(':id/notes')
   @Roles('THERAPIST')
-  updateNotes(@Request() req: any, @Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateNotesDto) {
+  updateNotes(
+    @Request() req: any,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: UpdateNotesDto,
+  ) {
     return this.sessionsService.updateNotes(req.user.userId, id, body.notes);
   }
 }

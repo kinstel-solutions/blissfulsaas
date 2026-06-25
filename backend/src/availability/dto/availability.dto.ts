@@ -24,11 +24,11 @@ export class UpsertWeeklyScheduleItemDto {
   @Max(6)
   dayOfWeek: number;
 
-  /** "09:00" HH:mm (UTC) */
+  /** "09:00" HH:mm (IST) */
   @IsString()
   startTime: string;
 
-  /** "17:00" HH:mm (UTC) */
+  /** "17:00" HH:mm (IST) */
   @IsString()
   endTime: string;
 

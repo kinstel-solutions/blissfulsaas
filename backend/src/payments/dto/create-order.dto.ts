@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsISO8601, IsOptional, IsEnum, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsISO8601,
+  IsOptional,
+  IsEnum,
+  IsUUID,
+} from 'class-validator';
 
 export enum ConsultationMode {
   ONLINE = 'ONLINE',

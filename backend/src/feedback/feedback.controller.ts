@@ -50,9 +50,7 @@ export class FeedbackController {
 
   /** GET /feedback/therapist/:therapistId/stats — Public rating aggregate (accessible by any authenticated user) */
   @Get('therapist/:therapistId/stats')
-  getTherapistStats(
-    @Param('therapistId', ParseUUIDPipe) therapistId: string,
-  ) {
+  getTherapistStats(@Param('therapistId', ParseUUIDPipe) therapistId: string) {
     return this.feedbackService.getTherapistRatingStats(therapistId);
   }
 

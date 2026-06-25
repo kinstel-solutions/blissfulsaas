@@ -21,6 +21,16 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
     return d.getDate();
   });
 
+  const todaysSessionsCount = sessions.filter((session) => {
+    const date = new Date(session.scheduledAt);
+    const today = new Date();
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    );
+  }).length;
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -68,9 +78,9 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
           <h3 className="text-xs font-bold text-slate-800 uppercase tracking-widest">
             Today&apos;s Schedule
           </h3>
-          {sessions.length > 0 && (
+          {todaysSessionsCount > 0 && (
             <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">
-              {sessions.length}
+              {todaysSessionsCount}
             </span>
           )}
         </div>

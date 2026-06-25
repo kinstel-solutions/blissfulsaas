@@ -1,4 +1,10 @@
-import { IsString, IsUUID, IsISO8601, IsOptional, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsUUID,
+  IsISO8601,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 
 export class CreateBookingDto {
   /** The therapist's internal UUID (from Therapist.id) */

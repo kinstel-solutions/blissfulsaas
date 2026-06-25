@@ -194,7 +194,7 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
                 {patient.latestSessionNotes ? (
                    <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
                       <p className="text-sm text-slate-600 leading-relaxed italic">
-                        "{patient.latestSessionNotes}"
+                        &quot;{patient.latestSessionNotes}&quot;
                       </p>
                       <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last updated {new Date(patient.latestSession!).toLocaleDateString()}</span>

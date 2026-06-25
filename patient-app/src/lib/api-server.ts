@@ -34,6 +34,7 @@ export const api = {
   },
   sessions: {
     all: () => fetchWithAuthContent("/sessions/all"),
+    getById: (id: string) => fetchWithAuthContent(`/sessions/${id}`),
   },
   intake: {
     get: () => fetchWithAuthContent("/patients/intake"),

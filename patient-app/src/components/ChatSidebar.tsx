@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase";
-// Force re-bundling to ensure hook stability across HMR
 import { api } from "@/lib/api";
-import { MessageSquare, Send, X } from "lucide-react";
+import { MessageSquare, Send } from "lucide-react";
 
 interface Message {
   id: string;
@@ -17,8 +16,6 @@ interface Message {
 interface ChatSidebarProps {
   appointmentId: string;
   currentUserId: string;
-  isOpen: boolean;
-  onClose: () => void;
 }
 
 const supabaseClient = createClient();
@@ -26,8 +23,6 @@ const supabaseClient = createClient();
 export default function ChatSidebar({
   appointmentId,
   currentUserId,
-  isOpen,
-  onClose,
 }: ChatSidebarProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -35,7 +30,6 @@ export default function ChatSidebar({
   const [status, setStatus] = useState<"connecting" | "connected" | "error">("connecting");
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Fetch message history on mount
   const loadHistory = useCallback(async () => {
     try {
       const history = await api.messages.history(appointmentId);
@@ -83,7 +77,6 @@ export default function ChatSidebar({
     return () => clearInterval(poll);
   }, [status, loadHistory]);
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -95,8 +88,8 @@ export default function ChatSidebar({
     setSending(true);
     try {
       await api.messages.send(appointmentId, text);
-    } catch (e: any) {
-      setInput(text); // restore on error
+    } catch {
+      setInput(text);
     } finally {
       setSending(false);
     }
@@ -109,40 +102,30 @@ export default function ChatSidebar({
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="absolute inset-0 z-40 flex flex-col bg-slate-950/95 backdrop-blur-xl rounded-2xl border border-white/10 animate-in slide-in-from-right duration-300">
+    <div className="flex flex-col flex-1 min-h-0">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <h3 className="text-sm font-bold uppercase tracking-widest text-white/70">
-            Session Chat
-          </h3>
-          {status !== 'connected' && (
-            <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-widest ${
-              status === 'error' ? 'bg-red-500/20 text-red-400' : 
-              'bg-yellow-500/20 text-yellow-400'
-            }`}>
-              {status}
-            </span>
-          )}
-        </div>
-        <button
-          onClick={onClose}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
-        >
-          <X className="w-4 h-4" />
-        </button>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        <h3 className="text-xs font-bold uppercase tracking-widest text-primary/60 flex items-center gap-2">
+          <MessageSquare className="w-4 h-4" /> Session Chat
+        </h3>
+        {status !== 'connected' && (
+          <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-widest ${
+            status === 'error' ? 'bg-red-100 text-red-700' : 
+            'bg-yellow-100 text-yellow-700'
+          }`}>
+            {status}
+          </span>
+        )}
       </div>
 
       {/* Message List */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10">
+      <div className="flex-1 overflow-y-auto space-y-3 min-h-0 pr-1">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full gap-3 opacity-30">
-            <MessageSquare className="w-8 h-8 text-white" />
-            <p className="text-white text-xs font-bold uppercase tracking-widest">
+          <div className="flex flex-col items-center justify-center h-32 gap-2 text-slate-300">
+            <MessageSquare className="w-6 h-6" />
+            <p className="text-xs font-bold uppercase tracking-widest">
               No messages yet
             </p>
           </div>
@@ -155,19 +138,19 @@ export default function ChatSidebar({
               className={`flex ${isMe ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                   isMe
-                    ? "bg-primary text-white rounded-br-sm"
-                    : "bg-white/10 text-white/90 rounded-bl-sm"
+                    ? "bg-slate-900 text-white rounded-br-sm"
+                    : "bg-slate-100 text-slate-800 rounded-bl-sm"
                 }`}
               >
                 <p>{msg.content}</p>
                 <p
                   className={`text-xs mt-1 font-bold uppercase tracking-wider ${
-                    isMe ? "text-white/50" : "text-white/30"
+                    isMe ? "text-white/40" : "text-slate-400"
                   }`}
                 >
-                  {new Date(msg.createdAt).toLocaleTimeString('en-US', {
+                  {new Date(msg.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
@@ -180,20 +163,20 @@ export default function ChatSidebar({
       </div>
 
       {/* Input */}
-      <div className="px-4 pb-4 pt-2 border-t border-white/10">
-        <div className="flex items-center gap-2 bg-white/10 rounded-2xl px-4 py-2">
+      <div className="mt-2">
+        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            className="flex-1 bg-transparent text-white placeholder:text-white/30 text-sm outline-none"
+            placeholder="Send a message..."
+            className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-400 text-sm outline-none"
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || sending}
-            className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white disabled:opacity-30 hover:bg-primary/80 transition-all active:scale-90"
+            className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white disabled:opacity-30 hover:bg-primary transition-all active:scale-90"
           >
             <Send className="w-3.5 h-3.5" />
           </button>

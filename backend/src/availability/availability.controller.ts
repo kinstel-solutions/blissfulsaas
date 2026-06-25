@@ -69,10 +69,7 @@ export class AvailabilityController {
   /** POST /availability/overrides — add or update a date override */
   @Post('overrides')
   @Roles('THERAPIST')
-  async createOverride(
-    @Request() req: any,
-    @Body() dto: CreateOverrideDto,
-  ) {
+  async createOverride(@Request() req: any, @Body() dto: CreateOverrideDto) {
     const therapist = await this.availabilityService.getTherapistByUserId(
       req.user.userId,
     );
@@ -142,9 +139,7 @@ export class AvailabilityController {
    */
   @Get('therapist/:id/schedule')
   @Roles('PATIENT', 'ADMIN', 'THERAPIST')
-  async getTherapistSchedule(
-    @Param('id', ParseUUIDPipe) therapistId: string,
-  ) {
+  async getTherapistSchedule(@Param('id', ParseUUIDPipe) therapistId: string) {
     return this.availabilityService.getWeeklySchedule(therapistId);
   }
 }

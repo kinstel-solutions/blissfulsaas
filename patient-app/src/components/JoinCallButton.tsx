@@ -7,9 +7,10 @@ import { Video } from "lucide-react";
 interface JoinCallButtonProps {
   sessionId: string;
   scheduledAt: string;
+  status: string;
 }
 
-export default function JoinCallButton({ sessionId, scheduledAt }: JoinCallButtonProps) {
+export default function JoinCallButton({ sessionId, scheduledAt, status }: JoinCallButtonProps) {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
   useEffect(() => {
@@ -25,6 +26,21 @@ export default function JoinCallButton({ sessionId, scheduledAt }: JoinCallButto
     const interval = setInterval(checkTime, 1000);
     return () => clearInterval(interval);
   }, [scheduledAt]);
+
+  // If session is not confirmed yet, block joining regardless of time
+  if (status === "PENDING") {
+    return (
+      <div className="w-full flex flex-col items-center justify-center gap-2 px-6 py-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700">
+        <span className="flex items-center gap-2 font-extrabold uppercase tracking-widest text-xs">
+          <Video className="w-4.5 h-4.5 opacity-60" />
+          Awaiting Confirmation
+        </span>
+        <span className="text-xs font-medium text-amber-600/80 text-center">
+          The join button will be available once the therapist confirms your session.
+        </span>
+      </div>
+    );
+  }
 
   // If time is not yet computed, disable to prevent hydration layout shift/mismatch
   const isDisabled = timeLeft === null || timeLeft > 5 * 60 * 1000;

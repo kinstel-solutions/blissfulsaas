@@ -36,19 +36,13 @@ export class NotificationsController {
 
   /** PATCH /notifications/:id/read — mark one as read */
   @Patch(':id/read')
-  markRead(
-    @Request() req: any,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  markRead(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
     return this.notificationsService.markRead(req.user.userId, id);
   }
 
   /** DELETE /notifications/:id — delete one notification */
   @Delete(':id')
-  delete(
-    @Request() req: any,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  delete(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
     return this.notificationsService.delete(req.user.userId, id);
   }
 

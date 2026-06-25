@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Star, MessageSquare, Send, CheckCircle2, Loader2, X } from "lucide-react";
 
 interface FeedbackFormProps {
@@ -22,6 +23,9 @@ export default function FeedbackForm({
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
 
   const getRatingLabel = (r: number) => {
@@ -77,7 +81,8 @@ export default function FeedbackForm({
   };
 
   if (submitted) {
-    return (
+    if (!mounted) return null;
+    return createPortal(
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
         <div className="bg-white border border-outline-variant/20 rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-in zoom-in-95 duration-300">
           <div className="w-20 h-20 bg-primary/5 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
@@ -88,13 +93,16 @@ export default function FeedbackForm({
             Your feedback helps our therapists grow and supports others in finding the right care.
           </p>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   }
 
   const displayRating = hoveredRating || rating;
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
       <div className="bg-white border border-outline-variant/20 rounded-[2.5rem] p-8 md:p-12 max-w-xl w-full shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-in zoom-in-95 duration-300 relative">
         {/* Close button */}
@@ -201,6 +209,7 @@ export default function FeedbackForm({
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

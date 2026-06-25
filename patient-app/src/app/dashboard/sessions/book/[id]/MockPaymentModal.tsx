@@ -72,7 +72,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
       const mockPaymentId = `MOCK_PAY_${Date.now()}_${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
       const mockSignature = `MOCK_SIG_${Date.now()}`;
 
-      await api.payments.verify({
+      const result = await api.payments.verify({
         razorpay_order_id: orderData.orderId,
         razorpay_payment_id: mockPaymentId,
         razorpay_signature: mockSignature,
@@ -83,8 +83,9 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
       });
 
       setStep("success");
-      // Redirect after showing success for a moment
-      setTimeout(() => router.push("/dashboard/sessions?success=true"), 1800);
+      // Redirect to the new session detail page
+      const sessionId = result?.id || result?.appointmentId;
+      setTimeout(() => router.push(sessionId ? `/dashboard/sessions/${sessionId}` : "/dashboard/sessions"), 1800);
     } catch (err: any) {
       setErrorMsg(err.message || "Payment verification failed");
       setStep("error");

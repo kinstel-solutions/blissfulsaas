@@ -17,23 +17,26 @@ export class PatientsService {
           userId,
           firstName: 'New',
           lastName: 'Patient',
-        }
+        },
       });
     }
 
     return patient;
   }
 
-  async updateIntake(userId: string, data: {
-    reasonForSeeking?: string;
-    mentalHealthHistory?: string;
-    currentMedications?: string;
-    previousTherapy?: boolean;
-    therapyGoals?: string;
-    emergencyContactName?: string;
-    emergencyContactPhone?: string;
-    primaryConcerns?: string[];
-  }) {
+  async updateIntake(
+    userId: string,
+    data: {
+      reasonForSeeking?: string;
+      mentalHealthHistory?: string;
+      currentMedications?: string;
+      previousTherapy?: boolean;
+      therapyGoals?: string;
+      emergencyContactName?: string;
+      emergencyContactPhone?: string;
+      primaryConcerns?: string[];
+    },
+  ) {
     await this.prisma.patient.findUniqueOrThrow({ where: { userId } });
 
     return this.prisma.patient.update({
