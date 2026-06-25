@@ -10,7 +10,7 @@ export default function CompleteSessionButton({ appointmentId }: { appointmentId
   const handleComplete = async () => {
     if (!window.confirm("Are you sure you want to complete this session? This action cannot be undone.")) return;
     try {
-      await api.appointments.complete(appointmentId);
+      await api.sessions.complete(appointmentId);
       router.push('/dashboard/appointments');
     } catch (err) {
       console.error("Failed to complete appointment", err);
