@@ -74,11 +74,18 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
     const handleFullscreenChange = () => {
       setIsFullscreen(!!(document.fullscreenElement || (document as any).webkitFullscreenElement));
     };
+    const handleSessionCompleting = () => {
+      setSessionEnded(true);
+    };
+    
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    window.addEventListener("session-completing", handleSessionCompleting);
+    
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
       document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      window.removeEventListener("session-completing", handleSessionCompleting);
     };
   }, []);
 
@@ -132,14 +139,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
     }
   }, [sessionEnded, localCameraTrack, localMicrophoneTrack]);
 
-  useEffect(() => {
-    return () => {
-      localCameraTrack?.stop();
-      localCameraTrack?.close();
-      localMicrophoneTrack?.stop();
-      localMicrophoneTrack?.close();
-    };
-  }, [localCameraTrack, localMicrophoneTrack]);
+
 
   // Handle Dynamic Muting/Disabling - Use setEnabled to turn off hardware instead of just muting
   useEffect(() => {
@@ -160,6 +160,14 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
     if (localCameraTrack) {
       const config = getEncoderConfig(quality, frameRate);
       await localCameraTrack.setEncoderConfiguration(config as any).catch(console.error);
+
+      const mediaStreamTrack = localCameraTrack.getMediaStreamTrack();
+      if (mediaStreamTrack) {
+        await mediaStreamTrack.applyConstraints({
+          width: { ideal: config.width },
+          height: { ideal: config.height }
+        }).catch(console.error);
+      }
     }
   };
 
@@ -193,21 +201,16 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
       setTimeout(() => router.push(`/dashboard/appointments/${appointmentId}`), 3000);
     };
 
-    const handleUserLeft = (user: any, reason: string) => {
-      if (reason === "Quit") {
-        setSessionEnded(true);
-        setTimeout(() => router.push(`/dashboard/appointments/${appointmentId}`), 3000);
-      }
-    };
+
 
     client.on("token-privilege-will-expire", handleTokenWillExpire);
     client.on("token-privilege-did-expire", handleTokenExpired);
-    client.on("user-left", handleUserLeft);
+
 
     return () => {
       client.off("token-privilege-will-expire", handleTokenWillExpire);
       client.off("token-privilege-did-expire", handleTokenExpired);
-      client.off("user-left", handleUserLeft);
+
     };
   }, [client, router, appointmentId]);
 

@@ -2,17 +2,18 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { MessageSquare, Search, Clock, Calendar, ChevronRight, Send, Ban } from "lucide-react";
+import Link from "next/link";
+import { MessageSquare, Search, Clock, Calendar, ChevronRight, Send, Ban, Video, CalendarPlus, Book, BookOpen } from "lucide-react";
 import { api } from "@/lib/api";
 import { createClient } from "@/lib/supabase";
 
 const supabaseClient = createClient();
 
-export default function MessageHistoryClient({ 
-  initialSessions, 
+export default function MessageHistoryClient({
+  initialSessions,
   currentUserId
-}: { 
-  initialSessions: any[], 
+}: {
+  initialSessions: any[],
   currentUserId: string
 }) {
   const [selectedSession, setSelectedSession] = useState<any>(null);
@@ -31,7 +32,7 @@ export default function MessageHistoryClient({
     try {
       const data = await api.messages.history(sessionId);
       setMessages(data || []);
-      
+
       // Mark as read when messages are loaded
       await api.messages.markRead(sessionId);
       setUnreadCounts(prev => ({ ...prev, [sessionId]: 0 }));
@@ -46,7 +47,7 @@ export default function MessageHistoryClient({
     try {
       const counts = await api.messages.unreadCounts();
       setUnreadCounts(counts || {});
-    } catch (e) {}
+    } catch (e) { }
   }, []);
 
   const searchParams = useSearchParams();
@@ -176,7 +177,7 @@ export default function MessageHistoryClient({
       // Primary sort: Active status first
       if (a.status !== 'CANCELLED' && b.status === 'CANCELLED') return -1;
       if (a.status === 'CANCELLED' && b.status !== 'CANCELLED') return 1;
-      
+
       // Secondary sort: Most recent date
       return new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime();
     });
@@ -186,6 +187,14 @@ export default function MessageHistoryClient({
     Date.now() <= new Date(selectedSession.scheduledAt).getTime() + ((selectedSession.duration || 60) * 60000) + (7 * 24 * 60 * 60 * 1000)
   ) : false;
 
+  const activeUpcomingSession = selectedSession
+    ? initialSessions.find(
+      (s) =>
+        s.therapist?.id === selectedSession.therapist?.id &&
+        (s.status === 'PENDING' || s.status === 'CONFIRMED')
+    )
+    : null;
+
   return (
     <div className="flex-1 bg-white border border-slate-200 rounded-2xl md:rounded-xl shadow-sm flex overflow-hidden h-[calc(100vh-16rem)] md:h-[calc(100vh-18rem)]">
       {/* Sidebar - Conversation List */}
@@ -193,9 +202,9 @@ export default function MessageHistoryClient({
         <div className="p-4 md:p-6 border-b border-slate-50">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Search therapists..." 
+            <input
+              type="text"
+              placeholder="Search therapists..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-slate-50 border-none rounded-xl pl-10 pr-4 py-2.5 md:py-2 text-xs focus:ring-2 focus:ring-primary/20 transition-all outline-none"
@@ -217,24 +226,22 @@ export default function MessageHistoryClient({
                 <button
                   key={s.id}
                   onClick={() => setSelectedSession(s)}
-                  className={`relative w-full p-3 md:p-4 rounded-xl md:rounded-2xl transition-all flex items-center gap-3 text-left ${
-                    isActive ? 'bg-primary/5 border border-primary/10' : 'hover:bg-slate-50 border border-transparent'
-                  }`}
+                  className={`relative w-full p-3 md:p-4 rounded-xl md:rounded-2xl transition-all flex items-center gap-3 text-left ${isActive ? 'bg-primary/5 border border-primary/10' : 'hover:bg-slate-50 border border-transparent'
+                    }`}
                 >
                   {unreadCount > 0 && (
                     <div className="absolute top-3 md:top-4 right-3 md:right-4 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
                       {unreadCount}
                     </div>
                   )}
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                    isActive ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'
-                  }`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${isActive ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'
+                    }`}>
                     {therapist?.firstName?.[0]}{therapist?.lastName?.[0]}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <p className={`text-sm font-bold truncate ${isActive ? 'text-primary' : 'text-slate-900'}`}>
-                        Dr. {therapist?.firstName} {therapist?.lastName}
+                        {therapist?.firstName} {therapist?.lastName}
                       </p>
                       {s.status === 'CANCELLED' && (
                         <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 bg-red-50 text-red-500 rounded-md shrink-0">Cancelled</span>
@@ -272,7 +279,7 @@ export default function MessageHistoryClient({
             {/* Thread Header */}
             <div className="p-4 md:p-6 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-10">
               <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
-                <button 
+                <button
                   onClick={() => setSelectedSession(null)}
                   className="md:hidden p-2 -ml-2 text-slate-400 hover:text-slate-900 shrink-0"
                 >
@@ -280,7 +287,7 @@ export default function MessageHistoryClient({
                 </button>
                 <div className="min-w-0">
                   <h3 className="text-sm font-bold text-slate-900 leading-none truncate">
-                    Dr. {selectedSession.therapist?.firstName} {selectedSession.therapist?.lastName}
+                    {selectedSession.therapist?.firstName} {selectedSession.therapist?.lastName}
                   </h3>
                   <div className="flex flex-wrap items-center gap-2 mt-1.5">
                     <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest flex items-center gap-1">
@@ -301,6 +308,28 @@ export default function MessageHistoryClient({
                   </div>
                 </div>
               </div>
+              {/* Actions */}
+              <div className="flex items-center gap-2">
+                {activeUpcomingSession ? (
+                  <Link
+                    href={`/dashboard/sessions/${activeUpcomingSession.id}`}
+                    className="flex items-center gap-1.5 px-3 md:px-4 py-2 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-widest rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all shadow-primary/20 whitespace-nowrap"
+                  >
+                    <Book className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">View Session</span>
+                    <span className="md:hidden text-[11px]">View Session</span>
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/dashboard/sessions/book/${selectedSession.therapist?.id}`}
+                    className="flex items-center gap-1.5 px-3 md:px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 text-xs font-bold uppercase tracking-widest rounded-xl transition-all whitespace-nowrap"
+                  >
+                    <CalendarPlus className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">Book Consultation</span>
+                    <span className="md:hidden">Book</span>
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Message List */}
@@ -319,11 +348,10 @@ export default function MessageHistoryClient({
                   const isMe = m.senderId === currentUserId;
                   return (
                     <div key={m.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                      <div className={`max-w-[85%] md:max-w-[70%] p-3.5 md:p-4 rounded-xl md:rounded-2xl text-xs md:text-sm shadow-sm ${
-                        isMe 
-                          ? 'bg-primary text-white rounded-tr-none' 
-                          : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
-                      }`}>
+                      <div className={`max-w-[85%] md:max-w-[70%] p-3.5 md:p-4 rounded-xl md:rounded-2xl text-xs md:text-sm shadow-sm ${isMe
+                        ? 'bg-primary text-white rounded-tr-none'
+                        : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
+                        }`}>
                         {m.content}
                       </div>
                       <span className="mt-1.5 text-[9px] md:text-xs font-bold text-slate-300 uppercase tracking-tighter">
@@ -363,8 +391,8 @@ export default function MessageHistoryClient({
                   Read Only History
                 </p>
                 <p className="text-[10px] text-slate-400">
-                  {isCancelled 
-                    ? "Chatting is disabled for cancelled appointments." 
+                  {isCancelled
+                    ? "Chatting is disabled for cancelled appointments."
                     : "This chat window closed 7 days after the consultation."
                   }
                 </p>

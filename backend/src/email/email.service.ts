@@ -180,7 +180,7 @@ export class EmailService {
   async sendTherapistProfileUpdatesApproved(to: string, therapistName: string) {
     const title = 'Changes Approved';
     const subject = 'Your profile updates are now live — Blissful SaaS';
-    const body = `Dear Dr. ${therapistName},\n\nWe have successfully reviewed and approved your recent profile updates. The changes are now live and visible to patients on the platform.`;
+    const body = `Dear ${therapistName},\n\nWe have successfully reviewed and approved your recent profile updates. The changes are now live and visible to patients on the platform.`;
     return this.sendEmail(
       to,
       subject,
@@ -196,7 +196,7 @@ export class EmailService {
   async sendTherapistProfileUpdatesRejected(to: string, therapistName: string) {
     const title = 'Profile Updates Reviewed';
     const subject = 'Update on your profile revision request — Blissful SaaS';
-    const body = `Dear Dr. ${therapistName},\n\nOur administration team has reviewed your requested profile changes. Unfortunately, we could not approve the updates as submitted. Your active profile will remain unchanged for now.\n\nPlease review your details and re-submit or contact therapist support for further clarification.`;
+    const body = `Dear ${therapistName},\n\nOur administration team has reviewed your requested profile changes. Unfortunately, we could not approve the updates as submitted. Your active profile will remain unchanged for now.\n\nPlease review your details and re-submit or contact therapist support for further clarification.`;
     return this.sendEmail(
       to,
       subject,

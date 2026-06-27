@@ -3,11 +3,11 @@
 import React, { useRef, useEffect } from 'react';
 
 const testimonials = [
-  { text: '"The Blissful Station has transformed how I manage my practice. The intake flows and automated billing save me hours every week, allowing me to focus entirely on patient care."', name: 'Dr. Aruna' },
-  { text: '"Finally, a platform that respects the clinical process. The design is calm, and the tools are rigorous. It\'s the digital station my practice needed."', name: 'Dr. Sameer' },
-  { text: '"The verified marketplace has brought me high-alignment patients who are truly ready for the work. The quality of connection here is unmatched."', name: 'Dr. Priya' },
-  { text: '"Seamless transitions between video consultations and session notes. The interface is intuitive and reduces the cognitive load of practice management."', name: 'Dr. Vikram' },
-  { text: '"As a clinical psychologist, I value the ethical boundaries built into the system. The notification and boundary tools are game-changers."', name: 'Dr. Neha' },
+  { text: '"The Blissful Station has transformed how I manage my practice. The intake flows and automated billing save me hours every week, allowing me to focus entirely on patient care."', name: 'Aruna' },
+  { text: '"Finally, a platform that respects the clinical process. The design is calm, and the tools are rigorous. It\'s the digital station my practice needed."', name: 'Sameer' },
+  { text: '"The verified marketplace has brought me high-alignment patients who are truly ready for the work. The quality of connection here is unmatched."', name: 'Priya' },
+  { text: '"Seamless transitions between video consultations and session notes. The interface is intuitive and reduces the cognitive load of practice management."', name: 'Vikram' },
+  { text: '"As a clinical psychologist, I value the ethical boundaries built into the system. The notification and boundary tools are game-changers."', name: 'Neha' },
 ];
 
 const doubled = [...testimonials, ...testimonials];

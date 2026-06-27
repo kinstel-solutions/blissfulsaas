@@ -63,7 +63,7 @@ export class FeedbackService {
 
     // Notify therapist (fire-and-forget)
     const therapistName =
-      `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+      `${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
     setImmediate(() => {
       if (appointment.therapist.userId) {
         this.notifications

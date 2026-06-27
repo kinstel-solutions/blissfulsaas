@@ -27,15 +27,15 @@ export default function CancelSessionButton({ id }: { id: string }) {
     <button 
       onClick={handleCancel}
       disabled={loading}
-      className="flex items-center gap-1.5 px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+      className="flex items-center justify-center gap-2 w-full h-14 bg-rose-50/50 hover:bg-rose-50 text-rose-600 border border-rose-100/80 font-bold uppercase tracking-widest text-xs rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
       title="Cancel Session"
     >
       {loading ? (
-        <div className="w-3.5 h-3.5 border-2 border-rose-600/30 border-t-rose-600 rounded-full animate-spin" />
+        <div className="w-4 h-4 border-2 border-rose-600/30 border-t-rose-600 rounded-full animate-spin" />
       ) : (
-        <Trash2 className="w-3.5 h-3.5" />
+        <Trash2 className="w-4 h-4" />
       )}
-      <span>Cancel</span>
+      <span>Cancel Session</span>
     </button>
   );
 }

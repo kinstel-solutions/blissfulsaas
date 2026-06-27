@@ -16,26 +16,27 @@ interface Session {
 
 interface SessionFeedbackButtonProps {
   session: Session;
+  fullWidth?: boolean;
 }
 
-export default function SessionFeedbackButton({ session }: SessionFeedbackButtonProps) {
+export default function SessionFeedbackButton({ session, fullWidth }: SessionFeedbackButtonProps) {
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   if (session.status !== "COMPLETED") return null;
 
   const hasExistingFeedback = !!session.feedback;
-  const therapistName = `Dr. ${session.therapist?.firstName ?? ""} ${session.therapist?.lastName ?? ""}`.trim();
+  const therapistName = `${session.therapist?.firstName ?? ""} ${session.therapist?.lastName ?? ""}`.trim();
 
   if (hasExistingFeedback || submitted) {
     const rating = session.feedback?.rating ?? 5;
     return (
-      <div className="flex items-center gap-1.5 px-4 py-2 bg-primary/5 border border-primary/10 rounded-xl">
+      <div className={`flex items-center justify-center gap-1.5 px-4 h-14 bg-primary/5 border border-primary/10 rounded-2xl ${fullWidth ? 'w-full' : ''}`}>
         <div className="flex items-center gap-0.5">
           {[1, 2, 3, 4, 5].map((star) => (
             <Star
               key={star}
-              className={`w-3.5 h-3.5 ${
+              className={`w-4 h-4 ${
                 star <= rating
                   ? "fill-primary text-primary"
                   : "text-outline-variant/30"
@@ -43,7 +44,7 @@ export default function SessionFeedbackButton({ session }: SessionFeedbackButton
             />
           ))}
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
+        <span className="text-xs font-bold uppercase tracking-widest text-primary/60">
           Reviewed
         </span>
       </div>
@@ -55,9 +56,9 @@ export default function SessionFeedbackButton({ session }: SessionFeedbackButton
       <button
         id={`leave-review-btn-${session.id}`}
         onClick={() => setShowForm(true)}
-        className="px-4 py-3 bg-primary/5 text-primary border border-primary/10 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-primary/10 transition-all flex items-center gap-1.5"
+        className={`bg-primary/5 text-primary border border-primary/10 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-primary/10 transition-all flex items-center justify-center gap-1.5 h-14 ${fullWidth ? 'w-full' : 'px-4'}`}
       >
-        <Star className="w-3.5 h-3.5" />
+        <Star className="w-4 h-4" />
         Rate Session
       </button>
 

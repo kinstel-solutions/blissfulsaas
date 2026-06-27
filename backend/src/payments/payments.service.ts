@@ -79,7 +79,7 @@ export class PaymentsService {
     }
 
     const therapistName =
-      `Dr. ${therapist.firstName ?? ''} ${therapist.lastName ?? ''}`.trim();
+      `${therapist.firstName ?? ''} ${therapist.lastName ?? ''}`.trim();
     const amountInPaise = Math.round((therapist.hourlyRate ?? 1500) * 100);
 
     if (this.isMock) {
@@ -228,7 +228,7 @@ export class PaymentsService {
       });
 
       const therapistName =
-        `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+        `${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
       const dateStr = scheduledAt.toLocaleDateString('en-US', {
         weekday: 'short',
         month: 'short',

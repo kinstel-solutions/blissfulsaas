@@ -52,7 +52,7 @@ export default async function AppointmentsPage() {
   // Aggregate average per therapist
   const feedbackByTherapist: Record<string, { name: string; ratings: number[] }> = {};
   for (const fb of feedbackItems) {
-    const tName = `Dr. ${fb.appointment?.therapist?.firstName ?? ""} ${fb.appointment?.therapist?.lastName ?? ""}`.trim();
+    const tName = `${fb.appointment?.therapist?.firstName ?? ""} ${fb.appointment?.therapist?.lastName ?? ""}`.trim();
     const tId = fb.therapistId;
     if (!feedbackByTherapist[tId]) {
       feedbackByTherapist[tId] = { name: tName, ratings: [] };
@@ -170,7 +170,7 @@ export default async function AppointmentsPage() {
                         </div>
                         <div>
                           <p className="font-heading font-medium text-foreground text-sm">
-                            Dr. {appt.therapist?.firstName} {appt.therapist?.lastName}
+                            {appt.therapist?.firstName} {appt.therapist?.lastName}
                           </p>
                           <p className="text-[10px] text-muted-foreground mt-0.5 tracking-tight">{appt.therapist?.user?.email}</p>
                         </div>
@@ -288,7 +288,7 @@ export default async function AppointmentsPage() {
                       {fb.appointment?.patient?.firstName ?? "Patient"} {fb.appointment?.patient?.lastName ?? ""}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      → Dr. {fb.appointment?.therapist?.firstName ?? ""} {fb.appointment?.therapist?.lastName ?? ""}
+                      → {fb.appointment?.therapist?.firstName ?? ""} {fb.appointment?.therapist?.lastName ?? ""}
                     </p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">

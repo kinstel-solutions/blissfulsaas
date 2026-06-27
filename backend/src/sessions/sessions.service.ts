@@ -104,7 +104,7 @@ export class SessionsService {
 
       // 6. Emit notifications (fire-and-forget after tx)
       const therapistName =
-        `Dr. ${therapist.firstName ?? ''} ${therapist.lastName ?? ''}`.trim();
+        `${therapist.firstName ?? ''} ${therapist.lastName ?? ''}`.trim();
       const dateStr = scheduledAt.toLocaleDateString('en-US', {
         weekday: 'short',
         month: 'short',
@@ -344,7 +344,7 @@ export class SessionsService {
       const stats = therapistAggregates.find((a) => a.therapistId === t.id);
       return {
         therapistId: t.id,
-        therapistName: `Dr. ${t.firstName || ''} ${t.lastName || ''}`.trim(),
+        therapistName: `${t.firstName || ''} ${t.lastName || ''}`.trim(),
         email: t.user?.email || '',
         totalConsultations: stats?._count?._all || 0,
         revenue: stats?._sum?.amountPaid || 0,
@@ -418,7 +418,7 @@ export class SessionsService {
         timeZone: 'Asia/Kolkata',
       });
       const therapistName =
-        `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+        `${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
 
       setImmediate(() => {
         if (role === 'PATIENT') {
@@ -525,7 +525,7 @@ export class SessionsService {
 
       // Notify patient session is complete + request feedback
       const therapistName =
-        `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+        `${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
       setImmediate(() => {
         const title = 'Session Completed';
         const body = `Your session with ${therapistName} has been marked as complete. We hope it went well!`;
@@ -607,7 +607,7 @@ export class SessionsService {
 
       // Notify patient session is confirmed
       const therapistName =
-        `Dr. ${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
+        `${appointment.therapist.firstName ?? ''} ${appointment.therapist.lastName ?? ''}`.trim();
       const dateStr = appointment.scheduledAt.toLocaleDateString('en-US', {
         weekday: 'short',
         month: 'short',
@@ -814,7 +814,7 @@ export class SessionsService {
     for (const session of upcomingSessions) {
       try {
         const therapistName =
-          `Dr. ${session.therapist.firstName ?? ''} ${session.therapist.lastName ?? ''}`.trim();
+          `${session.therapist.firstName ?? ''} ${session.therapist.lastName ?? ''}`.trim();
         const patientName =
           `${session.patient.firstName ?? ''} ${session.patient.lastName ?? ''}`.trim() ||
           'Patient';

@@ -30,14 +30,9 @@ export default function JoinCallButton({ sessionId, scheduledAt, status }: JoinC
   // If session is not confirmed yet, block joining regardless of time
   if (status === "PENDING") {
     return (
-      <div className="w-full flex flex-col items-center justify-center gap-2 px-6 py-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700">
-        <span className="flex items-center gap-2 font-extrabold uppercase tracking-widest text-xs">
-          <Video className="w-4.5 h-4.5 opacity-60" />
-          Awaiting Confirmation
-        </span>
-        <span className="text-xs font-medium text-amber-600/80 text-center">
-          The join button will be available once the therapist confirms your session.
-        </span>
+      <div className="w-full flex items-center justify-center gap-2 px-6 h-14 bg-amber-50/50 border border-amber-200/80 rounded-2xl text-amber-700 font-bold uppercase tracking-widest text-xs">
+        <Video className="w-4 h-4 opacity-60 shrink-0" />
+        <span>Awaiting Confirmation</span>
       </div>
     );
   }
@@ -63,27 +58,20 @@ export default function JoinCallButton({ sessionId, scheduledAt, status }: JoinC
     return (
       <button
         disabled
-        className="w-full sm:w-auto bg-neutral-100 text-neutral-500 border border-neutral-200 px-6 py-3.5 rounded-xl font-extrabold uppercase tracking-widest text-xs sm:text-sm cursor-not-allowed opacity-80 flex flex-col items-center justify-center min-w-[140px] leading-tight"
+        className="w-full bg-slate-50/50 text-slate-400 border border-outline-variant/30 h-14 rounded-2xl font-bold uppercase tracking-widest text-xs cursor-not-allowed flex items-center justify-center gap-2"
         title="Join Call will be available 5 minutes before the session starts"
       >
-        <span className="flex items-center gap-2">
-          <Video className="w-4.5 h-4.5 opacity-60" />
-          Join Call
-        </span>
-        {countdownText && (
-          <span className="text-xs sm:text-xs font-bold lowercase tracking-normal text-neutral-600 mt-1">
-            {countdownText}
-          </span>
-        )}
+        <Video className="w-4 h-4 opacity-50 shrink-0" />
+        <span>Join Call {countdownText ? `(${countdownText})` : ""}</span>
       </button>
     );
   }
 
   return (
-    <Link href={`/dashboard/sessions/${sessionId}/call`} className="w-full sm:w-auto">
-      <button className="w-full sm:w-auto bg-emerald-600 text-white hover:bg-emerald-700 px-6 py-3.5 rounded-xl font-extrabold uppercase tracking-widest text-xs sm:text-sm shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
-        <Video className="w-4.5 h-4.5" />
-        Join Call
+    <Link href={`/dashboard/sessions/${sessionId}/call`} className="w-full">
+      <button className="w-full bg-primary text-primary-foreground hover:bg-primary/95 h-14 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+        <Video className="w-4 h-4 text-primary-foreground shrink-0" />
+        <span>Join Call</span>
       </button>
     </Link>
   );
