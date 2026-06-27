@@ -15,17 +15,28 @@ export async function fetchWithAuthContent(path: string, options: RequestInit = 
     headers["Authorization"] = `Bearer ${session.access_token}`;
   }
 
-  const response = await fetch(`${BACKEND_URL}${path}`, {
-    ...options,
-    headers,
-    cache: 'no-store'
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-  if (!response.ok) {
+  try {
+    const response = await fetch(`${BACKEND_URL}${path}`, {
+      ...options,
+      headers,
+      cache: 'no-store',
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error(`Fetch failed for path ${path}:`, error.message || error);
     return null;
+  } finally {
+    clearTimeout(timeoutId);
   }
-
-  return response.json();
 }
 
 export const api = {

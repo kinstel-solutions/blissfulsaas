@@ -66,7 +66,7 @@ export default async function DashboardLayout({
           </Link>
           <span className="text-xs font-bold text-primary leading-normal text-left block">
             Express. Connect.<br />
-            Understand. Transform.
+            Transform.
           </span>
         </div>
 
@@ -82,7 +82,7 @@ export default async function DashboardLayout({
             </div>
             <div className="flex flex-col overflow-hidden text-left leading-tight">
               <span className="text-[13.5px] font-bold truncate">
-                Dr. {user.user_metadata?.first_name || "Riya"} {user.user_metadata?.last_name || "Sharma"}
+                {user.user_metadata?.first_name || "Riya"} {user.user_metadata?.last_name || "Sharma"}
               </span>
               <span className="text-xs font-medium text-muted-foreground/80 mt-0.5 truncate">
                 Clinical Psychologist

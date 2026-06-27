@@ -76,7 +76,7 @@ export class MessagesService {
       : appointment.patient.userId;
     const senderName = isPatient
       ? `${appointment.patient.firstName ?? 'Patient'}`
-      : `Dr. ${appointment.therapist.lastName ?? 'Therapist'}`;
+      : `${appointment.therapist.firstName ?? 'Therapist'}`;
 
     setImmediate(() => {
       this.notifications

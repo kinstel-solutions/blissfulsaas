@@ -155,7 +155,7 @@ export class TherapistsService {
             userId: admin.id,
             type: NotificationType.GENERAL,
             title: 'Action Required: Therapist Profile Updates',
-            body: `Verified therapist Dr. ${therapistName} has submitted updates to their profile. Please review in the admin panel.`,
+            body: `Verified therapist ${therapistName} has submitted updates to their profile. Please review in the admin panel.`,
             metadata: { therapistId: profile.id },
           })
           .catch((err) => this.logger.error(err));

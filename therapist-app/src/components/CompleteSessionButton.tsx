@@ -10,6 +10,9 @@ export default function CompleteSessionButton({ appointmentId }: { appointmentId
   const handleComplete = async () => {
     if (!window.confirm("Are you sure you want to complete this session? This action cannot be undone.")) return;
     try {
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent('session-completing'));
+      }
       await api.sessions.complete(appointmentId);
       router.push('/dashboard/appointments');
     } catch (err) {

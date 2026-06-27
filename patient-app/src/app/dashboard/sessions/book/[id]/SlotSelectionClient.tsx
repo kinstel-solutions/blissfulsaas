@@ -402,19 +402,23 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                             }`}>
                               <Clock className="w-4 h-4" />
                             </div>
-                            <span className={`font-semibold text-sm ${
-                              isUnavailable
-                                ? "text-slate-500"
-                                : isSelected
-                                ? "text-white"
-                                : "text-foreground"
-                            }`}>
-                              {formatSlotTime(slot.startUtc)}
-                            </span>
+                            <div className="flex flex-col items-start">
+                              <span className={`font-semibold text-sm ${
+                                isUnavailable
+                                  ? "text-slate-500"
+                                  : isSelected
+                                  ? "text-white"
+                                  : "text-foreground"
+                              }`}>
+                                {formatSlotTime(slot.startUtc)}
+                              </span>
+                              {isUnavailable && (
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
+                                  Booked
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          {isUnavailable && (
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Booked</span>
-                          )}
                           {isSelected && !isUnavailable && (
                             <CheckCircle2 className="w-5 h-5 text-white animate-in zoom-in" />
                           )}
@@ -440,7 +444,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-foreground">
-                      Dr. {therapist.firstName} {therapist.lastName}
+                      {therapist.firstName} {therapist.lastName}
                     </p>
                     <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">Selected Expert</p>
                   </div>

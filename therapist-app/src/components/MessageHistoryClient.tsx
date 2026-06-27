@@ -277,7 +277,7 @@ export default function MessageHistoryClient({
                 </button>
                 <div className="min-w-0">
                   <h3 className="text-sm font-bold text-slate-900 leading-none truncate">
-                    {mode === 'therapist' ? selectedSession.patient?.firstName + ' ' + selectedSession.patient?.lastName : 'Dr. ' + selectedSession.therapist?.firstName}
+                    {mode === 'therapist' ? selectedSession.patient?.firstName + ' ' + selectedSession.patient?.lastName : selectedSession.therapist?.firstName}
                   </h3>
                   <div className="flex flex-wrap items-center gap-2 mt-1.5">
                     <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest flex items-center gap-1">

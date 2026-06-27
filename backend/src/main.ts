@@ -34,6 +34,12 @@ async function bootstrap() {
   });
 
   const port = process.env.PORT ?? 5000;
+  
+  // Fix for Next.js 18+ undici fetch HeadersTimeoutError
+  const server = app.getHttpServer();
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
+
   await app.listen(port);
   console.log(`Backend running on: http://localhost:${port}`);
 }

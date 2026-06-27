@@ -164,14 +164,14 @@ export default async function SessionDetailPage({
                 <div className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/10 shrink-0">
                   <Image
                     src={profileImage}
-                    alt={`Dr. ${therapist?.firstName} ${therapist?.lastName}`}
+                    alt={`${therapist?.firstName} ${therapist?.lastName}`}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div className="flex-1 min-w-0 pt-1">
                   <h1 className="text-xl lg:text-2xl font-heading font-medium text-foreground truncate">
-                    Dr. {therapist?.firstName} {therapist?.lastName}
+                    {therapist?.firstName} {therapist?.lastName}
                   </h1>
                   <p className="text-xs font-bold uppercase tracking-widest text-primary/60 mt-1">
                     {therapist?.qualifications ||
@@ -453,35 +453,46 @@ export default async function SessionDetailPage({
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center gap-3 w-full px-6 py-5 bg-primary/5 text-primary rounded-2xl border border-primary/15 font-bold">
-                      <Building2 className="w-6 h-6" />
-                      <div>
-                        <p className="text-sm font-bold uppercase tracking-widest">
-                          In-Person Visit
-                        </p>
-                        {therapist?.clinicAddress && (
-                          <p className="text-xs font-medium text-primary/70 mt-0.5">
-                            {therapist.clinicAddress}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full px-6 py-5 bg-primary/5 text-primary rounded-2xl border border-primary/15 font-bold">
+                      <div className="flex items-center gap-3">
+                        <Building2 className="w-6 h-6 shrink-0" />
+                        <div>
+                          <p className="text-sm font-bold uppercase tracking-widest">
+                            In-Person Visit
                           </p>
-                        )}
+                          {therapist?.clinicAddress && (
+                            <p className="text-xs font-medium text-primary/70 mt-0.5">
+                              {therapist.clinicAddress}
+                            </p>
+                          )}
+                        </div>
                       </div>
+                      {therapist?.mapLink && (
+                        <a
+                          href={therapist.mapLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-primary/90 transition-all shadow-md hover:shadow-lg active:scale-[0.98] shrink-0"
+                        >
+                          <MapPin className="w-4 h-4" />
+                          <span>View Map</span>
+                        </a>
+                      )}
                     </div>
                   )}
 
                   {/* Secondary CTA: Message Therapist */}
                   <Link
                     href={`/dashboard/messages?sessionId=${session.id}`}
-                    className="flex items-center justify-center gap-3 w-full px-6 py-4.5 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-2xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group"
+                    className="flex items-center justify-center gap-2 w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-2xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group"
                   >
-                    <MessageSquare className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
+                    <MessageSquare className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
                     <span>Message Therapist</span>
                   </Link>
 
                   {/* Destructive: Cancel Session */}
-                  <div className="pt-2 border-t border-outline-variant/10">
-                    <div className="flex justify-center">
-                      <CancelSessionButton id={session.id} />
-                    </div>
+                  <div className="pt-2 border-t border-outline-variant/10 w-full">
+                    <CancelSessionButton id={session.id} />
                   </div>
                 </>
               )}
@@ -491,25 +502,25 @@ export default async function SessionDetailPage({
                 <>
                   {/* Feedback CTA */}
                   <div className="w-full">
-                    <SessionFeedbackButton session={session} />
+                    <SessionFeedbackButton session={session} fullWidth />
                   </div>
 
                   {/* Message Therapist */}
                   <Link
                     href={`/dashboard/messages?sessionId=${session.id}`}
-                    className="flex items-center justify-center gap-3 w-full px-6 py-4.5 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-2xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group"
+                    className="flex items-center justify-center gap-2 w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-2xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group"
                   >
-                    <MessageSquare className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
+                    <MessageSquare className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
                     <span>Message Therapist</span>
                   </Link>
 
                   {/* Book Again */}
                   <Link
                     href={`/dashboard/sessions/book/${therapist?.id}`}
-                    className="flex items-center justify-center gap-3 w-full px-6 py-4.5 bg-primary text-primary-foreground rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]"
                   >
-                    <RefreshCw className="w-4.5 h-4.5" />
-                    <span>Book Again with Dr. {therapist?.firstName}</span>
+                    <RefreshCw className="w-4 h-4 shrink-0" />
+                    <span>Book Again with {therapist?.firstName}</span>
                   </Link>
                 </>
               )}
@@ -528,20 +539,21 @@ export default async function SessionDetailPage({
                   {/* Rebook */}
                   <Link
                     href={`/dashboard/sessions/book/${therapist?.id}`}
-                    className="flex items-center justify-center gap-3 w-full px-6 py-5 bg-primary text-primary-foreground rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center gap-2 w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]"
                   >
-                    <RefreshCw className="w-4.5 h-4.5" />
+                    <RefreshCw className="w-4 h-4 shrink-0" />
                     <span>
-                      Rebook with Dr. {therapist?.firstName}
+                      Rebook with {therapist?.firstName}
                     </span>
                   </Link>
 
-                  {/* Or discover */}
-                  <div className="text-center">
-                    <AlexButton href="/discover" size="sm">
-                      Browse Other Therapists
-                    </AlexButton>
-                  </div>
+                  {/* Discover */}
+                  <Link
+                    href="/discover"
+                    className="flex items-center justify-center gap-2 w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-2xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group"
+                  >
+                    <span>Browse Other Therapists</span>
+                  </Link>
                 </>
               )}
             </div>

@@ -16,7 +16,7 @@ export default async function SlotSelectionPage({ params }: { params: Promise<{ 
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-5 duration-700">
       <header>
         <h1 className="text-4xl font-heading font-medium text-foreground">
-          Schedule with Dr. {therapist.firstName}
+          Schedule with {therapist.firstName}
         </h1>
         <p className="text-muted-foreground mt-2 text-lg">
           Pick a date and choose a time slot that works best for you.

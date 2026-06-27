@@ -8,7 +8,8 @@ import {
   ClipboardList,
   ChevronLeft,
   MessageSquare,
-  Phone
+  Phone,
+  Building2
 } from "lucide-react";
 import Link from "next/link";
 import AppointmentActions from "@/components/AppointmentActions";
@@ -75,10 +76,18 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
             </div>
           </div>
           
-          <div className="flex items-center gap-2 lg:gap-3">
+          <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
+             {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && appointment.status !== 'EXPIRED' && appointment.mode === 'ONLINE' && (
+                <Link href={`/dashboard/sessions/${appointment.id}/call`} className="flex-1 lg:flex-none">
+                   <button className="w-full lg:w-auto px-4 lg:px-5 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95">
+                      <Video className="w-3.5 h-3.5 text-white" />
+                      Join Call
+                   </button>
+                </Link>
+             )}
              <Link href={`/dashboard/messages?sessionId=${appointment.id}`} className="flex-1 lg:flex-none">
-                <button className="w-full lg:w-auto px-5 lg:px-6 py-3 bg-white text-slate-700 rounded-lg border border-slate-200 font-bold text-[10px] lg:text-xs uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm">
-                   <MessageSquare className="w-4 h-4 text-primary" />
+                <button className="w-full lg:w-auto px-4 lg:px-5 py-2.5 bg-white text-slate-700 rounded-xl border border-slate-200 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95">
+                   <MessageSquare className="w-3.5 h-3.5 text-primary" />
                    Message
                 </button>
              </Link>
@@ -123,20 +132,17 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
           </div>
         </div>
 
-        <div className="flex items-center gap-4 pr-2">
-           {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && appointment.status !== 'EXPIRED' && (
-             appointment.mode === 'IN_CLINIC' ? (
-               <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 border border-emerald-100">
-                 🏥 In-Clinic
-               </div>
-             ) : (
-                <Link href={`/dashboard/sessions/${appointment.id}/call`}>
-                  <button className="px-5 py-2 bg-slate-900 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-primary transition-all flex items-center gap-2">
-                    <Video className="w-3.5 h-3.5" />
-                    Join Call
-                  </button>
-                </Link>
-             )
+        <div className="flex items-center gap-4 pr-4">
+           {appointment.mode === 'IN_CLINIC' ? (
+             <div className="px-3.5 py-1.5 bg-emerald-50 text-emerald-700 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 border border-emerald-200/50 shadow-sm">
+               <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+               <span>In-Clinic</span>
+             </div>
+           ) : (
+             <div className="px-3.5 py-1.5 bg-blue-50 text-blue-700 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 border border-blue-200/50 shadow-sm">
+               <Video className="w-3.5 h-3.5 text-blue-600" />
+               <span>Online</span>
+             </div>
            )}
         </div>
       </div>

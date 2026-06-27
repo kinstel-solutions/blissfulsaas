@@ -62,7 +62,7 @@ export default async function SessionsPage() {
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 <h4 className="text-lg font-heading font-medium text-foreground group-hover:text-primary transition-colors">
-                  Dr. {session.therapist?.firstName} {session.therapist?.lastName}
+                  {session.therapist?.firstName} {session.therapist?.lastName}
                 </h4>
                 <span
                   className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest border ${isClinic

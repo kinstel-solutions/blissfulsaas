@@ -124,14 +124,6 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
     }
   }, [sessionEnded, localCameraTrack, localMicrophoneTrack]);
 
-  useEffect(() => {
-    return () => {
-      localCameraTrack?.stop();
-      localCameraTrack?.close();
-      localMicrophoneTrack?.stop();
-      localMicrophoneTrack?.close();
-    };
-  }, [localCameraTrack, localMicrophoneTrack]);
 
   // Robust Mobile Toggling - Use setEnabled to turn off hardware instead of just muting
   useEffect(() => {
@@ -146,12 +138,19 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
     }
   }, [cameraOn, localCameraTrack]);
 
-  // Live quality switching — no track recreation needed
   const handleQualityChange = async (quality: "360p" | "480p" | "720p" | "1080p") => {
     setVideoQuality(quality);
     if (localCameraTrack) {
       const config = getEncoderConfig(quality, frameRate);
       await localCameraTrack.setEncoderConfiguration(config as any).catch(console.error);
+
+      const mediaStreamTrack = localCameraTrack.getMediaStreamTrack();
+      if (mediaStreamTrack) {
+        await mediaStreamTrack.applyConstraints({
+          width: { ideal: config.width },
+          height: { ideal: config.height }
+        }).catch(console.error);
+      }
     }
   };
 
@@ -186,21 +185,16 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
       setTimeout(() => router.push(`/dashboard/sessions/${appointmentId}`), 3000);
     };
 
-    const handleUserLeft = (user: any, reason: string) => {
-      if (reason === "Quit") {
-        setSessionEnded(true);
-        setTimeout(() => router.push(`/dashboard/sessions/${appointmentId}`), 3000);
-      }
-    };
+
 
     client.on("token-privilege-will-expire", handleTokenWillExpire);
     client.on("token-privilege-did-expire", handleTokenExpired);
-    client.on("user-left", handleUserLeft);
+
 
     return () => {
       client.off("token-privilege-will-expire", handleTokenWillExpire);
       client.off("token-privilege-did-expire", handleTokenExpired);
-      client.off("user-left", handleUserLeft);
+
     };
   }, [client, router, appointmentId]);
 

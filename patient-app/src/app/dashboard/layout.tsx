@@ -51,7 +51,7 @@ export default async function DashboardLayout({
           </Link>
           <span className="text-xs font-bold text-primary leading-normal text-left block">
             Express. Connect.<br />
-            Understand. Transform.
+            Transform.
           </span>
         </div>
 
