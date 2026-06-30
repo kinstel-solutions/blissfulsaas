@@ -155,13 +155,14 @@ export default async function SessionDetailPage({
       {/* ── Main Content Grid ────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* ──── Left Column: Therapist Info ────────────────────── */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-7 space-y-6">
           {/* Therapist Hero Card */}
-          <details className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg shadow-primary/5 group">
+          {/* Mobile Therapist Card (Collapsible) */}
+          <details className="lg:hidden bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg shadow-primary/5 group">
             {/* Profile Header */}
             <summary className="relative p-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden flex justify-between items-start">
               <div className="flex items-start gap-5">
-                <div className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/10 shrink-0">
+                <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/10 shrink-0">
                   <Image
                     src={profileImage}
                     alt={`${therapist?.firstName} ${therapist?.lastName}`}
@@ -170,7 +171,7 @@ export default async function SessionDetailPage({
                   />
                 </div>
                 <div className="flex-1 min-w-0 pt-1">
-                  <h1 className="text-xl lg:text-2xl font-heading font-medium text-foreground truncate">
+                  <h1 className="text-xl font-heading font-medium text-foreground truncate">
                     {therapist?.firstName} {therapist?.lastName}
                   </h1>
                   <p className="text-xs font-bold uppercase tracking-widest text-primary/60 mt-1">
@@ -270,10 +271,122 @@ export default async function SessionDetailPage({
               </Link>
             </div>
           </details>
+
+          {/* Desktop Therapist Card (Always Open & Expanded) */}
+          <div className="hidden lg:flex lg:flex-col lg:h-full lg:min-h-[550px] bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg shadow-primary/5">
+            {/* Profile Header */}
+            <div className="relative p-6 flex justify-between items-start shrink-0">
+              <div className="flex items-start gap-5">
+                <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/10 shrink-0">
+                  <Image
+                    src={profileImage}
+                    alt={`${therapist?.firstName} ${therapist?.lastName}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0 pt-1">
+                  <h1 className="text-2xl font-heading font-medium text-foreground truncate">
+                    {therapist?.firstName} {therapist?.lastName}
+                  </h1>
+                  <p className="text-xs font-bold uppercase tracking-widest text-primary/60 mt-1">
+                    {therapist?.qualifications ||
+                      therapist?.specialities?.[0] ||
+                      "Clinical Psychotherapist"}
+                  </p>
+                  {therapist?.gender && (
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <User className="w-3 h-3 text-muted-foreground/40" />
+                      <span className="text-xs text-muted-foreground font-medium capitalize">
+                        {therapist.gender}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Info Grid */}
+            <div className="p-6 pt-4 space-y-4 border-t border-outline-variant/10 flex-1">
+              {/* Experience */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3.5 bg-surface-container-low/50 rounded-xl border border-outline-variant/10">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Clock className="w-3 h-3 text-primary/40" />
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40">
+                      Experience
+                    </span>
+                  </div>
+                  <p className="text-sm font-bold text-primary tracking-tight">
+                    {therapist?.yearsOfExperience
+                      ? `${therapist.yearsOfExperience} Years`
+                      : "Experienced"}
+                  </p>
+                </div>
+                <div className="p-3.5 bg-surface-container-low/50 rounded-xl border border-outline-variant/10">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Globe className="w-3 h-3 text-primary/40" />
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40">
+                      Languages
+                    </span>
+                  </div>
+                  <p className="text-sm font-bold text-foreground tracking-tight truncate">
+                    {therapist?.languages?.length > 0
+                      ? therapist.languages.join(", ")
+                      : "English"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Qualifications */}
+              {therapist?.qualifications && (
+                <div className="p-3.5 bg-surface-container-low/50 rounded-xl border border-outline-variant/10">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <GraduationCap className="w-3 h-3 text-primary/40" />
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40">
+                      Qualifications
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium text-foreground tracking-tight leading-relaxed">
+                    {therapist.qualifications}
+                  </p>
+                </div>
+              )}
+
+              {/* Specializations */}
+              {therapist?.specialities?.length > 0 && (
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 mb-2.5 px-1">
+                    Specializations
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {therapist.specialities.map((tag: string) => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1.5 bg-primary/5 text-primary text-[10px] font-bold tracking-tight rounded-lg border border-primary/10"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* View Full Profile Link */}
+            <div className="px-6 pb-6 shrink-0">
+              <Link
+                href={`/therapist/${therapist?.id}`}
+                className="text-[10px] font-bold uppercase tracking-widest text-primary/50 hover:text-primary transition-colors"
+              >
+                View Full Profile →
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* ──── Right Column: Appointment Details + CTAs ──────── */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
+        <div className="lg:col-span-5 flex flex-col gap-6">
           {/* Appointment Details Card */}
           <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg shadow-primary/5 order-2">
             <div className="p-5 lg:p-6 bg-surface-container-low/30 border-b border-outline-variant/10">
@@ -500,10 +613,14 @@ export default async function SessionDetailPage({
               {/* ─── Completed Session CTAs ──────────────────────── */}
               {isCompleted && (
                 <>
-                  {/* Feedback CTA */}
-                  <div className="w-full">
-                    <SessionFeedbackButton session={session} fullWidth />
-                  </div>
+                  {/* Book Again */}
+                  <Link
+                    href={`/dashboard/sessions/book/${therapist?.id}`}
+                    className="flex items-center justify-center gap-2 w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]"
+                  >
+                    <RefreshCw className="w-4 h-4 shrink-0" />
+                    <span>Book Again with {therapist?.firstName}</span>
+                  </Link>
 
                   {/* Message Therapist */}
                   <Link
@@ -514,14 +631,10 @@ export default async function SessionDetailPage({
                     <span>Message Therapist</span>
                   </Link>
 
-                  {/* Book Again */}
-                  <Link
-                    href={`/dashboard/sessions/book/${therapist?.id}`}
-                    className="flex items-center justify-center gap-2 w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]"
-                  >
-                    <RefreshCw className="w-4 h-4 shrink-0" />
-                    <span>Book Again with {therapist?.firstName}</span>
-                  </Link>
+                  {/* Feedback CTA */}
+                  <div className="w-full">
+                    <SessionFeedbackButton session={session} fullWidth variant="detail" />
+                  </div>
                 </>
               )}
 

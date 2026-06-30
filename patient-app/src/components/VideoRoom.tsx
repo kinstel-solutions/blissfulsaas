@@ -214,7 +214,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
   }
 
   return (
-    <div className="h-full min-h-[600px] lg:h-[calc(100vh-220px)] flex flex-col lg:flex-row gap-4 lg:gap-8 pb-10 lg:pb-0 animate-in fade-in duration-1000">
+    <div className="h-full min-h-[600px] lg:h-[calc(100vh-220px)] flex flex-col lg:flex-row gap-4 lg:gap-8 pb-2 lg:pb-0 -mx-5 sm:mx-0 animate-in fade-in duration-1000">
       <div className="flex flex-col flex-[2] relative gap-4 lg:gap-6 h-[60vh] min-h-[500px] lg:h-auto lg:min-h-0">
         <div
           ref={containerRef}
@@ -257,7 +257,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
           </div>
 
           {/* Self-Feed PiP */}
-          <div className="absolute top-8 right-8 w-40 md:w-56 aspect-video rounded-2xl md:rounded-xl border border-white/20 shadow-2xl overflow-hidden z-30 hover:scale-105 transition-transform bg-slate-800">
+          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-28 sm:w-40 md:w-56 aspect-video rounded-xl md:rounded-2xl border border-white/20 shadow-2xl overflow-hidden z-30 hover:scale-105 transition-transform bg-slate-800">
             {localCameraTrack ? (
               <div className={`w-full h-full relative ${!cameraOn ? 'hidden' : 'block'}`}>
                 <LocalVideoTrack track={localCameraTrack} play style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -279,17 +279,17 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
             </div>
           </div>
 
-          <div className="absolute top-8 left-8 z-30 flex flex-col bg-transparent px-4 py-3 rounded-2xl  text-left">
-            <span className="text-xs font-bold uppercase tracking-widest text-white">The</span>
-            <span className="text-xs font-bold uppercase tracking-widest text-white">Blissful</span>
-            <span className="text-xs font-bold uppercase tracking-widest text-white">Station</span>
+          <div className="absolute top-4 left-4 md:top-5 md:left-5 z-30 flex flex-col bg-transparent px-2 md:px-4 py-2 md:py-3 rounded-2xl text-left">
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white leading-tight">The</span>
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white leading-tight">Blissful</span>
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white leading-tight">Station</span>
           </div>
 
           {/* Call Controls HUD */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-4 animate-in slide-in-from-bottom-10 duration-700">
+          <div className="absolute bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-1.5 sm:gap-3 w-max max-w-[96%] px-2 sm:px-4 py-2.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] shadow-2xl animate-in slide-in-from-bottom-10 duration-700">
             <button
               onClick={() => setMic(prev => !prev)}
-              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${micOn ? "bg-white/10 text-white border-white/20 hover:bg-white/20" : "bg-red-500 text-white border-red-400"
+              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border ${micOn ? "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30" : "bg-red-500/90 text-white border-red-400 hover:bg-red-500"
                 }`}
             >
               {micOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
@@ -297,47 +297,46 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
 
             <button
               onClick={() => setCamera(prev => !prev)}
-              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${cameraOn ? "bg-white/10 text-white border-white/20 hover:bg-white/20" : "bg-red-500 text-white border-red-400"
+              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border ${cameraOn ? "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30" : "bg-red-500/90 text-white border-red-400 hover:bg-red-500"
                 }`}
             >
               {cameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
             </button>
 
             {/* Video Quality Selector */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setShowQualityMenu(prev => !prev)}
-                className="w-14 h-14 rounded-full flex flex-col items-center justify-center gap-0.5 transition-all shadow-xl border bg-white/10 text-white border-white/20 hover:bg-white/20"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex flex-col items-center justify-center gap-0.5 transition-all shadow-lg border bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30"
                 title="Video Quality"
               >
-                <Settings2 className="w-4 h-4" />
-                <span className="text-[9px] font-bold uppercase tracking-wide opacity-80">
-                  {videoQuality}·{frameRate}
+                <Settings2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wide opacity-80 leading-none">
+                  {videoQuality === "1080p" ? "FHD" : videoQuality}
                 </span>
               </button>
               {showQualityMenu && (
-                <div className="absolute bottom-16 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl overflow-hidden min-w-[130px] animate-in fade-in zoom-in-95 duration-200">
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-white/40 px-4 pt-3 pb-1">Resolution</p>
+                <div className="absolute bottom-[4.5rem] left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden min-w-[140px] animate-in fade-in zoom-in-95 duration-200">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 px-4 pt-3 pb-2 border-b border-white/10">Resolution</p>
                   {(["360p", "480p", "720p", "1080p"] as const).map((q) => (
                     <button
                       key={q}
                       onClick={() => handleQualityChange(q)}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-bold tracking-wide transition-colors ${
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors ${
                         videoQuality === q
                           ? "text-primary bg-primary/10"
                           : "text-white hover:bg-white/10"
                       }`}
                     >
-                      {q === "720p" ? `${q} ★` : q}
+                      {q === "720p" ? `${q} HD` : q === "1080p" ? `${q} FHD` : q}
                     </button>
                   ))}
-                  <div className="border-t border-white/10 mt-1" />
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-white/40 px-4 pt-2 pb-1">Frame Rate</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 px-4 pt-3 pb-2 border-b border-white/10 border-t mt-1">Frame Rate</p>
                   {([15, 24, 30] as const).map((fps) => (
                     <button
                       key={fps}
                       onClick={() => handleFrameRateChange(fps)}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-bold tracking-wide transition-colors ${
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors ${
                         frameRate === fps
                           ? "text-primary bg-primary/10"
                           : "text-white hover:bg-white/10"
@@ -352,21 +351,24 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
 
             <button
               onClick={toggleFullscreen}
-              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${isFullscreen ? "bg-primary text-white border-primary/45 hover:bg-primary/80" : "bg-white/10 text-white border-white/20 hover:bg-white/20"
+              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border ${isFullscreen ? "bg-primary text-white border-primary/45 hover:bg-primary/80" : "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30"
                 }`}
               title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
             >
               {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
             </button>
 
+            <div className="w-px h-8 sm:h-10 bg-white/20 mx-1 sm:mx-2 block"></div>
+
             <button
               onClick={() => {
                 setSessionEnded(true);
                 router.push(`/dashboard/sessions/${appointmentId}`);
               }}
-              className="w-16 h-16 rounded-2xl bg-red-600 text-white border border-red-400/50 flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all mx-4"
+              className="w-14 h-12 sm:w-16 sm:h-14 shrink-0 rounded-2xl sm:rounded-[1.2rem] bg-red-600 hover:bg-red-500 text-white border border-red-500 flex items-center justify-center shadow-lg shadow-red-600/20 hover:scale-105 active:scale-95 transition-all ml-1 sm:ml-2"
+              title="End Session"
             >
-              <PhoneOff className="w-7 h-7" />
+              <PhoneOff className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>

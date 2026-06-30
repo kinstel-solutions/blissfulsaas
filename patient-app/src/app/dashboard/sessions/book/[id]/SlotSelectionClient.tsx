@@ -79,9 +79,10 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
     fetchSlots();
   }, [therapist.id, selectedDate]);
 
-  // Filter slots by mode
-  const onlineSlots = slots.filter((s) => s.mode === "ONLINE");
-  const clinicSlots = slots.filter((s) => s.mode === "IN_CLINIC");
+  // Filter slots by mode and hide past slots
+  const now = new Date();
+  const onlineSlots = slots.filter((s) => s.mode === "ONLINE" && new Date(s.startUtc) > now);
+  const clinicSlots = slots.filter((s) => s.mode === "IN_CLINIC" && new Date(s.startUtc) > now);
   const activeSlots = selectedMode === "ONLINE" ? onlineSlots : clinicSlots;
   const availableActiveSlots = activeSlots.filter((s) => s.available);
 
