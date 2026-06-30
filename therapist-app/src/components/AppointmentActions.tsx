@@ -44,12 +44,12 @@ export default function AppointmentActions({ id, status }: { id: string, status:
   if (status === 'CANCELLED' || status === 'COMPLETED' || status === 'EXPIRED') return null;
 
   return (
-    <div className="flex items-center justify-end gap-2.5">
+    <div className="contents lg:flex lg:items-center lg:justify-end lg:gap-2.5">
       {status === 'PENDING' && (
         <button 
           onClick={() => handleAction('confirm')}
           disabled={loading}
-          className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-[10px] rounded-xl shadow-sm transition-all hover:shadow active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          className="flex items-center justify-center gap-1.5 w-full lg:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold uppercase tracking-widest text-[10px] rounded-xl shadow-sm transition-all hover:shadow active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
         >
           <CheckCircle className="w-3.5 h-3.5" />
           Confirm
@@ -60,7 +60,7 @@ export default function AppointmentActions({ id, status }: { id: string, status:
         <button 
           onClick={() => handleAction('complete')}
           disabled={loading}
-          className="flex items-center gap-1.5 px-4 py-2.5 bg-primary text-white hover:bg-primary-dark font-bold uppercase tracking-widest text-[10px] rounded-xl shadow-sm transition-all hover:shadow active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          className="flex items-center justify-center gap-1.5 w-full lg:w-auto px-4 py-2.5 bg-primary text-white hover:bg-primary-dark font-bold uppercase tracking-widest text-[10px] rounded-xl shadow-sm transition-all hover:shadow active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
         >
           <PlayCircle className="w-3.5 h-3.5" />
           Complete
@@ -70,7 +70,7 @@ export default function AppointmentActions({ id, status }: { id: string, status:
       <button 
         onClick={() => handleAction('cancel')}
         disabled={loading}
-        className="flex items-center gap-1.5 px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+        className="flex items-center justify-center gap-1.5 w-full lg:w-auto px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
       >
         <XCircle className="w-3.5 h-3.5" />
         Cancel

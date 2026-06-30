@@ -160,7 +160,7 @@ export default async function SessionsPage() {
           {/* Feedback badge for completed sessions */}
           {isCompleted && (
             <div className="w-full sm:w-auto">
-              <SessionFeedbackButton session={session} />
+              <SessionFeedbackButton session={session} fullWidth />
             </div>
           )}
 

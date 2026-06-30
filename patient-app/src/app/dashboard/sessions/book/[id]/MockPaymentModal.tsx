@@ -96,22 +96,21 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }}
+      className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm"
     >
       <div
-        className="relative w-full max-w-md animate-in fade-in zoom-in-95 duration-300"
+        className="relative w-full max-w-md my-auto animate-in fade-in zoom-in-95 duration-300"
         role="dialog"
         aria-modal="true"
         aria-label="Payment"
       >
         {/* ── Card shell ──────────────────────────────────────────── */}
-        <div className="rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
+        <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
 
           {/* Header bar */}
-          <div className="bg-[#1a1a2e] px-6 py-5 flex items-center justify-between">
+          <div className="bg-[#1a1a2e] px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
                 <Lock className="w-4 h-4 text-primary" />
               </div>
               <div>
@@ -130,7 +129,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
           </div>
 
           {/* Body */}
-          <div className="bg-[#0f0f1a] px-6 py-8">
+          <div className="bg-[#0f0f1a] px-4 py-6 sm:px-6 sm:py-8">
 
             {/* ── Success State ────────────────────────────── */}
             {step === "success" && (
@@ -189,8 +188,8 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
               <div className="space-y-6">
                 {/* Dev Mode Banner */}
                 {orderData.isMock && (
-                  <div className="flex items-center gap-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
-                    <Zap className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                  <div className="flex items-start sm:items-center gap-2.5 sm:gap-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
+                    <Zap className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5 sm:mt-0" />
                     <div>
                       <p className="text-amber-400 text-xs font-bold uppercase tracking-widest">Dev Mode — Mock Payment</p>
                       <p className="text-amber-400/60 text-xs mt-0.5">No real charge. Pre-filled test card below.</p>
@@ -199,9 +198,9 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                 )}
 
                 {/* Order Summary */}
-                <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2">
+                <div className="p-3 sm:p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2">
                   <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Order Summary</p>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-white text-sm font-medium">{orderData.therapistName}</p>
                       <p className="text-white/40 text-xs">{formattedDate} • {formattedTime} IST</p>
@@ -213,10 +212,10 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                         </p>
                       )}
                     </div>
-                    <p className="text-white text-xl font-heading font-medium">₹{amountInRupees}</p>
+                    <p className="text-white text-lg sm:text-xl font-heading font-medium flex-shrink-0">₹{amountInRupees}</p>
                   </div>
                   {orderData.mode === 'IN_CLINIC' && orderData.clinicAddress && (
-                    <p className="text-white/30 text-xs pt-2 border-t border-white/5">
+                    <p className="text-white/30 text-xs pt-2 border-t border-white/5 leading-relaxed">
                       📍 {orderData.clinicAddress}
                     </p>
                   )}
@@ -233,7 +232,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                         value={cardNumber}
                         onChange={(e) => setCardNumber(e.target.value)}
                         maxLength={19}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
                         placeholder="0000 0000 0000 0000"
                       />
                       <CreditCard className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
@@ -247,7 +246,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                       type="text"
                       value={cardName}
                       onChange={(e) => setCardName(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
                       placeholder="Full Name"
                     />
                   </div>
@@ -261,7 +260,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                         value={expiry}
                         onChange={(e) => setExpiry(e.target.value)}
                         maxLength={5}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
                         placeholder="MM/YY"
                       />
                     </div>
@@ -272,7 +271,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                         value={cvv}
                         onChange={(e) => setCvv(e.target.value)}
                         maxLength={3}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
                         placeholder="•••"
                       />
                     </div>
@@ -283,27 +282,27 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                 <button
                   id="mock-payment-pay-btn"
                   onClick={handlePay}
-                  className="w-full py-4 bg-primary text-white rounded-2xl font-bold uppercase tracking-widest text-sm shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 sm:py-4 bg-primary text-white rounded-2xl font-bold uppercase tracking-widest text-xs sm:text-sm shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   <Lock className="w-4 h-4" />
                   Pay ₹{amountInRupees}
                 </button>
 
                 {/* Trust badges */}
-                <div className="flex items-center justify-center gap-4 pt-2">
-                  <div className="flex items-center gap-1.5 text-white/30 text-xs">
+                <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 pt-2 text-[11px] sm:text-xs">
+                  <div className="flex items-center gap-1 text-white/30">
                     <ShieldCheck className="w-3 h-3" />
                     <span>256-bit SSL</span>
                   </div>
-                  <div className="w-px h-3 bg-white/10" />
-                  <div className="flex items-center gap-1.5 text-white/30 text-xs">
+                  <div className="hidden sm:block w-px h-3 bg-white/10" />
+                  <div className="flex items-center gap-1 text-white/30">
                     <Lock className="w-3 h-3" />
                     <span>PCI Compliant</span>
                   </div>
                   {orderData.isMock && (
                     <>
-                      <div className="w-px h-3 bg-white/10" />
-                      <span className="text-amber-500/50 text-xs font-bold uppercase tracking-widest">Mock</span>
+                      <div className="hidden sm:block w-px h-3 bg-white/10" />
+                      <span className="text-amber-500/50 font-bold uppercase tracking-widest">Mock</span>
                     </>
                   )}
                 </div>
