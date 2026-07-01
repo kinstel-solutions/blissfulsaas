@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronRight, Fingerprint, Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
@@ -12,7 +13,16 @@ import { AlexButton } from "@/components/ui/AlexButton";
 import { loginSchema, type LoginValues } from "@/lib/validations";
 
 export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const [error, setError] = useState<string | null>(searchParams.get("error"));
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);

@@ -30,7 +30,7 @@ export default async function DashboardLayout({
     .single();
 
   if (dbUser?.role !== "PATIENT") {
-    redirect("/login?error=Unauthorized: Patient access required");
+    redirect("/auth/unauthorized");
   }
 
   return (

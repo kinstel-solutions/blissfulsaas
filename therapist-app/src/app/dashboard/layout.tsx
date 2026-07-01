@@ -32,7 +32,7 @@ export default async function DashboardLayout({
     .single();
 
   if (dbUser?.role !== "THERAPIST") {
-    redirect("/login?error=Unauthorized: Therapist access required");
+    redirect("/auth/unauthorized");
   }
 
   // Fetch Therapist Profile Image
