@@ -43,8 +43,7 @@ export default async function DashboardLayout({
 
   if (dbUser?.role !== "ADMIN") {
     // If not admin, sign them out and send back to login
-    await supabase.auth.signOut();
-    redirect("/login?error=Unauthorized: Admin access required");
+    redirect("/auth/unauthorized");
   }
 
   return (

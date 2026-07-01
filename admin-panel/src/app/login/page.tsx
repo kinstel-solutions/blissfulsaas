@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -12,8 +13,17 @@ import { AlexButton } from "@/components/ui/AlexButton";
 import { adminLoginSchema, type AdminLoginValues } from "@/lib/validations";
 
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AdminLoginForm />
+    </Suspense>
+  );
+}
+
+function AdminLoginForm() {
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(searchParams.get("error"));
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 

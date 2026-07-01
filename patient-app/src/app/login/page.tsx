@@ -21,10 +21,10 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
-  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const [error, setError] = useState<string | null>(searchParams.get("error"));
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/discover";
   const [showPassword, setShowPassword] = useState(false);
 

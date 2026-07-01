@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { 
-  ArrowRight, Search, Filter, Star, Sparkles, Loader2, GraduationCap, 
+  ArrowRight, Search, Star, Sparkles, Loader2, GraduationCap, 
   Globe, Clock, ShieldCheck, ChevronLeft, ChevronRight, Brain, Heart, 
   Smile, Users, Flame, Sun, CloudRain, Shield, Compass 
 } from "lucide-react";
@@ -35,6 +35,29 @@ export default function DiscoverPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [selectedSpeciality, setSelectedSpeciality] = useState<string | null>(null);
+  const [currentWordIdx, setCurrentWordIdx] = useState(0);
+  const [animationClass, setAnimationClass] = useState("translate-y-0 opacity-100 transition-all duration-200");
+
+  const words = ["Specialty...", "Name...", "Concern..."];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Step 1: Slide down and fade out
+      setAnimationClass("translate-y-2 opacity-0 transition-all duration-200");
+      
+      setTimeout(() => {
+        // Step 2: Swap text and position it above (instantly, no transition)
+        setCurrentWordIdx((prev) => (prev + 1) % words.length);
+        setAnimationClass("translate-y-[-8px] opacity-0");
+        
+        // Step 3: Slide down to center and fade in
+        setTimeout(() => {
+          setAnimationClass("translate-y-0 opacity-100 transition-all duration-200");
+        }, 20);
+      }, 200);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
 
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -129,26 +152,30 @@ export default function DiscoverPage() {
       </div>
 
       {/* Discovery Search Tray */}
-      <div className="bg-surface-container-low/50 backdrop-blur-md p-2 sm:p-1.5 rounded-xl border border-outline-variant/30 flex flex-col sm:flex-row gap-2 sm:gap-1.5 shadow-sm items-stretch sm:items-center">
-        <div className="flex-1 w-full relative flex items-center">
-          <Search className="absolute left-4 w-4 h-4 text-primary/40" />
+      <div className="bg-surface-container-low/50 backdrop-blur-md p-1.5 rounded-xl border border-outline-variant/30 flex flex-row gap-1 shadow-sm items-center">
+        <div className="flex-1 relative flex items-center">
+          <Search className="absolute left-3 sm:left-4 w-4 h-4 text-primary/40" />
           <input
             type="text"
-            placeholder="Search by specialty, name, or concern..."
-            className="w-full h-10 sm:h-12 bg-transparent pl-11 pr-4 text-sm font-medium outline-none placeholder:text-muted-foreground/50"
+            className="w-full h-10 sm:h-12 bg-transparent pl-9 sm:pl-11 pr-2 sm:pr-4 text-[13px] sm:text-base font-heading font-semibold outline-none tracking-wider text-foreground"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          {!searchQuery && (
+            <span className="absolute left-9 sm:left-11 text-[13px] sm:text-base font-heading font-semibold text-slate-700 sm:text-muted-foreground/80 pointer-events-none flex gap-1 items-center tracking-wider">
+              <span>Search by</span>
+              <span
+                className={`text-primary italic inline-block ${animationClass}`}
+              >
+                {words[currentWordIdx]}
+              </span>
+            </span>
+          )}
         </div>
-        <div className="w-px h-8 bg-outline-variant/20 hidden sm:block" />
-        <div className="flex items-center gap-1.5 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none h-10 sm:h-12 px-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-primary/60 hover:text-primary transition-colors shrink-0 rounded-xl border border-outline-variant/20 sm:border-0 bg-white/50 hover:bg-white/80 active:bg-white/90 sm:bg-transparent">
-            <Filter className="w-3.5 h-3.5" />
-            Filters
-          </button>
+        <div className="flex items-center gap-1.5 shrink-0">
           <AlexButton
             size="md"
-            className="shadow-md shrink-0 flex-1 sm:flex-initial h-10 sm:h-10 !py-0 text-[11px] sm:text-sm gap-1.5 sm:gap-2.5 pl-1 sm:pl-1.5 pr-2.5 sm:pr-2.5 [&_.cta-icon-circle]:w-7 [&_.cta-icon-circle]:h-7 sm:[&_.cta-icon-circle]:w-8 sm:[&_.cta-icon-circle]:h-8 [&_svg]:w-3 [&_svg]:h-3 sm:[&_svg]:w-3.5 sm:[&_svg]:h-3.5"
+            className="shadow-md shrink-0 h-10 sm:h-12 !py-0 text-[13px] sm:text-lg gap-1.5 sm:gap-3 pl-1 sm:pl-2 pr-2.5 sm:pr-4 [&_.cta-icon-circle]:w-7 [&_.cta-icon-circle]:h-7 sm:[&_.cta-icon-circle]:w-9 sm:[&_.cta-icon-circle]:h-9 [&_svg]:w-3 [&_svg]:h-3 sm:[&_svg]:w-4 sm:[&_svg]:h-4"
           >
             Search
           </AlexButton>
