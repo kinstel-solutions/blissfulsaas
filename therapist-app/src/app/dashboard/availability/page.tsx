@@ -236,7 +236,12 @@ function CalendarPicker({ value, onChange, minDate }: CalendarPickerProps) {
   const firstDayIndex = new Date(Date.UTC(year, month, 1)).getUTCDay();
   const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
 
-  const days = [];
+  const days: {
+    day: number;
+    month: number;
+    year: number;
+    isCurrentMonth: boolean;
+  }[] = [];
   const prevMonthDays = new Date(Date.UTC(year, month, 0)).getUTCDate();
   for (let i = firstDayIndex - 1; i >= 0; i--) {
     days.push({
