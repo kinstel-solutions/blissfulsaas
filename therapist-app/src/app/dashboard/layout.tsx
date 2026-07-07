@@ -98,9 +98,9 @@ export default async function DashboardLayout({
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center px-4 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground/60 hover:text-primary rounded-lg transition-colors group"
+              className="flex items-center px-4 py-3.5 text-base font-medium text-foreground/80 hover:text-primary rounded-lg transition-colors group"
             >
-              <item.icon className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform" />
+              <item.icon className="w-5 h-5 mr-4 group-hover:scale-110 transition-transform" />
               {item.label}
             </Link>
           ))}

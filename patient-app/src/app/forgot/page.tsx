@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Mail, Fingerprint, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Mail, Fingerprint, Loader2, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
 
 export default function ForgotPasswordPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -93,6 +95,23 @@ export default function ForgotPasswordPage() {
 
       <main className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10 pt-32 pb-20">
         <div className="w-full max-w-xl">
+          <div className="mb-6 flex justify-start">
+            <button
+              onClick={() => {
+                if (window.document.referrer.includes(window.location.host)) {
+                  router.back();
+                } else {
+                  router.push("/");
+                }
+              }}
+              type="button"
+              className="group flex items-center gap-2 px-4 py-2 bg-white/40 hover:bg-white/80 backdrop-blur-sm border border-[#1A2F28]/5 rounded-full text-xs font-bold uppercase tracking-widest text-[#1A2F28]/60 hover:text-[#1A2F28] transition-all shadow-sm cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
+              Back
+            </button>
+          </div>
+
           <div className="text-center mb-10">
             <div className="w-20 h-20 rounded-2xl bg-white/40 backdrop-blur-sm border border-[#1A2F28]/5 flex items-center justify-center mx-auto mb-6 shadow-sm">
                <Fingerprint className="w-10 h-10 text-[#2D4F43] stroke-[1.5]" />

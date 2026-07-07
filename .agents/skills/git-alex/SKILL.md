@@ -5,7 +5,7 @@ description: Run the git-alex workflow to automatically stage, commit, push the 
 
 # Git Commit, Push, and Merge Workflow (git-alex)
 
-Use this skill when the user mentions "git-alex" or requests to "commit, push and merge" local changes.
+Use this skill when the user mentions "git-alex".
 
 ## Steps to Execute
 

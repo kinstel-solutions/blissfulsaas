@@ -151,7 +151,6 @@ model ScheduleOverride {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([therapistId, date, mode])
   @@index([therapistId, date])
 }
 

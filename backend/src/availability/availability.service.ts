@@ -43,6 +43,27 @@ function intervalsOverlap(s1: Date, e1: Date, s2: Date, e2: Date): boolean {
   return s1 < e2 && e1 > s2;
 }
 
+function subtractBlock(
+  blocks: { startMin: number; endMin: number }[],
+  bStart: number,
+  bEnd: number,
+): { startMin: number; endMin: number }[] {
+  const result: { startMin: number; endMin: number }[] = [];
+  for (const block of blocks) {
+    if (block.endMin <= bStart || block.startMin >= bEnd) {
+      result.push(block);
+    } else {
+      if (block.startMin < bStart) {
+        result.push({ startMin: block.startMin, endMin: bStart });
+      }
+      if (block.endMin > bEnd) {
+        result.push({ startMin: bEnd, endMin: block.endMin });
+      }
+    }
+  }
+  return result;
+}
+
 export interface TimeSlot {
   startTime: string; // "HH:mm" UTC
   endTime: string; // "HH:mm" UTC
@@ -154,9 +175,6 @@ export class AvailabilityService {
   }
 
   async createOverride(therapistId: string, dto: CreateOverrideDto) {
-    // Normalise the date to midnight UTC
-    const dateMidnight = new Date(`${dto.date}T00:00:00.000Z`);
-
     if (dto.isAvailable) {
       if (!dto.startTime || !dto.endTime) {
         throw new BadRequestException(
@@ -166,28 +184,99 @@ export class AvailabilityService {
       this.validateTimeRange(dto.startTime, dto.endTime);
     }
 
-    return this.prisma.scheduleOverride.upsert({
-      where: {
-        therapistId_date_mode: {
+    if (dto.endDate) {
+      const start = new Date(`${dto.date}T00:00:00.000Z`);
+      const end = new Date(`${dto.endDate}T00:00:00.000Z`);
+
+      if (end < start) {
+        throw new BadRequestException('endDate must be after or equal to date');
+      }
+
+      const results = [];
+      const cursor = new Date(start);
+      while (cursor <= end) {
+        const dateStr = cursor.toISOString().slice(0, 10);
+        const result = await this.saveSingleOverride(therapistId, {
+          ...dto,
+          date: dateStr,
+        });
+        results.push(result);
+        cursor.setUTCDate(cursor.getUTCDate() + 1);
+      }
+      return results[results.length - 1];
+    } else {
+      return this.saveSingleOverride(therapistId, dto);
+    }
+  }
+
+  private async saveSingleOverride(therapistId: string, dto: CreateOverrideDto) {
+    const dateMidnight = new Date(`${dto.date}T00:00:00.000Z`);
+    const mode = (dto.mode as ConsultationMode) ?? null;
+
+    const isFullDayBlock = !dto.isAvailable && (!dto.startTime || !dto.endTime);
+
+    if (isFullDayBlock) {
+      // Delete all existing overrides for this day/mode since it blocks the whole day anyway
+      await this.prisma.scheduleOverride.deleteMany({
+        where: {
           therapistId,
           date: dateMidnight,
-          mode: (dto.mode as ConsultationMode) ?? null,
+          mode,
         },
+      });
+
+      return this.prisma.scheduleOverride.create({
+        data: {
+          therapistId,
+          date: dateMidnight,
+          isAvailable: false,
+          mode,
+          reason: dto.reason ?? null,
+        },
+      });
+    }
+
+    // For partial blocks or custom available slots, remove any existing full day block
+    await this.prisma.scheduleOverride.deleteMany({
+      where: {
+        therapistId,
+        date: dateMidnight,
+        mode,
+        isAvailable: false,
+        startTime: null,
+        endTime: null,
       },
-      create: {
+    });
+
+    // Check if an override with the exact same time exists
+    const existing = await this.prisma.scheduleOverride.findFirst({
+      where: {
+        therapistId,
+        date: dateMidnight,
+        mode,
+        isAvailable: dto.isAvailable,
+        startTime: dto.startTime ?? null,
+        endTime: dto.endTime ?? null,
+      },
+    });
+
+    if (existing) {
+      return this.prisma.scheduleOverride.update({
+        where: { id: existing.id },
+        data: {
+          reason: dto.reason ?? null,
+        },
+      });
+    }
+
+    return this.prisma.scheduleOverride.create({
+      data: {
         therapistId,
         date: dateMidnight,
         isAvailable: dto.isAvailable,
         startTime: dto.startTime ?? null,
         endTime: dto.endTime ?? null,
-        mode: (dto.mode as ConsultationMode) ?? null,
-        reason: dto.reason ?? null,
-      },
-      update: {
-        isAvailable: dto.isAvailable,
-        startTime: dto.startTime ?? null,
-        endTime: dto.endTime ?? null,
-        mode: (dto.mode as ConsultationMode) ?? null,
+        mode,
         reason: dto.reason ?? null,
       },
     });
@@ -236,13 +325,15 @@ export class AvailabilityService {
     }> = [];
 
     for (const m of modesToCheck) {
-      const block = await this.resolveActiveBlock(
+      const blocks = await this.resolveActiveBlocks(
         therapistId,
         dateMidnight,
         dayOfWeek,
         m,
       );
-      if (block) activeBlocks.push({ ...block, mode: m });
+      for (const block of blocks) {
+        activeBlocks.push({ ...block, mode: m });
+      }
     }
 
     if (activeBlocks.length === 0) return [];
@@ -315,14 +406,14 @@ export class AvailabilityService {
    * Priority: ScheduleOverride (mode-specific) → ScheduleOverride (null mode)
    *           → WeeklyAvailability
    */
-  private async resolveActiveBlock(
+  private async resolveActiveBlocks(
     therapistId: string,
     dateMidnight: Date,
     dayOfWeek: number,
     mode: ConsultationMode,
-  ): Promise<{ startMin: number; endMin: number } | null> {
-    // Check mode-specific override first, then catch-all (mode = null)
-    const override = await this.prisma.scheduleOverride.findFirst({
+  ): Promise<{ startMin: number; endMin: number }[]> {
+    // Fetch all overrides for the date (both mode-specific and catch-all)
+    const overrides = await this.prisma.scheduleOverride.findMany({
       where: {
         therapistId,
         date: dateMidnight,
@@ -331,31 +422,60 @@ export class AvailabilityService {
       orderBy: { mode: 'asc' }, // mode-specific (non-null) sorts before null
     });
 
-    if (override) {
-      if (!override.isAvailable) return null; // Day blocked
-      if (override.startTime && override.endTime) {
-        return {
-          startMin: parseTime(override.startTime),
-          endMin: parseTime(override.endTime),
-        };
-      }
-      // isAvailable=true but no custom hours → shouldn't normally happen,
-      // fall through to weekly schedule
+    // If there's any full-day block, the entire day is blocked
+    const hasFullDayBlock = overrides.some(
+      (o) => !o.isAvailable && (!o.startTime || !o.endTime),
+    );
+    if (hasFullDayBlock) {
+      return [];
     }
 
-    // Fallback to weekly schedule
-    const weekly = await this.prisma.weeklyAvailability.findUnique({
-      where: {
-        therapistId_dayOfWeek_mode: { therapistId, dayOfWeek, mode },
-      },
-    });
+    // Determine the base blocks of available times
+    const availableOverrides = overrides.filter(
+      (o) => o.isAvailable && o.startTime && o.endTime,
+    );
 
-    if (!weekly || !weekly.isActive) return null;
+    let baseBlocks: { startMin: number; endMin: number }[] = [];
 
-    return {
-      startMin: parseTime(weekly.startTime),
-      endMin: parseTime(weekly.endTime),
-    };
+    if (availableOverrides.length > 0) {
+      baseBlocks = availableOverrides.map((o) => ({
+        startMin: parseTime(o.startTime!),
+        endMin: parseTime(o.endTime!),
+      }));
+    } else {
+      // Fallback to weekly schedule
+      const weekly = await this.prisma.weeklyAvailability.findUnique({
+        where: {
+          therapistId_dayOfWeek_mode: { therapistId, dayOfWeek, mode },
+        },
+      });
+
+      if (weekly && weekly.isActive) {
+        baseBlocks = [
+          {
+            startMin: parseTime(weekly.startTime),
+            endMin: parseTime(weekly.endTime),
+          },
+        ];
+      }
+    }
+
+    if (baseBlocks.length === 0) return [];
+
+    // Filter blocked overrides (isAvailable = false and has startTime/endTime)
+    const blockedOverrides = overrides.filter(
+      (o) => !o.isAvailable && o.startTime && o.endTime,
+    );
+
+    // Subtract all blocked intervals from the base blocks
+    let activeBlocks = baseBlocks;
+    for (const bo of blockedOverrides) {
+      const bStart = parseTime(bo.startTime!);
+      const bEnd = parseTime(bo.endTime!);
+      activeBlocks = subtractBlock(activeBlocks, bStart, bEnd);
+    }
+
+    return activeBlocks;
   }
 
   // ─────────────────────────────────────────────────────────────────────────

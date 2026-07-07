@@ -53,9 +53,13 @@ export class UpsertWeeklyScheduleDto {
 // ---------------------------------------------------------------------------
 
 export class CreateOverrideDto {
-  /** ISO date string, e.g. "2026-10-12" */
   @IsDateString()
   date: string;
+
+  /** Optional ISO date string for range, e.g. "2026-10-15" */
+  @IsDateString()
+  @IsOptional()
+  endDate?: string;
 
   /** false = full day blocked; true = custom hours */
   @IsBoolean()
