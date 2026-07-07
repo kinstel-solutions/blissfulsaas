@@ -36,6 +36,7 @@ export interface ScheduleOverride {
 
 export interface CreateOverridePayload {
   date: string;            // "YYYY-MM-DD"
+  endDate?: string;        // "YYYY-MM-DD"
   isAvailable: boolean;
   startTime?: string;
   endTime?: string;
