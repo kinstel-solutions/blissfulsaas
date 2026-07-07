@@ -65,9 +65,6 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
     setStep("processing");
     setErrorMsg(null);
 
-    // Simulate brief processing delay for realism
-    await new Promise((r) => setTimeout(r, 1800));
-
     try {
       const mockPaymentId = `MOCK_PAY_${Date.now()}_${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
       const mockSignature = `MOCK_SIG_${Date.now()}`;
@@ -85,7 +82,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
       setStep("success");
       // Redirect to the new session detail page
       const sessionId = result?.id || result?.appointmentId;
-      setTimeout(() => router.push(sessionId ? `/dashboard/sessions/${sessionId}` : "/dashboard/sessions"), 1800);
+      router.push(sessionId ? `/dashboard/sessions/${sessionId}` : "/dashboard/sessions");
     } catch (err: any) {
       setErrorMsg(err.message || "Payment verification failed");
       setStep("error");

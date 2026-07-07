@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronRight, User, Mail, Lock, Briefcase, Loader2, Eye, EyeOff } from "lucide-react";
+import { ChevronRight, User, Mail, Lock, Briefcase, Loader2, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { signUpTherapist } from "./actions";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
@@ -73,9 +73,9 @@ export default function SignupPage() {
                 <Mail className="w-10 h-10 text-[#2D4F43]" />
               </div>
               <div className="space-y-4">
-                <h2 className="text-4xl font-cormorant font-medium text-[#1A2F28]">Verify your <span className="italic">application</span></h2>
+                <h2 className="text-4xl font-cormorant font-medium text-[#1A2F28]">Check your <span className="italic">inbox</span></h2>
                 <p className="text-[#1A2F28]/60 text-lg leading-relaxed">
-                  We've sent a verification link to your professional email. Please click the link to confirm your account and begin your application process.
+                  We've sent a verification link to your email. Please click the link to activate your account and start your journey.
                 </p>
               </div>
               <div className="pt-4">
@@ -102,6 +102,23 @@ export default function SignupPage() {
 
       <main className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10 pt-32 pb-20">
         <div className="w-full max-w-2xl mt-12 mb-24">
+          <div className="mb-6 flex justify-start">
+            <button
+              onClick={() => {
+                if (window.document.referrer.includes(window.location.host)) {
+                  router.back();
+                } else {
+                  router.push("/");
+                }
+              }}
+              type="button"
+              className="group flex items-center gap-2 px-4 py-2 bg-white/40 hover:bg-white/80 backdrop-blur-sm border border-[#1A2F28]/5 rounded-full text-xs font-bold uppercase tracking-widest text-[#1A2F28]/60 hover:text-[#1A2F28] transition-all shadow-sm cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
+              Back
+            </button>
+          </div>
+
           <div className="text-center mb-10">
             <div className="w-20 h-20 rounded-2xl bg-white/40 backdrop-blur-sm border border-[#1A2F28]/5 flex items-center justify-center mx-auto mb-6 shadow-sm">
                <Briefcase className="w-10 h-10 text-[#2D4F43] stroke-[1.5]" />
