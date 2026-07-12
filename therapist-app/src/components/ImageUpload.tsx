@@ -3,6 +3,9 @@
 import { useState, useRef } from "react";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 
 interface ImageUploadProps {
   value?: string;
@@ -40,19 +43,19 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
       const filePath = `profiles/${fileName}`;
 
       const { error: uploadError, data } = await supabase.storage
-        .from('therapist-profiles')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+          .from('therapist-profiles')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
       if (uploadError) {
         throw uploadError;
       }
 
       const { data: { publicUrl } } = supabase.storage
-        .from('therapist-profiles')
-        .getPublicUrl(filePath);
+          .from('therapist-profiles')
+          .getPublicUrl(filePath);
 
       onChange(publicUrl);
     } catch (error: any) {
@@ -73,12 +76,12 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
   return (
     <div className="space-y-4 w-full">
       {label && (
-        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
+        <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
           {label}
-        </label>
+        </Label>
       )}
       
-      <div className="flex flex-col items-center justify-center gap-6 p-8 md:p-12 border-2 border-dashed border-outline-variant/30 rounded-[2.5rem] md:rounded-[3rem] bg-linear-to-br from-surface-container-lowest to-surface-container-low/50 hover:border-primary/50 transition-all duration-700 group min-h-[260px] md:min-h-[340px] shadow-sm hover:shadow-xl relative overflow-hidden">
+      <Card className="flex flex-col items-center justify-center gap-6 p-8 md:p-12 border-2 border-dashed border-outline-variant/30 hover:border-primary/50 transition-all duration-700 group min-h-[260px] md:min-h-[340px] relative overflow-hidden">
         <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
         {value ? (
           <div className="relative w-full aspect-square max-w-[240px] rounded-[2rem] overflow-hidden shadow-2xl border border-outline-variant/20 group/preview">
@@ -93,13 +96,14 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
                 }
               }}
             />
-            <button
+            <Button
+              variant="destructive"
               onClick={onRemove}
-              className="absolute top-4 right-4 p-2 bg-red-500/90 text-white rounded-xl hover:bg-red-600 transition-all shadow-lg backdrop-blur-sm opacity-0 group-hover/preview:opacity-100 scale-90 group-hover/preview:scale-100"
+              className="absolute top-4 right-4 p-2 transition-all backdrop-blur-sm opacity-0 group-hover/preview:opacity-100 scale-90 group-hover/preview:scale-100 h-auto w-auto"
               type="button"
             >
               <X className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         ) : (
           <div 
@@ -131,7 +135,7 @@ export function ImageUpload({ value, onChange, label, description }: ImageUpload
           accept="image/*"
           className="hidden"
         />
-      </div>
+      </Card>
       
       {description && (
         <p className="text-[10px] text-muted-foreground/50 font-medium px-2">

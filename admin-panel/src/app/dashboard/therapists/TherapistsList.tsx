@@ -12,6 +12,9 @@ import {
   AlertCircle,
   ChevronDown
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 
 export interface TherapistWithUser {
   id: string;
@@ -90,20 +93,21 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
           <div className="pl-3 text-muted-foreground/60 shrink-0">
             <Search className="w-4 h-4" />
           </div>
-          <input
+          <Input
             type="text"
             placeholder="Search by name, email..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-3 pr-8 py-2 bg-transparent border-0 text-sm font-medium placeholder:text-muted-foreground/50 text-foreground focus:outline-none focus:ring-0 transition-all outline-none"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+            className="w-full pl-3 pr-8 py-2 bg-transparent border-0 text-sm font-medium placeholder:text-muted-foreground/50 text-foreground focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 transition-all outline-none"
           />
           {searchQuery && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setSearchQuery("")}
-              className="absolute right-2 text-muted-foreground/40 hover:text-muted-foreground/75 text-xs font-semibold uppercase tracking-wider"
+              className="absolute right-2 text-muted-foreground/40 hover:text-muted-foreground/75 text-xs font-semibold uppercase tracking-wider h-auto w-auto p-0"
             >
               Clear
-            </button>
+            </Button>
           )}
         </div>
 
@@ -112,9 +116,10 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
 
         {/* Filter Dropdown Selector */}
         <div className="relative shrink-0">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-1.5 px-3 py-2 hover:bg-surface-container-low/50 rounded-xl border border-outline-variant/20 hover:border-outline-variant/50 transition-all text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground shrink-0 cursor-pointer shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-2 hover:bg-surface-container-low/50 rounded-xl border border-outline-variant/20 hover:border-outline-variant/50 transition-all text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground shrink-0 cursor-pointer shadow-xs h-auto w-auto"
           >
             {statusFilter === "all" && <Users className="w-3.5 h-3.5" />}
             {statusFilter === "new" && <Clock className="w-3.5 h-3.5 text-amber-600 animate-pulse" />}
@@ -135,7 +140,7 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
             </span>
             
             <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-250 ${isDropdownOpen ? 'rotate-180 text-primary' : ''}`} />
-          </button>
+          </Button>
 
           {/* Dropdown Menu Overlay */}
           {isDropdownOpen && (
@@ -151,13 +156,14 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                 </div>
                 
                 {/* Option: All */}
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     setStatusFilter("all");
                     setIsDropdownOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold hover:bg-surface-container-low transition-colors text-left cursor-pointer ${
-                    statusFilter === "all" ? "text-primary bg-primary/5" : "text-foreground/70"
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold hover:bg-surface-container-low transition-colors text-left cursor-pointer h-auto rounded-none ${
+                    statusFilter === "all" ? "text-primary bg-primary/5 hover:bg-primary/5 hover:text-primary" : "text-foreground/70"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -167,16 +173,17 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted-foreground/10 text-muted-foreground font-bold shrink-0">
                     {counts.all}
                   </span>
-                </button>
+                </Button>
 
                 {/* Option: New */}
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     setStatusFilter("new");
                     setIsDropdownOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold hover:bg-amber-500/5 transition-colors text-left cursor-pointer ${
-                    statusFilter === "new" ? "text-amber-700 bg-amber-500/5" : "text-foreground/70"
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold hover:bg-amber-500/5 transition-colors text-left cursor-pointer h-auto rounded-none ${
+                    statusFilter === "new" ? "text-amber-700 bg-amber-500/5 hover:bg-amber-500/5 hover:text-amber-700" : "text-foreground/70"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -186,16 +193,17 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 font-bold shrink-0">
                     {counts.new}
                   </span>
-                </button>
+                </Button>
 
                 {/* Option: Updates */}
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     setStatusFilter("updates");
                     setIsDropdownOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold hover:bg-yellow-500/5 transition-colors text-left cursor-pointer ${
-                    statusFilter === "updates" ? "text-yellow-700 bg-yellow-500/5" : "text-foreground/70"
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold hover:bg-yellow-500/5 transition-colors text-left cursor-pointer h-auto rounded-none ${
+                    statusFilter === "updates" ? "text-yellow-700 bg-yellow-500/5 hover:bg-yellow-500/5 hover:text-yellow-700" : "text-foreground/70"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -205,16 +213,17 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-700 font-bold shrink-0">
                     {counts.updates}
                   </span>
-                </button>
+                </Button>
 
                 {/* Option: Verified */}
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     setStatusFilter("verified");
                     setIsDropdownOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold hover:bg-emerald-500/5 transition-colors text-left cursor-pointer ${
-                    statusFilter === "verified" ? "text-emerald-700 bg-emerald-500/5" : "text-foreground/70"
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold hover:bg-emerald-500/5 transition-colors text-left cursor-pointer h-auto rounded-none ${
+                    statusFilter === "verified" ? "text-emerald-700 bg-emerald-500/5 hover:bg-emerald-500/5 hover:text-emerald-700" : "text-foreground/70"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -224,7 +233,7 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 font-bold shrink-0">
                     {counts.verified}
                   </span>
-                </button>
+                </Button>
               </div>
             </>
           )}
@@ -232,7 +241,7 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
       </div>
 
       {/* Main Table */}
-      <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-xl shadow-xl overflow-hidden relative group">
+      <Card className="overflow-hidden relative group">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -310,12 +319,13 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
                     <div className="flex flex-col items-center justify-center space-y-3">
                       <XCircle className="w-10 h-10 text-muted-foreground/40 animate-pulse" />
                       <p className="text-muted-foreground font-medium text-sm">No practitioners matched your search or filter criteria.</p>
-                      <button 
+                      <Button 
+                        variant="ghost"
                         onClick={clearFilters}
-                        className="text-xs font-bold text-primary hover:underline uppercase tracking-wider mt-2"
+                        className="text-xs font-bold text-primary hover:underline uppercase tracking-wider mt-2 h-auto w-auto p-0 hover:bg-transparent"
                       >
                         Clear Search & Filters
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -323,7 +333,7 @@ export default function TherapistsList({ initialTherapists }: TherapistsListProp
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

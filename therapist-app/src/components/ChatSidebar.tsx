@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase";
 import { api } from "@/lib/api";
 import { MessageSquare, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface Message {
   id: string;
@@ -165,21 +167,22 @@ export default function ChatSidebar({
       {/* Input */}
       <div className="mt-4 pt-4 border-t border-slate-100">
         <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5">
-          <input
+          <Input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Send a message..."
-            className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-400 text-sm outline-none"
+            className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-400 text-sm outline-none border-none focus-visible:ring-0 focus-visible:ring-offset-0"
           />
-          <button
+          <Button
+            variant="ghost"
             onClick={handleSend}
             disabled={!input.trim() || sending}
-            className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white disabled:opacity-30 hover:bg-primary transition-all active:scale-90"
+            className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white disabled:opacity-30 hover:bg-primary transition-all active:scale-90 p-0 hover:text-white h-auto"
           >
             <Send className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

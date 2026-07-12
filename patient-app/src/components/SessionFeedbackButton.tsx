@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 import FeedbackForm from "./FeedbackForm";
+import { Button } from "@/components/ui/button";
 
 interface Session {
   id: string;
@@ -58,14 +59,15 @@ export default function SessionFeedbackButton({ session, fullWidth, variant = "c
 
   return (
     <>
-      <button
+      <Button
+        variant="ghost"
         id={`leave-review-btn-${session.id}`}
         onClick={() => setShowForm(true)}
-        className={`bg-primary/5 text-primary border border-primary/10 font-bold uppercase tracking-widest text-xs hover:bg-primary/10 transition-all flex items-center justify-center gap-1.5 px-5 ${baseStyles} ${fullWidth ? 'w-full' : ''}`}
+        className={`bg-primary/5 text-primary border border-primary/10 font-bold uppercase tracking-widest text-xs hover:bg-primary/10 transition-all flex items-center justify-center gap-1.5 px-5 h-auto ${baseStyles} ${fullWidth ? 'w-full' : ''}`}
       >
         <Star className="w-3.5 h-3.5" />
         Rate Session
-      </button>
+      </Button>
 
       {showForm && (
         <FeedbackForm

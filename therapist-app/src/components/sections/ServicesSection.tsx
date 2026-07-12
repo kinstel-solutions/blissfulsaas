@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { FileText, Video, LayoutDashboard, History, Bell, Calendar, Shield, CreditCard, Users } from "lucide-react";
 
 const features = [
@@ -79,7 +81,7 @@ export function ServicesSection() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, idx) => (
-            <div
+            <Card
               key={idx}
               className={`bg-white p-10 rounded-[25px] transition-all duration-400 border border-[rgba(33,77,62,0.05)] shadow-[0_5px_15px_rgba(33,77,62,0.02)] hover:border-[var(--accent)] hover:shadow-[0_10px_40px_rgba(33,77,62,0.08)] hover:-translate-y-2.5 group ${
                 !isExpanded && idx >= 3 ? "hidden md:block" : "block"
@@ -91,16 +93,18 @@ export function ServicesSection() {
                 {feature.title}
               </h3>
               <p className="text-[var(--text-light)]">{feature.description}</p>
-            </div>
+            </Card>
           ))}
         </div>
 
         <div className="mt-8 flex justify-center md:hidden">
-          <button
+          <Button
+            variant="link"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-[var(--primary)] font-medium border-b border-[var(--primary)] pb-0.5 hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors">
+            className="text-[var(--primary)] font-medium pb-0.5 hover:text-[var(--accent)] transition-colors p-0 h-auto no-underline hover:no-underline"
+          >
             {isExpanded ? "Show Less" : "View All Features"}
-          </button>
+          </Button>
         </div>
 
         <div className="mt-12 md:mt-16 flex justify-center">

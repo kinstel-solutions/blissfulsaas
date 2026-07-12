@@ -3,6 +3,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { api } from "@/lib/api";
 import { FileText, Save, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
 
 interface NotesSidebarProps {
   appointmentId: string;
@@ -45,7 +48,7 @@ export default function NotesSidebar({ appointmentId }: NotesSidebarProps) {
   };
 
   return (
-    <div className="flex flex-col flex-1 bg-slate-50 border border-slate-200 rounded-2xl animate-in slide-in-from-right duration-300">
+    <Card className="flex flex-col flex-1 bg-slate-50 animate-in slide-in-from-right duration-300">
       <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 bg-white rounded-t-2xl">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
@@ -55,10 +58,10 @@ export default function NotesSidebar({ appointmentId }: NotesSidebarProps) {
             Private Notes
           </h3>
         </div>
-        <button
+        <Button
           onClick={handleSave}
           disabled={saving || loading}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-slate-800 disabled:opacity-50 transition-all shadow-md active:scale-95"
+          className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest disabled:opacity-50 transition-all active:scale-95 h-auto"
         >
           {saving ? (
             <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -68,7 +71,7 @@ export default function NotesSidebar({ appointmentId }: NotesSidebarProps) {
             <Save className="w-3.5 h-3.5" />
           )}
           {saved ? "Saved" : "Save"}
-        </button>
+        </Button>
       </div>
 
       <div className="flex-1 flex flex-col relative overflow-hidden">
@@ -77,16 +80,16 @@ export default function NotesSidebar({ appointmentId }: NotesSidebarProps) {
             <div className="w-8 h-8 border-4 border-slate-200 border-t-amber-500 rounded-full animate-spin flex-shrink-0" />
           </div>
         ) : (
-          <textarea
+          <Textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Start typing your clinical notes here... 
 
 These notes are strictly private and will only be visible to you for future reference."
-            className="flex-1 w-full p-6 lg:p-8 bg-transparent resize-none outline-none text-slate-800 text-sm leading-relaxed transition-all min-h-[300px]"
+            className="flex-1 w-full p-6 lg:p-8 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 resize-none outline-none text-slate-800 text-sm leading-relaxed transition-all min-h-[300px]"
           />
         )}
       </div>
-    </div>
+    </Card>
   );
 }

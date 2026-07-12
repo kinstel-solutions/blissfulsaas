@@ -9,16 +9,20 @@ import { Loader2, Save, UserCircle2, GraduationCap, Globe, Clock, Tag, MapPin, S
 import { ImageUpload } from "@/components/ImageUpload";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 const COMMON_SPECIALITIES = [
-  "Anxiety", "Depression", "Trauma", "ADHD", "Couples Therapy", 
-  "LGBTQ+", "Bipolar Disorder", "Eating Disorders", "Grief", 
+  "Anxiety", "Depression", "Trauma", "ADHD", "Couples Therapy",
+  "LGBTQ+", "Bipolar Disorder", "Eating Disorders", "Grief",
   "Self-Esteem", "Workplace Stress", "Mindfulness", "Family Therapy",
   "Addiction", "Sleep Disorders", "OCD"
 ];
 
 const COMMON_LANGUAGES = [
-  "English", "Hindi", "Bengali", "Spanish", "French", "German", 
+  "English", "Hindi", "Bengali", "Spanish", "French", "German",
   "Arabic", "Mandarin", "Urdu", "Tamil", "Telegu", "Marathi"
 ];
 
@@ -76,7 +80,7 @@ export default function ProfilePage() {
       try {
         const data = await api.therapists.getProfile();
         const profileData = { ...data, ...(data.pendingFields || {}) };
-        
+
         reset({
           firstName: profileData.firstName || "",
           lastName: data.lastName || "",
@@ -135,7 +139,7 @@ export default function ProfilePage() {
 
     try {
       await api.therapists.updateProfile(data);
-      setSuccessMessage(isVerified 
+      setSuccessMessage(isVerified
         ? "Profile updates submitted successfully and are pending review by the admin board."
         : "Profile updated successfully. Changes will be visible once your application is approved."
       );
@@ -195,35 +199,35 @@ export default function ProfilePage() {
             {successMessage}
           </div>
         )}
-        
+
         {/* Verification Alert */}
         {!isVerified && (
           <div className="p-5 md:p-6 bg-amber-500/5 border border-amber-500/10 rounded-[2.5rem] flex items-center gap-5 md:gap-6 relative overflow-hidden group">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-             <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 shrink-0 shadow-inner border border-amber-500/5">
-               <Shield className="w-6 h-6" />
-             </div>
-             <div className="space-y-1">
-               <p className="text-sm font-bold text-amber-900/80">Pending Clinical Verification</p>
-               <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
-                 Your credentials are currently being reviewed by our clinical board. Complete your profile now to expedite the process.
-               </p>
-             </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 shrink-0 shadow-inner border border-amber-500/5">
+              <Shield className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-bold text-amber-900/80">Pending Clinical Verification</p>
+              <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
+                Your credentials are currently being reviewed by our clinical board. Complete your profile now to expedite the process.
+              </p>
+            </div>
           </div>
         )}
 
         {isVerified && hasPendingEdits && (
           <div className="p-5 md:p-6 bg-amber-500/5 border border-amber-500/10 rounded-[2.5rem] flex items-center gap-5 md:gap-6 relative overflow-hidden group">
-             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-             <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 shrink-0 shadow-inner border border-amber-500/5">
-               <Clock className="w-6 h-6" />
-             </div>
-             <div className="space-y-1">
-               <p className="text-sm font-bold text-amber-900/80">Pending Profile Edits</p>
-               <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
-                 You have submitted changes that are awaiting review by our clinical board. Your previously verified profile remains live until these are approved.
-               </p>
-             </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 shrink-0 shadow-inner border border-amber-500/5">
+              <Clock className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-bold text-amber-900/80">Pending Profile Edits</p>
+              <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
+                You have submitted changes that are awaiting review by our clinical board. Your previously verified profile remains live until these are approved.
+              </p>
+            </div>
           </div>
         )}
 
@@ -241,42 +245,38 @@ export default function ProfilePage() {
             <div className="flex-1 space-y-6 w-full">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">First Name</label>
-                <input
+                <Input
                   type="text"
                   {...register("firstName")}
-                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.firstName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.firstName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                 />
                 {errors.firstName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.firstName.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Last Name</label>
-                <input
+                <Input
                   type="text"
                   {...register("lastName")}
-                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.lastName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.lastName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                 />
                 {errors.lastName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.lastName.message}</p>}
               </div>
 
               <div className="space-y-2 relative">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Gender</label>
-                <div 
-                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm transition-all duration-300 cursor-pointer flex justify-between items-center group hover:border-primary/40 focus-within:ring-4 focus-within:ring-primary/10 ${
-                    errors.gender ? 'border-red-500' : 'border-outline-variant/30'
-                  }`}
+                <div
+                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm transition-all duration-300 cursor-pointer flex justify-between items-center group hover:border-primary/40 focus-within:ring-4 focus-within:ring-primary/10 ${errors.gender ? 'border-red-500' : 'border-outline-variant/30'
+                    }`}
                   onClick={() => setGenderOpen(!genderOpen)}
                 >
                   <span className={formData.gender ? "text-foreground font-medium" : "text-muted-foreground"}>
                     {formData.gender || "Select Gender"}
                   </span>
-                  <div className={`w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-muted-foreground/50 transition-all duration-300 border border-outline-variant/10 ${
-                    genderOpen ? 'rotate-180 text-primary border-primary/20 bg-primary/5' : 'group-hover:text-primary'
-                  }`}>
+                  <div className={`w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-muted-foreground/50 transition-all duration-300 border border-outline-variant/10 ${genderOpen ? 'rotate-180 text-primary border-primary/20 bg-primary/5' : 'group-hover:text-primary'
+                    }`}>
                     <ChevronDown className="w-4 h-4" />
                   </div>
                 </div>
@@ -288,9 +288,8 @@ export default function ProfilePage() {
                       {["Male", "Female", "Non-binary", "Other", "Prefer not to say"].map(option => (
                         <div
                           key={option}
-                          className={`px-5 py-3.5 text-sm cursor-pointer transition-all duration-200 hover:bg-primary/5 hover:text-primary border-b border-outline-variant/5 last:border-0 ${
-                            formData.gender === option ? 'bg-primary/10 font-bold text-primary' : 'text-foreground/80 font-medium'
-                          }`}
+                          className={`px-5 py-3.5 text-sm cursor-pointer transition-all duration-200 hover:bg-primary/5 hover:text-primary border-b border-outline-variant/5 last:border-0 ${formData.gender === option ? 'bg-primary/10 font-bold text-primary' : 'text-foreground/80 font-medium'
+                            }`}
                           onClick={() => {
                             setValue("gender", option, { shouldDirty: true, shouldValidate: true });
                             setGenderOpen(false);
@@ -309,28 +308,26 @@ export default function ProfilePage() {
 
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Phone Number</label>
-                <input
+                <Input
                   type="tel"
                   {...register("phone")}
                   placeholder="e.g. +1 (555) 000-0000"
-                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.phone ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                 />
                 {errors.phone && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.phone.message}</p>}
               </div>
 
-              </div>
             </div>
+          </div>
 
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Editorial Bio (Optional)</label>
-            <textarea
+            <Textarea
               {...register("bio")}
               rows={5}
-              className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors resize-none leading-relaxed ${
-                errors.bio ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-              }`}
+              className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors resize-none leading-relaxed focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.bio ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                }`}
               placeholder="Describe your unique therapeutic approach..."
             />
             {errors.bio && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.bio.message}</p>}
@@ -339,14 +336,13 @@ export default function ProfilePage() {
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Qualifications</label>
             <div className="relative">
-              <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-              <input
+              <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+              <Input
                 type="text"
                 {...register("qualifications")}
                 placeholder="e.g. M.Phil in Clinical Psychology, Yale University"
-                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                  errors.qualifications ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                }`}
+                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.qualifications ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
               />
               {errors.qualifications && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.qualifications.message}</p>}
             </div>
@@ -355,14 +351,13 @@ export default function ProfilePage() {
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Introduction Video URL (Optional)</label>
             <div className="relative">
-              <Video className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-              <input
+              <Video className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+              <Input
                 type="url"
                 {...register("videoUrl")}
                 placeholder="e.g. https://www.youtube.com/watch?v=..."
-                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                  errors.videoUrl ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                }`}
+                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.videoUrl ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
               />
               {errors.videoUrl && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.videoUrl.message}</p>}
             </div>
@@ -375,14 +370,13 @@ export default function ProfilePage() {
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Clinic Address (for in-clinic visits)</label>
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-              <input
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+              <Input
                 type="text"
                 {...register("clinicAddress")}
                 placeholder="e.g. 24 MG Road, Bengaluru, Karnataka 560001"
-                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                  errors.clinicAddress ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-emerald-500/50'
-                }`}
+                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.clinicAddress ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-emerald-500/50'
+                  }`}
               />
               {errors.clinicAddress && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.clinicAddress.message}</p>}
             </div>
@@ -395,14 +389,13 @@ export default function ProfilePage() {
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Google Maps Link</label>
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-              <input
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+              <Input
                 type="url"
                 {...register("mapLink")}
                 placeholder="e.g. https://maps.google.com/?q=..."
-                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                  errors.mapLink ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-emerald-500/50'
-                }`}
+                className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.mapLink ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-emerald-500/50'
+                  }`}
               />
               {errors.mapLink && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.mapLink.message}</p>}
             </div>
@@ -416,13 +409,12 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Hourly Rate (INR)</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">₹</span>
-                <input
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium z-10">₹</span>
+                <Input
                   type="number"
                   {...register("hourlyRate", { valueAsNumber: true })}
-                  className={`w-full bg-surface-container-lowest border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.hourlyRate ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.hourlyRate ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                   min="0"
                 />
                 {errors.hourlyRate && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.hourlyRate.message}</p>}
@@ -431,13 +423,12 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Years of Experience</label>
               <div className="relative">
-                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-                <input
+                <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+                <Input
                   type="number"
                   {...register("yearsOfExperience", { valueAsNumber: true })}
-                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.yearsOfExperience ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.yearsOfExperience ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                   min="0"
                 />
                 {errors.yearsOfExperience && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.yearsOfExperience.message}</p>}
@@ -446,21 +437,21 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Languages</label>
               <div className="relative">
-                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
+                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
                 <div className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-xl pl-12 pr-4 py-3 min-h-[48px] flex flex-wrap gap-2 items-center">
                   {formData.languages.map(lang => (
                     <span key={lang} className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase flex items-center gap-1">
                       {lang}
-                      <button type="button" onClick={() => handleRemoveItem(lang, 'languages')} className="hover:text-red-500">&times;</button>
+                      <Button type="button" variant="ghost" onClick={() => handleRemoveItem(lang, 'languages')} className="hover:text-red-500 p-0 h-auto w-auto hover:bg-transparent">&times;</Button>
                     </span>
                   ))}
-                  <input
+                  <Input
                     type="text"
                     value={languageInput}
-                    onChange={(e) => setLanguageInput(e.target.value)}
-                    onKeyDown={(e) => handleAddItem(e, 'languages', languageInput, setLanguageInput)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLanguageInput(e.target.value)}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleAddItem(e, 'languages', languageInput, setLanguageInput)}
                     placeholder="Add language..."
-                    className="flex-1 min-w-[80px] bg-transparent outline-none text-sm"
+                    className="flex-1 min-w-[80px] bg-transparent outline-none text-sm border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto shadow-none"
                   />
                 </div>
               </div>
@@ -469,9 +460,10 @@ export default function ProfilePage() {
                 {COMMON_LANGUAGES.map(lang => {
                   const isSelected = formData.languages.includes(lang);
                   return (
-                    <button
+                    <Button
                       key={lang}
                       type="button"
+                      variant="ghost"
                       onClick={() => {
                         if (isSelected) {
                           handleRemoveItem(lang, 'languages');
@@ -479,14 +471,13 @@ export default function ProfilePage() {
                           setValue("languages", [...formData.languages, lang], { shouldDirty: true });
                         }
                       }}
-                      className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border ${
-                        isSelected 
-                          ? 'bg-primary text-primary-foreground border-primary' 
+                      className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 border h-auto w-auto hover:bg-transparent ${isSelected
+                          ? 'bg-primary text-primary-foreground border-primary'
                           : 'bg-surface-container-low text-primary/40 border-outline-variant/30 hover:border-primary/40 hover:text-primary'
-                      }`}
+                        }`}
                     >
                       {lang}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -496,34 +487,35 @@ export default function ProfilePage() {
           {/* Tags */}
           <div className="space-y-3">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Focus Specialities</label>
-            <div className="p-5 bg-surface-container-lowest border border-outline-variant/30 rounded-[2rem] min-h-[120px] flex gap-3 flex-wrap items-start focus-within:border-primary/50 transition-colors shadow-inner">
+            <Card className="p-5 min-h-[120px] flex gap-3 flex-wrap items-start focus-within:border-primary/50 transition-colors">
               <Tag className="w-4 h-4 text-primary/40 mt-1" />
               {formData.specialities.map(tag => (
                 <span key={tag} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-xs font-bold tracking-tight shadow-sm hover:scale-105 transition-transform">
                   {tag}
-                  <button type="button" onClick={() => handleRemoveItem(tag, 'specialities')} className="hover:bg-white/20 rounded-full w-4 h-4 flex items-center justify-center -mr-1">
+                  <Button type="button" variant="ghost" onClick={() => handleRemoveItem(tag, 'specialities')} className="hover:bg-white/20 rounded-full w-4 h-4 flex items-center justify-center -mr-1 p-0 hover:bg-transparent text-current">
                     &times;
-                  </button>
+                  </Button>
                 </span>
               ))}
-              <input
+              <Input
                 type="text"
                 value={specialityInput}
-                onChange={(e) => setSpecialityInput(e.target.value)}
-                onKeyDown={(e) => handleAddItem(e, 'specialities', specialityInput, setSpecialityInput)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSpecialityInput(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleAddItem(e, 'specialities', specialityInput, setSpecialityInput)}
                 placeholder="Type speciality and press Enter..."
-                className="flex-1 min-w-[200px] bg-transparent outline-none text-sm placeholder:text-muted-foreground/50 py-2"
+                className="flex-1 min-w-[200px] bg-transparent outline-none text-sm placeholder:text-muted-foreground/50 py-2 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto shadow-none"
               />
-            </div>
+            </Card>
             <div className="space-y-4">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Common Specialities</label>
               <div className="flex flex-wrap gap-2">
                 {COMMON_SPECIALITIES.map(spec => {
                   const isSelected = formData.specialities.includes(spec);
                   return (
-                    <button
+                    <Button
                       key={spec}
                       type="button"
+                      variant="ghost"
                       onClick={() => {
                         if (isSelected) {
                           handleRemoveItem(spec, 'specialities');
@@ -531,14 +523,13 @@ export default function ProfilePage() {
                           setValue("specialities", [...formData.specialities, spec], { shouldDirty: true });
                         }
                       }}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold tracking-tight transition-all duration-300 border ${
-                        isSelected 
-                          ? 'bg-primary text-primary-foreground border-primary shadow-lg scale-105' 
+                      className={`px-4 py-2 rounded-xl text-xs font-bold tracking-tight transition-all duration-300 border h-auto w-auto hover:bg-transparent ${isSelected
+                          ? 'bg-primary text-primary-foreground border-primary shadow-lg scale-105'
                           : 'bg-surface-container-lowest text-primary/60 border-outline-variant/30 hover:border-primary/40 hover:text-primary'
-                      }`}
+                        }`}
                     >
                       {spec}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -563,14 +554,13 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">RCI / MCI Registration Number</label>
               <div className="relative">
-                <FileCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-                <input
+                <FileCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+                <Input
                   type="text"
                   {...register("rciNumber")}
                   placeholder="e.g. A12345"
-                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.rciNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.rciNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                 />
                 {errors.rciNumber && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-1 ml-1">{errors.rciNumber.message}</p>}
               </div>
@@ -606,54 +596,50 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Bank Name</label>
               <div className="relative">
-                <Landmark className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-                <input
+                <Landmark className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+                <Input
                   type="text"
                   {...register("bankName")}
                   placeholder="e.g. State Bank of India"
-                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.bankName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.bankName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Account Holder Name</label>
-              <input
+              <Input
                 type="text"
                 {...register("bankAccountHolderName")}
                 placeholder="Full name as on bank account"
-                className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
-                  errors.bankAccountHolderName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                }`}
+                className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.bankAccountHolderName ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Account Number</label>
               <div className="relative">
-                <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-                <input
+                <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+                <Input
                   type="text"
                   {...register("bankAccountNumber")}
                   placeholder="e.g. 1234567890123456"
-                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.bankAccountNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.bankAccountNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">IFSC Code</label>
-              <input
+              <Input
                 type="text"
                 {...register("bankIfscCode")}
                 placeholder="e.g. SBIN0001234"
-                className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors uppercase ${
-                  errors.bankIfscCode ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                }`}
+                className={`w-full bg-surface-container-lowest border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors uppercase focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.bankIfscCode ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                  }`}
               />
             </div>
           </div>
@@ -662,14 +648,13 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">PAN Card Number</label>
               <div className="relative">
-                <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-                <input
+                <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+                <Input
                   type="text"
                   {...register("panNumber")}
                   placeholder="e.g. ABCDE1234F"
-                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors uppercase ${
-                    errors.panNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors uppercase focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.panNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                 />
               </div>
             </div>
@@ -677,14 +662,13 @@ export default function ProfilePage() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Aadhaar Number</label>
               <div className="relative">
-                <Fingerprint className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
-                <input
+                <Fingerprint className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40 z-10" />
+                <Input
                   type="text"
                   {...register("aadhaarNumber")}
                   placeholder="e.g. 1234 5678 9012"
-                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors ${
-                    errors.aadhaarNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
-                  }`}
+                  className={`w-full bg-surface-container-lowest border rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 ${errors.aadhaarNumber ? 'border-red-500 focus:border-red-500' : 'border-outline-variant/30 focus:border-primary/50'
+                    }`}
                 />
               </div>
             </div>

@@ -17,6 +17,8 @@ import { useRouter } from "next/navigation";
 import ChatSidebar from "./ChatSidebar";
 import NotesSidebar from "./NotesSidebar";
 import { uuidToUid } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function VideoRoom({ appId, channel, token, appointmentId, patientName, currentUserId }: any) {
   // Initialize the Agora client inside the component to avoid module scope issues in Next.js
@@ -323,109 +325,118 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
 
           {/* Call Controls HUD */}
           <div className="absolute bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-1.5 sm:gap-3 w-max max-w-[96%] px-2 sm:px-4 py-2.5 bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] shadow-2xl animate-in slide-in-from-bottom-10 duration-700">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setMic(p => !p)}
-              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border ${micOn ? "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30" : "bg-red-500/90 text-white border-red-400 hover:bg-red-500"
+              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border p-0 ${micOn ? "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30" : "bg-red-500/90 text-white border-red-400 hover:bg-red-500"
                 }`}
             >
               {micOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
-            </button>
+            </Button>
             
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setCamera(p => !p)}
-              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border ${cameraOn ? "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30" : "bg-red-500/90 text-white border-red-400 hover:bg-red-500"
+              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border p-0 ${cameraOn ? "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30" : "bg-red-500/90 text-white border-red-400 hover:bg-red-500"
                 }`}
             >
               {cameraOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
-            </button>
+            </Button>
 
             {/* Video Quality Selector */}
             <div className="relative shrink-0">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setShowQualityMenu(prev => !prev)}
-                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex flex-col items-center justify-center gap-0.5 transition-all shadow-lg border bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex flex-col items-center justify-center gap-0.5 transition-all shadow-lg border bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30 p-0 h-auto"
                 title="Video Quality"
               >
                 <Settings2 className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wide opacity-80 leading-none">
                   {videoQuality}·{frameRate}
                 </span>
-              </button>
+              </Button>
               {showQualityMenu && (
                 <div className="absolute bottom-[4.5rem] left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden min-w-[140px] animate-in fade-in zoom-in-95 duration-200">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 px-4 pt-3 pb-2 border-b border-white/10">Resolution</p>
                   {(["360p", "480p", "720p", "1080p"] as const).map((q) => (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={q}
                       onClick={() => handleQualityChange(q)}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors ${
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors rounded-none h-auto justify-start border-none ${
                         videoQuality === q
                           ? "text-primary bg-primary/10"
-                          : "text-white hover:bg-white/10"
+                          : "text-white hover:bg-white/10 hover:text-white"
                       }`}
                     >
                       {q === "720p" ? `${q} ★` : q}
-                    </button>
+                    </Button>
                   ))}
                   <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 px-4 pt-3 pb-2 border-b border-white/10 border-t mt-1">Frame Rate</p>
                   {([15, 24, 30] as const).map((fps) => (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={fps}
                       onClick={() => handleFrameRateChange(fps)}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors ${
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors rounded-none h-auto justify-start border-none ${
                         frameRate === fps
                           ? "text-primary bg-primary/10"
-                          : "text-white hover:bg-white/10"
+                          : "text-white hover:bg-white/10 hover:text-white"
                       }`}
                     >
                       {fps} fps{fps === 30 ? " ★" : ""}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}
             </div>
 
-            <button
+            <Button
+              variant="ghost"
               onClick={toggleFullscreen}
-              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border ${isFullscreen ? "bg-primary text-white border-primary/45 hover:bg-primary/80" : "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30"
+              className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-full flex items-center justify-center transition-all shadow-lg border p-0 ${isFullscreen ? "bg-primary text-white border-primary/45 hover:bg-primary/80" : "bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30"
                 }`}
               title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
             >
               {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
-            </button>
+            </Button>
 
             <div className="w-px h-8 sm:h-10 bg-white/20 mx-1 sm:mx-2 block"></div>
 
-            <button
+            <Button
+              variant="ghost"
               onClick={handleDisconnect}
-              className="w-14 h-12 sm:w-16 sm:h-14 shrink-0 rounded-2xl sm:rounded-[1.2rem] bg-red-600 hover:bg-red-500 text-white border border-red-500 flex items-center justify-center shadow-lg shadow-red-600/20 hover:scale-105 active:scale-95 transition-all ml-1 sm:ml-2"
+              className="w-14 h-12 sm:w-16 sm:h-14 shrink-0 rounded-2xl sm:rounded-[1.2rem] bg-red-600 hover:bg-red-500 text-white border border-red-500 flex items-center justify-center shadow-lg shadow-red-600/20 hover:scale-105 active:scale-95 transition-all ml-1 sm:ml-2 p-0"
               title="End Session"
             >
               <PhoneOff className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Persistence / Sidebar (Integrated Chat & Notes) */}
       <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 h-auto lg:h-full min-h-0 lg:max-h-[calc(100vh-220px)]">
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-10 flex flex-col shadow-sm lg:overflow-hidden min-h-0">
+        <Card className="p-4 md:p-10 flex flex-col lg:overflow-hidden min-h-0">
 
           <div className="flex p-1 bg-slate-100 rounded-2xl mb-6">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setActiveTab('notes')}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all ${activeTab === 'notes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-none h-auto ${activeTab === 'notes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
                 }`}
             >
               Clinical Notes
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => setActiveTab('chat')}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all ${activeTab === 'chat' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-none h-auto ${activeTab === 'chat' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
                 }`}
             >
               Session Chat
-            </button>
+            </Button>
           </div>
 
           <div className="flex-1 flex flex-col min-h-[400px] lg:min-h-0">
@@ -438,7 +449,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
               <NotesSidebar appointmentId={appointmentId} />
             )}
           </div>
-        </div>
+        </Card>
       </aside>
     </div>
   );

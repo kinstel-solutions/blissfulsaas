@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { Users, Mail, Phone, Calendar, ArrowRight, Activity, ShieldCheck, MessageSquare, Clock } from "lucide-react";
 import PatientDetailPanel from "./PatientDetailPanel";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 
 interface Patient {
   id: string;
@@ -27,7 +30,7 @@ export default function PatientList({ roster }: { roster: Patient[] }) {
 
   return (
     <>
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px] md:min-w-full">
             <thead>
@@ -48,9 +51,9 @@ export default function PatientList({ roster }: { roster: Patient[] }) {
                 >
                   <td className="px-5 md:px-10 py-4 md:py-8">
                     <div className="flex items-center gap-5">
-                      <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center text-primary font-bold text-xl border border-primary/10 group-hover:bg-primary group-hover:text-white transition-all">
-                        {p.firstName?.[0]}{p.lastName?.[0]}
-                      </div>
+                      <Avatar className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center text-primary font-bold text-xl border border-primary/10 group-hover:bg-primary group-hover:text-white transition-all h-auto shrink-0">
+                        <AvatarFallback className="bg-transparent text-current font-bold text-xl">{p.firstName?.[0]}{p.lastName?.[0]}</AvatarFallback>
+                      </Avatar>
                       <div>
                         <p className="font-sans text-lg font-bold text-slate-900 leading-tight">
                           {p.firstName} {p.lastName}
@@ -90,24 +93,26 @@ export default function PatientList({ roster }: { roster: Patient[] }) {
                   </td>
                   <td className="px-5 md:px-10 py-4 md:py-8 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                       <button 
-                        className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-primary hover:border-primary/30 rounded-xl transition-all shadow-sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePatientClick(p);
-                        }}
-                       >
-                         <MessageSquare className="w-4 h-4" />
-                       </button>
-                       <button 
-                        className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-primary hover:border-primary/30 rounded-xl transition-all shadow-sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePatientClick(p);
-                        }}
-                       >
-                         <Clock className="w-4 h-4" />
-                       </button>
+                        <Button 
+                         variant="outline"
+                         className="p-2.5 text-slate-400 hover:text-primary hover:border-primary/30 transition-all h-auto w-auto"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           handlePatientClick(p);
+                         }}
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                         variant="outline"
+                         className="p-2.5 text-slate-400 hover:text-primary hover:border-primary/30 transition-all h-auto w-auto"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           handlePatientClick(p);
+                         }}
+                        >
+                          <Clock className="w-4 h-4" />
+                        </Button>
                     </div>
                   </td>
                 </tr>
@@ -115,7 +120,7 @@ export default function PatientList({ roster }: { roster: Patient[] }) {
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
 
       <PatientDetailPanel 
         patient={selectedPatient} 

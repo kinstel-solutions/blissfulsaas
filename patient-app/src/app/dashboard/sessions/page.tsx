@@ -4,6 +4,8 @@ import { fetchWithAuthContent } from "@/lib/api-server";
 import SessionFeedbackButton from "@/components/SessionFeedbackButton";
 import SessionCountdownLabel from "@/components/SessionCountdownLabel";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default async function SessionsPage() {
   // Fetch ALL sessions (upcoming + past) so patients can review completed ones
@@ -29,8 +31,8 @@ export default async function SessionsPage() {
     const isCancelled = session.status === "CANCELLED" || session.status === "NO_SHOW" || session.status === "EXPIRED";
 
     return (
-      <div
-        className={`relative bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:shadow-lg transition-all border-l-4 group ${isCompleted
+      <Card
+        className={`relative p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all border-l-4 group ${isCompleted
             ? "border-l-blue-400/50 bg-blue-50/10"
             : isCancelled
               ? "border-l-destructive/30 opacity-60"
@@ -167,24 +169,24 @@ export default async function SessionsPage() {
           {/* Book Again for completed/cancelled */}
           {(isCompleted || isCancelled) && session.therapist?.id && (
             <Link href={`/dashboard/sessions/book/${session.therapist.id}`} className="w-full sm:w-auto pointer-events-auto">
-              <button className="w-full sm:w-auto bg-primary text-primary-foreground px-5 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]">
+              <Button className="w-full sm:w-auto bg-primary text-primary-foreground px-5 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
                 <RefreshCw className="w-3.5 h-3.5" />
                 Book Again
-              </button>
+              </Button>
             </Link>
           )}
 
           {/* View Session button for upcoming */}
           {(session.status === "PENDING" || session.status === "CONFIRMED") && (
             <Link href={`/dashboard/sessions/${session.id}`} className="w-full sm:w-auto pointer-events-auto">
-              <button className="w-full sm:w-auto bg-primary text-primary-foreground px-5 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]">
+              <Button className="w-full sm:w-auto bg-primary text-primary-foreground px-5 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
                 <ArrowRight className="w-3.5 h-3.5" />
                 View Session
-              </button>
+              </Button>
             </Link>
           )}
         </div>
-      </div>
+      </Card>
     );
   };
 

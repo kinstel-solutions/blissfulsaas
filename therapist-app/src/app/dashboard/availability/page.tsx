@@ -33,6 +33,9 @@ import type {
   CreateOverridePayload,
 } from "@/lib/api";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -319,7 +322,7 @@ function CalendarPicker({ value, onChange, minDate }: CalendarPickerProps) {
       {isOpen && (
         <>
           <div className="fixed inset-0 z-[1001]" onClick={() => setIsOpen(false)} />
-          <div className="absolute top-[105%] left-0 w-full sm:w-80 bg-white border border-outline-variant/30 rounded-2xl shadow-2xl z-[1002] p-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <Card className="absolute top-[105%] left-0 w-full sm:w-80 z-[1002] p-4 animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="flex items-center justify-between mb-4">
               <button
                 type="button"
@@ -383,7 +386,7 @@ function CalendarPicker({ value, onChange, minDate }: CalendarPickerProps) {
                 );
               })}
             </div>
-          </div>
+          </Card>
         </>
       )}
     </div>
@@ -444,7 +447,7 @@ function AvailabilityMiniCalendar({ overrides, onDayClick }: MiniCalendarProps) 
   ];
 
   return (
-    <div className="bg-white border border-outline-variant/30 rounded-2xl shadow-sm p-4 w-full">
+    <Card className="p-4 w-full">
       <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
         <span className="text-sm font-bold text-foreground">
           Exceptions Calendar
@@ -543,7 +546,7 @@ function AvailabilityMiniCalendar({ overrides, onDayClick }: MiniCalendarProps) 
           <span>Available Hours</span>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -1035,12 +1038,12 @@ function AddOverrideDialog({ open, onClose, onSave, defaultDate }: AddOverrideDi
               <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
                 Reason (optional)
               </label>
-              <input
+              <Input
                 type="text"
                 value={reason}
-                onChange={(e) => setReason(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReason(e.target.value)}
                 placeholder="e.g. Conference, Holiday, Personal"
-                className="w-full px-3 py-2.5 rounded-xl border border-outline-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40"
+                className="w-full px-3 py-2.5 rounded-xl border border-outline-variant/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 focus-visible:ring-0 focus-visible:ring-offset-0"
               />
             </div>
 
@@ -1061,13 +1064,14 @@ function AddOverrideDialog({ open, onClose, onSave, defaultDate }: AddOverrideDi
           </div>
 
           <div className="flex gap-3 mt-6">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-sm font-semibold text-muted-foreground hover:bg-slate-50 transition-colors"
+              className="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-sm font-semibold text-muted-foreground hover:bg-slate-50 transition-colors h-auto"
             >
               Cancel
-            </button>
+            </Button>
             <AlexButton
               onClick={handleSave}
               disabled={saving}

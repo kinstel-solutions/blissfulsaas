@@ -32,7 +32,7 @@
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   
-  --radius-xl: 1.5rem;
+  --radius-xl: 0.6875rem;
   --radius-2xl: 2rem;
   --radius-3xl: 2.5rem;
   --radius-4xl: 3rem;
@@ -248,4 +248,4 @@
   font-weight: 600;
   line-height: 16px;
   letter-spacing: 0.05em;
-}
+}

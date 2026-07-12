@@ -1,6 +1,7 @@
 import { Users, Mail, Phone, Calendar, ArrowRight, Activity, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
+import { Card } from "@/components/ui/card";
 import PatientList from "@/components/PatientList";
 
 export default async function PatientRosterPage() {
@@ -25,13 +26,13 @@ export default async function PatientRosterPage() {
       </header>
 
       {roster.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-2xl p-24 text-center shadow-sm">
+        <Card className="p-24 text-center">
           <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8 text-slate-300">
              <Users className="w-12 h-12" />
           </div>
           <h3 className="text-2xl font-heading font-medium text-slate-900">Your patient list is empty</h3>
           <p className="text-slate-500 mt-3 max-w-sm mx-auto leading-relaxed"> Once patients start booking appointments with you, they will appear here for your clinical records.</p>
-        </div>
+        </Card>
       ) : (
         <PatientList roster={roster} />
       )}

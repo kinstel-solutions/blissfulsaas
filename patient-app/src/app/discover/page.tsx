@@ -12,6 +12,7 @@ import { api } from "@/lib/api";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { BreathingLoader } from "@/components/BreathingLoader";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Button } from "@/components/ui/button";
 
 // Helper to get custom Lucide icon based on speciality name
 const getSpecialityIcon = (spec: string) => {
@@ -191,12 +192,13 @@ export default function DiscoverPage() {
               <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-primary/60">Explore Areas of Expertise</h2>
             </div>
             {selectedSpeciality && (
-              <button 
-                onClick={() => setSelectedSpeciality(null)}
-                className="text-xs font-bold text-primary hover:text-primary/80 transition-colors underline decoration-2 underline-offset-4 cursor-pointer"
-              >
-                Show All Specialists
-              </button>
+               <Button 
+                 variant="link"
+                 onClick={() => setSelectedSpeciality(null)}
+                 className="text-xs font-bold text-primary hover:text-primary/80 transition-colors underline decoration-2 underline-offset-4 cursor-pointer p-0 h-auto hover:no-underline"
+               >
+                 Show All Specialists
+               </Button>
             )}
           </div>
           
@@ -208,22 +210,24 @@ export default function DiscoverPage() {
             <div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-[#F8FAF9] to-transparent pointer-events-none z-10" />
 
             {/* Left Scroll Button */}
-            <button 
+            <Button 
+              variant="outline"
               onClick={scrollLeft}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-outline-variant/30 text-primary shadow-md hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center z-20 opacity-0 group-hover/carousel:opacity-100 hover:scale-110 cursor-pointer"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-outline-variant/30 text-primary shadow-md hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center z-20 opacity-0 group-hover/carousel:opacity-100 hover:scale-110 cursor-pointer p-0"
               aria-label="Scroll left"
             >
               <ChevronLeft className="w-5 h-5" />
-            </button>
+            </Button>
 
             {/* Right Scroll Button */}
-            <button 
+            <Button 
+              variant="outline"
               onClick={scrollRight}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-outline-variant/30 text-primary shadow-md hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center z-20 opacity-0 group-hover/carousel:opacity-100 hover:scale-110 cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-outline-variant/30 text-primary shadow-md hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center z-20 opacity-0 group-hover/carousel:opacity-100 hover:scale-110 cursor-pointer p-0"
               aria-label="Scroll right"
             >
               <ChevronRight className="w-5 h-5" />
-            </button>
+            </Button>
 
             {/* Horizontally scrollable list */}
             <div 

@@ -4,17 +4,19 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { 
-  Heart, Brain, Pill, Users, Target, Phone, 
+import {
+  Heart, Brain, Pill, Users, Target, Phone,
   ChevronRight, ChevronLeft, CheckCircle, Loader2,
   AlertCircle, Shield
 } from "lucide-react";
 import { fetchWithAuth } from "@/lib/api";
 import { patientIntakeSchema, type PatientIntakeValues } from "@/lib/validations";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const CONCERN_OPTIONS = [
   "Anxiety", "Depression", "Stress", "Trauma / PTSD", "Relationship Issues",
-  "Grief & Loss", "Anger Management", "Self-Esteem", "Work / Career", 
+  "Grief & Loss", "Anger Management", "Self-Esteem", "Work / Career",
   "Sleep Problems", "Addiction", "Family Conflict", "Loneliness", "OCD",
 ];
 
@@ -106,13 +108,12 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
             <div key={s.id} className="flex items-center gap-2">
               <button
                 onClick={() => step > s.id && setStep(s.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
-                  step === s.id 
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                    : step > s.id 
-                      ? 'bg-emerald-500 text-white' 
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${step === s.id
+                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                    : step > s.id
+                      ? 'bg-emerald-500 text-white'
                       : 'bg-surface-container-low text-muted-foreground'
-                }`}
+                  }`}
               >
                 {step > s.id ? <CheckCircle className="w-3 h-3" /> : <s.icon className="w-3 h-3" />}
                 <span className="hidden sm:block">{s.label}</span>
@@ -123,8 +124,8 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
         </div>
 
         {/* Form Card */}
-        <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-2xl p-5 md:p-10 shadow-xl">
-          
+        <Card className="p-5 md:p-10">
+
           {/* Step 1: Reason & Concerns */}
           {step === 1 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -135,9 +136,8 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
               <textarea
                 {...register("reasonForSeeking")}
                 placeholder="E.g., I've been feeling overwhelmed at work and struggling with anxiety..."
-                className={`w-full h-36 bg-surface-container-low border rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed transition-colors ${
-                  errors.reasonForSeeking ? 'border-red-500' : 'border-outline-variant/30'
-                }`}
+                className={`w-full h-36 bg-surface-container-low border rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed transition-colors ${errors.reasonForSeeking ? 'border-red-500' : 'border-outline-variant/30'
+                  }`}
               />
               {errors.reasonForSeeking && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.reasonForSeeking.message}</p>}
               <div>
@@ -148,11 +148,10 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                       key={c}
                       type="button"
                       onClick={() => toggleConcern(c)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                        form.primaryConcerns.includes(c)
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${form.primaryConcerns.includes(c)
                           ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
                           : 'bg-surface-container-low text-foreground/70 border-outline-variant/30 hover:border-primary/30'
-                      }`}
+                        }`}
                     >
                       {c}
                     </button>
@@ -178,11 +177,10 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                       key={opt.label}
                       type="button"
                       onClick={() => setValue("previousTherapy", opt.val, { shouldValidate: true })}
-                      className={`flex-1 py-4 rounded-2xl text-sm font-bold border transition-all ${
-                        form.previousTherapy === opt.val
+                      className={`flex-1 py-4 rounded-2xl text-sm font-bold border transition-all ${form.previousTherapy === opt.val
                           ? 'bg-primary text-white border-primary'
                           : 'bg-surface-container-low border-outline-variant/30 text-foreground/70 hover:border-primary/30'
-                      }`}
+                        }`}
                     >
                       {opt.label}
                     </button>
@@ -219,9 +217,8 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
               <textarea
                 {...register("therapyGoals")}
                 placeholder="E.g., I want to learn coping strategies for anxiety, improve my communication in relationships, and feel more confident in daily life..."
-                className={`w-full h-48 bg-surface-container-low border rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed transition-colors ${
-                  errors.therapyGoals ? 'border-red-500' : 'border-outline-variant/30'
-                }`}
+                className={`w-full h-48 bg-surface-container-low border rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed transition-colors ${errors.therapyGoals ? 'border-red-500' : 'border-outline-variant/30'
+                  }`}
               />
               {errors.therapyGoals && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.therapyGoals.message}</p>}
             </div>
@@ -240,9 +237,8 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                   <input
                     {...register("emergencyContactName")}
                     placeholder="e.g. Jane Doe"
-                    className={`w-full h-14 bg-surface-container-low border rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none transition-colors ${
-                      errors.emergencyContactName ? 'border-red-500' : 'border-outline-variant/30'
-                    }`}
+                    className={`w-full h-14 bg-surface-container-low border rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none transition-colors ${errors.emergencyContactName ? 'border-red-500' : 'border-outline-variant/30'
+                      }`}
                   />
                   {errors.emergencyContactName && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactName.message}</p>}
                 </div>
@@ -251,9 +247,8 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                   <input
                     {...register("emergencyContactPhone")}
                     placeholder="+91 XXXXX XXXXX"
-                    className={`w-full h-14 bg-surface-container-low border rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none transition-colors ${
-                      errors.emergencyContactPhone ? 'border-red-500' : 'border-outline-variant/30'
-                    }`}
+                    className={`w-full h-14 bg-surface-container-low border rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none transition-colors ${errors.emergencyContactPhone ? 'border-red-500' : 'border-outline-variant/30'
+                      }`}
                   />
                   {errors.emergencyContactPhone && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactPhone.message}</p>}
                 </div>
@@ -269,34 +264,35 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
 
           {/* Navigation */}
           <div className="mt-10 flex items-center justify-between">
-            <button
+            <Button
+              variant="outline"
               onClick={() => setStep(prev => prev - 1)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold border border-outline-variant/30 text-foreground/70 hover:bg-surface-container-low transition-all ${step === 1 ? 'invisible' : ''}`}
+              className={`flex items-center gap-2 text-sm font-bold transition-all h-auto ${step === 1 ? 'invisible' : ''}`}
             >
               <ChevronLeft className="w-4 h-4" /> Back
-            </button>
+            </Button>
 
             {step < 4 ? (
-              <button
+              <Button
                 type="button"
                 onClick={nextStep}
-                className="flex items-center gap-2 px-4 md:px-8 py-3 rounded-2xl text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                className="flex items-center gap-2 text-sm font-bold hover:-translate-y-0.5 transition-all h-auto"
               >
                 Continue <ChevronRight className="w-4 h-4" />
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 type="button"
                 onClick={handleSubmit(onSubmit)}
                 disabled={saving}
-                className="flex items-center gap-2 px-4 md:px-8 py-3 rounded-2xl text-sm font-bold bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40"
+                className="flex items-center gap-2 bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40 h-auto"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                 {saving ? "Submitting..." : "Complete Intake"}
-              </button>
+              </Button>
             )}
           </div>
-        </div>
+        </Card>
 
         <p className="text-center text-xs text-muted-foreground/50 mt-8 uppercase tracking-widest font-bold">
           🔒 Industry-standard AES-256 encryption • Your privacy is our priority

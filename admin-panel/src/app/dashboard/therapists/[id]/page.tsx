@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import ApproveButton from "./ApproveButton";
 import RejectButton from "./RejectButton";
+import { Card } from "@/components/ui/card";
 
 export default async function TherapistDetailPage({
   params,
@@ -113,7 +114,7 @@ export default async function TherapistDetailPage({
   return (
     <div className="space-y-12 pb-24 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
       {/* Header Slot */}
-      <div className="bg-surface-container-lowest border border-outline-variant/10 rounded-xl p-6 md:p-10 shadow-sm relative overflow-hidden">
+      <Card className="p-6 md:p-10 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         
         <div className="flex flex-col gap-8 relative z-10">
@@ -168,8 +169,8 @@ export default async function TherapistDetailPage({
                <RejectButton id={therapist.id} isUpdate={!!therapist.pendingFields} />
             </div>
           </div>
-        </div>
-      </div>
+         </div>
+      </Card>
 
       <div className="grid grid-cols-1 gap-12">
         {/* Core Profile Info */}
@@ -185,14 +186,14 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-primary/5 text-primary/40 group-hover:text-primary group-hover:bg-primary/10`}>
                     <GraduationCap className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                  <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground`}>
                     {qualificationsInfo.value || "No qualifications listed."}
                     {qualificationsInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
                         Original: {qualificationsInfo.originalValue || "Empty"}
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </div>
              </div>
 
@@ -202,9 +203,9 @@ export default async function TherapistDetailPage({
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary/40 group-hover:text-primary group-hover:bg-primary/10 transition-all">
                     <Mail className="w-5 h-5" />
                   </div>
-                  <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-xl pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
+                  <Card className="w-full pl-16 pr-6 py-5 text-sm font-medium text-foreground">
                     {(therapist.user as any)?.email}
-                  </div>
+                  </Card>
                 </div>
              </div>
 
@@ -217,14 +218,14 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-primary/5 text-primary/40 group-hover:text-primary group-hover:bg-primary/10`}>
                     <User className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                  <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground`}>
                     {genderInfo.value || "Not provided"}
                     {genderInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
                         Original: {genderInfo.originalValue || "Empty"}
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </div>
              </div>
 
@@ -237,14 +238,14 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-primary/5 text-primary/40 group-hover:text-primary group-hover:bg-primary/10`}>
                     <Phone className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                  <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground`}>
                     {phoneInfo.value || "Not provided"}
                     {phoneInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
                         Original: {phoneInfo.originalValue || "Empty"}
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </div>
              </div>
           </div>
@@ -254,7 +255,7 @@ export default async function TherapistDetailPage({
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Clinical Biography</label>
               {bioInfo.hasPending && <PendingLabel />}
             </div>
-            <div className={`border rounded-xl px-8 py-8 text-lg italic serif leading-relaxed shadow-sm relative overflow-hidden transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground/80`}>
+            <Card className={`px-8 py-8 text-lg italic serif leading-relaxed relative overflow-hidden transition-all text-foreground/80`}>
                <div className={`absolute top-0 right-0 w-32 h-32 bg-primary/[0.02] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2`} />
                <FileText className={`w-8 h-8 mb-4 text-primary/10`} />
                "{bioInfo.value || "No biography provided by the practitioner."}"
@@ -264,7 +265,7 @@ export default async function TherapistDetailPage({
                   "{bioInfo.originalValue || "Empty"}"
                 </div>
                )}
-            </div>
+            </Card>
           </div>
 
           <div className="space-y-2">
@@ -303,9 +304,9 @@ export default async function TherapistDetailPage({
                 })()}
               </div>
             ) : (
-              <div className={`w-full border rounded-xl px-6 py-5 text-sm font-medium italic shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-muted-foreground/40`}>
+              <Card className={`w-full px-6 py-5 text-sm font-medium italic transition-all text-muted-foreground/40`}>
                 No introduction video provided.
-              </div>
+              </Card>
             )}
             {videoUrlInfo.hasPending && (
               <p className="text-[10px] text-muted-foreground/40 font-medium mt-1 ml-2">Original URL: {videoUrlInfo.originalValue || "Empty"}</p>
@@ -319,7 +320,7 @@ export default async function TherapistDetailPage({
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Hourly Rate</label>
                   {hourlyRateInfo.hasPending && <PendingLabel />}
                 </div>
-                <div className={`border rounded-xl p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-emerald-500/20`}>
+                <Card className={`p-6 flex flex-col gap-4 group transition-all hover:border-emerald-500/20`}>
                    <div className="flex items-center gap-5">
                      <div className={`w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-emerald-600 border-emerald-500/5`}>
                         <IndianRupee className="w-7 h-7" />
@@ -334,14 +335,14 @@ export default async function TherapistDetailPage({
                       Original: ₹{hourlyRateInfo.originalValue || 0}
                     </div>
                    )}
-                </div>
+                </Card>
              </div>
              <div className="space-y-2">
                 <div className="flex items-center">
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Experience</label>
                   {yearsOfExperienceInfo.hasPending && <PendingLabel />}
                 </div>
-                <div className={`border rounded-xl p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-primary/20`}>
+                <Card className={`p-6 flex flex-col gap-4 group transition-all hover:border-primary/20`}>
                    <div className="flex items-center gap-5">
                      <div className={`w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-primary border-primary/5`}>
                         <Clock className="w-7 h-7" />
@@ -356,7 +357,7 @@ export default async function TherapistDetailPage({
                       Original: {yearsOfExperienceInfo.originalValue || 0} Years
                     </div>
                    )}
-                </div>
+                </Card>
              </div>
 
              <div className="space-y-2">
@@ -364,7 +365,7 @@ export default async function TherapistDetailPage({
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Languages</label>
                   {languagesInfo.hasPending && <PendingLabel />}
                 </div>
-                <div className={`border rounded-xl p-6 flex flex-col gap-4 shadow-sm group transition-all bg-surface-container-low border-outline-variant/10 hover:border-primary/20`}>
+                <Card className={`p-6 flex flex-col gap-4 group transition-all hover:border-primary/20`}>
                    <div className="flex items-center gap-5">
                      <div className={`w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-inner border group-hover:scale-110 transition-transform text-primary border-primary/5`}>
                         <Globe className="w-7 h-7" />
@@ -380,7 +381,7 @@ export default async function TherapistDetailPage({
                       Original: {languagesInfo.originalValue?.join(', ') || "English"}
                     </div>
                    )}
-                </div>
+                </Card>
              </div>
           </div>
 
@@ -395,14 +396,14 @@ export default async function TherapistDetailPage({
                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
                    <MapPin className="w-5 h-5" />
                  </div>
-                 <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                 <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground`}>
                    {clinicAddressInfo.value || "No clinic address provided."}
                    {clinicAddressInfo.hasPending && (
                     <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
                       Original: {clinicAddressInfo.originalValue || "Empty"}
                     </div>
                    )}
-                 </div>
+                 </Card>
                </div>
             </div>
 
@@ -416,7 +417,7 @@ export default async function TherapistDetailPage({
                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
                    <ExternalLink className="w-5 h-5" />
                  </div>
-                 <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                 <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground`}>
                    {mapLinkInfo.value ? (
                      <a href={mapLinkInfo.value} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1.5 font-bold">
                        {mapLinkInfo.value}
@@ -434,7 +435,7 @@ export default async function TherapistDetailPage({
                       ) : "Empty"}
                     </div>
                    )}
-                 </div>
+                 </Card>
                </div>
             </div>
 
@@ -445,9 +446,9 @@ export default async function TherapistDetailPage({
                  <div className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary/40 group-hover:text-primary group-hover:bg-primary/10 transition-all">
                    <Calendar className="w-5 h-5" />
                  </div>
-                 <div className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-xl pl-16 pr-6 py-5 text-sm font-medium text-foreground shadow-sm">
+                 <Card className="w-full pl-16 pr-6 py-5 text-sm font-medium text-foreground">
                    {new Date((therapist.user as any)?.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                 </div>
+                 </Card>
                </div>
             </div>
           </div>
@@ -499,14 +500,14 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-indigo-500/5 text-indigo-600/40 group-hover:text-indigo-600 group-hover:bg-indigo-500/10`}>
                     <FileCheck className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                  <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground`}>
                     {rciNumberInfo.value || "Not provided"}
                     {rciNumberInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
                         Original: {rciNumberInfo.originalValue || "Empty"}
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </div>
               </div>
 
@@ -561,14 +562,14 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
                     <Landmark className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                  <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground`}>
                     {bankNameInfo.value || "Not provided"}
                     {bankNameInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
                         Original: {bankNameInfo.originalValue || "Empty"}
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </div>
               </div>
 
@@ -577,14 +578,14 @@ export default async function TherapistDetailPage({
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">Account Holder</label>
                   {bankAccountHolderNameInfo.hasPending && <PendingLabel />}
                 </div>
-                <div className={`w-full border rounded-xl px-6 py-5 text-sm font-medium shadow-sm bg-surface-container-lowest border-outline-variant/20 text-foreground`}>
+                <Card className={`w-full px-6 py-5 text-sm font-medium text-foreground`}>
                   {bankAccountHolderNameInfo.value || "Not provided"}
                   {bankAccountHolderNameInfo.hasPending && (
                     <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic">
                       Original: {bankAccountHolderNameInfo.originalValue || "Empty"}
                     </div>
                   )}
-                </div>
+                </Card>
               </div>
 
               <div className="space-y-2">
@@ -596,14 +597,14 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-emerald-500/5 text-emerald-600/40 group-hover:text-emerald-600 group-hover:bg-emerald-500/10`}>
                     <CreditCard className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground font-mono`}>
+                  <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground font-mono`}>
                     {bankAccountNumberInfo.value || "Not provided"}
                     {bankAccountNumberInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic font-sans">
                         Original: {bankAccountNumberInfo.originalValue || "Empty"}
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </div>
               </div>
 
@@ -612,14 +613,14 @@ export default async function TherapistDetailPage({
                   <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">IFSC Code</label>
                   {bankIfscCodeInfo.hasPending && <PendingLabel />}
                 </div>
-                <div className={`w-full border rounded-xl px-6 py-5 text-sm font-medium shadow-sm bg-surface-container-lowest border-outline-variant/20 text-foreground font-mono uppercase`}>
+                <Card className={`w-full px-6 py-5 text-sm font-medium text-foreground font-mono uppercase`}>
                   {bankIfscCodeInfo.value || "Not provided"}
                   {bankIfscCodeInfo.hasPending && (
                     <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic font-sans">
                       Original: {bankIfscCodeInfo.originalValue || "Empty"}
                     </div>
                   )}
-                </div>
+                </Card>
               </div>
             </div>
 
@@ -633,14 +634,14 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-amber-500/5 text-amber-600/40 group-hover:text-amber-600 group-hover:bg-amber-500/10`}>
                     <CreditCard className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground font-mono uppercase`}>
+                  <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground font-mono uppercase`}>
                     {panNumberInfo.value || "Not provided"}
                     {panNumberInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic font-sans">
                         Original: {panNumberInfo.originalValue || "Empty"}
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </div>
               </div>
 
@@ -653,14 +654,14 @@ export default async function TherapistDetailPage({
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-amber-500/5 text-amber-600/40 group-hover:text-amber-600 group-hover:bg-amber-500/10`}>
                     <Fingerprint className="w-5 h-5" />
                   </div>
-                  <div className={`w-full border rounded-xl pl-16 pr-6 py-5 text-sm font-medium shadow-sm transition-all bg-surface-container-lowest border-outline-variant/20 text-foreground font-mono`}>
+                  <Card className={`w-full pl-16 pr-6 py-5 text-sm font-medium transition-all text-foreground font-mono`}>
                     {aadhaarNumberInfo.value || "Not provided"}
                     {aadhaarNumberInfo.hasPending && (
                       <div className="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-muted-foreground/40 italic font-sans">
                         Original: {aadhaarNumberInfo.originalValue || "Empty"}
                       </div>
                     )}
-                  </div>
+                  </Card>
                 </div>
               </div>
             </div>

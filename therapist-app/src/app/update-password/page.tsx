@@ -6,6 +6,9 @@ import { Lock, Fingerprint, Loader2, Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function UpdatePasswordPage() {
   const [password, setPassword] = useState("");
@@ -66,7 +69,7 @@ export default function UpdatePasswordPage() {
             <p className="text-[#1A2F28]/60 text-sm font-medium uppercase tracking-[0.2em]">Secure your Provider Account</p>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(26,47,40,0.05)] border border-white/40 relative overflow-hidden group">
+          <Card className="backdrop-blur-xl p-8 md:p-12 relative overflow-hidden group">
             {/* Inner Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#E3F2ED]/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000" />
             
@@ -76,25 +79,26 @@ export default function UpdatePasswordPage() {
                   New Password
                 </label>
                 <div className="relative group/input">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                     <Lock size={18} />
                   </div>
-                  <input 
+                  <Input 
                     id="password" 
                     type={showPassword ? "text" : "password"} 
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     placeholder="••••••••" 
-                    className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
+                    className="w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 focus:border-[#2D4F43]/20"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 hover:text-[#2D4F43] transition-colors"
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 hover:text-[#2D4F43] transition-colors h-auto w-auto p-0 hover:bg-transparent"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -103,25 +107,26 @@ export default function UpdatePasswordPage() {
                   Confirm Password
                 </label>
                 <div className="relative group/input">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                     <Lock size={18} />
                   </div>
-                  <input 
+                  <Input 
                     id="confirmPassword" 
                     type={showPassword ? "text" : "password"} 
                     required
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••" 
-                    className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
+                    className="w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 focus:border-[#2D4F43]/20"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 hover:text-[#2D4F43] transition-colors"
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 hover:text-[#2D4F43] transition-colors h-auto w-auto p-0 hover:bg-transparent"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                  </Button>
                 </div>
               </div>
               
@@ -142,7 +147,7 @@ export default function UpdatePasswordPage() {
                 </AlexButton>
               </div>
             </form>
-          </div>
+          </Card>
         </div>
       </main>
     </div>

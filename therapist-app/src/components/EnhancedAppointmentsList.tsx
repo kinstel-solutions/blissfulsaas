@@ -13,6 +13,8 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AppointmentActions from "@/components/AppointmentActions";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export default function EnhancedAppointmentsList({ initialAppointments }: { initialAppointments: any[] }) {
   const router = useRouter();
@@ -40,7 +42,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
   });
 
   return (
-    <div className="bg-white lg:border border-slate-200 lg:rounded-xl overflow-hidden lg:shadow-sm">
+    <Card className="overflow-hidden">
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full text-left border-separate border-spacing-0">
           <thead>
@@ -96,11 +98,12 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                             </p>
                             <div className="w-1 h-1 rounded-full bg-slate-300 mt-1" />
                             <Link href={`/dashboard/messages?sessionId=${appt.id}`} onClick={e => e.stopPropagation()}>
-                              <button 
-                                className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1 hover:text-primary transition-colors"
+                              <Button
+                                variant="ghost"
+                                className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1 hover:text-primary transition-colors p-0 h-auto hover:bg-transparent"
                               >
                                 Message
-                              </button>
+                              </Button>
                             </Link>
                           </div>
                         </div>
@@ -132,9 +135,9 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                       <div className="flex items-center justify-end gap-3" onClick={e => e.stopPropagation()}>
                          <AppointmentActions id={appt.id} status={appt.status} />
                          <Link href={`/dashboard/appointments/${appt.id}`}>
-                            <button className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-all">
+                            <Button variant="ghost" className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-all w-auto h-auto">
                                <ChevronUp className="w-5 h-5 rotate-90" />
-                            </button>
+                            </Button>
                          </Link>
                       </div>
                     </td>
@@ -219,9 +222,9 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                 <div className="px-5 pb-5 flex items-center justify-between gap-3 border-t border-slate-50 pt-4">
                    <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                       <Link href={`/dashboard/messages?sessionId=${appt.id}`}>
-                        <button className="p-2.5 bg-primary/5 text-primary rounded-lg border border-primary/10">
+                        <Button variant="ghost" className="p-2.5 text-primary">
                           <MessageSquare className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </Link>
                       <AppointmentActions id={appt.id} status={appt.status} />
                    </div>
@@ -234,6 +237,6 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
           })
         )}
       </div>
-    </div>
+    </Card>
   );
 }

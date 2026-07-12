@@ -14,6 +14,7 @@ import AgoraRTC, {
 } from "agora-rtc-react";
 import { Mic, MicOff, Video, VideoOff, PhoneOff, Shield, Maximize2, Minimize2, Settings2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/card";
 import ChatSidebar from "./ChatSidebar";
 import { uuidToUid } from "@/lib/utils";
 
@@ -376,7 +377,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
 
       {/* Sidebar Chat (Separate Section) */}
       <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 h-auto lg:h-full min-h-0 lg:max-h-[calc(100vh-220px)]">
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 min-h-100 md:p-6 flex flex-col shadow-sm lg:overflow-hidden min-h-0 h-full flex-1">
+        <Card className="p-4 min-h-100 md:p-6 flex flex-col lg:overflow-hidden min-h-0 h-full flex-1">
           <div className="flex-1 flex flex-col min-h-0">
             {currentUserId && (
               <ChatSidebar
@@ -385,7 +386,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
               />
             )}
           </div>
-        </div>
+        </Card>
       </aside>
     </div>
   );

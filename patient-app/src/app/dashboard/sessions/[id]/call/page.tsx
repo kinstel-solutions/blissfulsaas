@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import VideoRoomWrapper from "@/components/VideoRoomWrapper";
+import { Button } from "@/components/ui/button";
 
 export default async function PatientCallPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -26,9 +27,9 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
             You don't have permission to join this room, or the session has expired.
           </p>
           <Link href="/dashboard/sessions">
-            <button className="bg-surface-container-low text-foreground border border-outline-variant/50 px-4 md:px-8 py-3 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-surface transition-all">
+            <Button variant="ghost" className="bg-surface-container-low text-foreground border border-outline-variant/50 px-4 md:px-8 py-3 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-surface transition-all h-auto">
               Back to Sessions
-            </button>
+            </Button>
           </Link>
         </div>
       </div>

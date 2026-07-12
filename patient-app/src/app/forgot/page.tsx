@@ -7,6 +7,9 @@ import { Mail, Fingerprint, Loader2, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -61,7 +64,7 @@ export default function ForgotPasswordPage() {
         
         <main className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10 pt-32 pb-20">
           <div className="w-full max-w-xl">
-            <div className="bg-white/60 backdrop-blur-xl p-8 md:p-14 rounded-[2.5rem] shadow-[0_20px_50px_rgba(26,47,40,0.05)] border border-white/40 text-center space-y-8">
+            <Card className="backdrop-blur-xl p-8 md:p-14 text-center space-y-8">
               <div className="w-20 h-20 bg-[#E3F2ED] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Mail className="w-10 h-10 text-[#2D4F43]" />
               </div>
@@ -78,7 +81,7 @@ export default function ForgotPasswordPage() {
                   </AlexButton>
                 </Link>
               </div>
-            </div>
+            </Card>
           </div>
         </main>
       </div>
@@ -96,7 +99,8 @@ export default function ForgotPasswordPage() {
       <main className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10 pt-32 pb-20">
         <div className="w-full max-w-xl">
           <div className="mb-6 flex justify-start">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 if (window.document.referrer.includes(window.location.host)) {
                   router.back();
@@ -105,11 +109,11 @@ export default function ForgotPasswordPage() {
                 }
               }}
               type="button"
-              className="group flex items-center gap-2 px-4 py-2 bg-white/40 hover:bg-white/80 backdrop-blur-sm border border-[#1A2F28]/5 rounded-full text-xs font-bold uppercase tracking-widest text-[#1A2F28]/60 hover:text-[#1A2F28] transition-all shadow-sm cursor-pointer"
+              className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1A2F28]/60 hover:text-[#1A2F28] transition-all cursor-pointer w-auto h-auto hover:text-inherit"
             >
               <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
               Back
-            </button>
+            </Button>
           </div>
 
           <div className="text-center mb-10">
@@ -122,7 +126,7 @@ export default function ForgotPasswordPage() {
             <p className="text-[#1A2F28]/60 text-sm font-medium uppercase tracking-[0.2em]">Secure Recovery for your Station</p>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(26,47,40,0.05)] border border-white/40 relative overflow-hidden group">
+          <Card className="backdrop-blur-xl p-8 md:p-12 relative overflow-hidden group">
             {/* Inner Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#E3F2ED]/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000" />
             
@@ -132,17 +136,17 @@ export default function ForgotPasswordPage() {
                   Email Address
                 </label>
                 <div className="relative group/input">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                     <Mail size={18} />
                   </div>
-                  <input 
+                  <Input 
                     id="email" 
                     type="email" 
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     placeholder="your@email.com" 
-                    className="w-full h-16 bg-white/50 border border-[#1A2F28]/5 focus:border-[#2D4F43]/20 focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm"
+                    className="w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 focus:border-[#2D4F43]/20"
                   />
                 </div>
               </div>
@@ -173,7 +177,7 @@ export default function ForgotPasswordPage() {
                 </Link>
               </p>
             </div>
-          </div>
+          </Card>
         </div>
       </main>
     </div>

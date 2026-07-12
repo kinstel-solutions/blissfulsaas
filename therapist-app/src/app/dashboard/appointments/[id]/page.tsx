@@ -16,6 +16,7 @@ import AppointmentActions from "@/components/AppointmentActions";
 import AppointmentNotesClient from "./AppointmentNotesClient";
 import { notFound } from "next/navigation";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Button } from "@/components/ui/button";
 
 export default async function AppointmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -79,17 +80,17 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
           <div className="grid grid-cols-2 gap-2 w-full lg:flex lg:w-auto lg:items-center lg:gap-3">
              {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && appointment.status !== 'EXPIRED' && appointment.mode === 'ONLINE' && (
                 <Link href={`/dashboard/sessions/${appointment.id}/call`} className="contents lg:block lg:flex-none">
-                   <button className="w-full lg:w-auto px-4 lg:px-5 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95">
+                   <Button variant="default" className="w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto">
                       <Video className="w-3.5 h-3.5 text-white" />
                       Join Call
-                   </button>
+                   </Button>
                 </Link>
              )}
              <Link href={`/dashboard/messages?sessionId=${appointment.id}`} className="contents lg:block lg:flex-none">
-                <button className="w-full lg:w-auto px-4 lg:px-5 py-2.5 bg-white text-slate-700 rounded-xl border border-slate-200 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95">
+                <Button variant="outline" className="w-full lg:w-auto px-4 lg:px-5 py-2.5 bg-white text-slate-700 rounded-xl border border-slate-200 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95 h-auto">
                    <MessageSquare className="w-3.5 h-3.5 text-primary" />
                    Message
-                </button>
+                </Button>
              </Link>
              <div className="contents lg:block lg:flex-none">
                 <AppointmentActions id={appointment.id} status={appointment.status} />
