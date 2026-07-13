@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Calendar as CalendarIcon, 
-  Clock, 
-  ChevronUp, 
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  ChevronUp,
   FileText,
   MessageSquare,
   MapPin,
@@ -47,10 +47,10 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
         <table className="w-full text-left border-separate border-spacing-0">
           <thead>
             <tr className="bg-slate-50/50 border-b border-slate-100">
-              <th className="px-4 md:px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Consultation</th>
-              <th className="px-4 md:px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Timing</th>
-              <th className="px-4 md:px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Status</th>
-              <th className="px-4 md:px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400 text-right">Reference</th>
+              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em]">Consultation</th>
+              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em]">Timing</th>
+              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em]">Status</th>
+              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em] text-right">Reference</th>
             </tr>
           </thead>
           <tbody className="">
@@ -66,7 +66,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                 const hasNotes = appt.therapistNotes && appt.therapistNotes.length > 0;
 
                 return (
-                  <tr 
+                  <tr
                     key={appt.id}
                     onClick={() => navigateToDetail(appt.id)}
                     className={`group transition-all cursor-pointer hover:bg-slate-50/50 ${['CANCELLED', 'COMPLETED', 'EXPIRED'].includes(appt.status) ? 'opacity-70 grayscale-[0.2]' : ''}`}
@@ -77,19 +77,18 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                           {appt.patient?.firstName?.[0]}
                         </div>
                         <div>
-                          <div className="font-sans font-bold text-slate-900 flex items-center gap-2 group-hover/patient:text-primary transition-colors">
+                          <div className="text-lg font-sans font-bold text-slate-900 flex items-center gap-2 group-hover/patient:text-primary transition-colors">
                             {appt.patient?.firstName} {appt.patient?.lastName}
                             {hasNotes && (
                               <div className="flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md border border-blue-100">
-                                 <FileText className="w-2.5 h-2.5" />
-                                 <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap">Notes</span>
+                                <FileText className="w-2.5 h-2.5" />
+                                <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap">Notes</span>
                               </div>
                             )}
                           </div>
                           <div className="flex items-center gap-2">
-                            <p className={`text-xs font-bold uppercase tracking-widest mt-1 flex items-center gap-1.5 ${
-                              appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
-                            }`}>
+                            <p className={`text-sm font-bold uppercase tracking-widest mt-1 flex items-center gap-1.5 ${appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
+                              }`}>
                               {appt.mode === 'IN_CLINIC' ? (
                                 <><MapPin className="w-3 h-3" /> In-Clinic Visit</>
                               ) : (
@@ -111,34 +110,33 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     </td>
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50">
                       <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                        <div className="flex items-center gap-2 text-base text-slate-700 font-medium">
                           {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-slate-400 font-bold uppercase">
+                        <div className="flex items-center gap-2 text-sm text-slate-400 font-bold uppercase">
                           <Clock className="w-3 h-3" />
                           {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </div>
                     </td>
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50">
-                       <span className={`px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-widest border ${
-                          appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
-                          appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                      <span className={`px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-widest border ${appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
+                        appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                           appt.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                          appt.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
-                          'bg-slate-50 text-slate-500 border-slate-100'
+                            appt.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
+                              'bg-slate-50 text-slate-500 border-slate-100'
                         }`}>
-                          {appt.status}
-                        </span>
+                        {appt.status}
+                      </span>
                     </td>
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50 text-right">
                       <div className="flex items-center justify-end gap-3" onClick={e => e.stopPropagation()}>
-                         <AppointmentActions id={appt.id} status={appt.status} />
-                         <Link href={`/dashboard/appointments/${appt.id}`}>
-                            <Button variant="ghost" className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-all w-auto h-auto">
-                               <ChevronUp className="w-5 h-5 rotate-90" />
-                            </Button>
-                         </Link>
+                        <AppointmentActions id={appt.id} status={appt.status} />
+                        <Link href={`/dashboard/appointments/${appt.id}`}>
+                          <Button variant="ghost" className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-all w-auto h-auto">
+                            <ChevronUp className="w-5 h-5 rotate-90" />
+                          </Button>
+                        </Link>
                       </div>
                     </td>
                   </tr>
@@ -161,57 +159,54 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
             const hasNotes = appt.therapistNotes && appt.therapistNotes.length > 0;
 
             return (
-              <Card 
+              <Card
                 key={appt.id}
                 onClick={() => navigateToDetail(appt.id)}
-                className={`flex flex-col transition-all duration-300 overflow-hidden active:scale-[0.98] cursor-pointer p-0 gap-0 ${
-                  ['CANCELLED', 'COMPLETED', 'EXPIRED'].includes(appt.status) ? 'opacity-70' : ''
-                }`}
+                className={`flex flex-col transition-all duration-300 overflow-hidden active:scale-[0.98] cursor-pointer p-0 gap-0 ${['CANCELLED', 'COMPLETED', 'EXPIRED'].includes(appt.status) ? 'opacity-70' : ''
+                  }`}
               >
                 {/* Header Info */}
                 <div className="p-5 flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg transition-all shadow-sm shrink-0 border bg-white text-primary border-slate-100">
                       {appt.patient?.firstName?.[0]}
                     </div>
                     <div>
-                      <div className="font-sans font-bold text-slate-900 line-clamp-1">
+                      <div className="text-lg font-bold text-primary">
                         {appt.patient?.firstName} {appt.patient?.lastName}
                       </div>
-                      <div className={`text-[10px] font-bold uppercase tracking-widest mt-1 flex items-center gap-1.5 ${
-                        appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
-                      }`}>
+                      <div className={`text-sm font-bold uppercase tracking-widest mt-2 flex items-center gap-1.5 ${appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
+                        }`}>
                         {appt.mode === 'IN_CLINIC' ? (
                           <><MapPin className="w-3 h-3" /> In-Clinic Visit</>
                         ) : (
                           <><Video className="w-3 h-3" /> Video Session</>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border shrink-0 ${
-                          appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
+                      <div className="flex flex-col items-start gap-2 mt-4">
+                        <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-widest border shrink-0 ${appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
                           appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                          appt.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                          appt.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
-                          'bg-slate-50 text-slate-500 border-slate-100'
-                        }`}>
+                            appt.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                              appt.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
+                                'bg-slate-50 text-slate-500 border-slate-100'
+                          }`}>
                           {appt.status}
                         </span>
                         {hasNotes && (
-                         <div className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100">
+                          <div className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100">
                             <FileText className="w-2.5 h-2.5" />
-                            <span className="text-[9px] font-bold uppercase tracking-widest">Notes</span>
-                         </div>
+                            <span className="text-xs font-bold uppercase tracking-widest">Notes</span>
+                          </div>
                         )}
                       </div>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <div className="text-right">
-                      <div className="text-xs font-bold text-slate-900">
+                      <div className="text-base font-bold text-slate-900">
                         {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </div>
-                      <div className="text-[10px] text-slate-400 font-bold uppercase mt-1">
+                      <div className="text-sm text-slate-400 font-bold uppercase mt-1">
                         {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
@@ -220,17 +215,17 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
 
                 {/* Actions Bar */}
                 <div className="px-5 pb-5 flex items-center justify-between gap-3 border-t border-slate-50 pt-4">
-                   <div className="flex gap-2" onClick={e => e.stopPropagation()}>
-                      <Link href={`/dashboard/messages?sessionId=${appt.id}`}>
-                        <Button variant="ghost" className="p-2.5 text-primary">
-                          <MessageSquare className="w-4 h-4" />
-                        </Button>
-                      </Link>
-                      <AppointmentActions id={appt.id} status={appt.status} />
-                   </div>
-                   <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                      View <ChevronUp className="w-4 h-4 rotate-90" />
-                   </div>
+                  <div className="flex gap-2" onClick={e => e.stopPropagation()}>
+                    <Link href={`/dashboard/messages?sessionId=${appt.id}`}>
+                      <Button variant="ghost" className="p-2.5 text-primary">
+                        <MessageSquare className="w-4 h-4" />
+                      </Button>
+                    </Link>
+                    <AppointmentActions id={appt.id} status={appt.status} />
+                  </div>
+                  <div className="flex items-center gap-1 text-sm font-bold text-slate-400 uppercase tracking-widest">
+                    View <ChevronUp className="w-4 h-4 rotate-90" />
+                  </div>
                 </div>
               </Card>
             );

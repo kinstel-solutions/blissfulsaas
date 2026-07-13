@@ -55,7 +55,7 @@ export default async function DashboardLayout({
       <MobileNav currentUserId={user.id} />
       <aside className="w-80 bg-surface-container-low border-r border-outline-variant/30 flex-col z-20 shadow-sm hidden lg:flex animate-fade-in">
         {/* Brand Block */}
-        <div className="px-6 py-6 border-b border-outline-variant/10 flex flex-col gap-3 shrink-0">
+        <div className="px-6 py-6 border-b border-outline-variant/10 flex flex-col gap-3 mb-6 shrink-0">
           <Link href="/dashboard" className="flex items-start gap-4">
             <Image src="/iconLogo.jpeg" alt="Icon" width={56} height={56} className="w-14 h-14 rounded-full object-cover shrink-0 mt-0.5" />
             <div className="flex flex-col text-left font-heading font-black text-xl text-primary leading-[1.0] tracking-tight">
@@ -64,7 +64,7 @@ export default async function DashboardLayout({
               <span>Station</span>
             </div>
           </Link>
-          <span className="text-xs font-bold text-primary leading-normal text-left block">
+          <span className="text-sm font-bold text-primary leading-normal text-left block">
             Express. Connect.<br />
             Transform.
           </span>
@@ -73,7 +73,7 @@ export default async function DashboardLayout({
         {/* Profile Widget in Sidebar */}
         <Link href="/dashboard/profile" className="px-6 py-4 border-b border-outline-variant/10 flex items-center justify-between group hover:bg-slate-50/50 transition-colors shrink-0 cursor-pointer">
           <div className="flex items-center gap-3.5 overflow-hidden">
-            <div className="w-12 h-12 rounded-xl bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary text-base font-bold shadow-inner overflow-hidden shrink-0">
+            <div className="w-18 h-18 rounded-xl bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary text-base font-bold shadow-inner overflow-hidden shrink-0">
               {profileImageUrl ? (
                 <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
               ) : (
@@ -81,10 +81,10 @@ export default async function DashboardLayout({
               )}
             </div>
             <div className="flex flex-col overflow-hidden text-left leading-tight">
-              <span className="text-[13.5px] font-bold truncate">
+              <span className="text-lg font-bold truncate">
                 {user.user_metadata?.first_name || "Riya"} {user.user_metadata?.last_name || "Sharma"}
               </span>
-              <span className="text-xs font-medium text-muted-foreground/80 mt-0.5 truncate">
+              <span className="text-base font-medium text-muted-foreground/80 mt-2 truncate">
                 Clinical Psychologist
               </span>
             </div>
