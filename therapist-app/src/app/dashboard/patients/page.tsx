@@ -19,9 +19,9 @@ export default async function PatientRosterPage() {
             A comprehensive record of your clinical client base. Manage profiles, track engagement, and review session histories.
           </p>
         </div>
-        <div className="flex items-center gap-3 bg-emerald-50 text-emerald-700 px-6 py-3 rounded-2xl border border-emerald-100 shadow-sm">
-          <ShieldCheck className="w-5 h-5" />
-          <span className="text-sm font-bold uppercase tracking-widest">Confidential Patient Records</span>
+        <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl border border-emerald-100 shadow-xs">
+          <ShieldCheck className="w-4 h-4" />
+          <span className="text-[10px] font-bold uppercase tracking-widest">Confidential Patient Records</span>
         </div>
       </header>
 

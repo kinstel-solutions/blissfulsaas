@@ -161,10 +161,10 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
             const hasNotes = appt.therapistNotes && appt.therapistNotes.length > 0;
 
             return (
-              <div 
+              <Card 
                 key={appt.id}
                 onClick={() => navigateToDetail(appt.id)}
-                className={`flex flex-col rounded-xl border transition-all duration-300 overflow-hidden bg-white border-slate-100 active:bg-slate-50 active:scale-[0.98] ${
+                className={`flex flex-col transition-all duration-300 overflow-hidden active:scale-[0.98] cursor-pointer p-0 gap-0 ${
                   ['CANCELLED', 'COMPLETED', 'EXPIRED'].includes(appt.status) ? 'opacity-70' : ''
                 }`}
               >
@@ -232,7 +232,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                       View <ChevronUp className="w-4 h-4 rotate-90" />
                    </div>
                 </div>
-              </div>
+              </Card>
             );
           })
         )}

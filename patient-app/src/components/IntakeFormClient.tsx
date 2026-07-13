@@ -13,6 +13,9 @@ import { fetchWithAuth } from "@/lib/api";
 import { patientIntakeSchema, type PatientIntakeValues } from "@/lib/validations";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const CONCERN_OPTIONS = [
   "Anxiety", "Depression", "Stress", "Trauma / PTSD", "Relationship Issues",
@@ -106,18 +109,20 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
         <div className="flex items-center justify-center gap-2 mb-10">
           {STEPS.map((s, i) => (
             <div key={s.id} className="flex items-center gap-2">
-              <button
+              <Button
+                variant={step === s.id ? "default" : "secondary"}
                 onClick={() => step > s.id && setStep(s.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${step === s.id
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                    : step > s.id
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-surface-container-low text-muted-foreground'
+                className={`flex items-center gap-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all h-auto py-2 px-4 ${
+                    step > s.id
+                      ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                      : step === s.id
+                        ? 'shadow-lg shadow-primary/20'
+                        : 'text-muted-foreground bg-surface-container-low hover:bg-surface-container'
                   }`}
               >
                 {step > s.id ? <CheckCircle className="w-3 h-3" /> : <s.icon className="w-3 h-3" />}
                 <span className="hidden sm:block">{s.label}</span>
-              </button>
+              </Button>
               {i < STEPS.length - 1 && <div className={`w-6 h-0.5 rounded-full ${step > s.id ? 'bg-emerald-400' : 'bg-outline-variant/30'}`} />}
             </div>
           ))}
@@ -133,28 +138,25 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 <h2 className="text-2xl font-heading font-medium text-foreground mb-2">Why are you seeking therapy?</h2>
                 <p className="text-sm text-muted-foreground">Be as open as you're comfortable with.</p>
               </div>
-              <textarea
+              <Textarea
                 {...register("reasonForSeeking")}
                 placeholder="E.g., I've been feeling overwhelmed at work and struggling with anxiety..."
-                className={`w-full h-36 bg-surface-container-low border rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed transition-colors ${errors.reasonForSeeking ? 'border-red-500' : 'border-outline-variant/30'
-                  }`}
+                className={`w-full h-36 resize-none bg-surface-container-low border-outline-variant/30 transition-colors ${errors.reasonForSeeking ? 'border-red-500' : ''}`}
               />
               {errors.reasonForSeeking && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.reasonForSeeking.message}</p>}
               <div>
                 <p className="text-sm font-bold text-foreground mb-4">Select your primary concerns <span className="text-muted-foreground font-normal">(choose all that apply)</span></p>
                 <div className="flex flex-wrap gap-2">
                   {CONCERN_OPTIONS.map(c => (
-                    <button
+                    <Button
                       key={c}
                       type="button"
+                      variant={form.primaryConcerns.includes(c) ? "default" : "outline"}
                       onClick={() => toggleConcern(c)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${form.primaryConcerns.includes(c)
-                          ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                          : 'bg-surface-container-low text-foreground/70 border-outline-variant/30 hover:border-primary/30'
-                        }`}
+                      className={`h-auto px-4 py-2 rounded-xl text-xs font-bold transition-all ${form.primaryConcerns.includes(c) ? 'shadow-md shadow-primary/20' : ''}`}
                     >
                       {c}
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 {errors.primaryConcerns && <p className="text-xs text-red-500 font-bold mt-2 ml-1">{errors.primaryConcerns.message}</p>}
@@ -170,38 +172,36 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 <p className="text-sm text-muted-foreground">This helps your therapist provide better, personalized care.</p>
               </div>
               <div>
-                <label className="block text-sm font-bold text-foreground mb-3">Have you seen a therapist before?</label>
+                <Label className="block text-sm font-bold text-foreground mb-3">Have you seen a therapist before?</Label>
                 <div className="flex gap-3">
                   {[{ label: "Yes", val: true }, { label: "No", val: false }].map(opt => (
-                    <button
+                    <Button
                       key={opt.label}
                       type="button"
+                      variant={form.previousTherapy === opt.val ? "default" : "outline"}
                       onClick={() => setValue("previousTherapy", opt.val, { shouldValidate: true })}
-                      className={`flex-1 py-4 rounded-2xl text-sm font-bold border transition-all ${form.previousTherapy === opt.val
-                          ? 'bg-primary text-white border-primary'
-                          : 'bg-surface-container-low border-outline-variant/30 text-foreground/70 hover:border-primary/30'
-                        }`}
+                      className={`flex-1 py-4 h-auto rounded-2xl text-sm font-bold transition-all ${form.previousTherapy !== opt.val ? 'bg-surface-container-low border-outline-variant/30' : ''}`}
                     >
                       {opt.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 {errors.previousTherapy && <p className="text-xs text-red-500 font-bold mt-2 ml-1">{errors.previousTherapy.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-bold text-foreground mb-3">Any relevant mental health history? <span className="font-normal text-muted-foreground">(optional)</span></label>
-                <textarea
+                <Label className="block text-sm font-bold text-foreground mb-3">Any relevant mental health history? <span className="font-normal text-muted-foreground">(optional)</span></Label>
+                <Textarea
                   {...register("mentalHealthHistory")}
                   placeholder="E.g., diagnosed conditions, hospitalizations, significant life events..."
-                  className="w-full h-32 bg-surface-container-low border border-outline-variant/30 rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed"
+                  className="w-full h-32 resize-none bg-surface-container-low border-outline-variant/30"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-foreground mb-3">Current medications? <span className="font-normal text-muted-foreground">(optional)</span></label>
-                <textarea
+                <Label className="block text-sm font-bold text-foreground mb-3">Current medications? <span className="font-normal text-muted-foreground">(optional)</span></Label>
+                <Textarea
                   {...register("currentMedications")}
                   placeholder="List any medications you are currently taking..."
-                  className="w-full h-24 bg-surface-container-low border border-outline-variant/30 rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed"
+                  className="w-full h-24 resize-none bg-surface-container-low border-outline-variant/30"
                 />
               </div>
             </div>
@@ -214,11 +214,10 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 <h2 className="text-2xl font-heading font-medium text-foreground mb-2">What do you hope to achieve?</h2>
                 <p className="text-sm text-muted-foreground">Setting clear goals helps measure your progress.</p>
               </div>
-              <textarea
+              <Textarea
                 {...register("therapyGoals")}
                 placeholder="E.g., I want to learn coping strategies for anxiety, improve my communication in relationships, and feel more confident in daily life..."
-                className={`w-full h-48 bg-surface-container-low border rounded-2xl p-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none resize-none leading-relaxed transition-colors ${errors.therapyGoals ? 'border-red-500' : 'border-outline-variant/30'
-                  }`}
+                className={`w-full h-48 resize-none bg-surface-container-low border-outline-variant/30 transition-colors ${errors.therapyGoals ? 'border-red-500' : ''}`}
               />
               {errors.therapyGoals && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.therapyGoals.message}</p>}
             </div>
@@ -233,22 +232,20 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
               </div>
               <div className="space-y-5">
                 <div>
-                  <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Full Name</label>
-                  <input
+                  <Label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Full Name</Label>
+                  <Input
                     {...register("emergencyContactName")}
                     placeholder="e.g. Jane Doe"
-                    className={`w-full h-14 bg-surface-container-low border rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none transition-colors ${errors.emergencyContactName ? 'border-red-500' : 'border-outline-variant/30'
-                      }`}
+                    className={`w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors ${errors.emergencyContactName ? 'border-red-500' : ''}`}
                   />
                   {errors.emergencyContactName && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactName.message}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Phone Number</label>
-                  <input
+                  <Label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Phone Number</Label>
+                  <Input
                     {...register("emergencyContactPhone")}
                     placeholder="+91 XXXXX XXXXX"
-                    className={`w-full h-14 bg-surface-container-low border rounded-2xl px-5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 outline-none transition-colors ${errors.emergencyContactPhone ? 'border-red-500' : 'border-outline-variant/30'
-                      }`}
+                    className={`w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors ${errors.emergencyContactPhone ? 'border-red-500' : ''}`}
                   />
                   {errors.emergencyContactPhone && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactPhone.message}</p>}
                 </div>
@@ -265,9 +262,11 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
           {/* Navigation */}
           <div className="mt-10 flex items-center justify-between">
             <Button
+              type="button"
               variant="outline"
+              size="lg"
               onClick={() => setStep(prev => prev - 1)}
-              className={`flex items-center gap-2 text-sm font-bold transition-all h-auto ${step === 1 ? 'invisible' : ''}`}
+              className={step === 1 ? 'invisible' : ''}
             >
               <ChevronLeft className="w-4 h-4" /> Back
             </Button>
@@ -275,17 +274,21 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
             {step < 4 ? (
               <Button
                 type="button"
+                variant="default"
+                size="lg"
                 onClick={nextStep}
-                className="flex items-center gap-2 text-sm font-bold hover:-translate-y-0.5 transition-all h-auto"
+                className="flex items-center gap-2"
               >
                 Continue <ChevronRight className="w-4 h-4" />
               </Button>
             ) : (
               <Button
                 type="button"
+                variant="default"
+                size="lg"
                 onClick={handleSubmit(onSubmit)}
                 disabled={saving}
-                className="flex items-center gap-2 bg-emerald-600 text-white shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-40 h-auto"
+                className="flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                 {saving ? "Submitting..." : "Complete Intake"}

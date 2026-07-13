@@ -162,7 +162,7 @@ export default async function AppointmentsPage() {
                     </td>
                     <td className="px-4 md:px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-xs overflow-hidden shrink-0">
+                        <div className="w-8 h-8 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-xs overflow-hidden shrink-0">
                           {appt.therapist?.profileImageUrl ? (
                             <img src={appt.therapist.profileImageUrl} alt={appt.therapist.firstName} className="w-full h-full object-cover" />
                           ) : (

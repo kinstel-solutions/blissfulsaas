@@ -68,7 +68,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
       <div className="flex flex-col lg:flex-row gap-16 relative">
         {/* Profile Image & Status */}
         <div className="w-full lg:w-2/5 flex flex-col items-center">
-          <div className="relative aspect-square w-full rounded-2xl overflow-hidden border border-outline-variant/30 shadow-2xl group transition-transform duration-1000 rotate-2 hover:rotate-0">
+          <div className="relative aspect-square w-full rounded-xl overflow-hidden border border-outline-variant/30 shadow-2xl group transition-transform duration-1000 rotate-2 hover:rotate-0">
              <Image 
               src={specialist.image} 
               alt={specialist.name}

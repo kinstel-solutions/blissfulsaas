@@ -169,7 +169,7 @@ export default async function SessionsPage() {
           {/* Book Again for completed/cancelled */}
           {(isCompleted || isCancelled) && session.therapist?.id && (
             <Link href={`/dashboard/sessions/book/${session.therapist.id}`} className="w-full sm:w-auto pointer-events-auto">
-              <Button className="w-full sm:w-auto bg-primary text-primary-foreground px-5 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
+              <Button className="w-full sm:w-auto px-5 py-3 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
                 <RefreshCw className="w-3.5 h-3.5" />
                 Book Again
               </Button>
@@ -179,7 +179,7 @@ export default async function SessionsPage() {
           {/* View Session button for upcoming */}
           {(session.status === "PENDING" || session.status === "CONFIRMED") && (
             <Link href={`/dashboard/sessions/${session.id}`} className="w-full sm:w-auto pointer-events-auto">
-              <Button className="w-full sm:w-auto bg-primary text-primary-foreground px-5 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
+              <Button className="w-full sm:w-auto px-5 py-3 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
                 <ArrowRight className="w-3.5 h-3.5" />
                 View Session
               </Button>
@@ -212,7 +212,7 @@ export default async function SessionsPage() {
       </header>
 
       {allSessions.length === 0 ? (
-        <div className="py-32 text-center bg-surface-container-low/30 rounded-2xl border border-outline-variant/30 px-6">
+        <Card className="py-32 flex flex-col items-center justify-center text-center px-6">
           <div className="w-20 h-20 bg-surface-container-lowest rounded-xl flex items-center justify-center mx-auto mb-6 text-primary/10">
             <Calendar className="w-10 h-10" />
           </div>
@@ -226,7 +226,7 @@ export default async function SessionsPage() {
           >
             Explore Therapists
           </Link>
-        </div>
+        </Card>
       ) : (
         <div className="space-y-8">
           {/* Upcoming */}

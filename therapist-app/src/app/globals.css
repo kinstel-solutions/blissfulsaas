@@ -25,6 +25,9 @@
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
 
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);

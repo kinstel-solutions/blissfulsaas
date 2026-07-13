@@ -58,7 +58,7 @@ export default async function DashboardLayout({
         {/* Profile Widget in Sidebar */}
         <Link href="/dashboard/account" className="px-6 py-4 border-b border-outline-variant/10 flex items-center justify-between group hover:bg-slate-50/50 transition-colors shrink-0 cursor-pointer">
           <div className="flex items-center gap-3.5 overflow-hidden">
-            <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-base font-bold shadow-inner overflow-hidden shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-base font-bold shadow-inner overflow-hidden shrink-0">
               {user.user_metadata?.first_name?.[0]?.toUpperCase() || "P"}
             </div>
             <div className="flex flex-col overflow-hidden text-left leading-tight">

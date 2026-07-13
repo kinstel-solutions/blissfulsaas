@@ -46,10 +46,10 @@ export default function AppointmentNotesClient({ appointmentId, initialNotes }: 
         <Button 
           onClick={saveNotes}
           disabled={loading}
-          className={`w-full sm:w-auto px-6 lg:px-8 py-3 lg:py-3 rounded-2xl text-[10px] lg:text-xs font-bold uppercase tracking-widest transition-all shadow-lg ${
+          className={`w-full sm:w-auto px-6 lg:px-8 py-3 lg:py-3 text-[10px] lg:text-xs font-bold uppercase tracking-widest transition-all ${
             saved 
-              ? 'bg-emerald-500 text-white shadow-emerald-200' 
-              : 'bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 shadow-primary/20'
+              ? 'bg-emerald-500 hover:bg-emerald-600 text-white' 
+              : 'bg-primary text-white hover:bg-primary/95'
           } flex items-center justify-center gap-2 h-auto`}
         >
           {loading ? (
