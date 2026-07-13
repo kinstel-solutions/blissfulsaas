@@ -125,7 +125,7 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
               <h2 className="text-xl font-bold text-slate-900 leading-tight font-sans">
                 {patient.firstName} {patient.lastName}
               </h2>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Patient Identity</p>
+              <p className="text-base text-slate-400 font-bold uppercase tracking-widest mt-1">Patient Identity</p>
             </div>
           </div>
           <Button 
@@ -310,7 +310,7 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
                        <div className="h-full flex flex-col items-center justify-center opacity-30 text-center p-10">
                           <MessageSquare className="w-12 h-12 mb-4" />
                           <p className="text-sm font-medium">No messages with this patient yet.</p>
-                          <p className="text-xs mt-2">Messages from all sessions will appear here.</p>
+                          <p className="text-base mt-2">Messages from all sessions will appear here.</p>
                        </div>
                     ) : (
                       messages.map((msg, idx) => {

@@ -211,7 +211,7 @@ export default function MessageHistoryClient({
               placeholder="Search therapists..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 md:py-2 text-base md:text-xs transition-all bg-slate-50 border-transparent focus-visible:ring-1 focus-visible:ring-primary/20 rounded-xl"
+              className="w-full pl-11 pr-4 py-3.5 md:py-2 text-base md:text-base transition-all bg-slate-50 border-transparent focus-visible:ring-1 focus-visible:ring-primary/20 rounded-xl"
             />
           </div>
         </div>
@@ -219,7 +219,7 @@ export default function MessageHistoryClient({
           {filteredSessions.length === 0 ? (
             <div className="text-center py-16 md:py-20 opacity-30">
               <MessageSquare className="w-10 h-10 mx-auto mb-2" />
-              <p className="text-sm md:text-xs font-bold uppercase tracking-widest">No history found</p>
+              <p className="text-sm md:text-base font-bold uppercase tracking-widest">No history found</p>
             </div>
           ) : (
             filteredSessions.map((s) => {
@@ -239,7 +239,7 @@ export default function MessageHistoryClient({
                       {unreadCount}
                     </div>
                   )}
-                  <div className={`w-14 h-14 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-base md:text-xs shrink-0 ${isActive ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'
+                  <div className={`w-14 h-14 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-base md:text-base shrink-0 ${isActive ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'
                     }`}>
                     {therapist?.firstName?.[0]}{therapist?.lastName?.[0]}
                   </div>
@@ -275,7 +275,7 @@ export default function MessageHistoryClient({
               <MessageSquare className="w-8 h-8 md:w-10 md:h-10" />
             </div>
             <h3 className="text-lg md:text-xl font-heading font-medium text-slate-800 mb-2">Message History</h3>
-            <p className="text-xs md:text-sm text-slate-400 max-w-xs leading-relaxed">
+            <p className="text-base md:text-sm text-slate-400 max-w-xs leading-relaxed">
               Select a therapist from the sidebar to review your clinical chat history for each session.
             </p>
           </div>
@@ -296,7 +296,7 @@ export default function MessageHistoryClient({
                     {selectedSession.therapist?.firstName} {selectedSession.therapist?.lastName}
                   </h3>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                    <p className="text-xs md:text-[10px] text-slate-400 font-medium uppercase tracking-widest flex items-center gap-1">
+                    <p className="text-base md:text-[10px] text-slate-400 font-medium uppercase tracking-widest flex items-center gap-1">
                       <Clock className="w-3 h-3 md:w-3 md:h-3" />
                       {mounted ? new Date(selectedSession.scheduledAt).toLocaleDateString('en-US') : '...'}
                     </p>
@@ -347,7 +347,7 @@ export default function MessageHistoryClient({
               ) : messages.length === 0 ? (
                 <div className="flex flex-col h-full items-center justify-center text-slate-300 opacity-50 space-y-2">
                   <MessageSquare className="w-10 h-10" />
-                  <p className="text-sm md:text-xs font-bold uppercase tracking-widest text-center">No messages in this thread</p>
+                  <p className="text-sm md:text-base font-bold uppercase tracking-widest text-center">No messages in this thread</p>
                 </div>
               ) : (
                 messages.map((m) => {

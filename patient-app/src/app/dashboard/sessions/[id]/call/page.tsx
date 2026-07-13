@@ -50,7 +50,7 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
             <h1 className="text-2xl font-heading font-medium text-foreground">
               Clinical Consultation
             </h1>
-            <p className="text-xs uppercase font-bold tracking-[0.2em] text-primary/60">
+            <p className="text-base uppercase font-bold tracking-[0.2em] text-primary/60">
               Live Session Room
             </p>
           </div>

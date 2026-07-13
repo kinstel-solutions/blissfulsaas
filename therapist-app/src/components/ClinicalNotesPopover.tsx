@@ -49,7 +49,7 @@ export default function ClinicalNotesPopover({ appointmentId, initialNotes }: { 
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 leading-tight">Clinical Session Notes</h3>
-                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Private Record • Confidential</p>
+                <p className="text-base text-slate-400 font-bold uppercase tracking-widest mt-1">Private Record • Confidential</p>
               </div>
             </div>
             <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="p-2 text-slate-400 hover:text-slate-900 transition-colors h-auto w-auto">
@@ -66,7 +66,7 @@ export default function ClinicalNotesPopover({ appointmentId, initialNotes }: { 
             />
             
             <div className="mt-8 flex items-center justify-between">
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">
+              <p className="text-base text-slate-400 font-bold uppercase tracking-widest">
                 Last auto-synced: {new Date().toLocaleTimeString()}
               </p>
               <Button 

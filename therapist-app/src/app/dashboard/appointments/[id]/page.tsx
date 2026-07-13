@@ -195,7 +195,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                          <div>
                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Reason for Seeking</p>
                             <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed italic">"{appointment.patient.reasonForSeeking}"</p>
+                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed italic">"{appointment.patient.reasonForSeeking}"</p>
                             </div>
                          </div>
                       )}
@@ -224,7 +224,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                          <div>
                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical History</p>
                             <div className="p-3 lg:p-4 bg-amber-50/30 rounded-2xl border border-amber-100/50">
-                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.mentalHealthHistory}</p>
+                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.mentalHealthHistory}</p>
                             </div>
                          </div>
                       )}
@@ -233,7 +233,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                          <div>
                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical Goals</p>
                             <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.therapyGoals}</p>
+                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.therapyGoals}</p>
                             </div>
                          </div>
                       )}
@@ -243,7 +243,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                             <p className="text-[9px] lg:text-[10px] font-bold text-red-400 uppercase tracking-widest mb-3">Emergency Contact</p>
                             <div className="flex items-center justify-between p-3 lg:p-4 bg-red-50/30 rounded-2xl border border-red-100/50">
                                <div>
-                                  <p className="text-xs font-bold text-slate-900">{appointment.patient.emergencyContactName || 'Not Provided'}</p>
+                                  <p className="text-base font-bold text-slate-900">{appointment.patient.emergencyContactName || 'Not Provided'}</p>
                                   <p className="text-[10px] text-slate-500 font-medium">{appointment.patient.emergencyContactPhone || 'No Phone'}</p>
                                </div>
                                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">

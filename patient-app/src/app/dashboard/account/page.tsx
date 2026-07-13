@@ -30,7 +30,7 @@ export default function AccountPage() {
         </div>
         <div>
           <h2 className="text-lg font-bold text-foreground leading-none">Jane Doe</h2>
-          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest font-bold">Premium Patient</p>
+          <p className="text-base text-muted-foreground mt-1 uppercase tracking-widest font-bold">Premium Patient</p>
         </div>
       </Card>
 

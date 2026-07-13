@@ -154,7 +154,7 @@ export function LandingNavbar({
           </ul>
 
           <div className="pt-8 border-t border-gray-100 flex flex-col items-center text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4 font-outfit">
+            <p className="text-base font-semibold uppercase tracking-widest text-gray-400 mb-4 font-outfit">
               Clinical Workspace
             </p>
             {user ? (

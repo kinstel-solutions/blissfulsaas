@@ -143,7 +143,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 placeholder="E.g., I've been feeling overwhelmed at work and struggling with anxiety..."
                 className={`w-full h-36 resize-none bg-surface-container-low border-outline-variant/30 transition-colors ${errors.reasonForSeeking ? 'border-red-500' : ''}`}
               />
-              {errors.reasonForSeeking && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.reasonForSeeking.message}</p>}
+              {errors.reasonForSeeking && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.reasonForSeeking.message}</p>}
               <div>
                 <p className="text-sm font-bold text-foreground mb-4">Select your primary concerns <span className="text-muted-foreground font-normal">(choose all that apply)</span></p>
                 <div className="flex flex-wrap gap-2">
@@ -159,7 +159,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                     </Button>
                   ))}
                 </div>
-                {errors.primaryConcerns && <p className="text-xs text-red-500 font-bold mt-2 ml-1">{errors.primaryConcerns.message}</p>}
+                {errors.primaryConcerns && <p className="text-base text-red-500 font-bold mt-2 ml-1">{errors.primaryConcerns.message}</p>}
               </div>
             </div>
           )}
@@ -186,7 +186,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                     </Button>
                   ))}
                 </div>
-                {errors.previousTherapy && <p className="text-xs text-red-500 font-bold mt-2 ml-1">{errors.previousTherapy.message}</p>}
+                {errors.previousTherapy && <p className="text-base text-red-500 font-bold mt-2 ml-1">{errors.previousTherapy.message}</p>}
               </div>
               <div>
                 <Label className="block text-sm font-bold text-foreground mb-3">Any relevant mental health history? <span className="font-normal text-muted-foreground">(optional)</span></Label>
@@ -219,7 +219,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 placeholder="E.g., I want to learn coping strategies for anxiety, improve my communication in relationships, and feel more confident in daily life..."
                 className={`w-full h-48 resize-none bg-surface-container-low border-outline-variant/30 transition-colors ${errors.therapyGoals ? 'border-red-500' : ''}`}
               />
-              {errors.therapyGoals && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.therapyGoals.message}</p>}
+              {errors.therapyGoals && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.therapyGoals.message}</p>}
             </div>
           )}
 
@@ -238,7 +238,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                     placeholder="e.g. Jane Doe"
                     className={`w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors ${errors.emergencyContactName ? 'border-red-500' : ''}`}
                   />
-                  {errors.emergencyContactName && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactName.message}</p>}
+                  {errors.emergencyContactName && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactName.message}</p>}
                 </div>
                 <div>
                   <Label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Phone Number</Label>
@@ -247,12 +247,12 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                     placeholder="+91 XXXXX XXXXX"
                     className={`w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors ${errors.emergencyContactPhone ? 'border-red-500' : ''}`}
                   />
-                  {errors.emergencyContactPhone && <p className="text-xs text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactPhone.message}</p>}
+                  {errors.emergencyContactPhone && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactPhone.message}</p>}
                 </div>
               </div>
               <div className="p-5 bg-primary/5 rounded-2xl border border-primary/10 flex items-start gap-3">
                 <AlertCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <p className="text-xs text-foreground/70 leading-relaxed">
+                <p className="text-base text-foreground/70 leading-relaxed">
                   This information is only used in genuine clinical emergencies and is never shared or sold to third parties.
                 </p>
               </div>
@@ -297,7 +297,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
           </div>
         </Card>
 
-        <p className="text-center text-xs text-muted-foreground/50 mt-8 uppercase tracking-widest font-bold">
+        <p className="text-center text-base text-muted-foreground/50 mt-8 uppercase tracking-widest font-bold">
           🔒 Industry-standard AES-256 encryption • Your privacy is our priority
         </p>
       </div>

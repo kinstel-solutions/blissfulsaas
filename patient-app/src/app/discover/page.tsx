@@ -315,7 +315,7 @@ export default function DiscoverPage() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-2xl font-heading font-medium text-foreground">{t.firstName} {t.lastName}</h3>
-                  <p className="text-xs font-bold text-primary/60 uppercase tracking-widest flex items-center gap-2 mt-1">
+                  <p className="text-base font-bold text-primary/60 uppercase tracking-widest flex items-center gap-2 mt-1">
                     <GraduationCap className="w-3 h-3" /> {t.qualifications || "Clinician Specialist"}
                   </p>
                 </div>

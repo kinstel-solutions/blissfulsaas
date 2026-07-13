@@ -125,7 +125,7 @@ export default function ChatSidebar({
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-32 gap-2 text-slate-300">
             <MessageSquare className="w-6 h-6" />
-            <p className="text-xs font-bold uppercase tracking-widest">
+            <p className="text-base font-bold uppercase tracking-widest">
               No messages yet
             </p>
           </div>

@@ -179,7 +179,7 @@ export default async function SessionDetailPage({
                   <h1 className="text-xl font-heading font-medium text-foreground truncate">
                     {therapist?.firstName} {therapist?.lastName}
                   </h1>
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary/60 mt-1">
+                  <p className="text-base font-bold uppercase tracking-widest text-primary/60 mt-1">
                     {therapist?.qualifications ||
                       therapist?.specialities?.[0] ||
                       "Clinical Psychotherapist"}
@@ -294,7 +294,7 @@ export default async function SessionDetailPage({
                   <h1 className="text-2xl font-heading font-medium text-foreground truncate">
                     {therapist?.firstName} {therapist?.lastName}
                   </h1>
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary/60 mt-1">
+                  <p className="text-base font-bold uppercase tracking-widest text-primary/60 mt-1">
                     {therapist?.qualifications ||
                       therapist?.specialities?.[0] ||
                       "Clinical Psychotherapist"}
@@ -474,7 +474,7 @@ export default async function SessionDetailPage({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-0.5">
+                  <p className="text-base font-bold uppercase tracking-widest text-primary/70 mb-0.5">
                     {isClinic ? "In-Clinic Visit" : "Online Video Consultation"}
                   </p>
                   {isClinic && therapist?.clinicAddress && (
@@ -500,7 +500,7 @@ export default async function SessionDetailPage({
                     </div>
                   )}
                   {isOnline && (
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-base text-muted-foreground mt-1">
                       Join from anywhere via secure video call
                     </p>
                   )}
@@ -579,7 +579,7 @@ export default async function SessionDetailPage({
                             In-Person Visit
                           </p>
                           {therapist?.clinicAddress && (
-                            <p className="text-xs font-medium text-primary/70 mt-0.5">
+                            <p className="text-base font-medium text-primary/70 mt-0.5">
                               {therapist.clinicAddress}
                             </p>
                           )}

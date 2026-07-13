@@ -40,7 +40,7 @@ export default function SignupPage() {
     setLoading(true);
     setError(null);
     const supabase = createClient();
-    
+
     const { error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -48,12 +48,12 @@ export default function SignupPage() {
         data: {
           first_name: data.firstName,
           last_name: data.lastName,
-          role: "PATIENT" 
+          role: "PATIENT"
         },
         emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
-    
+
     if (authError) {
       setError(authError.message);
       setLoading(false);
@@ -69,7 +69,7 @@ export default function SignupPage() {
         <LandingNavbar hideLinks />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#E3F2ED] rounded-full blur-[120px] -z-10 pointer-events-none transform translate-x-1/3 -translate-y-1/3 opacity-60" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#EEF5F2] rounded-full blur-[100px] -z-10 pointer-events-none transform -translate-x-1/4 translate-y-1/4 opacity-80" />
-        
+
         <main className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10 pt-32 pb-20">
           <div className="w-full max-w-xl">
             <Card className="backdrop-blur-xl p-8 md:p-14 text-center space-y-8">
@@ -134,7 +134,7 @@ export default function SignupPage() {
           <Card className="backdrop-blur-xl p-8 md:p-14 relative overflow-hidden group">
             {/* Inner Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#E3F2ED]/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000" />
-            
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -145,13 +145,12 @@ export default function SignupPage() {
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                       <User size={18} />
                     </div>
-                    <Input 
-                      id="firstName" 
+                    <Input
+                      id="firstName"
                       {...register("firstName")}
-                      placeholder="Jane" 
-                      className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${
-                        errors.firstName ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
-                      }`}
+                      placeholder="Jane"
+                      className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${errors.firstName ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
+                        }`}
                     />
                   </div>
                   {errors.firstName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.firstName.message}</p>}
@@ -164,13 +163,12 @@ export default function SignupPage() {
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                       <User size={18} />
                     </div>
-                    <Input 
-                      id="lastName" 
+                    <Input
+                      id="lastName"
                       {...register("lastName")}
-                      placeholder="Doe" 
-                      className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${
-                        errors.lastName ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
-                      }`}
+                      placeholder="Doe"
+                      className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${errors.lastName ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
+                        }`}
                     />
                   </div>
                   {errors.lastName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.lastName.message}</p>}
@@ -185,19 +183,18 @@ export default function SignupPage() {
                   <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                     <Mail size={18} />
                   </div>
-                  <Input 
-                    id="email" 
-                    type="email" 
+                  <Input
+                    id="email"
+                    type="email"
                     {...register("email")}
-                    placeholder="jane.doe@example.com" 
-                    className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${
-                      errors.email ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
-                    }`}
+                    placeholder="jane.doe@example.com"
+                    className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${errors.email ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
+                      }`}
                   />
                 </div>
                 {errors.email && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.email.message}</p>}
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
@@ -207,14 +204,13 @@ export default function SignupPage() {
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                       <Lock size={18} />
                     </div>
-                    <Input 
-                      id="password" 
-                      type={showPassword ? "text" : "password"} 
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
                       {...register("password")}
-                      placeholder="••••••••" 
-                      className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${
-                        errors.password ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
-                      }`}
+                      placeholder="••••••••"
+                      className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${errors.password ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
+                        }`}
                     />
                     <Button
                       type="button"
@@ -236,14 +232,13 @@ export default function SignupPage() {
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                       <Lock size={18} />
                     </div>
-                    <Input 
-                      id="confirmPassword" 
-                      type={showPassword ? "text" : "password"} 
+                    <Input
+                      id="confirmPassword"
+                      type={showPassword ? "text" : "password"}
                       {...register("confirmPassword")}
-                      placeholder="••••••••" 
-                      className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${
-                        errors.confirmPassword ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
-                      }`}
+                      placeholder="••••••••"
+                      className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${errors.confirmPassword ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
+                        }`}
                     />
                     <Button
                       type="button"
@@ -265,8 +260,8 @@ export default function SignupPage() {
               )}
 
               <div className="pt-2 flex justify-center">
-                <AlexButton 
-                  type="submit" 
+                <AlexButton
+                  type="submit"
                   size="lg"
                   disabled={loading}
                   className="px-12 text-sm uppercase tracking-[0.2em]"

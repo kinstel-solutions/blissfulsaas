@@ -10,24 +10,24 @@
   --font-plus-jakarta-sans: var(--font-plus-jakarta-sans), sans-serif;
   --font-heading: var(--font-manrope), sans-serif;
   --font-manrope: var(--font-manrope), sans-serif;
-  
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  
+
   --color-surface: var(--surface);
   --color-surface-container-low: var(--surface-container-low);
   --color-surface-container-lowest: var(--surface-container-lowest);
   --color-surface-bright: var(--surface-bright);
-  
+
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -41,7 +41,7 @@
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  
+
   --radius-xl: 0.6875rem;
   --radius-2xl: 2rem;
   --radius-3xl: 2.5rem;
@@ -64,7 +64,7 @@
 
   --primary: #214D3E;
   --primary-foreground: #ffffff;
-  
+
   --secondary: #EAF4F3;
   --secondary-foreground: #214D3E;
 
@@ -73,13 +73,13 @@
 
   --card: #ffffff;
   --card-foreground: #1b1c1c;
-  
+
   --muted: #efeded;
   --muted-foreground: #414944;
-  
+
   --accent: #F4C7A1;
   --accent-foreground: #214D3E;
-  
+
   --destructive: #ba1a1a;
   --border: #E8F0EE;
   --input: #c0c8c3;
@@ -94,15 +94,23 @@
   * {
     @apply border-border;
   }
+
   html {
     font-size: 16px;
     -webkit-text-size-adjust: 100%;
   }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     line-height: 1.6;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading tracking-tight text-primary;
   }
 }
@@ -110,13 +118,25 @@
 /* --- Premium Animation Suite --- */
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes breathe {
@@ -124,10 +144,12 @@
     transform: scale(0.7);
     opacity: 0;
   }
+
   35% {
     transform: scale(1.2);
     opacity: 1;
   }
+
   100% {
     transform: scale(0.7);
     opacity: 0;
@@ -135,19 +157,22 @@
 }
 
 @keyframes simmer {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 .simmer-text {
-  background: linear-gradient(
-    90deg,
-    var(--primary) 0%,
-    var(--primary) 40%,
-    #7ee7adb5 50%,
-    var(--primary) 60%,
-    var(--primary) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--primary) 0%,
+      var(--primary) 40%,
+      #7ee7adb5 50%,
+      var(--primary) 60%,
+      var(--primary) 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -161,8 +186,8 @@
   border: 1px solid var(--primary);
   color: var(--primary-foreground);
   transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .alex-button:hover {
@@ -195,10 +220,31 @@
 }
 
 @keyframes arrow-slide {
-  0% { transform: translate(0, 0); opacity: 1; }
-  45% { transform: translate(120%, -120%); opacity: 1; }
-  46% { opacity: 0; }
-  54% { opacity: 0; transform: translate(-120%, 120%); }
-  55% { opacity: 1; }
-  100% { transform: translate(0, 0); opacity: 1; }
-}
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+
+  45% {
+    transform: translate(120%, -120%);
+    opacity: 1;
+  }
+
+  46% {
+    opacity: 0;
+  }
+
+  54% {
+    opacity: 0;
+    transform: translate(-120%, 120%);
+  }
+
+  55% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}

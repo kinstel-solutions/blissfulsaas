@@ -355,7 +355,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                         <p className="text-muted-foreground italic text-sm">
                           No in-clinic slots available on this date.
                         </p>
-                        <p className="text-muted-foreground/60 text-xs mt-2">
+                        <p className="text-muted-foreground/60 text-base mt-2">
                           Try online consultation or pick another date.
                         </p>
                       </>
@@ -365,7 +365,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                         <p className="text-muted-foreground italic text-sm">
                           No online slots available on this date.
                         </p>
-                        <p className="text-muted-foreground/60 text-xs mt-2">
+                        <p className="text-muted-foreground/60 text-base mt-2">
                           Try another date or check in-clinic availability.
                         </p>
                       </>
@@ -447,7 +447,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                     <p className="text-sm font-bold text-foreground">
                       {therapist.firstName} {therapist.lastName}
                     </p>
-                    <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">Selected Expert</p>
+                    <p className="text-base text-muted-foreground uppercase font-bold tracking-widest">Selected Expert</p>
                   </div>
                 </div>
 
@@ -461,7 +461,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                     {selectedMode === "IN_CLINIC" ? <Building2 className="w-4 h-4" /> : <Monitor className="w-4 h-4" />}
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Visit Type</p>
+                    <p className="text-base font-bold uppercase tracking-widest text-muted-foreground/60">Visit Type</p>
                     <p className="text-sm font-semibold text-primary">
                       {selectedMode === "IN_CLINIC" ? "In-Clinic Visit" : "Online Consultation"}
                     </p>
@@ -473,7 +473,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                   <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl flex items-start gap-3 animate-in fade-in duration-300">
                     <MapPin className="w-4 h-4 text-primary/70 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-1">Clinic Location</p>
+                      <p className="text-base font-bold uppercase tracking-widest text-primary/70 mb-1">Clinic Location</p>
                       <p className="text-sm text-foreground font-medium leading-snug">{clinicAddress}</p>
                     </div>
                   </div>
@@ -482,7 +482,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                 {/* Selected date */}
                 {selectedDate && (
                   <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl animate-in fade-in duration-300">
-                    <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-1">Selected Date</p>
+                    <p className="text-base font-bold uppercase tracking-widest text-primary/70 mb-1">Selected Date</p>
                     <p className="text-sm text-foreground font-medium">{selectedDateDisplay}</p>
                   </div>
                 )}
@@ -494,7 +494,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                       ? "bg-primary/5 border-primary/20"
                       : "bg-primary/5 border-primary/10"
                   }`}>
-                    <p className="text-xs font-bold uppercase tracking-widest mb-2 text-primary">Selected Time</p>
+                    <p className="text-base font-bold uppercase tracking-widest mb-2 text-primary">Selected Time</p>
                     <p className="text-lg font-bold text-primary">
                       {formatSlotTime(selectedSlot.startUtc)} – {formatSlotTime(selectedSlot.endUtc)}
                     </p>
@@ -502,7 +502,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                 ) : (
                   <div className="p-5 md:p-10 border-2 border-dashed border-outline-variant/30 rounded-2xl text-center">
                     <Calendar className="w-6 h-6 text-muted-foreground/20 mx-auto mb-2" />
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">
+                    <p className="text-base font-bold uppercase tracking-widest text-muted-foreground italic">
                       {selectedDate ? "Select a time slot" : "Select a date first"}
                     </p>
                   </div>
@@ -511,7 +511,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                 {/* Amount */}
                 {selectedSlot && (
                   <div className="flex items-center justify-between px-2 animate-in fade-in duration-500">
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">Session Fee</p>
+                    <p className="text-base font-bold uppercase tracking-widest text-muted-foreground/60">Session Fee</p>
                     <p className="text-lg font-heading font-medium text-primary">
                       ₹{therapist.hourlyRate?.toLocaleString("en-IN") ?? "1,500"}
                     </p>
@@ -547,7 +547,7 @@ export default function SlotSelectionClient({ therapist }: { therapist: any }) {
                 )}
               </button>
 
-              <p className="mt-6 text-xs text-center text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-4 font-bold">
+              <p className="mt-6 text-base text-center text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-4 font-bold">
                 Secure payment • 256-bit SSL • No real charge in dev mode
               </p>
             </div>
@@ -602,7 +602,7 @@ function ModeCard({
         }`}>
           {isClinic ? "In-Clinic Visit" : "Online Consultation"}
         </p>
-        <p className="text-xs text-muted-foreground leading-snug">
+        <p className="text-base text-muted-foreground leading-snug">
           {isClinic
             ? clinicAddress || "Visit the therapist's clinic"
             : "Video call from anywhere"}

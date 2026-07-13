@@ -158,7 +158,7 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
 
         <div className="md:col-span-1 border-t md:border-t-0 md:border-l border-outline-variant/20 pt-4 md:pt-0 md:pl-6 flex flex-col justify-between md:h-full min-h-0">
           <div className="flex flex-col md:h-full min-h-0">
-            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider mb-3 sm:mb-4 shrink-0">
+            <p className="text-base font-bold text-muted-foreground/60 uppercase tracking-wider mb-3 sm:mb-4 shrink-0">
               {selectedDay ? `Sessions for ${monthName} ${selectedDay}` : "Select a day"}
             </p>
             

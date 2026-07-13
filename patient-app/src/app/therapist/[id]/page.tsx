@@ -88,7 +88,7 @@ export default async function TherapistProfilePage({ params }: { params: Promise
                  <span className="text-muted-foreground text-sm font-medium">({specialist.reviews} {specialist.reviews === 1 ? "review" : "reviews"})</span>
                </div>
              ) : (
-               <p className="text-xs text-muted-foreground/50 mb-2">No reviews yet</p>
+               <p className="text-base text-muted-foreground/50 mb-2">No reviews yet</p>
              )}
              <h2 className="text-4xl font-heading text-primary font-medium tracking-tight mt-6 mb-6">{specialist.rate}</h2>
              <div className="flex flex-col gap-3 w-full">
@@ -110,9 +110,9 @@ export default async function TherapistProfilePage({ params }: { params: Promise
         <div className="flex-1 space-y-12 px-2">
            <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-primary/60">{specialist.role}</p>
+                <p className="text-base font-bold uppercase tracking-widest text-primary/60">{specialist.role}</p>
                 <span className="w-1 h-1 rounded-full bg-outline-variant/30" />
-                <p className="text-xs font-bold uppercase tracking-widest text-primary/60">{specialist.experience}</p>
+                <p className="text-base font-bold uppercase tracking-widest text-primary/60">{specialist.experience}</p>
               </div>
               <h1 className="text-5xl font-heading font-normal text-foreground leading-[1.1] tracking-tight">{specialist.name}</h1>
               <p className="text-sm font-medium text-muted-foreground italic flex items-center gap-2">
@@ -129,19 +129,19 @@ export default async function TherapistProfilePage({ params }: { params: Promise
 
            <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="p-6 bg-surface-container-low/50 rounded-xl border border-outline-variant/10">
-                 <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40 mb-3 flex items-center gap-2">
+                 <p className="text-base font-bold uppercase tracking-widest text-muted-foreground/40 mb-3 flex items-center gap-2">
                    <Clock className="w-3 h-3" /> Experience
                  </p>
                  <p className="text-lg font-heading text-primary font-medium">{specialist.experience}</p>
               </div>
               <div className="p-6 bg-surface-container-low/50 rounded-xl border border-outline-variant/10">
-                 <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40 mb-3 flex items-center gap-2">
+                 <p className="text-base font-bold uppercase tracking-widest text-muted-foreground/40 mb-3 flex items-center gap-2">
                    <GraduationCap className="w-3 h-3" /> Education
                  </p>
                  <p className="text-sm font-medium text-foreground tracking-tight leading-relaxed">{specialist.qualifications}</p>
               </div>
               <div className="p-6 bg-surface-container-low/50 rounded-xl border border-outline-variant/10">
-                 <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40 mb-3 flex items-center gap-2">
+                 <p className="text-base font-bold uppercase tracking-widest text-muted-foreground/40 mb-3 flex items-center gap-2">
                    <Globe className="w-3 h-3" /> Languages
                  </p>
                  <p className="text-sm font-medium text-foreground tracking-tight leading-relaxed break-words">{specialist.languages.join(", ")}</p>

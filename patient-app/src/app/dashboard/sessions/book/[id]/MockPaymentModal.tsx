@@ -115,7 +115,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
               </div>
               <div>
                 <p className="text-white text-sm font-bold tracking-tight">Secure Checkout</p>
-                <p className="text-white/40 text-xs">The Blissful Station</p>
+                <p className="text-white/40 text-base">The Blissful Station</p>
               </div>
             </div>
             {step === "form" && (
@@ -192,19 +192,19 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                   <div className="flex items-start sm:items-center gap-2.5 sm:gap-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
                     <Zap className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5 sm:mt-0" />
                     <div>
-                      <p className="text-amber-400 text-xs font-bold uppercase tracking-widest">Dev Mode — Mock Payment</p>
-                      <p className="text-amber-400/60 text-xs mt-0.5">No real charge. Pre-filled test card below.</p>
+                      <p className="text-amber-400 text-base font-bold uppercase tracking-widest">Dev Mode — Mock Payment</p>
+                      <p className="text-amber-400/60 text-base mt-0.5">No real charge. Pre-filled test card below.</p>
                     </div>
                   </div>
                 )}
 
                 {/* Order Summary */}
                 <div className="p-3 sm:p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2">
-                  <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Order Summary</p>
+                  <p className="text-white/40 text-base font-bold uppercase tracking-widest">Order Summary</p>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-white text-sm font-medium">{orderData.therapistName}</p>
-                      <p className="text-white/40 text-xs">{formattedDate} • {formattedTime} IST</p>
+                      <p className="text-white/40 text-base">{formattedDate} • {formattedTime} IST</p>
                       {orderData.mode && (
                         <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${
                           orderData.mode === 'IN_CLINIC' ? 'text-primary' : 'text-primary'
@@ -216,7 +216,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                     <p className="text-white text-lg sm:text-xl font-heading font-medium flex-shrink-0">₹{amountInRupees}</p>
                   </div>
                   {orderData.mode === 'IN_CLINIC' && orderData.clinicAddress && (
-                    <p className="text-white/30 text-xs pt-2 border-t border-white/5 leading-relaxed">
+                    <p className="text-white/30 text-base pt-2 border-t border-white/5 leading-relaxed">
                       📍 {orderData.clinicAddress}
                     </p>
                   )}

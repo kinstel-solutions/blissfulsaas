@@ -577,9 +577,9 @@ function DayRow({ day, draft, onChange }: DayRowProps) {
           <div>
             <p className="font-semibold text-foreground text-sm">{day.label}</p>
             {anyActive ? (
-              <p className="text-xs text-primary font-medium">Working day</p>
+              <p className="text-base text-primary font-medium">Working day</p>
             ) : (
-              <p className="text-xs text-muted-foreground">Day off</p>
+              <p className="text-base text-muted-foreground">Day off</p>
             )}
           </div>
         </div>
@@ -802,7 +802,7 @@ function OverrideCard({
 
         <div>
           <p className="text-sm font-semibold text-foreground">{dateStr}</p>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-base text-muted-foreground mt-0.5">
             {override.isAvailable
               ? override.startTime && override.endTime
                 ? `${formatTime12(override.startTime)} – ${formatTime12(override.endTime)}${override.mode ? ` (${override.mode === "ONLINE" ? "Online" : "In-Clinic"})` : " (All modes)"}`
@@ -1050,7 +1050,7 @@ function AddOverrideDialog({ open, onClose, onSave, defaultDate }: AddOverrideDi
             {/* Timezone note */}
             <div className="flex items-start gap-2 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl">
               <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-700 font-medium">
+              <p className="text-base text-amber-700 font-medium">
                 Times are configured and stored in Indian Standard Time (IST / Asia/Kolkata).
               </p>
             </div>
@@ -1516,7 +1516,7 @@ export default function AvailabilityPage() {
                   <div className="flex flex-col items-center justify-center py-16 bg-white border border-outline-variant/20 rounded-2xl text-muted-foreground">
                     <CalendarClock className="w-12 h-12 mb-3 opacity-30" />
                     <p className="font-semibold text-foreground text-sm">No exceptions yet</p>
-                    <p className="text-xs text-muted-foreground mt-1 text-center">
+                    <p className="text-base text-muted-foreground mt-1 text-center">
                       Click a date on the calendar or add above.
                     </p>
                   </div>

@@ -48,7 +48,7 @@ export function BreathingLoader({
         <h2 className="text-2xl font-heading font-medium text-primary transition-all duration-700 ease-in-out min-h-[2rem]">
           {text ? text : (isBreathingIn ? "Breathing in..." : "Breathing out...")}
         </h2>
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground/40 animate-pulse">
+        <p className="text-base font-bold uppercase tracking-[0.3em] text-muted-foreground/40 animate-pulse">
           {subtext}
         </p>
       </div>

@@ -172,7 +172,7 @@ function LoginForm() {
             </form>
 
             <div className="mt-10 pt-8 border-t border-[#1A2F28]/5 text-center">
-              <p className="text-xs text-[#1A2F28]/40 font-medium">
+              <p className="text-base text-[#1A2F28]/40 font-medium">
                 Not a member yet?{" "}
                 <Link href="/signup" className="text-[#2D4F43] font-bold hover:underline decoration-[#2D4F43]/20 decoration-2 underline-offset-4">
                   Join our network

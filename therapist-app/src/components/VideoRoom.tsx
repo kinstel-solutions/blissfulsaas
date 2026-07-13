@@ -276,7 +276,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
               <div className="flex flex-col items-center gap-4 text-center">
                 <Shield className="w-12 h-12 text-red-500 mb-2" />
                 <p className="text-red-400 font-bold uppercase tracking-widest text-sm">Connection Failed</p>
-                <p className="text-white/60 text-xs">Could not connect to the secure room. Please try refreshing.</p>
+                <p className="text-white/60 text-base">Could not connect to the secure room. Please try refreshing.</p>
               </div>
             ) : (isConnected && !sessionEnded && remoteUsers.length > 0) ? (
               <RemoteUser

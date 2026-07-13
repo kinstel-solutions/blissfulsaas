@@ -184,7 +184,7 @@ export default function ProfilePage() {
         </div>
         <div>
           <h1 className="text-xl md:text-2xl font-heading font-medium text-foreground tracking-tight">Clinical Profile</h1>
-          <p className="text-[11px] md:text-xs font-medium text-muted-foreground/70 mt-0.5 max-w-xl leading-relaxed">Refine your public presence and manage clinical credentials.</p>
+          <p className="text-[11px] md:text-base font-medium text-muted-foreground/70 mt-0.5 max-w-xl leading-relaxed">Refine your public presence and manage clinical credentials.</p>
         </div>
       </div>
 
@@ -209,7 +209,7 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-1">
               <p className="text-sm font-bold text-amber-900/80">Pending Clinical Verification</p>
-              <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
+              <p className="text-[11px] md:text-base font-medium text-amber-800/60 leading-relaxed">
                 Your credentials are currently being reviewed by our clinical board. Complete your profile now to expedite the process.
               </p>
             </div>
@@ -224,7 +224,7 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-1">
               <p className="text-sm font-bold text-amber-900/80">Pending Profile Edits</p>
-              <p className="text-[11px] md:text-xs font-medium text-amber-800/60 leading-relaxed">
+              <p className="text-[11px] md:text-base font-medium text-amber-800/60 leading-relaxed">
                 You have submitted changes that are awaiting review by our clinical board. Your previously verified profile remains live until these are approved.
               </p>
             </div>

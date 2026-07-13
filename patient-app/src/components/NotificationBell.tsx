@@ -210,7 +210,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
                   <Bell className="w-5 h-5 text-muted-foreground/40" />
                 </div>
                 <p className="text-sm font-medium text-foreground/50">All caught up!</p>
-                <p className="text-xs text-muted-foreground/40 mt-1">No notifications yet.</p>
+                <p className="text-base text-muted-foreground/40 mt-1">No notifications yet.</p>
               </div>
             ) : (
               notifications.map((notif) => (
@@ -239,7 +239,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
                         <span className="shrink-0 w-2 h-2 rounded-full bg-primary mt-1" />
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
+                    <p className="text-base text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
                       {notif.body}
                     </p>
                     <p className="text-[10px] text-muted-foreground/50 mt-1">
