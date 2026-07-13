@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Manrope, Plus_Jakarta_Sans, Geist } from "next/font/google";
+import { Manrope, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -30,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", manrope.variable, plusJakartaSans.variable, "font-sans", geist.variable)}
+      className={cn("h-full antialiased", manrope.variable, plusJakartaSans.variable)}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">{children}</body>

@@ -65,24 +65,24 @@ function LoginForm() {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#EEF5F2] rounded-full blur-[100px] -z-10 pointer-events-none transform -translate-x-1/4 translate-y-1/4 opacity-80" />
 
       <main className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10 pt-32 pb-20">
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[95%] max-w-[1200px] px-4 md:px-8 pointer-events-none z-20">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (window.document.referrer.includes(window.location.host)) {
+                router.back();
+              } else {
+                router.push("/");
+              }
+            }}
+            type="button"
+            className="pointer-events-auto group flex items-center gap-2 px-4 py-2 bg-white/40 hover:bg-white/80 backdrop-blur-sm border border-[#1A2F28]/5 rounded-full text-xs font-bold uppercase tracking-widest text-[#1A2F28]/60 hover:text-[#1A2F28] transition-all shadow-sm cursor-pointer w-auto h-auto hover:text-inherit"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
+            Back
+          </Button>
+        </div>
         <div className="w-full max-w-xl">
-          <div className="mb-6 flex justify-start">
-            <Button
-              variant="ghost"
-              onClick={() => {
-                if (window.document.referrer.includes(window.location.host)) {
-                  router.back();
-                } else {
-                  router.push("/");
-                }
-              }}
-              type="button"
-              className="group flex items-center gap-2 px-4 py-2 bg-white/40 hover:bg-white/80 backdrop-blur-sm border border-[#1A2F28]/5 rounded-full text-xs font-bold uppercase tracking-widest text-[#1A2F28]/60 hover:text-[#1A2F28] transition-all shadow-sm cursor-pointer w-auto h-auto hover:text-inherit"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
-              Back
-            </Button>
-          </div>
 
           <div className="text-center mb-10">
             <div className="w-20 h-20 rounded-2xl bg-white/40 backdrop-blur-sm border border-[#1A2F28]/5 flex items-center justify-center mx-auto mb-6 shadow-sm">

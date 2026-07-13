@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-plus-jakarta-sans), sans-serif;
   --font-plus-jakarta-sans: var(--font-plus-jakarta-sans), sans-serif;
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-manrope), sans-serif;
   --font-manrope: var(--font-manrope), sans-serif;
 
   --color-primary: var(--primary);
@@ -66,7 +66,6 @@
 }
 
 :root {
-  /* Blissful Botanical Green (Perfect Reference Match) */
 
   --surface: #F8FAFC;
   --surface-container-low: #E8F0EE;
@@ -139,14 +138,16 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    line-height: 1.6;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans tracking-tight text-primary;
-  }
-  html {
-    @apply font-sans;
+    @apply font-heading tracking-tight text-primary;
   }
 }
 
@@ -202,8 +203,10 @@
 .alex-button {
   background-color: var(--primary);
   border: 1px solid var(--primary);
-  color: white;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--primary-foreground);
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .alex-button:hover {
@@ -213,8 +216,8 @@
 }
 
 .cta-icon-circle {
-  background-color: white;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--surface-container-lowest);
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,14 +247,7 @@
   100% { transform: translate(0, 0); opacity: 1; }
 }
 
-/* Hide scrollbars but keep functionality */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
+
 
 .dark {
   --background: oklch(0.145 0 0);
