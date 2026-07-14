@@ -31,7 +31,7 @@ export default function AppointmentNotesClient({ appointmentId, initialNotes }: 
   };
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden min-h-[400px] lg:min-h-[500px]">
+    <Card className="h-full flex flex-col overflow-hidden min-h-[400px] lg:min-h-[500px] p-0 gap-0">
       <div className="p-5 lg:p-8 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">

@@ -16,9 +16,9 @@ const features = [
   },
   {
     number: "03",
-    title: "Evidence-Based Results",
+    title: "Evidence-Based Methods",
     description:
-      "Our specialists utilize scientifically proven and ethical therapeutic modalities tailored to modern recovery.",
+      "Our specialists utilize scientifically proven and ethical therapeutic modalities tailored to support lasting recovery.",
   },
   {
     number: "04",

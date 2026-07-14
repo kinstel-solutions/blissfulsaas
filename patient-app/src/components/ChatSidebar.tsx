@@ -176,7 +176,7 @@ export default function ChatSidebar({
           <button
             onClick={handleSend}
             disabled={!input.trim() || sending}
-            className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white disabled:opacity-30 hover:bg-primary transition-all active:scale-90"
+            className="w-8 h-8 shrink-0 rounded-xl bg-slate-900 flex items-center justify-center text-white disabled:opacity-30 hover:bg-primary transition-all active:scale-90"
           >
             <Send className="w-3.5 h-3.5" />
           </button>

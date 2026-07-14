@@ -32,7 +32,7 @@ export default function SessionFeedbackButton({ session, fullWidth, variant = "c
 
   const baseStyles = variant === "detail" 
     ? "h-14 rounded-xl bg-surface-container-low hover:bg-surface-container-low/70 text-foreground border-outline-variant/30 hover:border-primary/30" 
-    : "py-3 rounded-xl bg-primary/5 text-primary border-primary/10 hover:bg-primary/10";
+    : "py-3 rounded-xl bg-primary/5 text-primary border-primary/10 hover:bg-primary/10 h-auto sm:min-w-[160px]";
 
   if (hasExistingFeedback || submitted) {
     const rating = session.feedback?.rating ?? 5;

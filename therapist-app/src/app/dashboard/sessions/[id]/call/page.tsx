@@ -45,7 +45,7 @@ export default async function SessionRoomPage({ params }: { params: Promise<{ id
 
   return (
     <div className="h-full lg:h-[calc(100vh-120px)] flex flex-col gap-4 lg:gap-6">
-      <header className="flex justify-between items-center bg-white/70 backdrop-blur-xl p-3 md:p-4 rounded-2xl z-10 border border-slate-100 shadow-sm mx-1">
+      <header className="flex justify-between items-center bg-white/70 backdrop-blur-xl p-3 md:p-4 rounded-xl z-10 border border-slate-100 shadow-sm mx-1">
         <div className="flex items-center gap-4 md:gap-8">
           <Link
             href="/dashboard"

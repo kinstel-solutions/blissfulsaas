@@ -138,7 +138,7 @@ export default async function SessionsPage() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto ml-0 md:ml-auto shrink-0 mt-4 md:mt-0 relative z-10">
           {/* Status badge */}
           <span
-            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${session.status === "CONFIRMED"
+            className={`self-start sm:self-auto text-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${session.status === "CONFIRMED"
                 ? "bg-primary/10 text-primary"
                 : session.status === "PENDING"
                   ? "bg-amber-100 text-amber-700"
@@ -169,7 +169,7 @@ export default async function SessionsPage() {
           {/* Book Again for completed/cancelled */}
           {(isCompleted || isCancelled) && session.therapist?.id && (
             <Link href={`/dashboard/sessions/book/${session.therapist.id}`} className="w-full sm:w-auto pointer-events-auto">
-              <Button className="w-full sm:w-auto px-5 py-3 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
+              <Button className="w-full sm:w-auto sm:min-w-[160px] px-5 py-3 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
                 <RefreshCw className="w-3.5 h-3.5" />
                 Book Again
               </Button>
@@ -179,7 +179,7 @@ export default async function SessionsPage() {
           {/* View Session button for upcoming */}
           {(session.status === "PENDING" || session.status === "CONFIRMED") && (
             <Link href={`/dashboard/sessions/${session.id}`} className="w-full sm:w-auto pointer-events-auto">
-              <Button className="w-full sm:w-auto px-5 py-3 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
+              <Button className="w-full sm:w-auto sm:min-w-[160px] px-5 py-3 font-bold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] h-auto">
                 <ArrowRight className="w-3.5 h-3.5" />
                 View Session
               </Button>

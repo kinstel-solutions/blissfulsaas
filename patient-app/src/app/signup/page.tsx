@@ -198,7 +198,7 @@ export default function SignupPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="password" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
-                    Security Code
+                    Password
                   </label>
                   <div className="relative group/input">
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
@@ -226,7 +226,7 @@ export default function SignupPage() {
 
                 <div className="space-y-2">
                   <label htmlFor="confirmPassword" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/40 ml-4">
-                    Confirm Code
+                    Confirm Password
                   </label>
                   <div className="relative group/input">
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">

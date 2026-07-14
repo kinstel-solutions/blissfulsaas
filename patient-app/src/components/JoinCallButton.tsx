@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Video } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 interface JoinCallButtonProps {
   sessionId: string;
@@ -64,17 +64,21 @@ export default function JoinCallButton({ sessionId, scheduledAt, status }: JoinC
         title="Join Call will be available 5 minutes before the session starts"
       >
         <Video className="w-4 h-4 opacity-50 shrink-0" />
-        <span>Join Call {countdownText ? `(${countdownText})` : ""}</span>
+        <span className="whitespace-nowrap shrink-0">Join Call {countdownText ? `(${countdownText})` : ""}</span>
       </Button>
     );
   }
 
   return (
-    <Link href={`/dashboard/sessions/${sessionId}/call`} className="w-full">
-      <Button className="w-full h-14 rounded-xl font-bold uppercase tracking-widest text-xs active:scale-[0.98] flex items-center justify-center gap-2">
-        <Video className="w-4 h-4 text-primary-foreground shrink-0" />
-        <span>Join Call</span>
-      </Button>
+    <Link
+      href={`/dashboard/sessions/${sessionId}/call`}
+      className={buttonVariants({
+        variant: "default",
+        className: "w-full h-14 rounded-xl font-bold uppercase tracking-widest text-xs active:scale-[0.98] flex items-center justify-center gap-2 shrink-0"
+      })}
+    >
+      <Video className="w-4 h-4 text-primary-foreground shrink-0" />
+      <span className="whitespace-nowrap shrink-0">Join Call</span>
     </Link>
   );
 }

@@ -234,11 +234,6 @@ export default function MessageHistoryClient({
                   className={`relative w-full p-5 md:p-4 transition-all flex items-center gap-4 text-left h-auto justify-start border ${isActive ? 'bg-primary/5 border-primary/10 hover:bg-primary/5 hover:text-inherit' : 'hover:bg-slate-50 border-transparent hover:text-inherit'
                     }`}
                 >
-                  {unreadCount > 0 && (
-                    <div className="absolute top-4 md:top-4 right-4 md:right-4 w-7 h-7 md:w-5 md:h-5 bg-primary text-white text-sm md:text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
-                      {unreadCount}
-                    </div>
-                  )}
                   <div className={`w-14 h-14 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-base md:text-base shrink-0 ${isActive ? 'bg-primary text-white' : 'bg-slate-100 text-slate-500'
                     }`}>
                     {therapist?.firstName?.[0]}{therapist?.lastName?.[0]}
@@ -255,9 +250,16 @@ export default function MessageHistoryClient({
                         <span className="text-xs md:text-[8px] font-bold uppercase px-2 py-0.5 bg-blue-50 text-blue-500 rounded-md shrink-0">Done</span>
                       )}
                     </div>
-                    <div className={`flex items-center gap-1.5 text-sm md:text-xs font-medium mt-1.5 ${unreadCount > 0 ? 'text-primary' : 'text-slate-400'}`}>
-                      <Calendar className="w-4 h-4 md:w-3 md:h-3" />
-                      {mounted ? new Date(s.scheduledAt).toLocaleDateString('en-US') : 'Loading...'}
+                    <div className="flex items-center justify-between gap-1.5 mt-1.5">
+                      <div className={`flex items-center gap-1.5 text-sm md:text-xs font-medium ${unreadCount > 0 ? 'text-primary' : 'text-slate-400'}`}>
+                        <Calendar className="w-4 h-4 md:w-3 md:h-3" />
+                        {mounted ? new Date(s.scheduledAt).toLocaleDateString('en-US') : 'Loading...'}
+                      </div>
+                      {unreadCount > 0 && (
+                        <div className="w-6 h-6 md:w-5 md:h-5 bg-primary text-white text-xs md:text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm shrink-0">
+                          {unreadCount}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Button>
@@ -395,7 +397,7 @@ export default function MessageHistoryClient({
                     variant="default"
                     onClick={handleSend}
                     disabled={!input.trim() || sending}
-                    className="w-11 h-11 md:w-11 md:h-11 flex items-center justify-center transition-all active:scale-95 shrink-0 p-0 h-auto rounded-l-none rounded-r-xl"
+                    className="w-11 h-11 md:w-11 md:h-11 flex items-center justify-center transition-all active:scale-95 shrink-0 p-0 rounded-l-none rounded-r-xl"
                   >
                     <Send className="w-5 h-5 md:w-4 md:h-4 md:-ml-0.5" />
                   </Button>

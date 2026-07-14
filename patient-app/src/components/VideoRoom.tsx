@@ -215,11 +215,11 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
   }
 
   return (
-    <div className="h-full min-h-[600px] lg:h-[calc(100vh-220px)] flex flex-col lg:flex-row gap-4 lg:gap-8 pb-2 lg:pb-0 -mx-5 sm:mx-0 animate-in fade-in duration-1000">
-      <div className="flex flex-col flex-[2] relative gap-4 lg:gap-6 h-[60vh] min-h-[500px] lg:h-auto lg:min-h-0">
+    <div className="h-full min-h-0 lg:h-[calc(100vh-220px)] flex flex-col lg:flex-row gap-4 lg:gap-8 pb-2 lg:pb-0 -mx-5 sm:mx-0 animate-in fade-in duration-1000">
+      <div className="flex flex-col relative gap-4 lg:gap-6 h-[44dvh] lg:h-auto lg:flex-[2] shrink-0">
         <div
           ref={containerRef}
-          className={`flex-1 bg-slate-950 border border-white/5 overflow-hidden relative shadow-2xl flex flex-col group ${isFullscreen ? "rounded-none" : "rounded-2xl"
+          className={`flex-1 bg-slate-950 border border-white/5 overflow-hidden relative shadow-2xl flex flex-col group ${isFullscreen ? "rounded-none" : "rounded-xl"
             }`}
         >
           {/* Background Overlay */}
@@ -258,7 +258,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
           </div>
 
           {/* Self-Feed PiP */}
-          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-28 sm:w-40 md:w-56 aspect-video rounded-xl md:rounded-2xl border border-white/20 shadow-2xl overflow-hidden z-30 hover:scale-105 transition-transform bg-slate-800">
+          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-36 sm:w-48 md:w-64 aspect-video rounded-xl md:rounded-2xl border border-white/20 shadow-2xl overflow-hidden z-30 hover:scale-105 transition-transform bg-slate-800">
             {localCameraTrack ? (
               <div className={`w-full h-full relative ${!cameraOn ? 'hidden' : 'block'}`}>
                 <LocalVideoTrack track={localCameraTrack} play style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -376,8 +376,8 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
       </div>
 
       {/* Sidebar Chat (Separate Section) */}
-      <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 h-auto lg:h-full min-h-0 lg:max-h-[calc(100vh-220px)]">
-        <Card className="p-4 min-h-100 md:p-6 flex flex-col lg:overflow-hidden min-h-0 h-full flex-1">
+      <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 flex-1 min-h-0 lg:h-full lg:max-h-[calc(100vh-220px)]">
+        <Card className="p-4 md:p-6 flex flex-col lg:overflow-hidden min-h-0 h-full flex-1 gap-0">
           <div className="flex-1 flex flex-col min-h-0">
             {currentUserId && (
               <ChatSidebar

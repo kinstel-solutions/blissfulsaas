@@ -17,7 +17,7 @@ export function HeroSection() {
         <h1 className="text-4xl md:text-5xl lg:text-[64px] leading-[1.1] mb-4 md:mb-8 font-cormorant font-bold text-[var(--text-dark)] tracking-[-1.5px]">
           Therapy and mental health care,
           <span className="simmer-text italic font-bold">
-            made calm.
+            made accessible.
           </span>
         </h1>
 

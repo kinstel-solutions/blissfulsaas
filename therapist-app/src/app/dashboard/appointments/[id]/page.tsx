@@ -16,7 +16,7 @@ import AppointmentActions from "@/components/AppointmentActions";
 import AppointmentNotesClient from "./AppointmentNotesClient";
 import { notFound } from "next/navigation";
 import { AlexButton } from "@/components/ui/AlexButton";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 export default async function AppointmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -80,18 +80,26 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
           
           <div className="grid grid-cols-2 gap-2 w-full lg:flex lg:w-auto lg:items-center lg:gap-3">
              {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && appointment.status !== 'EXPIRED' && appointment.mode === 'ONLINE' && (
-                <Link href={`/dashboard/sessions/${appointment.id}/call`} className="contents lg:block lg:flex-none">
-                   <Button variant="default" className="w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto">
-                      <Video className="w-3.5 h-3.5 text-white" />
-                      Join Call
-                   </Button>
+                <Link
+                   href={`/dashboard/sessions/${appointment.id}/call`}
+                   className={buttonVariants({
+                      variant: "default",
+                      className: "w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto py-2.5 px-4 lg:flex-none"
+                   })}
+                >
+                   <Video className="w-3.5 h-3.5 text-white shrink-0" />
+                   <span>Join Call</span>
                 </Link>
              )}
-             <Link href={`/dashboard/messages?sessionId=${appointment.id}`} className="contents lg:block lg:flex-none">
-                <Button variant="outline" className="w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto py-2.5">
-                   <MessageSquare className="w-3.5 h-3.5 text-primary" />
-                   Message
-                </Button>
+             <Link
+                href={`/dashboard/messages?sessionId=${appointment.id}`}
+                className={buttonVariants({
+                   variant: "secondary",
+                   className: "w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto py-2.5 px-4 lg:flex-none border-0 hover:bg-secondary/80"
+                })}
+             >
+                <MessageSquare className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span>Message</span>
              </Link>
              <div className="contents lg:block lg:flex-none">
                 <AppointmentActions id={appointment.id} status={appointment.status} />
@@ -162,7 +170,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         {/* Left Column: Patient Intake */}
         <div className="lg:col-span-5">
-           <Card className="h-full">
+           <Card className="h-full p-0 gap-0">
               <CardHeader className="p-5 lg:p-8 bg-slate-50/50 border-b border-slate-100 flex flex-row items-center gap-3 space-y-0">
                  <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
                     <ClipboardList className="w-5 h-5 text-violet-600" />

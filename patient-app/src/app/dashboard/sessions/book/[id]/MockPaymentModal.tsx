@@ -105,7 +105,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
         aria-label="Payment"
       >
         {/* ── Card shell ──────────────────────────────────────────── */}
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden p-0 gap-0 border border-white/10 bg-[#0f0f1a] shadow-2xl ring-0">
 
           {/* Header bar */}
           <div className="bg-[#1a1a2e] px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between">

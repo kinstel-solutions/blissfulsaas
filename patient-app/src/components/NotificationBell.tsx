@@ -99,7 +99,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
         prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
       );
       setUnread((prev) => Math.max(0, prev - 1));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const markAll = async () => {
@@ -108,7 +108,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
       await api.notifications.markAllRead();
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnread(0);
-    } catch (e) {}
+    } catch (e) { }
     setLoading(false);
   };
 
@@ -118,7 +118,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
       await api.notifications.deleteAll();
       setNotifications([]);
       setUnread(0);
-    } catch (e) {}
+    } catch (e) { }
     setLoading(false);
   };
 
@@ -127,7 +127,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
       await api.notifications.delete(id);
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       if (!wasRead) setUnread((prev) => Math.max(0, prev - 1));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   return (
@@ -138,11 +138,10 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
           <Button
             variant="ghost"
             id="notification-bell-btn"
-            className="relative rounded-full bg-surface-container-low border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container hover:border-primary/30 transition-all duration-200 group"
-            size="icon"
+            className="relative w-10 h-10 rounded-full bg-surface-container-low border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container hover:border-primary/30 transition-all duration-200 group"
             aria-label={`Notifications${unread > 0 ? ` (${unread} unread)` : ""}`}
           >
-            <Bell className="w-4 h-4 text-foreground/60 group-hover:text-primary transition-colors" />
+            <Bell className="size-5 text-foreground/60 group-hover:text-primary transition-colors" />
             {unread > 0 && (
               <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-md animate-bounce-once">
                 {unread > 9 ? "9+" : unread}
@@ -216,15 +215,13 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
               notifications.map((notif) => (
                 <div
                   key={notif.id}
-                  className={`group flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-surface-container/40 ${
-                    !notif.isRead ? "bg-primary/[0.03]" : ""
-                  }`}
+                  className={`group flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-surface-container/40 ${!notif.isRead ? "bg-primary/[0.03]" : ""
+                    }`}
                 >
                   {/* Icon badge */}
                   <div
-                    className={`shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center text-base ${
-                      TYPE_COLOR[notif.type] ?? TYPE_COLOR.GENERAL
-                    }`}
+                    className={`shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center text-base ${TYPE_COLOR[notif.type] ?? TYPE_COLOR.GENERAL
+                      }`}
                   >
                     {TYPE_ICON[notif.type] ?? "🔔"}
                   </div>

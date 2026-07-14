@@ -167,20 +167,20 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
               >
                 {/* Header Info */}
                 <div className="p-5 flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-4 min-w-0">
                     <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg transition-all shadow-sm shrink-0 border bg-white text-primary border-slate-100">
                       {appt.patient?.firstName?.[0]}
                     </div>
-                    <div>
-                      <div className="text-lg font-bold text-primary">
+                    <div className="min-w-0">
+                      <div className="text-lg font-bold text-primary truncate">
                         {appt.patient?.firstName} {appt.patient?.lastName}
                       </div>
-                      <div className={`text-sm font-bold uppercase tracking-widest mt-2 flex items-center gap-1.5 ${appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
+                      <div className={`text-sm font-bold uppercase tracking-widest mt-2 flex items-center gap-1.5 whitespace-nowrap ${appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
                         }`}>
                         {appt.mode === 'IN_CLINIC' ? (
-                          <><MapPin className="w-3 h-3" /> In-Clinic Visit</>
+                          <><MapPin className="w-3 h-3 shrink-0" /> In-Clinic Visit</>
                         ) : (
-                          <><Video className="w-3 h-3" /> Video Session</>
+                          <><Video className="w-3 h-3 shrink-0" /> Video Session</>
                         )}
                       </div>
                       <div className="flex flex-col items-start gap-2 mt-4">
@@ -193,20 +193,20 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                           {appt.status}
                         </span>
                         {hasNotes && (
-                          <div className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100">
-                            <FileText className="w-2.5 h-2.5" />
-                            <span className="text-xs font-bold uppercase tracking-widest">Notes</span>
+                          <div className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100 shrink-0">
+                            <FileText className="w-2.5 h-2.5 shrink-0" />
+                            <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap">Notes</span>
                           </div>
                         )}
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex flex-col items-end gap-2 shrink-0">
                     <div className="text-right">
-                      <div className="text-base font-bold text-slate-900">
+                      <div className="text-base font-bold text-slate-900 whitespace-nowrap">
                         {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </div>
-                      <div className="text-sm text-slate-400 font-bold uppercase mt-1">
+                      <div className="text-sm text-slate-400 font-bold uppercase mt-1 whitespace-nowrap">
                         {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
@@ -214,17 +214,14 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                 </div>
 
                 {/* Actions Bar */}
-                <div className="px-5 pb-5 flex items-center justify-between gap-3 border-t border-slate-50 pt-4">
-                  <div className="flex gap-2" onClick={e => e.stopPropagation()}>
-                    <Link href={`/dashboard/messages?sessionId=${appt.id}`}>
-                      <Button variant="ghost" className="p-2.5 text-primary">
+                <div className="px-5 pb-5 flex items-center border-t border-slate-50 pt-4">
+                  <div className="flex gap-2 flex-1 min-w-0" onClick={e => e.stopPropagation()}>
+                    <Link href={`/dashboard/messages?sessionId=${appt.id}`} className="shrink-0">
+                      <Button variant="ghost" className="p-2.5 text-primary shrink-0">
                         <MessageSquare className="w-4 h-4" />
                       </Button>
                     </Link>
                     <AppointmentActions id={appt.id} status={appt.status} />
-                  </div>
-                  <div className="flex items-center gap-1 text-sm font-bold text-slate-400 uppercase tracking-widest">
-                    View <ChevronUp className="w-4 h-4 rotate-90" />
                   </div>
                 </div>
               </Card>

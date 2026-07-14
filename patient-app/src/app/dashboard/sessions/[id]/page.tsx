@@ -393,7 +393,7 @@ export default async function SessionDetailPage({
         {/* ──── Right Column: Appointment Details + CTAs ──────── */}
         <div className="lg:col-span-5 flex flex-col gap-6">
           {/* Appointment Details Card */}
-          <Card className="overflow-hidden order-2">
+          <Card className="overflow-hidden order-2 p-0 gap-0">
             <CardHeader className="p-5 lg:p-6 bg-surface-container-low/30 border-b border-outline-variant/10 space-y-0">
               <h2 className="text-xs font-bold text-foreground uppercase tracking-widest flex items-center gap-2">
                 <Activity className="w-3.5 h-3.5 text-primary" />
@@ -550,7 +550,7 @@ export default async function SessionDetailPage({
           </Card>
 
           {/* ── BIG CTAs ──────────────────────────────────────────── */}
-          <Card className="overflow-hidden order-1">
+          <Card className="overflow-hidden order-1 p-0 gap-0">
             <CardHeader className="p-5 lg:p-6 bg-surface-container-low/30 border-b border-outline-variant/10 space-y-0">
               <h2 className="text-xs font-bold text-foreground uppercase tracking-widest">
                 Quick Actions

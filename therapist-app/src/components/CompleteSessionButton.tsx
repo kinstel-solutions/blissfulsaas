@@ -24,10 +24,10 @@ export default function CompleteSessionButton({ appointmentId }: { appointmentId
   return (
     <Button 
       onClick={handleComplete}
-      className="bg-slate-900 text-white font-bold uppercase tracking-widest text-[10px] md:text-xs rounded-xl px-4 py-2 md:px-6 md:py-2.5 shadow-sm hover:bg-primary transition-all flex items-center gap-2 h-auto"
+      className="bg-slate-900 text-white font-bold uppercase tracking-widest text-[10px] md:text-xs rounded-xl px-3 py-2 md:px-4 md:py-2.5 shadow-sm hover:bg-primary transition-all flex items-center justify-center gap-2 h-auto"
     >
-      <CheckCircle className="w-3 h-3 md:w-3.5 md:h-3.5" />
-      Complete & Close
+      <CheckCircle className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
+      <span className="whitespace-nowrap">Complete & Close</span>
     </Button>
   );
 }

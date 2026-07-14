@@ -37,7 +37,7 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
   }
 
   return (
-    <div className="h-[85vh] flex flex-col gap-12 animate-in fade-in duration-1000 md:-mx-12">
+    <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100vh-120px)] flex flex-col gap-4 lg:gap-6">
       <header className="flex items-center justify-between px-2 lg:px-0">
         <div className="flex items-center gap-6">
           <Link

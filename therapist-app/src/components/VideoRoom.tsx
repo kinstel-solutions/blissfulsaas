@@ -257,7 +257,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
       <div className="flex flex-col flex-[2] relative gap-4 lg:gap-6 h-[60vh] min-h-[500px] lg:h-auto lg:min-h-0">
         <div
           ref={containerRef}
-          className={`flex-1 bg-slate-950 border border-white/5 overflow-hidden relative shadow-2xl flex flex-col group ${isFullscreen ? "rounded-none" : "rounded-3xl lg:rounded-[3.5rem]"
+          className={`flex-1 bg-slate-950 border border-white/5 overflow-hidden relative shadow-2xl flex flex-col group ${isFullscreen ? "rounded-none" : "rounded-xl"
             }`}
         >
           {/* Background Overlay */}
@@ -296,7 +296,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
           </div>
 
           {/* Self-Feed (Local Video) */}
-          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-28 sm:w-40 md:w-48 aspect-video rounded-xl border border-white/20 shadow-2xl overflow-hidden z-20 group/pip hover:scale-105 transition-transform bg-slate-800">
+          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-36 sm:w-48 md:w-64 aspect-video rounded-xl border border-white/20 shadow-2xl overflow-hidden z-20 group/pip hover:scale-105 transition-transform bg-slate-800">
             {localCameraTrack ? (
               <div className={`w-full h-full relative ${!cameraOn ? 'hidden' : 'block'}`}>
                 <LocalVideoTrack track={localCameraTrack} play style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -348,12 +348,12 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
               <Button
                 variant="ghost"
                 onClick={() => setShowQualityMenu(prev => !prev)}
-                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex flex-col items-center justify-center gap-0.5 transition-all shadow-lg border bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30 p-0 h-auto"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex flex-col items-center justify-center gap-0.5 transition-all shadow-lg border bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/30 shrink-0"
                 title="Video Quality"
               >
-                <Settings2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wide opacity-80 leading-none">
-                  {videoQuality}·{frameRate}
+                <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+                <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wide opacity-80 leading-none whitespace-nowrap">
+                  {videoQuality}
                 </span>
               </Button>
               {showQualityMenu && (
@@ -418,13 +418,13 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
 
       {/* Persistence / Sidebar (Integrated Chat & Notes) */}
       <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 h-auto lg:h-full min-h-0 lg:max-h-[calc(100vh-220px)]">
-        <Card className="p-4 md:p-10 flex flex-col lg:overflow-hidden min-h-0">
+        <Card className="p-4 md:p-6 flex flex-col lg:overflow-hidden min-h-0">
 
-          <div className="flex p-1 bg-slate-100 rounded-2xl mb-6">
+          <div className="flex p-1 bg-slate-100 rounded-xl mb-6">
             <Button
               variant="ghost"
               onClick={() => setActiveTab('notes')}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-none h-auto ${activeTab === 'notes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-lg transition-all shadow-none h-auto ${activeTab === 'notes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
                 }`}
             >
               Clinical Notes
@@ -432,7 +432,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
             <Button
               variant="ghost"
               onClick={() => setActiveTab('chat')}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-none h-auto ${activeTab === 'chat' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-lg transition-all shadow-none h-auto ${activeTab === 'chat' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
                 }`}
             >
               Session Chat

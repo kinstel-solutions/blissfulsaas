@@ -102,7 +102,7 @@ export default async function DashboardLayout({
         </header>
 
         <div className="flex-1 overflow-auto p-6 pb-24 md:p-10 relative">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-5xl mx-auto h-full">
             {children}
           </div>
         </div>
