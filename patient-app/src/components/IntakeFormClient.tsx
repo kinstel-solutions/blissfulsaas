@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Heart, Brain, Pill, Users, Target, Phone,
+  Heart, Brain, Users, Phone,
   ChevronRight, ChevronLeft, CheckCircle, Loader2,
   AlertCircle, Shield
 } from "lucide-react";
@@ -17,20 +17,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
-const CONCERN_OPTIONS = [
-  "Anxiety", "Depression", "Stress", "Trauma / PTSD", "Relationship Issues",
-  "Grief & Loss", "Anger Management", "Self-Esteem", "Work / Career",
-  "Sleep Problems", "Addiction", "Family Conflict", "Loneliness", "OCD",
-];
-
 const STEPS = [
-  { id: 1, label: "Your Journey", icon: Heart, fields: ["reasonForSeeking", "primaryConcerns"] },
-  { id: 2, label: "Health History", icon: Brain, fields: ["previousTherapy"] },
-  { id: 3, label: "Goals", icon: Target, fields: ["therapyGoals"] },
-  { id: 4, label: "Emergency Contact", icon: Phone, fields: ["emergencyContactName", "emergencyContactPhone"] },
+  { id: 1, label: "About You", icon: Users, fields: ["fullName", "age", "pronouns", "city"] },
+  { id: 2, label: "Your Journey", icon: Heart, fields: ["reasonForSeeking"] },
+  { id: 3, label: "Health History", icon: Brain, fields: ["mentalHealthHistory", "currentMedications"] },
+  { id: 4, label: "Emergency Contact", icon: Phone, fields: ["emergencyContactName", "emergencyContactPhone", "consent"] },
 ];
 
-export default function IntakeFormClient({ initialData }: { initialData: any }) {
+export default function IntakeFormClient({ initialData, sessionId }: { initialData: any; sessionId?: string }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
@@ -41,40 +35,37 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
     setValue,
     watch,
     trigger,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<PatientIntakeValues>({
     resolver: zodResolver(patientIntakeSchema),
     mode: "onChange",
     defaultValues: {
+      fullName: initialData?.fullName || "",
+      age: initialData?.age || "",
+      pronouns: initialData?.pronouns || "",
+      city: initialData?.city || "",
       reasonForSeeking: initialData?.reasonForSeeking || "",
-      primaryConcerns: initialData?.primaryConcerns || [],
       mentalHealthHistory: initialData?.mentalHealthHistory || "",
       currentMedications: initialData?.currentMedications || "",
-      previousTherapy: initialData?.previousTherapy ?? undefined,
-      therapyGoals: initialData?.therapyGoals || "",
       emergencyContactName: initialData?.emergencyContactName || "",
       emergencyContactPhone: initialData?.emergencyContactPhone || "",
+      consent: initialData?.intakeCompleted ? true : undefined as any,
     },
   });
-
-  const form = watch();
-
-  const toggleConcern = (concern: string) => {
-    const current = watch("primaryConcerns");
-    const next = current.includes(concern)
-      ? current.filter((c: string) => c !== concern)
-      : [...current, concern];
-    setValue("primaryConcerns", next, { shouldValidate: true });
-  };
 
   const onSubmit = async (data: PatientIntakeValues) => {
     setSaving(true);
     try {
+      const { consent, ...payload } = data;
       await fetchWithAuth("/patients/intake", {
         method: "PATCH",
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
-      router.push("/dashboard?intake=complete");
+      if (sessionId) {
+        router.push(`/dashboard/sessions/${sessionId}`);
+      } else {
+        router.push("/dashboard?intake=complete");
+      }
       router.refresh();
     } catch (err) {
       console.error("Failed to save intake", err);
@@ -101,7 +92,9 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
           </div>
           <h1 className="text-4xl font-heading font-medium text-foreground">Clinical Intake Form</h1>
           <p className="text-muted-foreground mt-3 leading-relaxed">
-            Help your therapist understand you better. This information is shared only with the therapist you book with.
+            {sessionId
+              ? "Almost there! Fill out this form and your session will be confirmed."
+              : "Help your therapist understand you better. This information is shared only with the therapist you book with."}
           </p>
         </div>
 
@@ -131,11 +124,57 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
         {/* Form Card */}
         <Card className="p-5 md:p-10">
 
-          {/* Step 1: Reason & Concerns */}
+          {/* Step 1: About You */}
           {step === 1 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <div>
-                <h2 className="text-2xl font-heading font-medium text-foreground mb-2">Why are you seeking therapy?</h2>
+                <h2 className="text-2xl font-heading font-medium text-foreground mb-2">About You</h2>
+                <p className="text-sm text-muted-foreground">Let's start with some basic information.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <Label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Full Name</Label>
+                  <Input
+                    {...register("fullName")}
+                    placeholder="e.g. Jane Doe"
+                    className={`w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors ${errors.fullName ? 'border-red-500' : ''}`}
+                  />
+                  {errors.fullName && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.fullName.message}</p>}
+                </div>
+                <div>
+                  <Label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Age</Label>
+                  <Input
+                    {...register("age")}
+                    placeholder="e.g. 28"
+                    className={`w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors ${errors.age ? 'border-red-500' : ''}`}
+                  />
+                  {errors.age && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.age.message}</p>}
+                </div>
+                <div>
+                  <Label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Pronouns</Label>
+                  <Input
+                    {...register("pronouns")}
+                    placeholder="she/her, he/him, they/them"
+                    className={`w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors`}
+                  />
+                </div>
+                <div>
+                  <Label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">City</Label>
+                  <Input
+                    {...register("city")}
+                    placeholder="Online"
+                    className={`w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors`}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Reason */}
+          {step === 2 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+              <div>
+                <h2 className="text-2xl font-heading font-medium text-foreground mb-2">What brings you here?</h2>
                 <p className="text-sm text-muted-foreground">Be as open as you're comfortable with.</p>
               </div>
               <Textarea
@@ -144,52 +183,18 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 className={`w-full h-36 resize-none bg-surface-container-low border-outline-variant/30 transition-colors ${errors.reasonForSeeking ? 'border-red-500' : ''}`}
               />
               {errors.reasonForSeeking && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.reasonForSeeking.message}</p>}
-              <div>
-                <p className="text-sm font-bold text-foreground mb-4">Select your primary concerns <span className="text-muted-foreground font-normal">(choose all that apply)</span></p>
-                <div className="flex flex-wrap gap-2">
-                  {CONCERN_OPTIONS.map(c => (
-                    <Button
-                      key={c}
-                      type="button"
-                      variant={form.primaryConcerns.includes(c) ? "default" : "outline"}
-                      onClick={() => toggleConcern(c)}
-                      className={`h-auto px-4 py-2 rounded-xl text-xs font-bold transition-all ${form.primaryConcerns.includes(c) ? 'shadow-md shadow-primary/20' : ''}`}
-                    >
-                      {c}
-                    </Button>
-                  ))}
-                </div>
-                {errors.primaryConcerns && <p className="text-base text-red-500 font-bold mt-2 ml-1">{errors.primaryConcerns.message}</p>}
-              </div>
             </div>
           )}
 
-          {/* Step 2: Mental Health History */}
-          {step === 2 && (
+          {/* Step 3: Mental Health History */}
+          {step === 3 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <div>
                 <h2 className="text-2xl font-heading font-medium text-foreground mb-2">Your health background</h2>
                 <p className="text-sm text-muted-foreground">This helps your therapist provide better, personalized care.</p>
               </div>
               <div>
-                <Label className="block text-sm font-bold text-foreground mb-3">Have you seen a therapist before?</Label>
-                <div className="flex gap-3">
-                  {[{ label: "Yes", val: true }, { label: "No", val: false }].map(opt => (
-                    <Button
-                      key={opt.label}
-                      type="button"
-                      variant={form.previousTherapy === opt.val ? "default" : "outline"}
-                      onClick={() => setValue("previousTherapy", opt.val, { shouldValidate: true })}
-                      className={`flex-1 py-4 h-auto rounded-2xl text-sm font-bold transition-all ${form.previousTherapy !== opt.val ? 'bg-surface-container-low border-outline-variant/30' : ''}`}
-                    >
-                      {opt.label}
-                    </Button>
-                  ))}
-                </div>
-                {errors.previousTherapy && <p className="text-base text-red-500 font-bold mt-2 ml-1">{errors.previousTherapy.message}</p>}
-              </div>
-              <div>
-                <Label className="block text-sm font-bold text-foreground mb-3">Any relevant mental health history? <span className="font-normal text-muted-foreground">(optional)</span></Label>
+                <Label className="block text-sm font-bold text-foreground mb-3">Past therapy or mental-health history <span className="font-normal text-muted-foreground">(optional)</span></Label>
                 <Textarea
                   {...register("mentalHealthHistory")}
                   placeholder="E.g., diagnosed conditions, hospitalizations, significant life events..."
@@ -197,33 +202,17 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 />
               </div>
               <div>
-                <Label className="block text-sm font-bold text-foreground mb-3">Current medications? <span className="font-normal text-muted-foreground">(optional)</span></Label>
-                <Textarea
+                <Label className="block text-sm font-bold text-foreground mb-3">Current medications (if any) <span className="font-normal text-muted-foreground">(optional)</span></Label>
+                <Input
                   {...register("currentMedications")}
                   placeholder="List any medications you are currently taking..."
-                  className="w-full h-24 resize-none bg-surface-container-low border-outline-variant/30"
+                  className="w-full h-14 rounded-2xl px-5 bg-surface-container-low border-outline-variant/30 transition-colors"
                 />
               </div>
             </div>
           )}
 
-          {/* Step 3: Goals */}
-          {step === 3 && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-              <div>
-                <h2 className="text-2xl font-heading font-medium text-foreground mb-2">What do you hope to achieve?</h2>
-                <p className="text-sm text-muted-foreground">Setting clear goals helps measure your progress.</p>
-              </div>
-              <Textarea
-                {...register("therapyGoals")}
-                placeholder="E.g., I want to learn coping strategies for anxiety, improve my communication in relationships, and feel more confident in daily life..."
-                className={`w-full h-48 resize-none bg-surface-container-low border-outline-variant/30 transition-colors ${errors.therapyGoals ? 'border-red-500' : ''}`}
-              />
-              {errors.therapyGoals && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.therapyGoals.message}</p>}
-            </div>
-          )}
-
-          {/* Step 4: Emergency Contact */}
+          {/* Step 4: Emergency Contact & Consent */}
           {step === 4 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <div>
@@ -250,6 +239,20 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                   {errors.emergencyContactPhone && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.emergencyContactPhone.message}</p>}
                 </div>
               </div>
+
+              <div className={`p-5 rounded-2xl border flex items-center gap-4 ${errors.consent ? 'border-red-300 bg-red-50/50' : 'bg-surface-container-low border-outline-variant/30'}`}>
+                <input
+                  type="checkbox"
+                  id="consent"
+                  {...register("consent")}
+                  className="w-5 h-5 rounded border-outline-variant/50 text-primary focus:ring-primary cursor-pointer shrink-0"
+                />
+                <label htmlFor="consent" className="text-sm font-medium text-foreground leading-tight flex-1 cursor-pointer">
+                  I consent to the secure sharing of this form with my therapist and to the platform's privacy policy.
+                </label>
+              </div>
+              {errors.consent && <p className="text-base text-red-500 font-bold mt-1 ml-1">{errors.consent.message}</p>}
+
               <div className="p-5 bg-primary/5 rounded-2xl border border-primary/10 flex items-start gap-3">
                 <AlertCircle className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <p className="text-base text-foreground/70 leading-relaxed">
@@ -260,16 +263,34 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
           )}
 
           {/* Navigation */}
-          <div className="mt-10 flex items-center justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              onClick={() => setStep(prev => prev - 1)}
-              className={step === 1 ? 'invisible' : ''}
-            >
-              <ChevronLeft className="w-4 h-4" /> Back
-            </Button>
+          <div className="mt-10 flex items-center justify-between gap-4">
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={() => setStep(prev => prev - 1)}
+                className={step === 1 ? 'invisible' : ''}
+              >
+                <ChevronLeft className="w-4 h-4" /> Back
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="lg"
+                onClick={() => {
+                  if (sessionId) {
+                    router.push(`/dashboard/sessions/${sessionId}`);
+                  } else {
+                    router.push("/dashboard");
+                  }
+                }}
+                className="text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+              >
+                Skip
+              </Button>
+            </div>
 
             {step < 4 ? (
               <Button
@@ -291,7 +312,7 @@ export default function IntakeFormClient({ initialData }: { initialData: any }) 
                 className="flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-                {saving ? "Submitting..." : "Complete Intake"}
+                {saving ? "Submitting..." : sessionId ? "Confirm Booking" : "Complete Intake"}
               </Button>
             )}
           </div>

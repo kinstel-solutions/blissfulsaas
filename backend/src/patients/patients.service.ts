@@ -27,14 +27,15 @@ export class PatientsService {
   async updateIntake(
     userId: string,
     data: {
+      fullName?: string;
+      age?: string;
+      pronouns?: string;
+      city?: string;
       reasonForSeeking?: string;
       mentalHealthHistory?: string;
       currentMedications?: string;
-      previousTherapy?: boolean;
-      therapyGoals?: string;
       emergencyContactName?: string;
       emergencyContactPhone?: string;
-      primaryConcerns?: string[];
     },
   ) {
     await this.prisma.patient.findUniqueOrThrow({ where: { userId } });
@@ -47,14 +48,15 @@ export class PatientsService {
       },
       select: {
         intakeCompleted: true,
+        fullName: true,
+        age: true,
+        pronouns: true,
+        city: true,
         reasonForSeeking: true,
         mentalHealthHistory: true,
         currentMedications: true,
-        previousTherapy: true,
-        therapyGoals: true,
         emergencyContactName: true,
         emergencyContactPhone: true,
-        primaryConcerns: true,
       },
     });
   }

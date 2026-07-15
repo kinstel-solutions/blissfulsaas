@@ -1,16 +1,16 @@
 import * as z from "zod";
 
 export const patientIntakeSchema = z.object({
+  fullName: z.string().min(2, "Full name is required"),
+  age: z.string().min(1, "Age is required"),
+  pronouns: z.string().optional().or(z.literal("")),
+  city: z.string().optional().or(z.literal("")),
   reasonForSeeking: z.string().min(10, "Please provide a bit more detail (at least 10 characters)"),
-  primaryConcerns: z.array(z.string()).min(1, "Please select at least one concern"),
   mentalHealthHistory: z.string().optional().or(z.literal("")),
   currentMedications: z.string().optional().or(z.literal("")),
-  previousTherapy: z.boolean({
-    message: "Please select an option",
-  }),
-  therapyGoals: z.string().min(10, "Please provide a bit more detail about your goals"),
-  emergencyContactName: z.string().min(2, "Emergency contact name is required"),
-  emergencyContactPhone: z.string().min(10, "Valid emergency contact phone is required"),
+  emergencyContactName: z.string().optional().or(z.literal("")),
+  emergencyContactPhone: z.string().optional().or(z.literal("")),
+  consent: z.literal(true, { message: "You must consent to proceed" }),
 });
 
 export const loginSchema = z.object({

@@ -83,9 +83,9 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
       });
 
       setStep("success");
-      // Redirect to the new session detail page
+      // Redirect to intake form first, then to session after intake is complete
       const sessionId = result?.id || result?.appointmentId;
-      router.push(sessionId ? `/dashboard/sessions/${sessionId}` : "/dashboard/sessions");
+      router.push(sessionId ? `/dashboard/intake?session=${sessionId}` : "/dashboard/intake");
     } catch (err: any) {
       setErrorMsg(err.message || "Payment verification failed");
       setStep("error");
@@ -140,11 +140,11 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                 </div>
                 <div>
                   <h2 className="text-2xl font-heading text-white font-medium">Payment Successful!</h2>
-                  <p className="text-white/50 text-sm mt-2">Redirecting to your sessions…</p>
+                  <p className="text-white/50 text-sm mt-2">One last step — please fill out your intake form.</p>
                 </div>
                 <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest">
                   <Loader2 className="w-3 h-3 animate-spin" />
-                  Please wait
+                  Redirecting to intake form…
                 </div>
               </div>
             )}
