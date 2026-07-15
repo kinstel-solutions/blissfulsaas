@@ -187,64 +187,43 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No Intake Data Available</p>
                    </div>
                 ) : (
-                   <div className="space-y-6 lg:space-y-8">
-                      {appointment.patient?.primaryConcerns?.length > 0 && (
-                         <div>
-                            <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Primary Concerns</p>
-                            <div className="flex flex-wrap gap-1.5 lg:gap-2">
-                               {appointment.patient.primaryConcerns.map((c: string) => (
-                                  <span key={c} className="px-2.5 py-1 bg-violet-50 text-violet-700 text-[9px] lg:text-[10px] font-bold rounded-lg border border-violet-100">{c}</span>
-                               ))}
-                            </div>
-                         </div>
-                      )}
-                      
-                      {appointment.patient?.reasonForSeeking && (
-                         <div>
-                            <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Reason for Seeking</p>
-                            <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed italic">"{appointment.patient.reasonForSeeking}"</p>
-                            </div>
-                         </div>
-                      )}
+                    <div className="space-y-6 lg:space-y-8">
+                       <div>
+                          <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Patient Profile</p>
+                          <div className="space-y-2 text-slate-700 text-sm font-medium">
+                             <div><strong className="text-slate-400 mr-1.5">Full Name:</strong> {appointment.patient.fullName || 'Not Provided'}</div>
+                             <div><strong className="text-slate-400 mr-1.5">Age:</strong> {appointment.patient.age || 'Not Provided'}</div>
+                             {appointment.patient.pronouns && <div><strong className="text-slate-400 mr-1.5">Pronouns:</strong> {appointment.patient.pronouns}</div>}
+                             {appointment.patient.city && <div><strong className="text-slate-400 mr-1.5">City:</strong> {appointment.patient.city}</div>}
+                          </div>
+                       </div>
+                       
+                       {appointment.patient?.reasonForSeeking && (
+                          <div>
+                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Reason for Seeking</p>
+                             <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                <p className="text-base lg:text-sm text-slate-700 leading-relaxed italic">"{appointment.patient.reasonForSeeking}"</p>
+                             </div>
+                          </div>
+                       )}
 
-                      <div className="grid grid-cols-2 gap-4">
-                         {appointment.patient?.previousTherapy !== null && (
-                            <div className="col-span-1">
-                               <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Previous Therapy</p>
-                               <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${appointment.patient.previousTherapy ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
-                                  {appointment.patient.previousTherapy ? 'Yes' : 'No'}
-                               </span>
-                            </div>
-                         )}
+                       {appointment.patient?.currentMedications && (
+                          <div>
+                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Medications</p>
+                             <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-100 text-[10px] font-bold uppercase tracking-wider inline-block">
+                                {appointment.patient.currentMedications}
+                             </div>
+                          </div>
+                       )}
 
-                         {appointment.patient?.currentMedications && (
-                            <div className="col-span-1">
-                               <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Medications</p>
-                               <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-100 text-[10px] font-bold uppercase tracking-wider inline-block">
-                                  {appointment.patient.currentMedications}
-                               </div>
-                            </div>
-                         )}
-                      </div>
-
-                      {appointment.patient?.mentalHealthHistory && (
-                         <div>
-                            <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical History</p>
-                            <div className="p-3 lg:p-4 bg-amber-50/30 rounded-2xl border border-amber-100/50">
-                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.mentalHealthHistory}</p>
-                            </div>
-                         </div>
-                      )}
-
-                      {appointment.patient?.therapyGoals && (
-                         <div>
-                            <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical Goals</p>
-                            <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.therapyGoals}</p>
-                            </div>
-                         </div>
-                      )}
+                       {appointment.patient?.mentalHealthHistory && (
+                          <div>
+                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical History</p>
+                             <div className="p-3 lg:p-4 bg-amber-50/30 rounded-2xl border border-amber-100/50">
+                                <p className="text-base lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.mentalHealthHistory}</p>
+                             </div>
+                          </div>
+                       )}
 
                       {(appointment.patient?.emergencyContactName || appointment.patient?.emergencyContactPhone) && (
                          <div className="pt-6 border-t border-slate-100">
