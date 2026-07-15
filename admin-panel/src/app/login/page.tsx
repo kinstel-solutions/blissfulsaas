@@ -11,6 +11,8 @@ import { ShieldAlert, Loader2, Mail, Lock, ShieldCheck, Eye, EyeOff } from "luci
 import { createClient } from "@/lib/supabase";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { adminLoginSchema, type AdminLoginValues } from "@/lib/validations";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 export default function AdminLoginPage() {
   return (
@@ -90,7 +92,7 @@ function AdminLoginForm() {
             <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.4em]">Biometric or Security Auth Required</p>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-2xl p-8 md:p-14 rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.5)] border border-white/10 relative overflow-hidden group">
+          <Card className="backdrop-blur-2xl p-8 md:p-14 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#2D4F43]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-1000" />
             
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 relative z-10">
@@ -102,12 +104,12 @@ function AdminLoginForm() {
                   <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/input:text-[#2D4F43] transition-colors">
                     <Mail size={20} />
                   </div>
-                  <input 
+                  <Input 
                     type="email" 
                     {...register("email")}
                     placeholder="admin@station.os" 
-                    className={`w-full h-16 bg-white/5 border focus:bg-white/10 px-14 outline-none transition-all rounded-2xl text-white font-medium placeholder:text-white/10 shadow-inner ${
-                      errors.email ? 'border-red-500' : 'border-white/10 focus:border-[#2D4F43]/30'
+                    className={`w-full h-16 px-14 outline-none transition-all text-white font-medium placeholder:text-white/10 ${
+                      errors.email ? 'border-red-500' : 'focus:border-[#2D4F43]/30'
                     }`}
                   />
                 </div>
@@ -122,12 +124,12 @@ function AdminLoginForm() {
                   <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within/input:text-[#2D4F43] transition-colors">
                     <Lock size={20} />
                   </div>
-                  <input 
+                  <Input 
                     type={showPassword ? "text" : "password"} 
                     {...register("password")}
                     placeholder="••••••••" 
-                    className={`w-full h-16 bg-white/5 border focus:bg-white/10 px-14 outline-none transition-all rounded-2xl text-white font-medium placeholder:text-white/10 shadow-inner ${
-                      errors.password ? 'border-red-500' : 'border-white/10 focus:border-[#2D4F43]/30'
+                    className={`w-full h-16 px-14 outline-none transition-all text-white font-medium placeholder:text-white/10 ${
+                      errors.password ? 'border-red-500' : 'focus:border-[#2D4F43]/30'
                     }`}
                   />
                   <button
@@ -166,7 +168,7 @@ function AdminLoginForm() {
                 <br />Unauthorized access attempts are logged and reported.
               </p>
             </div>
-          </div>
+          </Card>
         </div>
       </main>
 

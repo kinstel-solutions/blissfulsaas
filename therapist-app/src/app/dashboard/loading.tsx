@@ -39,7 +39,7 @@ export default function Loading() {
         <h2 className="text-2xl font-heading font-medium text-primary transition-all duration-700 ease-in-out min-h-[2rem]">
           {isBreathingIn ? "Breathing in..." : "Breathing out..."}
         </h2>
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground/60 animate-pulse">
+        <p className="text-base font-bold uppercase tracking-[0.3em] text-muted-foreground/60 animate-pulse">
           Setting up your workstation
         </p>
       </div>

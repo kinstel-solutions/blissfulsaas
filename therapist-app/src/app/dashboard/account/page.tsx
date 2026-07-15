@@ -57,7 +57,7 @@ export default function AccountPage() {
         </div>
         <div>
           <h2 className="text-lg font-bold text-foreground leading-none">{fullName}</h2>
-          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest font-bold">
+          <p className="text-base text-muted-foreground mt-1 uppercase tracking-widest font-bold">
             {profile?.qualifications || "Active Practitioner"}
           </p>
         </div>

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import VideoRoomWrapper from "@/components/VideoRoomWrapper";
+import { Button } from "@/components/ui/button";
 
 export default async function PatientCallPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -26,9 +27,9 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
             You don't have permission to join this room, or the session has expired.
           </p>
           <Link href="/dashboard/sessions">
-            <button className="bg-surface-container-low text-foreground border border-outline-variant/50 px-4 md:px-8 py-3 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-surface transition-all">
+            <Button variant="ghost" className="bg-surface-container-low text-foreground border border-outline-variant/50 px-4 md:px-8 py-3 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-surface transition-all h-auto">
               Back to Sessions
-            </button>
+            </Button>
           </Link>
         </div>
       </div>
@@ -36,7 +37,7 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
   }
 
   return (
-    <div className="h-[85vh] flex flex-col gap-12 animate-in fade-in duration-1000 md:-mx-12">
+    <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100vh-120px)] flex flex-col gap-4 lg:gap-6">
       <header className="flex items-center justify-between px-2 lg:px-0">
         <div className="flex items-center gap-6">
           <Link
@@ -49,7 +50,7 @@ export default async function PatientCallPage({ params }: { params: Promise<{ id
             <h1 className="text-2xl font-heading font-medium text-foreground">
               Clinical Consultation
             </h1>
-            <p className="text-xs uppercase font-bold tracking-[0.2em] text-primary/60">
+            <p className="text-base uppercase font-bold tracking-[0.2em] text-primary/60">
               Live Session Room
             </p>
           </div>

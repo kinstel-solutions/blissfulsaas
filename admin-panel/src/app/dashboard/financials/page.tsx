@@ -11,6 +11,7 @@ import {
   Clock,
   BriefcaseMedical
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
@@ -50,18 +51,17 @@ export default async function FinancialsPage() {
   ];
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 font-outfit">
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-heading font-medium text-primary">Financial Tracking</h1>
           <p className="text-muted-foreground text-sm font-medium mt-1">Platform revenue, payouts, and engagement metrics</p>
         </div>
-        {/* Export Report removed */}
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {topLevelMetrics.map((metric, idx) => (
-          <div key={idx} className="bg-surface-container-lowest border border-outline-variant/20 p-4 md:p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+          <Card key={idx} className="p-4 md:p-6 relative overflow-hidden group transition-shadow">
             <div className={`w-10 h-10 sm:w-12 sm:h-12 ${metric.bg} ${metric.color} rounded-2xl flex items-center justify-center mb-4 md:mb-5 border border-current/10 shadow-inner group-hover:scale-110 transition-transform`}>
               <metric.icon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
@@ -72,11 +72,11 @@ export default async function FinancialsPage() {
             <div className="mt-3 md:mt-4 text-[9px] sm:text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                {metric.subtext}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
-      <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-xl shadow-xl overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="p-6 md:px-8 md:py-6 border-b border-outline-variant/10 bg-surface/50">
           <h3 className="text-lg font-heading font-medium text-primary">Provider Performance & Revenue</h3>
           <p className="text-xs text-muted-foreground mt-1">Gross revenue breakdown and consultation counts by specialist</p>
@@ -147,7 +147,6 @@ export default async function FinancialsPage() {
                     </p>
                   </td>
                   <td className="px-4 md:px-6 py-5 text-center">
-                    {/* View Ledger removed */}
                   </td>
                 </tr>
               ))}
@@ -161,7 +160,7 @@ export default async function FinancialsPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

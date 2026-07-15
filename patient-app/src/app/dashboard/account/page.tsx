@@ -13,6 +13,7 @@ import {
   MessageSquare
 } from "lucide-react";
 import SignOutButton from "@/components/SignOutButton";
+import { Card } from "@/components/ui/card";
 
 export default function AccountPage() {
   return (
@@ -23,15 +24,15 @@ export default function AccountPage() {
       </div>
 
       {/* Profile Section Preview */}
-      <div className="bg-surface-container-low border border-outline-variant/20 rounded-xl p-6 flex items-center gap-4">
+      <Card className="p-6 flex items-center gap-4">
         <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-2xl font-bold">
           JD
         </div>
         <div>
           <h2 className="text-lg font-bold text-foreground leading-none">Jane Doe</h2>
-          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest font-bold">Premium Patient</p>
+          <p className="text-base text-muted-foreground mt-1 uppercase tracking-widest font-bold">Premium Patient</p>
         </div>
-      </div>
+      </Card>
 
       <div className="space-y-2">
         <p className="px-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Account Settings</p>

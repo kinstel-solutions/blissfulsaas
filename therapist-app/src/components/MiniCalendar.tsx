@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface MiniCalendarProps {
   sessions: any[];
@@ -71,7 +73,7 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
   const selectedDaySessions = selectedDay ? getSessionsForDay(selectedDay) : [];
 
   return (
-    <div className="h-auto lg:h-[592px] bg-white border border-outline-variant/30 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col gap-4 sm:gap-6">
+    <Card className="h-auto lg:h-[592px] p-4 sm:p-6 flex flex-col gap-4 sm:gap-6">
       {/* Schedule Header inside the Card */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
         <div className="flex items-center gap-2">
@@ -96,18 +98,20 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
               {monthName} {year}
             </h3>
             <div className="flex items-center gap-1">
-              <button
+              <Button
+                variant="ghost"
                 onClick={prevMonth}
-                className="p-1.5 sm:p-2 hover:bg-slate-50 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 transition-colors h-auto w-auto"
               >
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={nextMonth}
-                className="p-1.5 sm:p-2 hover:bg-slate-50 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 transition-colors h-auto w-auto"
               >
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -154,7 +158,7 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
 
         <div className="md:col-span-1 border-t md:border-t-0 md:border-l border-outline-variant/20 pt-4 md:pt-0 md:pl-6 flex flex-col justify-between md:h-full min-h-0">
           <div className="flex flex-col md:h-full min-h-0">
-            <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider mb-3 sm:mb-4 shrink-0">
+            <p className="text-base font-bold text-muted-foreground/60 uppercase tracking-wider mb-3 sm:mb-4 shrink-0">
               {selectedDay ? `Sessions for ${monthName} ${selectedDay}` : "Select a day"}
             </p>
             
@@ -196,6 +200,6 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

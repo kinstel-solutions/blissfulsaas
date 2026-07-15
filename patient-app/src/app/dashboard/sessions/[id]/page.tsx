@@ -22,6 +22,8 @@ import CancelSessionButton from "@/components/CancelSessionButton";
 import SessionFeedbackButton from "@/components/SessionFeedbackButton";
 import JoinCallButton from "@/components/JoinCallButton";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function SessionDetailPage({
   params,
@@ -121,7 +123,10 @@ export default async function SessionDetailPage({
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <Link
         href="/dashboard/sessions"
-        className="inline-flex items-center gap-2 px-4 py-2.5 text-[10px] lg:text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground bg-surface-container-low hover:bg-surface-container border border-outline-variant/30 rounded-xl transition-all shadow-sm hover:shadow group w-fit"
+        className={buttonVariants({
+          variant: "outline",
+          className: "inline-flex items-center gap-2 px-4 py-2.5 text-[10px] lg:text-xs font-bold uppercase tracking-widest transition-all group w-fit rounded-xl bg-surface-container-low hover:bg-surface-container border-outline-variant/30 hover:border-primary/30"
+        })}
       >
         <ChevronLeft className="w-4.5 h-4.5 group-hover:-translate-x-0.5 transition-transform" />
         <span>Back to Sessions</span>
@@ -129,7 +134,7 @@ export default async function SessionDetailPage({
 
       {/* ── Status Banner ────────────────────────────────────────── */}
       <div
-        className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl border ${status.bg}`}
+        className={`flex items-center gap-3 px-5 py-3.5 rounded-xl border ${status.bg}`}
       >
         <div
           className={`w-2.5 h-2.5 rounded-full ${
@@ -162,7 +167,7 @@ export default async function SessionDetailPage({
             {/* Profile Header */}
             <summary className="relative p-6 cursor-pointer list-none [&::-webkit-details-marker]:hidden flex justify-between items-start">
               <div className="flex items-start gap-5">
-                <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/10 shrink-0">
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/10 shrink-0">
                   <Image
                     src={profileImage}
                     alt={`${therapist?.firstName} ${therapist?.lastName}`}
@@ -174,7 +179,7 @@ export default async function SessionDetailPage({
                   <h1 className="text-xl font-heading font-medium text-foreground truncate">
                     {therapist?.firstName} {therapist?.lastName}
                   </h1>
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary/60 mt-1">
+                  <p className="text-base font-bold uppercase tracking-widest text-primary/60 mt-1">
                     {therapist?.qualifications ||
                       therapist?.specialities?.[0] ||
                       "Clinical Psychotherapist"}
@@ -273,11 +278,11 @@ export default async function SessionDetailPage({
           </details>
 
           {/* Desktop Therapist Card (Always Open & Expanded) */}
-          <div className="hidden lg:flex lg:flex-col lg:h-full lg:min-h-[550px] bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg shadow-primary/5">
+          <Card className="hidden lg:flex lg:flex-col lg:h-full lg:min-h-[550px] overflow-hidden">
             {/* Profile Header */}
-            <div className="relative p-6 flex justify-between items-start shrink-0">
+            <CardHeader className="relative p-6 flex flex-row justify-between items-start shrink-0 space-y-0">
               <div className="flex items-start gap-5">
-                <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/10 shrink-0">
+                <div className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-primary/10 shadow-xl shadow-primary/10 shrink-0">
                   <Image
                     src={profileImage}
                     alt={`${therapist?.firstName} ${therapist?.lastName}`}
@@ -289,7 +294,7 @@ export default async function SessionDetailPage({
                   <h1 className="text-2xl font-heading font-medium text-foreground truncate">
                     {therapist?.firstName} {therapist?.lastName}
                   </h1>
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary/60 mt-1">
+                  <p className="text-base font-bold uppercase tracking-widest text-primary/60 mt-1">
                     {therapist?.qualifications ||
                       therapist?.specialities?.[0] ||
                       "Clinical Psychotherapist"}
@@ -304,10 +309,10 @@ export default async function SessionDetailPage({
                   )}
                 </div>
               </div>
-            </div>
+            </CardHeader>
 
             {/* Info Grid */}
-            <div className="p-6 pt-4 space-y-4 border-t border-outline-variant/10 flex-1">
+            <CardContent className="p-6 pt-4 space-y-4 border-t border-outline-variant/10 flex-1">
               {/* Experience */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3.5 bg-surface-container-low/50 rounded-xl border border-outline-variant/10">
@@ -371,7 +376,7 @@ export default async function SessionDetailPage({
                   </div>
                 </div>
               )}
-            </div>
+            </CardContent>
 
             {/* View Full Profile Link */}
             <div className="px-6 pb-6 shrink-0">
@@ -382,21 +387,21 @@ export default async function SessionDetailPage({
                 View Full Profile →
               </Link>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* ──── Right Column: Appointment Details + CTAs ──────── */}
         <div className="lg:col-span-5 flex flex-col gap-6">
           {/* Appointment Details Card */}
-          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg shadow-primary/5 order-2">
-            <div className="p-5 lg:p-6 bg-surface-container-low/30 border-b border-outline-variant/10">
+          <Card className="overflow-hidden order-2 p-0 gap-0">
+            <CardHeader className="p-5 lg:p-6 bg-surface-container-low/30 border-b border-outline-variant/10 space-y-0">
               <h2 className="text-xs font-bold text-foreground uppercase tracking-widest flex items-center gap-2">
                 <Activity className="w-3.5 h-3.5 text-primary" />
                 Appointment Details
               </h2>
-            </div>
+            </CardHeader>
 
-            <div className="p-5 lg:p-6 space-y-5">
+            <CardContent className="p-5 lg:p-6 space-y-5">
               {/* Date & Time Row */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="flex items-center gap-3">
@@ -469,7 +474,7 @@ export default async function SessionDetailPage({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-0.5">
+                  <p className="text-base font-bold uppercase tracking-widest text-primary/70 mb-0.5">
                     {isClinic ? "In-Clinic Visit" : "Online Video Consultation"}
                   </p>
                   {isClinic && therapist?.clinicAddress && (
@@ -495,7 +500,7 @@ export default async function SessionDetailPage({
                     </div>
                   )}
                   {isOnline && (
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-base text-muted-foreground mt-1">
                       Join from anywhere via secure video call
                     </p>
                   )}
@@ -541,18 +546,18 @@ export default async function SessionDetailPage({
                   </div>
                 </div>
               )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* ── BIG CTAs ──────────────────────────────────────────── */}
-          <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl overflow-hidden shadow-lg shadow-primary/5 order-1">
-            <div className="p-5 lg:p-6 bg-surface-container-low/30 border-b border-outline-variant/10">
+          <Card className="overflow-hidden order-1 p-0 gap-0">
+            <CardHeader className="p-5 lg:p-6 bg-surface-container-low/30 border-b border-outline-variant/10 space-y-0">
               <h2 className="text-xs font-bold text-foreground uppercase tracking-widest">
                 Quick Actions
               </h2>
-            </div>
+            </CardHeader>
 
-            <div className="p-5 lg:p-6 space-y-4">
+            <CardContent className="p-5 lg:p-6 space-y-4">
               {/* ─── Upcoming Session CTAs ───────────────────────── */}
               {isUpcoming && (
                 <>
@@ -574,7 +579,7 @@ export default async function SessionDetailPage({
                             In-Person Visit
                           </p>
                           {therapist?.clinicAddress && (
-                            <p className="text-xs font-medium text-primary/70 mt-0.5">
+                            <p className="text-base font-medium text-primary/70 mt-0.5">
                               {therapist.clinicAddress}
                             </p>
                           )}
@@ -597,7 +602,10 @@ export default async function SessionDetailPage({
                   {/* Secondary CTA: Message Therapist */}
                   <Link
                     href={`/dashboard/messages?sessionId=${session.id}`}
-                    className="flex items-center justify-center gap-2 w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-2xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group"
+                    className={buttonVariants({
+                      variant: "outline",
+                      className: "w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group flex items-center justify-center gap-2 shrink-0"
+                    })}
                   >
                     <MessageSquare className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
                     <span>Message Therapist</span>
@@ -616,7 +624,10 @@ export default async function SessionDetailPage({
                   {/* Book Again */}
                   <Link
                     href={`/dashboard/sessions/book/${therapist?.id}`}
-                    className="flex items-center justify-center gap-2 w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]"
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "w-full h-14 rounded-xl font-bold uppercase tracking-widest text-xs hover:-translate-y-0.5 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shrink-0"
+                    })}
                   >
                     <RefreshCw className="w-4 h-4 shrink-0" />
                     <span>Book Again with {therapist?.firstName}</span>
@@ -625,7 +636,10 @@ export default async function SessionDetailPage({
                   {/* Message Therapist */}
                   <Link
                     href={`/dashboard/messages?sessionId=${session.id}`}
-                    className="flex items-center justify-center gap-2 w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-2xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group"
+                    className={buttonVariants({
+                      variant: "outline",
+                      className: "w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group flex items-center justify-center gap-2 shrink-0"
+                    })}
                   >
                     <MessageSquare className="w-4 h-4 text-primary group-hover:scale-110 transition-transform shrink-0" />
                     <span>Message Therapist</span>
@@ -652,7 +666,10 @@ export default async function SessionDetailPage({
                   {/* Rebook */}
                   <Link
                     href={`/dashboard/sessions/book/${therapist?.id}`}
-                    className="flex items-center justify-center gap-2 w-full h-14 bg-primary text-primary-foreground rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]"
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "w-full h-14 rounded-xl font-bold uppercase tracking-widest text-xs hover:-translate-y-0.5 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shrink-0"
+                    })}
                   >
                     <RefreshCw className="w-4 h-4 shrink-0" />
                     <span>
@@ -663,14 +680,17 @@ export default async function SessionDetailPage({
                   {/* Discover */}
                   <Link
                     href="/discover"
-                    className="flex items-center justify-center gap-2 w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-2xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group"
+                    className={buttonVariants({
+                      variant: "outline",
+                      className: "w-full h-14 bg-surface-container-low hover:bg-surface-container-low/70 text-foreground rounded-xl border border-outline-variant/30 hover:border-primary/30 font-bold uppercase tracking-widest text-xs transition-all group flex items-center justify-center gap-2 shrink-0"
+                    })}
                   >
                     <span>Browse Other Therapists</span>
                   </Link>
                 </>
               )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

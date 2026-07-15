@@ -4,6 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import { Lock, X, CreditCard, CheckCircle2, AlertCircle, Loader2, ShieldCheck, Zap } from "lucide-react";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface OrderData {
   orderId: string;
@@ -80,9 +83,9 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
       });
 
       setStep("success");
-      // Redirect to the new session detail page
+      // Redirect to intake form first, then to session after intake is complete
       const sessionId = result?.id || result?.appointmentId;
-      router.push(sessionId ? `/dashboard/sessions/${sessionId}` : "/dashboard/sessions");
+      router.push(sessionId ? `/dashboard/intake?session=${sessionId}` : "/dashboard/intake");
     } catch (err: any) {
       setErrorMsg(err.message || "Payment verification failed");
       setStep("error");
@@ -102,7 +105,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
         aria-label="Payment"
       >
         {/* ── Card shell ──────────────────────────────────────────── */}
-        <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10">
+        <Card className="overflow-hidden p-0 gap-0 border border-white/10 bg-[#0f0f1a] shadow-2xl ring-0">
 
           {/* Header bar */}
           <div className="bg-[#1a1a2e] px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between">
@@ -112,16 +115,17 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
               </div>
               <div>
                 <p className="text-white text-sm font-bold tracking-tight">Secure Checkout</p>
-                <p className="text-white/40 text-xs">The Blissful Station</p>
+                <p className="text-white/40 text-base">The Blissful Station</p>
               </div>
             </div>
             {step === "form" && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-white/60 hover:text-white"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center text-white/60 hover:text-white p-0"
               >
                 <X className="w-4 h-4" />
-              </button>
+              </Button>
             )}
           </div>
 
@@ -136,11 +140,11 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                 </div>
                 <div>
                   <h2 className="text-2xl font-heading text-white font-medium">Payment Successful!</h2>
-                  <p className="text-white/50 text-sm mt-2">Redirecting to your sessions…</p>
+                  <p className="text-white/50 text-sm mt-2">One last step — please fill out your intake form.</p>
                 </div>
                 <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest">
                   <Loader2 className="w-3 h-3 animate-spin" />
-                  Please wait
+                  Redirecting to intake form…
                 </div>
               </div>
             )}
@@ -171,12 +175,12 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                   <h2 className="text-xl font-heading text-white">Payment Failed</h2>
                   <p className="text-red-400/80 text-sm mt-2">{errorMsg}</p>
                 </div>
-                <button
+                <Button
                   onClick={() => setStep("form")}
                   className="px-6 py-3 bg-primary text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-opacity"
                 >
                   Try Again
-                </button>
+                </Button>
               </div>
             )}
 
@@ -188,19 +192,19 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                   <div className="flex items-start sm:items-center gap-2.5 sm:gap-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
                     <Zap className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5 sm:mt-0" />
                     <div>
-                      <p className="text-amber-400 text-xs font-bold uppercase tracking-widest">Dev Mode — Mock Payment</p>
-                      <p className="text-amber-400/60 text-xs mt-0.5">No real charge. Pre-filled test card below.</p>
+                      <p className="text-amber-400 text-base font-bold uppercase tracking-widest">Dev Mode — Mock Payment</p>
+                      <p className="text-amber-400/60 text-base mt-0.5">No real charge. Pre-filled test card below.</p>
                     </div>
                   </div>
                 )}
 
                 {/* Order Summary */}
                 <div className="p-3 sm:p-4 bg-white/5 border border-white/10 rounded-2xl space-y-2">
-                  <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Order Summary</p>
+                  <p className="text-white/40 text-base font-bold uppercase tracking-widest">Order Summary</p>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-white text-sm font-medium">{orderData.therapistName}</p>
-                      <p className="text-white/40 text-xs">{formattedDate} • {formattedTime} IST</p>
+                      <p className="text-white/40 text-base">{formattedDate} • {formattedTime} IST</p>
                       {orderData.mode && (
                         <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${
                           orderData.mode === 'IN_CLINIC' ? 'text-primary' : 'text-primary'
@@ -212,7 +216,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                     <p className="text-white text-lg sm:text-xl font-heading font-medium flex-shrink-0">₹{amountInRupees}</p>
                   </div>
                   {orderData.mode === 'IN_CLINIC' && orderData.clinicAddress && (
-                    <p className="text-white/30 text-xs pt-2 border-t border-white/5 leading-relaxed">
+                    <p className="text-white/30 text-base pt-2 border-t border-white/5 leading-relaxed">
                       📍 {orderData.clinicAddress}
                     </p>
                   )}
@@ -224,12 +228,12 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                   <div className="space-y-2">
                     <label className="text-white/50 text-xs font-bold uppercase tracking-widest">Card Number</label>
                     <div className="relative">
-                      <input
+                      <Input
                         type="text"
                         value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCardNumber(e.target.value)}
                         maxLength={19}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="0000 0000 0000 0000"
                       />
                       <CreditCard className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
@@ -239,11 +243,11 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                   {/* Name */}
                   <div className="space-y-2">
                     <label className="text-white/50 text-xs font-bold uppercase tracking-widest">Name on Card</label>
-                    <input
+                    <Input
                       type="text"
                       value={cardName}
-                      onChange={(e) => setCardName(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCardName(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20 focus-visible:ring-0 focus-visible:ring-offset-0"
                       placeholder="Full Name"
                     />
                   </div>
@@ -252,23 +256,23 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-white/50 text-xs font-bold uppercase tracking-widest">Expiry</label>
-                      <input
+                      <Input
                         type="text"
                         value={expiry}
-                        onChange={(e) => setExpiry(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExpiry(e.target.value)}
                         maxLength={5}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="MM/YY"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-white/50 text-xs font-bold uppercase tracking-widest">CVV</label>
-                      <input
+                      <Input
                         type="text"
                         value={cvv}
-                        onChange={(e) => setCvv(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCvv(e.target.value)}
                         maxLength={3}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-white text-sm font-mono tracking-widest focus:outline-none focus:border-primary/50 transition-colors placeholder-white/20 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="•••"
                       />
                     </div>
@@ -276,14 +280,14 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
                 </div>
 
                 {/* Pay Button */}
-                <button
+                <Button
                   id="mock-payment-pay-btn"
                   onClick={handlePay}
-                  className="w-full py-3.5 sm:py-4 bg-primary text-white rounded-2xl font-bold uppercase tracking-widest text-xs sm:text-sm shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 sm:py-4 bg-primary text-white rounded-2xl font-bold uppercase tracking-widest text-xs sm:text-sm shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2 h-auto"
                 >
                   <Lock className="w-4 h-4" />
                   Pay ₹{amountInRupees}
-                </button>
+                </Button>
 
                 {/* Trust badges */}
                 <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 pt-2 text-[11px] sm:text-xs">
@@ -306,7 +310,7 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

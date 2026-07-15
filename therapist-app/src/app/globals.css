@@ -25,14 +25,24 @@
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
 
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
   
-  --radius-xl: 1.5rem;
+  --radius-xl: 0.6875rem;
   --radius-2xl: 2rem;
   --radius-3xl: 2.5rem;
   --radius-4xl: 3rem;
@@ -72,19 +82,28 @@
   
   --destructive: #ba1a1a;
   --border: #E8F0EE;
-  
+  --input: #c0c8c3;
+  --ring: #214D3E;
+  --popover: #ffffff;
+  --popover-foreground: #1b1c1c;
+
   --radius: 0.75rem;
 }
 
 @layer base {
   * {
-    @apply border-border/20;
+    @apply border-border;
+  }
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    line-height: 1.6;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans tracking-tight text-primary;
+    @apply font-heading tracking-tight text-primary;
   }
 }
 
@@ -140,8 +159,10 @@
 .alex-button {
   background-color: var(--primary);
   border: 1px solid var(--primary);
-  color: white;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--primary-foreground);
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .alex-button:hover {
@@ -151,8 +172,8 @@
 }
 
 .cta-icon-circle {
-  background-color: white;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--surface-container-lowest);
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -182,14 +203,7 @@
   100% { transform: translate(0, 0); opacity: 1; }
 }
 
-/* --- Scrollbar Utilities --- */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
 
 /* --- Design System Typography Utilities (docs/DESIGN.md) --- */
 .headline-lg {
@@ -248,4 +262,4 @@
   font-weight: 600;
   line-height: 16px;
   letter-spacing: 0.05em;
-}
+}

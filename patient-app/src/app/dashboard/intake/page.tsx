@@ -1,11 +1,11 @@
 import { api } from "@/lib/api-server";
 import IntakeFormClient from "@/components/IntakeFormClient";
-import { ClipboardList } from "lucide-react";
 
-export default async function IntakePage() {
+export default async function IntakePage({ searchParams }: { searchParams: Promise<{ session?: string }> }) {
   const intake = await api.intake.get();
+  const { session: sessionId } = await searchParams;
 
   return (
-    <IntakeFormClient initialData={intake} />
+    <IntakeFormClient initialData={intake} sessionId={sessionId} />
   );
 }

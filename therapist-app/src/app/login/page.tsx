@@ -11,6 +11,9 @@ import { createClient } from "@/lib/supabase";
 import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { loginSchema, type LoginValues } from "@/lib/validations";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   return (
@@ -61,23 +64,24 @@ function LoginForm() {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#EEF5F2] rounded-full blur-[100px] -z-10 pointer-events-none transform -translate-x-1/4 translate-y-1/4 opacity-80" />
 
       <main className="flex-1 flex items-center justify-center p-4 md:p-8 relative z-10 pt-32 pb-20">
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[95%] max-w-[1200px] px-4 md:px-8 pointer-events-none z-20">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (window.document.referrer.includes(window.location.host)) {
+                router.back();
+              } else {
+                router.push("/");
+              }
+            }}
+            type="button"
+            className="pointer-events-auto group flex items-center gap-2 px-4 py-2 bg-white/40 hover:bg-white/80 backdrop-blur-sm border border-[#1A2F28]/5 rounded-full text-xs font-bold uppercase tracking-widest text-[#1A2F28]/60 hover:text-[#1A2F28] transition-all shadow-sm cursor-pointer w-auto h-auto hover:text-inherit"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
+            Back
+          </Button>
+        </div>
         <div className="w-full max-w-xl">
-          <div className="mb-6 flex justify-start">
-            <button
-              onClick={() => {
-                if (window.document.referrer.includes(window.location.host)) {
-                  router.back();
-                } else {
-                  router.push("/");
-                }
-              }}
-              type="button"
-              className="group flex items-center gap-2 px-4 py-2 bg-white/40 hover:bg-white/80 backdrop-blur-sm border border-[#1A2F28]/5 rounded-full text-xs font-bold uppercase tracking-widest text-[#1A2F28]/60 hover:text-[#1A2F28] transition-all shadow-sm cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
-              Back
-            </button>
-          </div>
 
           <div className="text-center mb-10">
             <div className="w-20 h-20 rounded-2xl bg-white/40 backdrop-blur-sm border border-[#1A2F28]/5 flex items-center justify-center mx-auto mb-6 shadow-sm">
@@ -89,7 +93,7 @@ function LoginForm() {
             <p className="text-[#1A2F28]/60 text-sm font-medium uppercase tracking-[0.2em]">Therapist Dashboard Access</p>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(26,47,40,0.05)] border border-white/40 relative overflow-hidden group">
+          <Card className="backdrop-blur-xl p-8 md:p-12 relative overflow-hidden group">
             {/* Inner Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#E3F2ED]/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000" />
             
@@ -99,16 +103,16 @@ function LoginForm() {
                   Work Email
                 </label>
                 <div className="relative group/input">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                     <Mail size={18} />
                   </div>
-                  <input 
+                  <Input 
                     id="email" 
                     type="email" 
                     {...register("email")}
                     placeholder="dr.smith@blissfulstation.com" 
-                    className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
-                      errors.email ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                    className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${
+                      errors.email ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
                     }`}
                   />
                 </div>
@@ -125,25 +129,26 @@ function LoginForm() {
                   </Link>
                 </div>
                 <div className="relative group/input">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 group-focus-within/input:text-[#2D4F43] transition-colors z-10">
                     <Lock size={18} />
                   </div>
-                  <input 
+                  <Input 
                     id="password" 
                     type={showPassword ? "text" : "password"} 
                     {...register("password")}
                     placeholder="••••••••" 
-                    className={`w-full h-16 bg-white/50 border focus:bg-white px-14 outline-none transition-all rounded-2xl text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 shadow-sm ${
-                      errors.password ? 'border-red-500' : 'border-[#1A2F28]/5 focus:border-[#2D4F43]/20'
+                    className={`w-full h-16 px-14 outline-none transition-all text-[#1A2F28] font-medium placeholder:text-[#1A2F28]/20 ${
+                      errors.password ? 'border-red-500' : 'focus:border-[#2D4F43]/20'
                     }`}
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 hover:text-[#2D4F43] transition-colors"
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-[#1A2F28]/30 hover:text-[#2D4F43] transition-colors h-auto w-auto p-0 hover:bg-transparent"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                  </Button>
                 </div>
                 {errors.password && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-1 ml-4">{errors.password.message}</p>}
               </div>
@@ -167,14 +172,14 @@ function LoginForm() {
             </form>
 
             <div className="mt-10 pt-8 border-t border-[#1A2F28]/5 text-center">
-              <p className="text-xs text-[#1A2F28]/40 font-medium">
+              <p className="text-base text-[#1A2F28]/40 font-medium">
                 Not a member yet?{" "}
                 <Link href="/signup" className="text-[#2D4F43] font-bold hover:underline decoration-[#2D4F43]/20 decoration-2 underline-offset-4">
                   Join our network
                 </Link>
               </p>
             </div>
-          </div>
+          </Card>
           
           <div className="mt-12 flex justify-center items-center gap-8">
             <Link href="/" className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2F28]/30 hover:text-[#1A2F28] transition-colors">

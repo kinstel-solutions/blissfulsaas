@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Video } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 interface JoinCallButtonProps {
   sessionId: string;
@@ -30,7 +31,7 @@ export default function JoinCallButton({ sessionId, scheduledAt, status }: JoinC
   // If session is not confirmed yet, block joining regardless of time
   if (status === "PENDING") {
     return (
-      <div className="w-full flex items-center justify-center gap-2 px-6 h-14 bg-amber-50/50 border border-amber-200/80 rounded-2xl text-amber-700 font-bold uppercase tracking-widest text-xs">
+      <div className="w-full flex items-center justify-center gap-2 px-6 h-14 bg-amber-50/50 border border-amber-200/80 rounded-xl text-amber-700 font-bold uppercase tracking-widest text-xs">
         <Video className="w-4 h-4 opacity-60 shrink-0" />
         <span>Awaiting Confirmation</span>
       </div>
@@ -56,23 +57,28 @@ export default function JoinCallButton({ sessionId, scheduledAt, status }: JoinC
     }
 
     return (
-      <button
+      <Button
         disabled
-        className="w-full bg-slate-50/50 text-slate-400 border border-outline-variant/30 h-14 rounded-2xl font-bold uppercase tracking-widest text-xs cursor-not-allowed flex items-center justify-center gap-2"
+        variant="outline"
+        className="w-full h-14 rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2"
         title="Join Call will be available 5 minutes before the session starts"
       >
         <Video className="w-4 h-4 opacity-50 shrink-0" />
-        <span>Join Call {countdownText ? `(${countdownText})` : ""}</span>
-      </button>
+        <span className="whitespace-nowrap shrink-0">Join Call {countdownText ? `(${countdownText})` : ""}</span>
+      </Button>
     );
   }
 
   return (
-    <Link href={`/dashboard/sessions/${sessionId}/call`} className="w-full">
-      <button className="w-full bg-primary text-primary-foreground hover:bg-primary/95 h-14 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-        <Video className="w-4 h-4 text-primary-foreground shrink-0" />
-        <span>Join Call</span>
-      </button>
+    <Link
+      href={`/dashboard/sessions/${sessionId}/call`}
+      className={buttonVariants({
+        variant: "default",
+        className: "w-full h-14 rounded-xl font-bold uppercase tracking-widest text-xs active:scale-[0.98] flex items-center justify-center gap-2 shrink-0"
+      })}
+    >
+      <Video className="w-4 h-4 text-primary-foreground shrink-0" />
+      <span className="whitespace-nowrap shrink-0">Join Call</span>
     </Link>
   );
 }

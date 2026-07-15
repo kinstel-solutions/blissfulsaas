@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Bell, Check, CheckCheck, Trash2, X } from "lucide-react";
 import { api } from "@/lib/api";
 import { createClient } from "@/lib/supabase";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 const supabaseClient = createClient();
 
@@ -53,7 +55,6 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unread, setUnread] = useState(0);
   const [loading, setLoading] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
 
   const fetchNotifications = useCallback(async () => {
     try {
@@ -63,17 +64,6 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
     } catch (e) {
       console.error("[NotificationBell] Failed to fetch:", e);
     }
-  }, []);
-
-  // Close on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   // Initial fetch
@@ -102,10 +92,6 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
     };
   }, [currentUserId, fetchNotifications]);
 
-  const handleOpen = async () => {
-    setOpen((prev) => !prev);
-  };
-
   const markOne = async (id: string) => {
     try {
       await api.notifications.markRead(id);
@@ -113,7 +99,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
         prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
       );
       setUnread((prev) => Math.max(0, prev - 1));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const markAll = async () => {
@@ -122,7 +108,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
       await api.notifications.markAllRead();
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnread(0);
-    } catch (e) {}
+    } catch (e) { }
     setLoading(false);
   };
 
@@ -132,7 +118,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
       await api.notifications.deleteAll();
       setNotifications([]);
       setUnread(0);
-    } catch (e) {}
+    } catch (e) { }
     setLoading(false);
   };
 
@@ -141,32 +127,34 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
       await api.notifications.delete(id);
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       if (!wasRead) setUnread((prev) => Math.max(0, prev - 1));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   return (
-    <div className="relative" ref={panelRef}>
-      {/* Bell Button */}
-      <button
-        id="notification-bell-btn"
-        onClick={handleOpen}
-        className="relative w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container hover:border-primary/30 transition-all duration-200 group"
-        aria-label={`Notifications${unread > 0 ? ` (${unread} unread)` : ""}`}
-      >
-        <Bell className="w-4 h-4 text-foreground/60 group-hover:text-primary transition-colors" />
-        {unread > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-md animate-bounce-once">
-            {unread > 9 ? "9+" : unread}
-          </span>
-        )}
-      </button>
+    <div className="relative">
+      <Popover open={open} onOpenChange={setOpen}>
+        {/* Bell Button */}
+        <PopoverTrigger render={
+          <Button
+            variant="ghost"
+            id="notification-bell-btn"
+            className="relative w-10 h-10 rounded-full bg-surface-container-low border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container hover:border-primary/30 transition-all duration-200 group"
+            aria-label={`Notifications${unread > 0 ? ` (${unread} unread)` : ""}`}
+          >
+            <Bell className="size-5 text-foreground/60 group-hover:text-primary transition-colors" />
+            {unread > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center shadow-md animate-bounce-once">
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
+          </Button>
+        } />
 
-      {/* Dropdown Panel */}
-      {open && (
-        <div
-          id="notification-panel"
-          className="fixed sm:absolute right-4 sm:right-0 top-20 sm:top-12 left-4 sm:left-auto w-auto sm:w-[360px] max-w-[calc(100vw-2rem)] sm:max-w-none bg-surface border border-outline-variant/30 rounded-2xl shadow-2xl shadow-black/20 z-50 overflow-hidden"
-          style={{ animation: "slideDown 0.2s ease-out" }}
+        {/* Dropdown Panel */}
+        <PopoverContent
+          align="end"
+          sideOffset={8}
+          className="w-auto sm:w-[360px] max-w-[calc(100vw-2rem)] sm:max-w-none bg-surface border border-outline-variant/30 rounded-2xl shadow-2xl p-0 overflow-hidden z-50 gap-0"
         >
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/20">
@@ -181,32 +169,35 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
             </div>
             <div className="flex items-center gap-2">
               {unread > 0 && (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={markAll}
                   disabled={loading}
                   title="Mark all as read"
-                  className="flex items-center justify-center p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95 border border-primary/10"
+                  className="flex items-center justify-center p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95 border border-primary/10 h-auto w-auto"
                 >
                   <CheckCheck className="w-4 h-4" />
-                </button>
+                </Button>
               )}
               {notifications.length > 0 && (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={deleteAll}
                   disabled={loading}
                   title="Delete all"
-                  className="flex items-center justify-center p-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all active:scale-95 border border-red-500/10"
+                  className="flex items-center justify-center p-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all active:scale-95 border border-red-500/10 h-auto w-auto"
                 >
                   <Trash2 className="w-4 h-4" />
-                </button>
+                </Button>
               )}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setOpen(false)}
-                className="p-2 rounded-xl hover:bg-surface-container text-muted-foreground hover:text-foreground transition-all active:scale-95 border border-outline-variant/20 flex items-center justify-center"
+                className="p-2 rounded-xl hover:bg-surface-container text-muted-foreground hover:text-foreground transition-all active:scale-95 border border-outline-variant/20 flex items-center justify-center h-auto w-auto"
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -218,21 +209,19 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
                   <Bell className="w-5 h-5 text-muted-foreground/40" />
                 </div>
                 <p className="text-sm font-medium text-foreground/50">All caught up!</p>
-                <p className="text-xs text-muted-foreground/40 mt-1">No notifications yet.</p>
+                <p className="text-base text-muted-foreground/40 mt-1">No notifications yet.</p>
               </div>
             ) : (
               notifications.map((notif) => (
                 <div
                   key={notif.id}
-                  className={`group flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-surface-container/40 ${
-                    !notif.isRead ? "bg-primary/[0.03]" : ""
-                  }`}
+                  className={`group flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-surface-container/40 ${!notif.isRead ? "bg-primary/[0.03]" : ""
+                    }`}
                 >
                   {/* Icon badge */}
                   <div
-                    className={`shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center text-base ${
-                      TYPE_COLOR[notif.type] ?? TYPE_COLOR.GENERAL
-                    }`}
+                    className={`shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center text-base ${TYPE_COLOR[notif.type] ?? TYPE_COLOR.GENERAL
+                      }`}
                   >
                     {TYPE_ICON[notif.type] ?? "🔔"}
                   </div>
@@ -247,7 +236,7 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
                         <span className="shrink-0 w-2 h-2 rounded-full bg-primary mt-1" />
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
+                    <p className="text-base text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
                       {notif.body}
                     </p>
                     <p className="text-[10px] text-muted-foreground/50 mt-1">
@@ -258,21 +247,23 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
                   {/* Actions */}
                   <div className="shrink-0 flex flex-col gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ml-1 self-center">
                     {!notif.isRead && (
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => markOne(notif.id)}
                         title="Mark as read"
-                        className="p-2 rounded-xl bg-primary/5 hover:bg-primary/15 text-primary transition-all active:scale-95 border border-primary/10 flex items-center justify-center"
+                        className="p-2 rounded-xl bg-primary/5 hover:bg-primary/15 text-primary transition-all active:scale-95 border border-primary/10 flex items-center justify-center h-auto w-auto"
                       >
                         <Check className="w-4 h-4" />
-                      </button>
+                      </Button>
                     )}
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => deleteOne(notif.id, notif.isRead)}
                       title="Delete"
-                      className="p-2 rounded-xl bg-red-500/5 hover:bg-red-500/15 text-red-500 transition-all active:scale-95 border border-red-500/10 flex items-center justify-center"
+                      className="p-2 rounded-xl bg-red-500/5 hover:bg-red-500/15 text-red-500 transition-all active:scale-95 border border-red-500/10 flex items-center justify-center h-auto w-auto"
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))
@@ -287,14 +278,10 @@ export default function NotificationBell({ currentUserId }: { currentUserId: str
               </p>
             </div>
           )}
-        </div>
-      )}
+        </PopoverContent>
+      </Popover>
 
       <style jsx>{`
-        @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
         @keyframes bounce-once {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-3px); }

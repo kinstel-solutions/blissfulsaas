@@ -4,6 +4,8 @@ import { useState } from "react";
 import { FileText, Save, Check, StickyNote, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface AppointmentNotesClientProps {
   appointmentId: string;
@@ -29,7 +31,7 @@ export default function AppointmentNotesClient({ appointmentId, initialNotes }: 
   };
 
   return (
-    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm h-full flex flex-col overflow-hidden min-h-[400px] lg:min-h-[500px]">
+    <Card className="h-full flex flex-col overflow-hidden min-h-[400px] lg:min-h-[500px] p-0 gap-0">
       <div className="p-5 lg:p-8 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
@@ -41,14 +43,14 @@ export default function AppointmentNotesClient({ appointmentId, initialNotes }: 
           </div>
         </div>
         
-        <button 
+        <Button 
           onClick={saveNotes}
           disabled={loading}
-          className={`w-full sm:w-auto px-6 lg:px-8 py-3 lg:py-3 rounded-2xl text-[10px] lg:text-xs font-bold uppercase tracking-widest transition-all shadow-lg ${
+          className={`w-full sm:w-auto px-6 lg:px-8 py-3 lg:py-3 text-[10px] lg:text-xs font-bold uppercase tracking-widest transition-all ${
             saved 
-              ? 'bg-emerald-500 text-white shadow-emerald-200' 
-              : 'bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0 shadow-primary/20'
-          } flex items-center justify-center gap-2`}
+              ? 'bg-emerald-500 hover:bg-emerald-600 text-white' 
+              : 'bg-primary text-white hover:bg-primary/95'
+          } flex items-center justify-center gap-2 h-auto`}
         >
           {loading ? (
             'Saving...'
@@ -63,7 +65,7 @@ export default function AppointmentNotesClient({ appointmentId, initialNotes }: 
               Save Notes
             </>
           )}
-        </button>
+        </Button>
       </div>
 
       <div className="flex-1 p-5 lg:p-8 relative group">
@@ -98,6 +100,6 @@ export default function AppointmentNotesClient({ appointmentId, initialNotes }: 
            </p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

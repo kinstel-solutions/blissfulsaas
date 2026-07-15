@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Card } from "@/components/ui/card";
 import { CloudRain, Brain, ClipboardCheck, Compass, Infinity, Baby, Zap, MessageSquare, Heart, ChevronDown } from "lucide-react";
 
 const services = [
@@ -65,9 +66,9 @@ function ServiceCard({ service }: { service: any }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div
+    <Card
       onClick={() => setIsOpen(!isOpen)}
-      className="bg-white p-6 md:p-8 rounded-[25px] transition-all duration-300 border border-[rgba(33,77,62,0.05)] shadow-[0_5px_15px_rgba(33,77,62,0.02)] hover:border-[var(--accent)] hover:shadow-[0_10px_40px_rgba(33,77,62,0.08)] hover:-translate-y-1 cursor-pointer flex flex-col group select-none"
+      className="p-6 md:p-8 transition-all duration-300 hover:border-[var(--accent)] hover:shadow-[0_10px_40px_rgba(33,77,62,0.08)] hover:-translate-y-1 cursor-pointer flex flex-col group select-none"
     >
       {/* 
       <div className="text-[var(--primary)] mb-6 block transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
@@ -91,7 +92,7 @@ function ServiceCard({ service }: { service: any }) {
           </p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -100,12 +101,15 @@ export function ServicesSection() {
     <section id="services" className="bg-[#F8FAF9] py-[100px] md:py-[140px]">
       <div className="container mx-auto px-6 md:px-8 max-w-[1200px]">
         <div className="text-center max-w-[600px] mx-auto mb-10 md:mb-16">
+          <span className="text-[var(--primary)] font-bold text-xs uppercase tracking-[0.2em] mb-3 block">
+            what we offer
+          </span>
           <h2 className="text-3xl md:text-4xl font-cormorant font-semibold text-[var(--primary)] mb-4">
             Curated Specialized Care
           </h2>
           <p className="text-[var(--text-light)]">
             Our network offers a wide range of psychological therapy and counseling
-            services, tailored to your unique needs across the globe and online.
+            services, tailored to your unique needs across the globe, online and through select offline clinics.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

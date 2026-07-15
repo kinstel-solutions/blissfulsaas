@@ -4,6 +4,7 @@ import { fetchWithAuthContent } from "@/lib/api-server";
 import { createClient } from "@/lib/supabase/server";
 import VideoRoomWrapper from "@/components/VideoRoomWrapper";
 import CompleteSessionButton from "@/components/CompleteSessionButton";
+import { Button } from "@/components/ui/button";
 
 export default async function SessionRoomPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,9 +29,9 @@ export default async function SessionRoomPage({ params }: { params: Promise<{ id
             You don't have permission to join this room, or the session has expired.
           </p>
           <Link href="/dashboard/appointments">
-            <button className="bg-slate-100 text-slate-900 border border-slate-200 px-4 md:px-8 py-3 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-white transition-all">
+            <Button variant="ghost" className="bg-slate-100 text-slate-900 border border-slate-200 px-4 md:px-8 py-3 rounded-lg font-bold uppercase tracking-widest text-xs hover:bg-white transition-all h-auto">
               Back to Appointments
-            </button>
+            </Button>
           </Link>
         </div>
       </div>
@@ -44,7 +45,7 @@ export default async function SessionRoomPage({ params }: { params: Promise<{ id
 
   return (
     <div className="h-full lg:h-[calc(100vh-120px)] flex flex-col gap-4 lg:gap-6">
-      <header className="flex justify-between items-center bg-white/70 backdrop-blur-xl p-3 md:p-4 rounded-2xl z-10 border border-slate-100 shadow-sm mx-1">
+      <header className="flex justify-between items-center bg-white/70 backdrop-blur-xl p-3 md:p-4 rounded-xl z-10 border border-slate-100 shadow-sm mx-1">
         <div className="flex items-center gap-4 md:gap-8">
           <Link
             href="/dashboard"

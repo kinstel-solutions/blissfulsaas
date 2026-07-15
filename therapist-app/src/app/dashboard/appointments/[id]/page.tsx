@@ -16,6 +16,8 @@ import AppointmentActions from "@/components/AppointmentActions";
 import AppointmentNotesClient from "./AppointmentNotesClient";
 import { notFound } from "next/navigation";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 export default async function AppointmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -78,18 +80,26 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
           
           <div className="grid grid-cols-2 gap-2 w-full lg:flex lg:w-auto lg:items-center lg:gap-3">
              {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && appointment.status !== 'EXPIRED' && appointment.mode === 'ONLINE' && (
-                <Link href={`/dashboard/sessions/${appointment.id}/call`} className="contents lg:block lg:flex-none">
-                   <button className="w-full lg:w-auto px-4 lg:px-5 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95">
-                      <Video className="w-3.5 h-3.5 text-white" />
-                      Join Call
-                   </button>
+                <Link
+                   href={`/dashboard/sessions/${appointment.id}/call`}
+                   className={buttonVariants({
+                      variant: "default",
+                      className: "w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto py-2.5 px-4 lg:flex-none"
+                   })}
+                >
+                   <Video className="w-3.5 h-3.5 text-white shrink-0" />
+                   <span>Join Call</span>
                 </Link>
              )}
-             <Link href={`/dashboard/messages?sessionId=${appointment.id}`} className="contents lg:block lg:flex-none">
-                <button className="w-full lg:w-auto px-4 lg:px-5 py-2.5 bg-white text-slate-700 rounded-xl border border-slate-200 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95">
-                   <MessageSquare className="w-3.5 h-3.5 text-primary" />
-                   Message
-                </button>
+             <Link
+                href={`/dashboard/messages?sessionId=${appointment.id}`}
+                className={buttonVariants({
+                   variant: "secondary",
+                   className: "w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto py-2.5 px-4 lg:flex-none border-0 hover:bg-secondary/80"
+                })}
+             >
+                <MessageSquare className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span>Message</span>
              </Link>
              <div className="contents lg:block lg:flex-none">
                 <AppointmentActions id={appointment.id} status={appointment.status} />
@@ -99,7 +109,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
       </div>
 
       {/* Session Metadata Bar */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-4 lg:p-3 grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+      <Card className="rounded-3xl p-4 lg:p-3 grid grid-cols-2 gap-4 sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
         <div className="contents sm:flex sm:flex-wrap sm:items-center gap-4 lg:gap-8 sm:px-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -155,19 +165,22 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
              </div>
            )}
         </div>
-      </div>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         {/* Left Column: Patient Intake */}
         <div className="lg:col-span-5">
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden h-full">
-             <div className="p-5 lg:p-6 bg-slate-50/50 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                   <ClipboardList className="w-4 h-4 text-violet-600" />
-                   <h2 className="text-[10px] lg:text-xs font-bold text-slate-900 uppercase tracking-widest">Clinical Intake</h2>
-                </div>
-             </div>
-             <div className="p-5 lg:p-8">
+           <Card className="h-full p-0 gap-0">
+              <CardHeader className="p-5 lg:p-8 bg-slate-50/50 border-b border-slate-100 flex flex-row items-center gap-3 space-y-0">
+                 <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+                    <ClipboardList className="w-5 h-5 text-violet-600" />
+                 </div>
+                 <div>
+                    <h2 className="text-xs lg:text-sm font-bold text-slate-900 uppercase tracking-widest leading-none">Clinical Intake</h2>
+                    <p className="text-[9px] lg:text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1.5">Patient Intake Data</p>
+                 </div>
+              </CardHeader>
+              <CardContent className="p-5 lg:p-8">
                 {!appointment.patient?.intakeCompleted ? (
                    <div className="flex flex-col items-center justify-center text-center py-10 lg:py-20 opacity-30">
                       <ClipboardList className="w-10 h-10 lg:w-12 lg:h-12 mb-4 text-slate-300" />
@@ -190,7 +203,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                          <div>
                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Reason for Seeking</p>
                             <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed italic">"{appointment.patient.reasonForSeeking}"</p>
+                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed italic">"{appointment.patient.reasonForSeeking}"</p>
                             </div>
                          </div>
                       )}
@@ -219,7 +232,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                          <div>
                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical History</p>
                             <div className="p-3 lg:p-4 bg-amber-50/30 rounded-2xl border border-amber-100/50">
-                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.mentalHealthHistory}</p>
+                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.mentalHealthHistory}</p>
                             </div>
                          </div>
                       )}
@@ -228,7 +241,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                          <div>
                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical Goals</p>
                             <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                               <p className="text-xs lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.therapyGoals}</p>
+                               <p className="text-base lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.therapyGoals}</p>
                             </div>
                          </div>
                       )}
@@ -238,7 +251,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                             <p className="text-[9px] lg:text-[10px] font-bold text-red-400 uppercase tracking-widest mb-3">Emergency Contact</p>
                             <div className="flex items-center justify-between p-3 lg:p-4 bg-red-50/30 rounded-2xl border border-red-100/50">
                                <div>
-                                  <p className="text-xs font-bold text-slate-900">{appointment.patient.emergencyContactName || 'Not Provided'}</p>
+                                  <p className="text-base font-bold text-slate-900">{appointment.patient.emergencyContactName || 'Not Provided'}</p>
                                   <p className="text-[10px] text-slate-500 font-medium">{appointment.patient.emergencyContactPhone || 'No Phone'}</p>
                                </div>
                                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
@@ -247,10 +260,10 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                             </div>
                          </div>
                       )}
-                   </div>
-                )}
-             </div>
-          </div>
+                    </div>
+                 )}
+              </CardContent>
+           </Card>
         </div>
 
         {/* Right Column: Clinical Workstation / Notes */}

@@ -59,14 +59,15 @@ model Patient {
 
   // Clinical Intake Form
   intakeCompleted      Boolean  @default(false)
+  fullName             String?
+  age                  String?
+  pronouns             String?
+  city                 String?
   reasonForSeeking     String?
   mentalHealthHistory  String?
   currentMedications   String?
-  previousTherapy      Boolean?
-  therapyGoals         String?
   emergencyContactName  String?
   emergencyContactPhone String?
-  primaryConcerns      String[]
 
   appointments Appointment[]
 }

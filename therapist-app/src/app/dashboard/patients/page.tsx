@@ -1,6 +1,7 @@
 import { Users, Mail, Phone, Calendar, ArrowRight, Activity, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
+import { Card } from "@/components/ui/card";
 import PatientList from "@/components/PatientList";
 
 export default async function PatientRosterPage() {
@@ -18,20 +19,20 @@ export default async function PatientRosterPage() {
             A comprehensive record of your clinical client base. Manage profiles, track engagement, and review session histories.
           </p>
         </div>
-        <div className="flex items-center gap-3 bg-emerald-50 text-emerald-700 px-6 py-3 rounded-2xl border border-emerald-100 shadow-sm">
-          <ShieldCheck className="w-5 h-5" />
-          <span className="text-sm font-bold uppercase tracking-widest">Confidential Patient Records</span>
+        <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl border border-emerald-100 shadow-xs">
+          <ShieldCheck className="w-4 h-4" />
+          <span className="text-[10px] font-bold uppercase tracking-widest">Confidential Patient Records</span>
         </div>
       </header>
 
       {roster.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-2xl p-24 text-center shadow-sm">
+        <Card className="p-24 text-center">
           <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8 text-slate-300">
              <Users className="w-12 h-12" />
           </div>
           <h3 className="text-2xl font-heading font-medium text-slate-900">Your patient list is empty</h3>
           <p className="text-slate-500 mt-3 max-w-sm mx-auto leading-relaxed"> Once patients start booking appointments with you, they will appear here for your clinical records.</p>
-        </div>
+        </Card>
       ) : (
         <PatientList roster={roster} />
       )}

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Button } from "@/components/ui/button";
 
 export function LandingNavbar({ 
   portal = "patient", 
@@ -67,13 +68,15 @@ export function LandingNavbar({
             </AlexButton>
 
             {/* Mobile Toggle */}
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setIsMenuOpen(true)}
-              className="lg:hidden p-1.5 text-[var(--primary)] focus:outline-none"
+              className="lg:hidden p-1.5 text-[var(--primary)] focus:outline-none h-auto w-auto hover:bg-transparent"
               aria-label="Open Menu"
             >
               <Menu size={24} />
-            </button>
+            </Button>
           </div>
         )}
       </nav>
@@ -92,13 +95,15 @@ export function LandingNavbar({
                 Blissful Station
               </span>
             </div>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setIsMenuOpen(false)}
-              className="p-2 text-[var(--primary)] focus:outline-none"
+              className="p-2 text-[var(--primary)] focus:outline-none h-auto w-auto hover:bg-transparent"
               aria-label="Close Menu"
             >
               <X size={26} />
-            </button>
+            </Button>
           </div>
 
           <ul className="flex flex-col gap-6 list-none p-0 mb-10 text-center">
@@ -110,7 +115,7 @@ export function LandingNavbar({
           </ul>
 
           <div className="pt-8 border-t border-gray-100 flex flex-col items-center text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4 font-outfit">
+            <p className="text-base font-semibold uppercase tracking-widest text-gray-400 mb-4 font-outfit">
               Clinical Workspace
             </p>
             <AlexButton

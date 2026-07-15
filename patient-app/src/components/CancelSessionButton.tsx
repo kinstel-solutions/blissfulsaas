@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function CancelSessionButton({ id }: { id: string }) {
   const [loading, setLoading] = useState(false);
@@ -24,10 +25,11 @@ export default function CancelSessionButton({ id }: { id: string }) {
   };
 
   return (
-    <button 
+    <Button 
+      variant="destructive"
       onClick={handleCancel}
       disabled={loading}
-      className="flex items-center justify-center gap-2 w-full h-14 bg-rose-50/50 hover:bg-rose-50 text-rose-600 border border-rose-100/80 font-bold uppercase tracking-widest text-xs rounded-2xl transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+      className="flex items-center justify-center gap-2 w-full h-14 font-bold uppercase tracking-widest text-xs rounded-xl transition-all active:scale-[0.98]"
       title="Cancel Session"
     >
       {loading ? (
@@ -36,6 +38,6 @@ export default function CancelSessionButton({ id }: { id: string }) {
         <Trash2 className="w-4 h-4" />
       )}
       <span>Cancel Session</span>
-    </button>
+    </Button>
   );
 }

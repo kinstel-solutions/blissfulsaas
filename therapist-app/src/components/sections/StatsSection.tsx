@@ -26,7 +26,7 @@ export function StatsSection() {
                 {stat.value}
               </h3>
               
-              <p className="text-[var(--text-light)] font-medium uppercase text-[10px] md:text-xs tracking-[0.15em]">
+              <p className="text-[var(--text-light)] font-medium uppercase text-[10px] md:text-base tracking-[0.15em]">
                 {stat.label}
               </p>
               

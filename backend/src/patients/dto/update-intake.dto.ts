@@ -8,14 +8,25 @@ import {
 
 export class UpdateIntakeDto {
   @IsString()
+  @IsOptional()
+  fullName?: string;
+
+  @IsString()
+  @IsOptional()
+  age?: string;
+
+  @IsString()
+  @IsOptional()
+  pronouns?: string;
+
+  @IsString()
+  @IsOptional()
+  city?: string;
+
+  @IsString()
   @MinLength(10)
   @IsOptional()
   reasonForSeeking?: string;
-
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  primaryConcerns?: string[];
 
   @IsString()
   @IsOptional()
@@ -24,15 +35,6 @@ export class UpdateIntakeDto {
   @IsString()
   @IsOptional()
   currentMedications?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  previousTherapy?: boolean;
-
-  @IsString()
-  @MinLength(10)
-  @IsOptional()
-  therapyGoals?: string;
 
   @IsString()
   @IsOptional()

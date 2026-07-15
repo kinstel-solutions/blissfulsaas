@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 
 export default async function DashboardPage() {
   const supabase = await createAdminClient();
@@ -87,7 +88,7 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         {stats.map((stat, idx) => (
-          <div key={idx} className="group bg-surface-container-lowest border border-outline-variant/20 p-4 md:p-6 lg:p-8 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-default relative overflow-hidden">
+          <Card key={idx} className="group p-4 md:p-6 lg:p-8 hover:-translate-y-1.5 transition-all duration-500 cursor-default relative overflow-hidden">
             <div className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 ${stat.bg} rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-125 transition-transform duration-700`} />
             <div className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center mb-4 lg:mb-6 border border-current/10 shadow-inner group-hover:rotate-6 transition-transform`}>
               <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
@@ -96,12 +97,12 @@ export default async function DashboardPage() {
               <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">{stat.label}</p>
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{stat.value}</h3>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
-        <div className="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4 md:p-8 md:p-10 shadow-sm relative overflow-hidden group min-h-[400px] flex flex-col">
+        <Card className="p-4 md:p-8 md:p-10 relative overflow-hidden group min-h-[400px] flex flex-col">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3" />
           <div className="relative z-10 flex flex-col flex-1 justify-between">
             <div>
@@ -146,15 +147,15 @@ export default async function DashboardPage() {
             <div className="mt-8 md:mt-10">
               <Link
                 href="/dashboard/therapists"
-                className={cn(buttonVariants({ variant: "default" }), "w-full rounded-lg py-6 text-sm uppercase tracking-wider font-semibold shadow-md")}
+                className={cn(buttonVariants({ variant: "default" }), "w-full py-6 text-sm uppercase tracking-wider font-semibold")}
               >
                 View All Applications
               </Link>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div className="lg:col-span-2 bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-6 md:p-10 shadow-sm relative overflow-hidden group">
+        <Card className="lg:col-span-2 p-6 md:p-10 relative overflow-hidden group">
           <div className="flex items-center justify-between mb-8 md:mb-10">
             <div>
               <h3 className="text-xl md:text-2xl font-heading font-normal text-primary">Platform Activity</h3>
@@ -179,11 +180,8 @@ export default async function DashboardPage() {
             <span>{new Date(fourteenDaysAgo).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
             <span>Today</span>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
 }
-
-
-

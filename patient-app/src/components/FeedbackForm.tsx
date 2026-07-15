@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Star, MessageSquare, Send, CheckCircle2, Loader2, X } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 interface FeedbackFormProps {
   appointmentId: string;
@@ -26,7 +29,6 @@ export default function FeedbackForm({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
-
 
   const getRatingLabel = (r: number) => {
     switch (r) {
@@ -84,7 +86,7 @@ export default function FeedbackForm({
     if (!mounted) return null;
     return createPortal(
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
-        <div className="bg-white border border-outline-variant/20 rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-in zoom-in-95 duration-300">
+        <Card className="p-10 max-w-sm w-full text-center animate-in zoom-in-95 duration-300">
           <div className="w-20 h-20 bg-primary/5 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-primary" />
           </div>
@@ -92,7 +94,7 @@ export default function FeedbackForm({
           <p className="text-muted-foreground text-sm">
             Your feedback helps our therapists grow and supports others in finding the right care.
           </p>
-        </div>
+        </Card>
       </div>,
       document.body
     );
@@ -104,14 +106,15 @@ export default function FeedbackForm({
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
-      <div className="bg-white border border-outline-variant/20 rounded-[2.5rem] p-8 md:p-12 max-w-xl w-full shadow-[0_20px_50px_rgba(0,0,0,0.2)] animate-in zoom-in-95 duration-300 relative">
+      <Card className="p-8 md:p-12 max-w-xl w-full animate-in zoom-in-95 duration-300 relative">
         {/* Close button */}
-        <button
+        <Button
+          variant="ghost"
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-surface-container transition-colors"
+          className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground transition-colors h-auto w-auto"
         >
           <X className="w-5 h-5" />
-        </button>
+        </Button>
 
         {/* Header */}
         <div className="mb-8">
@@ -169,14 +172,14 @@ export default function FeedbackForm({
               <MessageSquare className="w-3.5 h-3.5" />
               Written Review <span className="font-normal normal-case tracking-normal text-muted-foreground/60">(optional)</span>
             </label>
-            <textarea
+            <Textarea
               id="feedback-comment"
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
               placeholder="Share what made this session helpful, or how it could be improved..."
               rows={4}
               maxLength={1000}
-              className="w-full bg-surface-container-low border border-outline-variant/30 rounded-2xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/40 resize-none transition-all"
             />
             <p className="text-right text-[10px] text-muted-foreground/50 mt-1">{comment.length}/1000</p>
           </div>
@@ -194,11 +197,11 @@ export default function FeedbackForm({
           </p>
 
           {/* Submit */}
-          <button
+          <Button
             type="submit"
             id="submit-feedback-btn"
             disabled={loading || rating === 0}
-            className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+            className="w-full py-4 font-bold uppercase tracking-widest text-xs hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none h-auto"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -206,9 +209,9 @@ export default function FeedbackForm({
               <Send className="w-4 h-4" />
             )}
             {loading ? "Submitting..." : "Submit Review"}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Card>
     </div>,
     document.body
   );

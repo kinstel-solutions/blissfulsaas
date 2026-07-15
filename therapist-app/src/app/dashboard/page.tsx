@@ -5,6 +5,9 @@ import Link from "next/link";
 import { fetchWithAuthContent } from "@/lib/api-server";
 import MiniCalendar from "@/components/MiniCalendar";
 import { AlexButton } from "@/components/ui/AlexButton";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 export const dynamic = "force-dynamic";
 
 interface Session {
@@ -87,10 +90,10 @@ export default async function DashboardPage() {
   const todayKolkata = new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' });
   const todaysSessionsCount = Array.isArray(allSessions)
     ? allSessions.filter((s: Session) => {
-        if (s.status === 'CANCELLED') return false;
-        const sessionDateKolkata = new Date(s.scheduledAt).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' });
-        return sessionDateKolkata === todayKolkata;
-      }).length
+      if (s.status === 'CANCELLED') return false;
+      const sessionDateKolkata = new Date(s.scheduledAt).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' });
+      return sessionDateKolkata === todayKolkata;
+    }).length
     : 0;
 
   // Calculate dynamic follow-ups count (patients with more than 1 session history):
@@ -156,7 +159,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <p className="text-sm font-bold text-amber-900 uppercase tracking-widest">Application Pending Review</p>
-              <p className="text-xs text-amber-800/60 font-medium mt-1">Your profile is currently private. An administrator will review your credentials before publishing you to the marketplace.</p>
+              <p className="text-base text-amber-800/60 font-medium mt-1">Your profile is currently private. An administrator will review your credentials before publishing you to the marketplace.</p>
             </div>
           </div>
           <AlexButton href="/dashboard/profile" size="md" className="shadow-lg shadow-amber-600/20 bg-amber-600 border-amber-600 hover:bg-amber-700 hover:border-amber-700">
@@ -173,7 +176,7 @@ export default async function DashboardPage() {
             <Calendar className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
           </div>
           <div>
-            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Today&apos;s Sessions</p>
+            <p className="text-[9px] sm:text-[10px] md:text-base font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Today&apos;s Sessions</p>
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{todaysSessionsCount}</h3>
           </div>
         </Link>
@@ -185,7 +188,7 @@ export default async function DashboardPage() {
             <Clock className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
           </div>
           <div>
-            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Pending Requests</p>
+            <p className="text-[9px] sm:text-[10px] md:text-base font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Pending Requests</p>
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{pendingSessions?.length || 0}</h3>
           </div>
         </Link>
@@ -197,7 +200,7 @@ export default async function DashboardPage() {
             <Activity className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
           </div>
           <div>
-            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Follow-ups</p>
+            <p className="text-[9px] sm:text-[10px] md:text-base font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">Follow-ups</p>
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{followUpsCount}</h3>
           </div>
         </Link>
@@ -209,7 +212,7 @@ export default async function DashboardPage() {
             <Users className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
           </div>
           <div>
-            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">New Clients</p>
+            <p className="text-[9px] sm:text-[10px] md:text-base font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-1 lg:mb-2">New Clients</p>
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-heading font-normal text-primary">{newClientsCount}</h3>
           </div>
         </Link>
@@ -226,9 +229,9 @@ export default async function DashboardPage() {
         {/* Right 1 Column: Client Overview & Clinical Performance */}
         <div className="lg:col-span-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8 lg:space-y-8 lg:gap-0">
           {/* Client Overview Card */}
-          <div className="min-h-[280px] lg:h-[280px] h-auto bg-white border border-outline-variant/30 rounded-xl p-5 shadow-xs flex flex-col relative overflow-hidden group justify-between">
+          <Card className="min-h-[280px] lg:h-[280px] h-auto p-5 flex flex-col relative overflow-hidden group justify-between">
             <div className="flex items-center justify-between mb-2 shrink-0">
-              <p className="text-xs font-bold text-slate-800 uppercase tracking-widest">Client Overview</p>
+              <p className="text-base font-bold text-slate-800 uppercase tracking-widest">Client Overview</p>
               <Link href="/dashboard/patients" className="text-[10px] font-black text-primary hover:underline uppercase tracking-wider">
                 View All Clients
               </Link>
@@ -290,14 +293,14 @@ export default async function DashboardPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Patient Reviews Widget */}
-          <div className="min-h-[280px] lg:h-[280px] h-auto bg-surface-container-low rounded-xl p-5 border border-outline-variant/20 flex flex-col relative overflow-hidden group shadow-sm justify-between">
+          <Card className="min-h-[280px] lg:h-[280px] h-auto p-5 flex flex-col relative overflow-hidden group justify-between">
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="z-10 flex flex-col flex-1 justify-between">
-              <p className="text-xs font-bold text-slate-800 uppercase tracking-widest shrink-0">Clinical Performance</p>
+              <p className="text-base font-bold text-slate-800 uppercase tracking-widest shrink-0">Clinical Performance</p>
               {avgRating !== null ? (
                 <div className="flex-1 flex flex-col justify-center space-y-4">
                   <div className="flex items-end gap-3 shrink-0">
@@ -351,7 +354,7 @@ export default async function DashboardPage() {
                 </div>
               )}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
 
@@ -374,9 +377,9 @@ export default async function DashboardPage() {
 
           <div className="flex flex-wrap gap-6 w-full">
             {pendingSessions.map((session: Session) => (
-              <div
+              <Card
                 key={session.id}
-                className="w-full md:w-[300px] bg-white p-5 rounded-xl border border-slate-100 hover:border-amber-200 transition-all group relative overflow-hidden flex flex-col justify-between h-48 shadow-sm"
+                className="w-full md:w-[300px] p-5 hover:border-amber-200 transition-all group relative overflow-hidden flex flex-col justify-between h-48"
               >
                 <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
 
@@ -424,19 +427,19 @@ export default async function DashboardPage() {
 
                 <div className="pt-3 border-t border-slate-50">
                   <Link href={`/dashboard/appointments/${session.id}`} className="block">
-                    <button className="w-full py-2 bg-primary/5 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary/20 rounded-lg text-[10px] font-bold uppercase tracking-widest text-primary transition-all flex items-center justify-center gap-2">
+                    <Button variant="ghost" className="w-full py-2 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary/20 text-[10px] font-bold uppercase tracking-widest text-primary transition-all flex items-center justify-center gap-2 h-auto hover:text-inherit">
                       Review Request <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    </Button>
                   </Link>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </div>
       ) : (
         !hasSchedule ? (
           <div className="pt-4 shrink-0">
-            <div className="bg-slate-900 border border-slate-800 p-5 md:p-8 rounded-xl shadow-2xl relative overflow-hidden group">
+            <Card className="bg-slate-900 border border-slate-800 p-5 md:p-8 rounded-xl shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="space-y-4 text-center md:text-left">
@@ -449,11 +452,11 @@ export default async function DashboardPage() {
                     You haven&apos;t added your clinical availability yet. Set your working hours so patients can start booking sessions.
                   </p>
                 </div>
-                  <AlexButton href="/dashboard/availability" size="lg" className="shadow-xl">
-                    Configure Schedule
-                  </AlexButton>
+                <AlexButton href="/dashboard/availability" size="lg" className="shadow-xl">
+                  Configure Schedule
+                </AlexButton>
               </div>
-            </div>
+            </Card>
           </div>
         ) : null
       )}

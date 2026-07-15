@@ -13,6 +13,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
 
@@ -134,7 +135,7 @@ export default async function AppointmentsPage() {
       </div>
 
       {/* Appointments Table */}
-      <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-xl shadow-xl overflow-hidden relative group">
+      <Card className="overflow-hidden relative group">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -161,7 +162,7 @@ export default async function AppointmentsPage() {
                     </td>
                     <td className="px-4 md:px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-xs overflow-hidden shrink-0">
+                        <div className="w-8 h-8 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold shadow-inner border border-primary/5 text-xs overflow-hidden shrink-0">
                           {appt.therapist?.profileImageUrl ? (
                             <img src={appt.therapist.profileImageUrl} alt={appt.therapist.firstName} className="w-full h-full object-cover" />
                           ) : (
@@ -228,7 +229,7 @@ export default async function AppointmentsPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
 
       {/* ─── Feedback Review Panel ─── */}
       <section className="space-y-6">
@@ -249,14 +250,14 @@ export default async function AppointmentsPage() {
               {Object.entries(feedbackByTherapist).map(([id, data]) => {
                 const avg = data.ratings.reduce((a: number, b: number) => a + b, 0) / data.ratings.length;
                 return (
-                  <div key={id} className="bg-surface-container-low border border-outline-variant/20 rounded-2xl px-4 py-3 text-right">
+                  <Card key={id} className="px-4 py-3 text-right">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{data.name}</p>
                     <div className="flex items-center gap-1 justify-end mt-1">
                       <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
                       <span className="text-sm font-bold text-foreground">{avg.toFixed(1)}</span>
                       <span className="text-[10px] text-muted-foreground">({data.ratings.length})</span>
                     </div>
-                  </div>
+                  </Card>
                 );
               })}
             </div>
@@ -274,9 +275,9 @@ export default async function AppointmentsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {feedbackItems.map((fb: any) => (
-              <div
+              <Card
                 key={fb.id}
-                className={`bg-surface-container-lowest border rounded-2xl p-5 space-y-3 transition-all hover:shadow-md ${
+                className={`p-5 space-y-3 transition-all border ${
                   fb.isPublic
                     ? "border-outline-variant/20"
                     : "border-destructive/10 opacity-60"
@@ -318,7 +319,7 @@ export default async function AppointmentsPage() {
                   </span>
                   <ToggleVisibilityButton feedbackId={fb.id} isPublic={fb.isPublic} token={token} />
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
@@ -326,6 +327,8 @@ export default async function AppointmentsPage() {
     </div>
   );
 }
+
+import { Button } from "@/components/ui/button";
 
 // Server-side toggle button using a form action
 function ToggleVisibilityButton({ feedbackId, isPublic, token }: { feedbackId: string; isPublic: boolean; token: string }) {
@@ -339,12 +342,13 @@ function ToggleVisibilityButton({ feedbackId, isPublic, token }: { feedbackId: s
         });
       }}
     >
-      <button
+      <Button
+        variant="ghost"
         type="submit"
-        className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-lg transition-all ${
+        className={`flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest transition-all h-auto hover:text-inherit ${
           isPublic
-            ? "text-muted-foreground/60 hover:text-destructive hover:bg-destructive/5"
-            : "text-emerald-600 hover:bg-emerald-50"
+            ? "text-muted-foreground/60 hover:text-destructive"
+            : "text-emerald-600"
         }`}
       >
         {isPublic ? (
@@ -356,7 +360,7 @@ function ToggleVisibilityButton({ feedbackId, isPublic, token }: { feedbackId: s
             <Eye className="w-3 h-3" /> Show
           </>
         )}
-      </button>
+      </Button>
     </form>
   );
 }

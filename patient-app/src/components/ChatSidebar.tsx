@@ -125,7 +125,7 @@ export default function ChatSidebar({
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-32 gap-2 text-slate-300">
             <MessageSquare className="w-6 h-6" />
-            <p className="text-xs font-bold uppercase tracking-widest">
+            <p className="text-base font-bold uppercase tracking-widest">
               No messages yet
             </p>
           </div>
@@ -176,7 +176,7 @@ export default function ChatSidebar({
           <button
             onClick={handleSend}
             disabled={!input.trim() || sending}
-            className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white disabled:opacity-30 hover:bg-primary transition-all active:scale-90"
+            className="w-8 h-8 shrink-0 rounded-xl bg-slate-900 flex items-center justify-center text-white disabled:opacity-30 hover:bg-primary transition-all active:scale-90"
           >
             <Send className="w-3.5 h-3.5" />
           </button>
