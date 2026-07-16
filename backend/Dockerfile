@@ -39,11 +39,12 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 # Use non-root node user for security
 USER node
 
-# Expose the application port (NestJS is configured for 5000)
-EXPOSE 5000
+# Expose the application port (Render defaults to 10000)
+EXPOSE 10000
 
 # Set environment variables
 ENV NODE_ENV=production
+ENV PORT=10000
 
 # Start the application
 CMD ["npm", "run", "start:prod"]

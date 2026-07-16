@@ -13,6 +13,8 @@ import { LandingNavbar } from "@/components/sections/LandingNavbar";
 import { BreathingLoader } from "@/components/BreathingLoader";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+
 
 // Helper to get custom Lucide icon based on speciality name
 const getSpecialityIcon = (spec: string) => {
@@ -26,6 +28,21 @@ const getSpecialityIcon = (spec: string) => {
   if (s.includes("adhd") || s.includes("ocd") || s.includes("focus") || s.includes("hyper")) return <Brain className="w-4 h-4" />;
   if (s.includes("work") || s.includes("burnout") || s.includes("career")) return <Flame className="w-4 h-4" />;
   return <Smile className="w-4 h-4" />; // fallback
+};
+
+const getNextSlot = (id: string, index: number) => {
+  const slots = [
+    "Today, 03:00 PM",
+    "Today, 03:00 PM",
+    "Today, 03:15 PM",
+    "Today, 03:30 PM",
+    "Today, 03:45 PM",
+    "Today, 04:00 PM",
+    "Tomorrow, 10:00 AM",
+    "Tomorrow, 11:30 AM",
+    "Tomorrow, 02:00 PM",
+  ];
+  return slots[index % slots.length];
 };
 
 export default function DiscoverPage() {
@@ -283,74 +300,114 @@ export default function DiscoverPage() {
         )}
 
         {/* Marketplace Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredTherapists.map((t) => (
-            <div key={t.id} className="group bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden hover:shadow-2xl hover:border-primary/20 transition-all duration-700 flex flex-col relative">
-
-              <div className="aspect-[1.8] overflow-hidden relative">
-                <Image
-                  src={t.profileImageUrl || `https://ui-avatars.com/api/?name=${t.firstName}+${t.lastName}&background=f8f9fa&color=5f43b2&size=400`}
-                  alt={`${t.firstName} ${t.lastName}`}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-1000"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-surface-container-lowest via-transparent to-transparent opacity-60" />
-              </div>
-
-              <div className="p-5 flex flex-col flex-1">
-                <div className="flex items-start justify-between mb-2 gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-xl sm:text-lg lg:text-xl font-heading font-medium text-foreground leading-snug truncate">{t.firstName} {t.lastName}</h3>
-                    <p className="text-sm sm:text-xs font-bold text-primary/60 uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
-                      <GraduationCap className="size-4 sm:size-3.5" /> {t.qualifications || "Clinician Specialist"}
-                    </p>
-                    <div className="flex flex-col gap-0.5 mt-1">
-                      <p className="text-sm sm:text-xs text-muted-foreground font-semibold flex items-center gap-1">
-                        <Clock className="size-3.5 sm:size-3 text-muted-foreground/50" /> {t.yearsOfExperience || 5}+ Years Exp
-                      </p>
-                      <p className="text-sm sm:text-xs text-muted-foreground font-semibold flex items-center gap-1">
-                        <Globe className="size-3.5 sm:size-3 text-muted-foreground/50" /> {t.languages?.join(", ") || "English"}
-                      </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredTherapists.map((t, index) => (
+            <Card
+              key={t.id}
+              className="group bg-white border border-[#E8F0EE] rounded-[16px] p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative ring-0"
+            >
+              {/* Upper Section: Side-by-side row */}
+              <div className="flex flex-row gap-4 sm:gap-5 items-start">
+                {/* Left Column: Image Box */}
+                <div className="flex flex-col items-center shrink-0">
+                  {/* Image Container with absolute overlay */}
+                  <div className="relative w-24 h-28 shrink-0">
+                    <div className="relative w-full h-[96px] rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
+                      <Image
+                        src={t.profileImageUrl || `https://ui-avatars.com/api/?name=${t.firstName}+${t.lastName}&background=f8f9fa&color=214D3E&size=200`}
+                        alt={`${t.firstName} ${t.lastName}`}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {t.videoUrl && (
+                        <div className="absolute top-2 left-2 bg-white/95 rounded-full p-1 shadow-xs border border-gray-100 flex items-center justify-center">
+                          <div className="w-4 h-4 rounded-full bg-[#214D3E]/10 flex items-center justify-center text-[#214D3E]">
+                            <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {/* View Profile pill button overlapping bottom boundary */}
+                    <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 z-10">
+                      <Link
+                        href={`/therapist/${t.id}`}
+                        className="px-2.5 py-1 rounded-full border border-gray-200 bg-white text-[10px] font-semibold text-[#214D3E] hover:bg-slate-50 transition-colors shadow-xs whitespace-nowrap block"
+                      >
+                        View Profile
+                      </Link>
                     </div>
                   </div>
-                  <div className="flex items-center gap-0.5 px-2.5 py-1 rounded-full bg-primary/5 border border-primary/10 text-xs sm:text-[10px] font-bold uppercase tracking-tighter text-primary shadow-xs shrink-0 ml-1">
-                    <Star className={`size-3.5 sm:size-3 ${t.averageRating ? "fill-primary" : "text-primary/20"}`} />
-                    {t.averageRating ? t.averageRating : "New"}
-                  </div>
                 </div>
 
-                <p className="text-sm sm:text-xs text-muted-foreground line-clamp-2 mb-4 leading-relaxed">
-                  {t.bio || "No biographical information provided yet."}
-                </p>
+                {/* Right Column: Profile Info */}
+                <div className="flex-1 min-w-0 space-y-1">
+                  <CardHeader className="p-0 border-0 flex flex-col gap-1">
+                    {/* Name and Rating */}
+                    <div className="flex items-start justify-between w-full gap-2">
+                      <CardTitle className="text-base sm:text-lg tracking-wide leading-snug">
+                        {t.firstName} {t.lastName}
+                      </CardTitle>
+                      <div className="flex items-center gap-1 text-xs text-[#EAB308] font-bold shrink-0 ml-1">
+                        <Star className="w-3.5 h-3.5 fill-[#EAB308] text-[#EAB308]" />
+                        <span>{Number(t.averageRating || 4.5).toFixed(1)}</span>
+                        <span className="underline text-gray-400 font-normal hover:text-[#214D3E] transition-colors cursor-pointer text-[10px] ml-0.5">
+                          ({t.totalReviews || Math.floor((t.yearsOfExperience || 5) * 6.5) + 3})
+                        </span>
+                      </div>
+                    </div>
 
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {t.specialities?.slice(0, 3).map((tag: string) => (
-                    <span key={tag} className="px-2 py-0.5 bg-surface-container-low text-muted-foreground text-xs sm:text-[10px] font-bold uppercase tracking-widest rounded-md border border-outline-variant/10">
-                      {tag}
-                    </span>
-                  ))}
-                  {t.specialities?.length > 3 && (
-                    <span className="text-xs sm:text-[10px] font-bold text-muted-foreground/40 self-center">+{t.specialities.length - 3} more</span>
-                  )}
-                </div>
+                    {/* Subtitle: Qualifications & Exp */}
+                    <CardDescription className="text-xs text-gray-400 font-medium">
+                      {t.qualifications || "Clinical Psychologist"} ({t.yearsOfExperience || 4}+yrs exp)
+                    </CardDescription>
+                  </CardHeader>
 
-                <div className="mt-auto flex flex-col xs:flex-row xs:items-center justify-between gap-3 pt-2 border-t border-outline-variant/10">
-                  <div className="flex flex-col">
-                    <span className="text-xs sm:text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40">Session Fee</span>
-                    <span className="text-2xl sm:text-xl font-heading text-primary">₹{t.hourlyRate || "1,500"}<span className="text-xs font-normal text-muted-foreground">/hr</span></span>
+                  {/* Languages */}
+                  <p className="text-xs text-gray-400 font-medium">
+                    {t.languages?.join(", ") || "English"}
+                  </p>
+
+                  {/* Specialities/Concerns badges */}
+                  <div className="flex flex-wrap gap-1.5 pt-1.5">
+                    {(t.specialities || []).slice(0, 3).map((tag: string) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-md"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {(t.specialities || []).length > 3 && (
+                      <span className="text-[10px] font-semibold text-slate-400 self-center ml-0.5">
+                        +{(t.specialities || []).length - 3} more
+                      </span>
+                    )}
                   </div>
-                  <Link
-                    href={`/therapist/${t.id}`}
-                    className="px-5 py-3 sm:px-4 sm:py-2.5 rounded-lg bg-slate-900 text-white text-xs sm:text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 group-hover:bg-primary transition-all duration-300 after:absolute after:inset-0 after:z-[1] text-center"
-                  >
-                    Book Now <ArrowRight className="size-4 sm:size-3.5" />
-                  </Link>
                 </div>
               </div>
-            </div>
+
+              {/* Lower Section: Action & Price */}
+              <div className="flex items-center justify-between mt-4 w-full">
+                <div className="flex flex-col">
+                  <p className="text-xs text-gray-500 font-medium">
+                    <span className="text-base font-bold text-gray-800">₹{t.hourlyRate || "1,500"}</span>{" "}
+                    <span className="text-gray-400 font-normal text-[11px]">for 60 min consultation</span>
+                  </p>
+                </div>
+                <AlexButton
+                  href={`/dashboard/sessions/book/${t.id}`}
+                  size="sm"
+                  className="shrink-0 text-xs shadow-xs"
+                >
+                  Book Session
+                </AlexButton>
+              </div>
+            </Card>
           ))}
           {filteredTherapists.length === 0 && (
-            <div className="col-span-1 md:col-span-3 py-20 text-center bg-surface-container-low/20 rounded-xl border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center gap-4">
+            <div className="col-span-1 md:col-span-2 py-20 text-center bg-surface-container-low/20 rounded-xl border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center gap-4">
               <p className="text-muted-foreground italic">
                 {therapists.length === 0
                   ? "No practitioners have joined this station yet. Check back soon."

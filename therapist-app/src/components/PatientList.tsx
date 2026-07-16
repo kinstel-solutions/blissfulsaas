@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Users, Mail, Phone, Calendar, ArrowRight, Activity, ShieldCheck, MessageSquare, Clock } from "lucide-react";
-import PatientDetailPanel from "./PatientDetailPanel";
+import { Users, Mail, Phone, Calendar, ArrowRight, Activity, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 interface Patient {
   id: string;
@@ -20,30 +18,32 @@ interface Patient {
 }
 
 export default function PatientList({ roster }: { roster: Patient[] }) {
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const router = useRouter();
 
   const handlePatientClick = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setIsPanelOpen(true);
+    router.push(`/dashboard/patients/${patient.id}`);
   };
+
+  const sortedRoster = [...roster].sort((a, b) => {
+    const dateA = a.latestSession ? new Date(a.latestSession).getTime() : 0;
+    const dateB = b.latestSession ? new Date(b.latestSession).getTime() : 0;
+    return dateB - dateA; // Most recent first
+  });
 
   return (
     <>
-      <Card className="overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] md:min-w-full">
+      <Card className="p-0 gap-0 ring-0 border border-slate-100 shadow-xs bg-white rounded-xl overflow-x-auto">
+        <table className="w-full min-w-[900px] md:min-w-full">
             <thead>
-              <tr className="border-b border-slate-100">
-                <th className="px-5 md:px-10 text-lg text-left uppercase text-primary">Patient identity</th>
-                <th className="px-5 md:px-10 text-lg text-left uppercase text-primary">Status & Activity</th>
-                <th className="px-5 md:px-10 text-lg text-left uppercase text-primary">Engagement</th>
-                <th className="px-5 md:px-10 text-lg text-left uppercase text-primary">Clinical History</th>
-                <th className="px-5 md:px-10 text-lg text-left uppercase text-primary"></th>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th className="px-5 md:px-10 py-6 uppercase text-primary tracking-[0.2em]">Patient identity</th>
+                <th className="px-5 md:px-10 py-6 uppercase text-primary tracking-[0.2em]">Status & Activity</th>
+                <th className="px-5 md:px-10 py-6 uppercase text-primary tracking-[0.2em]">Engagement</th>
+                <th className="px-5 md:px-10 py-6 uppercase text-primary tracking-[0.2em]">Clinical History</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {roster.map((p) => (
+              {sortedRoster.map((p) => (
                 <tr
                   key={p.id}
                   className="group hover:bg-slate-50/50 transition-colors cursor-pointer"
@@ -51,9 +51,9 @@ export default function PatientList({ roster }: { roster: Patient[] }) {
                 >
                   <td className="px-5 md:px-10 py-4">
                     <div className="flex items-center gap-5">
-                      <Avatar className="w-14 h-14 rounded-lg bg-primary/5 flex items-center justify-center text-primary font-bold text-xl border border-primary/10 group-hover:bg-primary group-hover:text-white transition-all h-auto shrink-0">
-                        <AvatarFallback className="bg-transparent text-current font-bold text-xl">{p.firstName?.[0]}{p.lastName?.[0]}</AvatarFallback>
-                      </Avatar>
+                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg transition-all shadow-sm border bg-white text-primary border-slate-100 group-hover:bg-primary group-hover:text-white group-hover:border-primary shrink-0">
+                        {p.firstName?.[0]}
+                      </div>
                       <div>
                         <p className="text-lg font-bold text-slate-900 leading-tight">
                           {p.firstName} {p.lastName}
@@ -91,42 +91,11 @@ export default function PatientList({ roster }: { roster: Patient[] }) {
                       <p className="text-sm text-slate-400">Last Consultation</p>
                     </div>
                   </td>
-                  <td className="px-5 md:px-10 py-4 md:py-8 text-right">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                      <Button
-                        variant="outline"
-                        className="p-2.5 text-slate-400 hover:text-primary hover:border-primary/30 transition-all h-auto w-auto"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePatientClick(p);
-                        }}
-                      >
-                        <MessageSquare className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="p-2.5 text-slate-400 hover:text-primary hover:border-primary/30 transition-all h-auto w-auto"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePatientClick(p);
-                        }}
-                      >
-                        <Clock className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
       </Card>
-
-      <PatientDetailPanel
-        patient={selectedPatient}
-        isOpen={isPanelOpen}
-        onClose={() => setIsPanelOpen(false)}
-      />
     </>
   );
 }

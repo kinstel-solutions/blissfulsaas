@@ -42,15 +42,15 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
   });
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="p-0 gap-0 overflow-hidden ring-0 border-0 bg-transparent rounded-none lg:border lg:border-slate-100 lg:bg-white lg:shadow-xs lg:rounded-xl">
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full text-left border-separate border-spacing-0">
           <thead>
             <tr className="bg-slate-50/50 border-b border-slate-100">
               <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em]">Consultation</th>
-              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em]">Timing</th>
-              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em]">Status</th>
-              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em] text-right">Reference</th>
+              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em] w-48">Timing</th>
+              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em] w-32">Status</th>
+              <th className="px-4 md:px-8 py-6 uppercase text-primary tracking-[0.2em] text-right w-60">Actions</th>
             </tr>
           </thead>
           <tbody className="">
@@ -95,20 +95,11 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                                 <><Video className="w-3 h-3" /> Video Consultation</>
                               )}
                             </p>
-                            <div className="w-1 h-1 rounded-full bg-slate-300 mt-1" />
-                            <Link href={`/dashboard/messages?sessionId=${appt.id}`} onClick={e => e.stopPropagation()}>
-                              <Button
-                                variant="ghost"
-                                className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mt-1 hover:text-primary transition-colors p-0 h-auto hover:bg-transparent"
-                              >
-                                Message
-                              </Button>
-                            </Link>
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 md:px-8 py-6 border-b border-slate-50">
+                    <td className="px-4 md:px-8 py-6 border-b border-slate-50 w-48">
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-base text-slate-700 font-medium">
                           {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -119,7 +110,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 md:px-8 py-6 border-b border-slate-50">
+                    <td className="px-4 md:px-8 py-6 border-b border-slate-50 w-32">
                       <span className={`px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-widest border ${appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
                         appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                           appt.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
@@ -129,7 +120,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                         {appt.status}
                       </span>
                     </td>
-                    <td className="px-4 md:px-8 py-6 border-b border-slate-50 text-right">
+                    <td className="px-4 md:px-8 py-6 border-b border-slate-50 text-right w-60">
                       <div className="flex items-center justify-end gap-3" onClick={e => e.stopPropagation()}>
                         <AppointmentActions id={appt.id} status={appt.status} />
                         <Link href={`/dashboard/appointments/${appt.id}`}>
@@ -166,61 +157,60 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                   }`}
               >
                 {/* Header Info */}
-                <div className="p-5 flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4 min-w-0">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg transition-all shadow-sm shrink-0 border bg-white text-primary border-slate-100">
-                      {appt.patient?.firstName?.[0]}
+                <div className="p-5 flex flex-col gap-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base transition-all shadow-sm shrink-0 border bg-white text-primary border-slate-100">
+                        {appt.patient?.firstName?.[0]}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-base font-bold text-slate-900 truncate">
+                          {appt.patient?.firstName} {appt.patient?.lastName}
+                        </div>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <div className="text-lg font-bold text-primary truncate">
-                        {appt.patient?.firstName} {appt.patient?.lastName}
-                      </div>
-                      <div className={`text-sm font-bold uppercase tracking-widest mt-2 flex items-center gap-1.5 whitespace-nowrap ${appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'
-                        }`}>
-                        {appt.mode === 'IN_CLINIC' ? (
-                          <><MapPin className="w-3 h-3 shrink-0" /> In-Clinic Visit</>
-                        ) : (
-                          <><Video className="w-3 h-3 shrink-0" /> Video Session</>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-start gap-2 mt-4">
-                        <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-widest border shrink-0 ${appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
-                          appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                            appt.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                              appt.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
-                                'bg-slate-50 text-slate-500 border-slate-100'
-                          }`}>
-                          {appt.status}
-                        </span>
-                        {hasNotes && (
-                          <div className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100 shrink-0">
-                            <FileText className="w-2.5 h-2.5 shrink-0" />
-                            <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap">Notes</span>
-                          </div>
-                        )}
-                      </div>
+                    <div className="text-right shrink-0">
+                      <span className="text-sm font-semibold text-slate-900">
+                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2 shrink-0">
-                    <div className="text-right">
-                      <div className="text-base font-bold text-slate-900 whitespace-nowrap">
-                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </div>
-                      <div className="text-sm text-slate-400 font-bold uppercase mt-1 whitespace-nowrap">
-                        {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                      </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
+                    <div className={`font-medium flex items-center gap-1.5 ${appt.mode === 'IN_CLINIC' ? 'text-emerald-600' : 'text-slate-400'}`}>
+                      {appt.mode === 'IN_CLINIC' ? (
+                        <><MapPin className="w-3.5 h-3.5" /> In-Clinic Visit</>
+                      ) : (
+                        <><Video className="w-3.5 h-3.5" /> Video Session</>
+                      )}
                     </div>
+                    <div className="text-slate-500 font-medium flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-slate-400" />
+                      <span>{new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border shrink-0 ${appt.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-100' :
+                      appt.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                        appt.status === 'COMPLETED' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                          appt.status === 'EXPIRED' ? 'bg-slate-50 text-slate-400 border-slate-100' :
+                            'bg-slate-50 text-slate-500 border-slate-100'
+                      }`}>
+                      {appt.status}
+                    </span>
+                    {hasNotes && (
+                      <div className="flex items-center gap-1 px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100 shrink-0">
+                        <FileText className="w-2.5 h-2.5 shrink-0" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">Notes</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Actions Bar */}
                 <div className="px-5 pb-5 flex items-center border-t border-slate-50 pt-4">
                   <div className="flex gap-2 flex-1 min-w-0" onClick={e => e.stopPropagation()}>
-                    <Link href={`/dashboard/messages?sessionId=${appt.id}`} className="shrink-0">
-                      <Button variant="ghost" className="p-2.5 text-primary shrink-0">
-                        <MessageSquare className="w-4 h-4" />
-                      </Button>
-                    </Link>
                     <AppointmentActions id={appt.id} status={appt.status} />
                   </div>
                 </div>

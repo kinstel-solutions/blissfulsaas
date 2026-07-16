@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import AppointmentActions from "@/components/AppointmentActions";
 import AppointmentNotesClient from "./AppointmentNotesClient";
+import PatientIntakeContent from "@/components/PatientIntakeContent";
 import { notFound } from "next/navigation";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -181,66 +182,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
                  </div>
               </CardHeader>
               <CardContent className="p-5 lg:p-8">
-                {!appointment.patient?.intakeCompleted ? (
-                   <div className="flex flex-col items-center justify-center text-center py-10 lg:py-20 opacity-30">
-                      <ClipboardList className="w-10 h-10 lg:w-12 lg:h-12 mb-4 text-slate-300" />
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No Intake Data Available</p>
-                   </div>
-                ) : (
-                    <div className="space-y-6 lg:space-y-8">
-                       <div>
-                          <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Patient Profile</p>
-                          <div className="space-y-2 text-slate-700 text-sm font-medium">
-                             <div><strong className="text-slate-400 mr-1.5">Full Name:</strong> {appointment.patient.fullName || 'Not Provided'}</div>
-                             <div><strong className="text-slate-400 mr-1.5">Age:</strong> {appointment.patient.age || 'Not Provided'}</div>
-                             {appointment.patient.pronouns && <div><strong className="text-slate-400 mr-1.5">Pronouns:</strong> {appointment.patient.pronouns}</div>}
-                             {appointment.patient.city && <div><strong className="text-slate-400 mr-1.5">City:</strong> {appointment.patient.city}</div>}
-                          </div>
-                       </div>
-                       
-                       {appointment.patient?.reasonForSeeking && (
-                          <div>
-                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Reason for Seeking</p>
-                             <div className="p-3 lg:p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <p className="text-base lg:text-sm text-slate-700 leading-relaxed italic">"{appointment.patient.reasonForSeeking}"</p>
-                             </div>
-                          </div>
-                       )}
-
-                       {appointment.patient?.currentMedications && (
-                          <div>
-                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Medications</p>
-                             <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-100 text-[10px] font-bold uppercase tracking-wider inline-block">
-                                {appointment.patient.currentMedications}
-                             </div>
-                          </div>
-                       )}
-
-                       {appointment.patient?.mentalHealthHistory && (
-                          <div>
-                             <p className="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Clinical History</p>
-                             <div className="p-3 lg:p-4 bg-amber-50/30 rounded-2xl border border-amber-100/50">
-                                <p className="text-base lg:text-sm text-slate-700 leading-relaxed">{appointment.patient.mentalHealthHistory}</p>
-                             </div>
-                          </div>
-                       )}
-
-                      {(appointment.patient?.emergencyContactName || appointment.patient?.emergencyContactPhone) && (
-                         <div className="pt-6 border-t border-slate-100">
-                            <p className="text-[9px] lg:text-[10px] font-bold text-red-400 uppercase tracking-widest mb-3">Emergency Contact</p>
-                            <div className="flex items-center justify-between p-3 lg:p-4 bg-red-50/30 rounded-2xl border border-red-100/50">
-                               <div>
-                                  <p className="text-base font-bold text-slate-900">{appointment.patient.emergencyContactName || 'Not Provided'}</p>
-                                  <p className="text-[10px] text-slate-500 font-medium">{appointment.patient.emergencyContactPhone || 'No Phone'}</p>
-                               </div>
-                               <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                                  <Phone className="w-3.5 h-3.5 text-red-600" />
-                               </div>
-                            </div>
-                         </div>
-                      )}
-                    </div>
-                 )}
+                <PatientIntakeContent patient={appointment.patient as any} />
               </CardContent>
            </Card>
         </div>
