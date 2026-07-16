@@ -73,6 +73,7 @@ export class TherapistsService {
           mapLink: true,
           profileImageUrl: true,
           phone: true,
+          videoUrl: true,
         },
         skip,
         take: limit,
