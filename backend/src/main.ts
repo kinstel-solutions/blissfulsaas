@@ -40,6 +40,8 @@ async function bootstrap() {
   server.keepAliveTimeout = 65000;
   server.headersTimeout = 66000;
 
+  app.enableShutdownHooks();
+
   await app.listen(port, '0.0.0.0');
   console.log(`Backend running on: http://0.0.0.0:${port}`);
 }
