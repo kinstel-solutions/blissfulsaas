@@ -46,5 +46,5 @@ EXPOSE 10000
 ENV NODE_ENV=production
 ENV PORT=10000
 
-# Start the application
-CMD ["npm", "run", "start:prod"]
+# Start the application directly with node to prevent npm from logging SIGTERM errors
+CMD ["node", "dist/main"]
