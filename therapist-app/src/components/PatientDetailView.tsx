@@ -12,7 +12,8 @@ import {
   Send,
   Loader2,
   ChevronLeft,
-  Phone
+  Phone,
+  Activity
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import PatientIntakeContent from "./PatientIntakeContent";
 import EnhancedAppointmentsList from "./EnhancedAppointmentsList";
+import MessageHistoryClient from "./MessageHistoryClient";
 
 interface Patient {
   id: string;
@@ -44,75 +46,94 @@ interface Patient {
   emergencyContactPhone?: string;
 }
 
-export default function PatientDetailView({ patient, sessions }: { patient: Patient; sessions: any[] }) {
+export default function PatientDetailView({ patient, sessions, currentUserId }: { patient: Patient; sessions: any[], currentUserId?: string }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'profile' | 'sessions' | 'messages'>('profile');
-  const [messages, setMessages] = useState<any[]>([]);
-  const [messageLoading, setMessageLoading] = useState(false);
-
-  useEffect(() => {
-    if (patient && activeTab === 'messages') {
-      fetchMessageHistory();
-    }
-  }, [patient, activeTab]);
-
-  const fetchMessageHistory = async () => {
-    if (!patient) return;
-    setMessageLoading(true);
-    try {
-      const data = await api.messages.patientHistory(patient.id);
-      setMessages(data);
-    } catch (error) {
-      console.error("Failed to fetch message history", error);
-    } finally {
-      setMessageLoading(false);
-    }
-  };
 
   if (!patient) return null;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20">
-      {/* Header */}
-      <header className="flex items-center gap-6">
-        <Button 
-          variant="outline" 
-          onClick={() => router.back()}
-          className="w-12 h-12 rounded-xl flex items-center justify-center p-0 shrink-0"
-        >
-          <ChevronLeft className="w-5 h-5 text-slate-500" />
-        </Button>
-        <div className="flex items-center gap-5 flex-1">
-          <Avatar className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-2xl shadow-inner shrink-0">
-            <AvatarFallback className="bg-transparent text-current font-bold">{patient.firstName?.[0]}{patient.lastName?.[0]}</AvatarFallback>
+      {/* Back Link */}
+      <button 
+        onClick={() => router.back()} 
+        className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-[0.25em] transition-colors"
+      >
+        <ChevronLeft className="w-4 h-4 shrink-0" /> Patients
+      </button>
+
+      {/* Header Profile Info */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-5">
+          <Avatar className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white font-extrabold text-2xl shrink-0 shadow-sm">
+            <AvatarFallback className="bg-transparent text-current font-extrabold">
+              {patient.firstName?.[0]}
+            </AvatarFallback>
           </Avatar>
-          <div>
-            <h2 className="text-3xl font-bold text-slate-900 leading-tight font-sans">
+          <div className="space-y-1.5">
+            <h2 className="text-3xl font-extrabold text-slate-900 leading-none tracking-tight font-sans">
               {patient.firstName} {patient.lastName}
             </h2>
-            <p className="text-sm text-slate-400 font-bold uppercase tracking-widest mt-1.5">Patient Identity</p>
+            <div className="flex items-center gap-3">
+              <span className={`text-[9px] px-2.5 py-1 rounded-md font-extrabold uppercase tracking-widest shadow-3xs ${
+                patient.latestSession && new Date(patient.latestSession) > new Date()
+                  ? "bg-amber-50 text-amber-700 border border-amber-100"
+                  : "bg-slate-100 text-slate-600 border border-slate-200"
+              }`}>
+                {patient.latestSession && new Date(patient.latestSession) > new Date() ? "Upcoming Session" : "Last Session"}
+              </span>
+            </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6 flex flex-col justify-between h-32 shadow-sm border-slate-100">
-          <div className="flex items-center gap-2 text-slate-400">
+      {/* Horizontal Metadata Pill-Bar */}
+      <div className="bg-white border border-slate-200/60 rounded-2xl md:rounded-full p-4 md:py-2 md:px-6 grid grid-cols-2 md:flex md:flex-row items-center md:items-center justify-between gap-4 md:gap-6 shadow-2xs">
+        {/* Item 1: Date */}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-emerald-50/60 text-emerald-600 flex items-center justify-center border border-emerald-100/30 shrink-0">
             <Calendar className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Total Sessions</span>
           </div>
-          <p className="text-4xl font-bold text-slate-900 font-sans">{patient.sessionCount || 0}</p>
-        </Card>
-        <Card className="p-6 flex flex-col justify-between h-32 shadow-sm border-slate-100">
-          <div className="flex items-center gap-2 text-slate-400">
-            <Clock className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Last Seen</span>
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date</div>
+            <div className="text-sm font-bold text-slate-900 mt-0.5 truncate">
+              {patient.latestSession ? new Date(patient.latestSession).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never'}
+            </div>
           </div>
-          <p className="text-2xl font-bold text-slate-900">
-            {patient.latestSession ? new Date(patient.latestSession).toLocaleDateString() : 'Never'}
-          </p>
-        </Card>
+        </div>
+
+        {/* Item 2: Engagement */}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-indigo-50/60 text-indigo-600 flex items-center justify-center border border-indigo-100/30 shrink-0">
+            <Activity className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Engagement</div>
+            <div className="text-sm font-bold text-slate-900 mt-0.5 truncate">{patient.sessionCount || 0} Sessions</div>
+          </div>
+        </div>
+
+        {/* Item 3: Email */}
+        <div className="flex items-center gap-3 col-span-2 md:col-span-1">
+          <div className="w-8 h-8 rounded-full bg-sky-50/60 text-sky-600 flex items-center justify-center border border-sky-100/30 shrink-0">
+            <Mail className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email</div>
+            <div className="text-sm font-bold text-slate-900 mt-0.5 truncate">{patient.user?.email || "N/A"}</div>
+          </div>
+        </div>
+
+        {/* Item 4: Patient ID */}
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-amber-50/60 text-amber-600 flex items-center justify-center border border-amber-100/30 shrink-0">
+            <User className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Patient ID</div>
+            <div className="text-sm font-bold text-slate-900 mt-0.5 truncate">{patient.id.slice(0, 8).toUpperCase()}</div>
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -155,50 +176,9 @@ export default function PatientDetailView({ patient, sessions }: { patient: Pati
         )}
 
         {activeTab === 'messages' && (
-           <Card className="flex flex-col min-h-[500px] h-[60vh] shadow-sm border-slate-100 overflow-hidden">
-             <div className="flex-1 space-y-6 overflow-y-auto p-8">
-                {messageLoading ? (
-                   <div className="h-full flex flex-col items-center justify-center opacity-40">
-                      <Loader2 className="w-10 h-10 animate-spin mb-4" />
-                      <p className="text-xs font-bold uppercase tracking-widest">Loading Conversation...</p>
-                   </div>
-                ) : messages.length === 0 ? (
-                   <div className="h-full flex flex-col items-center justify-center opacity-40 text-center p-10">
-                      <MessageSquare className="w-16 h-16 mb-6 text-slate-300" />
-                      <p className="text-lg font-medium text-slate-600">No messages with this patient yet.</p>
-                      <p className="text-sm mt-2 text-slate-400">Messages from all sessions will appear here.</p>
-                   </div>
-                ) : (
-                  messages.map((msg, idx) => {
-                    const isMe = msg.sender.role === 'THERAPIST';
-                    return (
-                      <div key={msg.id || idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`rounded-2xl p-4 max-w-[70%] text-base shadow-sm ${
-                          isMe ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-slate-50 border border-slate-100 text-slate-800 rounded-tl-sm'
-                        }`}>
-                          {msg.content}
-                          <div className={`text-[10px] mt-2 font-bold uppercase tracking-tighter opacity-50 ${isMe ? 'text-right' : ''}`}>
-                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-             </div>
-             <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-                 <div className="relative max-w-4xl mx-auto">
-                    <Input 
-                      type="text" 
-                      placeholder="Type a message..."
-                      className="w-full text-base transition-all pr-14 bg-white border-slate-200 h-14 rounded-xl shadow-sm"
-                    />
-                    <Button className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg flex items-center justify-center transition-all p-0 active:scale-95 shadow-sm">
-                      <Send className="w-5 h-5" />
-                    </Button>
-                 </div>
-             </div>
-           </Card>
+           <div className="h-[60vh] min-h-[500px]">
+             <MessageHistoryClient initialSessions={sessions} currentUserId={currentUserId || ""} />
+           </div>
         )}
       </div>
     </div>
