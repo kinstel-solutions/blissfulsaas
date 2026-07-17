@@ -125,7 +125,7 @@ export default async function DashboardPage() {
     : null;
 
   // Fetch availability to see if they have set up their schedule
-  const availabilitySlots = await fetchWithAuthContent("/availability");
+  const availabilitySlots = await fetchWithAuthContent("/availability/schedule");
   const hasSchedule = Array.isArray(availabilitySlots) && availabilitySlots.length > 0;
 
   const now = new Date();

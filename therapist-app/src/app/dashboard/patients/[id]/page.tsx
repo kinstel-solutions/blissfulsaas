@@ -2,6 +2,7 @@ import { fetchWithAuthContent } from "@/lib/api-server";
 import PatientDetailView from "@/components/PatientDetailView";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Patient Details | Therapist App",
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
 
 export default async function PatientPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   const [patients, allSessions] = await Promise.all([
     fetchWithAuthContent("/therapists/my-patients"),
     fetchWithAuthContent("/sessions/all")
@@ -26,7 +30,7 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="py-4">
-      <PatientDetailView patient={patient} sessions={patientSessions} />
+      <PatientDetailView patient={patient} sessions={patientSessions} currentUserId={user?.id || ""} />
     </div>
   );
 }
