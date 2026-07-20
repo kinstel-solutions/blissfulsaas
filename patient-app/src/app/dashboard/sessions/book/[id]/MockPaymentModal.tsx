@@ -58,10 +58,12 @@ export default function MockPaymentModal({ orderData, onClose }: Props) {
 
   const amountInRupees = (orderData.amount / 100).toLocaleString("en-IN");
   const formattedDate = new Date(orderData.scheduledAt).toLocaleDateString("en-US", {
-    weekday: "short", month: "short", day: "numeric"
+    weekday: "short", month: "short", day: "numeric", timeZone: "Asia/Kolkata"
   });
   const formattedTime = new Date(orderData.scheduledAt).toLocaleTimeString("en-US", {
-    hour: "2-digit", minute: "2-digit"
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Kolkata",
   });
 
   const handlePay = async () => {

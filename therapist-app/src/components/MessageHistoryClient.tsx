@@ -11,6 +11,18 @@ import { Card } from "@/components/ui/card";
 
 const supabaseClient = createClient();
 
+const parseUTCDate = (dateVal: string | Date | number) => {
+  if (!dateVal) return new Date();
+  if (dateVal instanceof Date) return dateVal;
+  if (typeof dateVal === 'number') return new Date(dateVal);
+  
+  let str = dateVal.trim();
+  if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}/.test(str) && !str.endsWith('Z') && !/[+-]\d{2}:?\d{2}$/.test(str)) {
+    str = str.replace(' ', 'T') + 'Z';
+  }
+  return new Date(str);
+};
+
 export default function MessageHistoryClient({
   initialSessions,
   currentUserId,
@@ -239,9 +251,9 @@ export default function MessageHistoryClient({
                       )}
                     </div>
                     <div className="flex items-center justify-between gap-1.5 mt-1.5">
-                      <div className={`flex items-center gap-1.5 text-sm md:text-xs font-medium ${unreadCount > 0 ? 'text-primary' : 'text-slate-400'}`}>
+                      <div className={`flex items-center gap-1.5 text-sm md:text-xs font-semibold ${unreadCount > 0 ? 'text-primary' : 'text-slate-600'}`}>
                         <Calendar className="w-4 h-4 md:w-3 md:h-3" />
-                        {mounted ? new Date(s.scheduledAt).toLocaleDateString('en-US') : '...'}
+                        {mounted ? new Date(s.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }) : '...'}
                       </div>
                       {unreadCount > 0 && (
                         <div className="w-6 h-6 md:w-5 md:h-5 bg-primary text-white text-xs md:text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm shrink-0">
@@ -286,9 +298,9 @@ export default function MessageHistoryClient({
                     {mode === 'therapist' ? selectedSession.patient?.firstName + ' ' + selectedSession.patient?.lastName : selectedSession.therapist?.firstName}
                   </h3>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                    <p className="text-base md:text-[10px] text-slate-400 font-medium uppercase tracking-widest flex items-center gap-1">
+                    <p className="text-base md:text-[10px] text-slate-600 font-bold uppercase tracking-widest flex items-center gap-1">
                       <Clock className="w-3 h-3 md:w-3 md:h-3" />
-                      {mounted ? new Date(selectedSession.scheduledAt).toLocaleDateString('en-US') : '...'}
+                      {mounted ? new Date(selectedSession.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }) : '...'}
                     </p>
                     {isCancelled ? (
                       <span className="text-red-500 text-xs md:text-[9px] font-bold uppercase flex items-center gap-1 bg-red-50 px-2 py-0.5 rounded-full">
@@ -313,7 +325,7 @@ export default function MessageHistoryClient({
                   <div className="w-6 h-6 border-2 border-slate-200 border-t-primary rounded-full animate-spin" />
                 </div>
               ) : messages.length === 0 ? (
-                <div className="flex flex-col h-full items-center justify-center text-slate-300 opacity-50 space-y-2">
+                <div className="flex flex-col h-full items-center justify-center text-slate-500 opacity-60 space-y-2">
                   <MessageSquare className="w-10 h-10" />
                   <p className="text-sm md:text-base font-bold uppercase tracking-widest text-center">No messages in this archive</p>
                 </div>
@@ -324,7 +336,7 @@ export default function MessageHistoryClient({
                     <div key={m.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                        <div className={`max-w-[85%] md:max-w-[70%] p-4 md:p-4 rounded-[11px] text-base md:text-sm shadow-sm whitespace-pre-wrap ${isMe
                            ? 'bg-primary text-white rounded-br-none'
-                           : 'bg-white text-slate-800 border border-slate-100 rounded-bl-none'
+                           : 'bg-white text-slate-900 border border-slate-100 rounded-bl-none'
                          }`}>
                         {m.content.split('\n').map((line: string, i: number) => (
                           <span key={i}>
@@ -337,8 +349,8 @@ export default function MessageHistoryClient({
                           </span>
                         ))}
                       </div>
-                      <span className="mt-2 text-xs md:text-xs font-bold text-slate-300 uppercase tracking-tighter">
-                        {mounted ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                      <span className="mt-2 text-xs md:text-xs font-bold text-slate-500 uppercase tracking-tighter">
+                        {mounted ? parseUTCDate(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                       </span>
                     </div>
                   );

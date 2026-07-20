@@ -34,12 +34,46 @@ export class SessionsService {
     scheduledAt: Date,
     durationMinutes = 50,
   ): Promise<boolean> {
-    const slotEnd = new Date(scheduledAt.getTime() + durationMinutes * 60 * 1000);
+    const slotEnd = new Date(
+      scheduledAt.getTime() + durationMinutes * 60 * 1000,
+    );
 
     const candidates = await tx.appointment.findMany({
       where: {
         therapistId,
-        status: { in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED] },
+        status: {
+          in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED],
+        },
+        scheduledAt: {
+          gte: new Date(scheduledAt.getTime() - 60 * 60 * 1000),
+          lt: slotEnd,
+        },
+      },
+    });
+
+    return candidates.some((appt: Appointment) => {
+      const apptStart = appt.scheduledAt;
+      const apptEnd = new Date(apptStart.getTime() + appt.duration * 60 * 1000);
+      return apptStart < slotEnd && apptEnd > scheduledAt;
+    });
+  }
+
+  async checkPatientBookingConflict(
+    tx: any,
+    patientId: string,
+    scheduledAt: Date,
+    durationMinutes = 50,
+  ): Promise<boolean> {
+    const slotEnd = new Date(
+      scheduledAt.getTime() + durationMinutes * 60 * 1000,
+    );
+
+    const candidates = await tx.appointment.findMany({
+      where: {
+        patientId,
+        status: {
+          in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED],
+        },
         scheduledAt: {
           gte: new Date(scheduledAt.getTime() - 60 * 60 * 1000),
           lt: slotEnd,
@@ -75,10 +109,27 @@ export class SessionsService {
       const scheduledAt = new Date(data.scheduledAt);
 
       // 3. Conflict check: therapist already has a booking that overlaps this slot
-      const hasConflict = await this.checkBookingConflict(tx, data.therapistId, scheduledAt);
+      const hasConflict = await this.checkBookingConflict(
+        tx,
+        data.therapistId,
+        scheduledAt,
+      );
 
       if (hasConflict) {
         throw new ConflictException('This time slot is no longer available');
+      }
+
+      // Check if patient already has a booking that overlaps this slot
+      const hasPatientConflict = await this.checkPatientBookingConflict(
+        tx,
+        patient.id,
+        scheduledAt,
+      );
+
+      if (hasPatientConflict) {
+        throw new ConflictException(
+          'You already have a session booked for this time slot',
+        );
       }
 
       // 4. Get the therapist details for notifications

@@ -108,7 +108,7 @@ export default function PatientList({ roster }: { roster: Patient[] }) {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-sm text-slate-600">
                         <Calendar className="w-4 h-4 text-slate-300" />
-                        <span className="text-base font-medium">{new Date(p.latestSession).toLocaleDateString('en-US')}</span>
+                        <span className="text-base font-medium">{new Date(p.latestSession).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' })}</span>
                       </div>
                       <p className={`text-sm ${new Date(p.latestSession) > new Date() ? "text-emerald-600 font-semibold" : "text-slate-400"}`}>
                         {new Date(p.latestSession) > new Date() ? "Upcoming Session" : "Last Session"}

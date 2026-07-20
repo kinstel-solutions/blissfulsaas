@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import {
   ArrowRight, Search, Star, Sparkles, Loader2, GraduationCap,
   Globe, Clock, ShieldCheck, ChevronLeft, ChevronRight, Brain, Heart,
-  Smile, Users, Flame, Sun, CloudRain, Shield, Compass
+  Smile, Users, Flame, Sun, CloudRain, Shield, Compass, X
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -55,6 +55,26 @@ export default function DiscoverPage() {
   const [selectedSpeciality, setSelectedSpeciality] = useState<string | null>(null);
   const [currentWordIdx, setCurrentWordIdx] = useState(0);
   const [animationClass, setAnimationClass] = useState("translate-y-0 opacity-100 transition-all duration-200");
+  const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
+
+  const getEmbedUrl = (url: string) => {
+    if (!url) return "";
+    let embedUrl = url;
+    if (url.includes('youtube.com/watch?v=')) {
+      const id = url.split('v=')[1]?.split('&')[0];
+      embedUrl = `https://www.youtube.com/embed/${id}`;
+    } else if (url.includes('youtu.be/')) {
+      const id = url.split('youtu.be/')[1]?.split('?')[0];
+      embedUrl = `https://www.youtube.com/embed/${id}`;
+    } else if (url.includes('vimeo.com/')) {
+      const id = url.split('vimeo.com/')[1]?.split('?')[0];
+      embedUrl = `https://player.vimeo.com/video/${id}`;
+    } else if (url.includes('loom.com/share/')) {
+      const id = url.split('loom.com/share/')[1]?.split('?')[0];
+      embedUrl = `https://www.loom.com/embed/${id}`;
+    }
+    return embedUrl;
+  };
 
   const words = ["Specialty...", "Name...", "Concern..."];
 
@@ -170,17 +190,17 @@ export default function DiscoverPage() {
         </div>
 
         {/* Discovery Search Tray */}
-        <div className="bg-surface-container-low/50 backdrop-blur-md p-1.5 rounded-xl border border-outline-variant/30 flex flex-row gap-1 shadow-sm items-center">
+        <div className="bg-surface-container-low/50 backdrop-blur-md p-1 rounded-xl border border-outline-variant/30 flex flex-row gap-1 shadow-sm items-center">
           <div className="flex-1 relative flex items-center">
-            <Search className="absolute left-3 sm:left-4 w-4 h-4 text-primary/40" />
+            <Search className="absolute left-2.5 sm:left-3.5 w-3.5 h-3.5 text-primary/40" />
             <input
               type="text"
-              className="w-full h-10 sm:h-12 bg-transparent pl-9 sm:pl-11 pr-2 sm:pr-4 text-[13px] sm:text-base font-heading font-semibold outline-none tracking-wider text-foreground"
+              className="w-full h-8 sm:h-10 bg-transparent pl-8 sm:pl-10 pr-2 sm:pr-4 text-[12px] sm:text-sm font-heading font-semibold outline-none tracking-wider text-foreground"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {!searchQuery && (
-              <span className="absolute left-9 sm:left-11 text-[13px] sm:text-base font-heading font-semibold text-slate-700 sm:text-muted-foreground/80 pointer-events-none flex gap-1 items-center tracking-wider">
+              <span className="absolute left-8 sm:left-10 text-[12px] sm:text-sm font-heading font-semibold text-slate-700 sm:text-muted-foreground/80 pointer-events-none flex gap-1 items-center tracking-wider">
                 <span>Search by</span>
                 <span
                   className={`text-primary italic inline-block ${animationClass}`}
@@ -193,7 +213,7 @@ export default function DiscoverPage() {
           <div className="flex items-center gap-1.5 shrink-0">
             <AlexButton
               size="md"
-              className="shadow-md shrink-0 h-10 sm:h-12 !py-0 text-[13px] sm:text-lg gap-1.5 sm:gap-3 pl-1 sm:pl-2 pr-2.5 sm:pr-4 [&_.cta-icon-circle]:w-7 [&_.cta-icon-circle]:h-7 sm:[&_.cta-icon-circle]:w-9 sm:[&_.cta-icon-circle]:h-9 [&_svg]:w-3 [&_svg]:h-3 sm:[&_svg]:w-4 sm:[&_svg]:h-4"
+              className="shadow-md shrink-0 h-8 sm:h-10 !py-0 text-[12px] sm:text-sm gap-1 sm:gap-2.5 pl-1 sm:pl-1.5 pr-2 sm:pr-3.5 [&_.cta-icon-circle]:w-6 [&_.cta-icon-circle]:h-6 sm:[&_.cta-icon-circle]:w-8 sm:[&_.cta-icon-circle]:h-8 [&_svg]:w-2.5 [&_svg]:h-2.5 sm:[&_svg]:w-3.5 sm:[&_svg]:h-3.5"
             >
               Search
             </AlexButton>
@@ -306,10 +326,17 @@ export default function DiscoverPage() {
               key={t.id}
               className="group bg-white border border-[#E8F0EE] rounded-[16px] p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative ring-0"
             >
+              {/* Absolute overlay link to make whole card clickable */}
+              <Link
+                href={`/therapist/${t.id}`}
+                className="absolute inset-0 z-0 rounded-[16px]"
+                aria-label={`View profile of ${t.firstName} ${t.lastName}`}
+              />
+
               {/* Upper Section: Side-by-side row */}
-              <div className="flex flex-row gap-4 sm:gap-5 items-start">
+              <div className="flex flex-row gap-4 sm:gap-5 items-start relative z-10 pointer-events-none">
                 {/* Left Column: Image Box */}
-                <div className="flex flex-col items-center shrink-0">
+                <div className="flex flex-col items-center shrink-0 pointer-events-auto">
                   {/* Image Container with absolute overlay */}
                   <div className="relative w-24 h-28 shrink-0">
                     <div className="relative w-full h-[96px] rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
@@ -320,13 +347,22 @@ export default function DiscoverPage() {
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       {t.videoUrl && (
-                        <div className="absolute top-2 left-2 bg-white/95 rounded-full p-1 shadow-xs border border-gray-100 flex items-center justify-center">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setActiveVideoUrl(t.videoUrl);
+                          }}
+                          className="absolute top-2 left-2 bg-white/95 hover:bg-slate-50 hover:scale-105 active:scale-95 rounded-full p-1 shadow-xs border border-gray-100 flex items-center justify-center cursor-pointer transition-all z-20 pointer-events-auto"
+                          title="Watch clinical introduction video"
+                        >
                           <div className="w-4 h-4 rounded-full bg-[#214D3E]/10 flex items-center justify-center text-[#214D3E]">
                             <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
                               <path d="M8 5v14l11-7z" />
                             </svg>
                           </div>
-                        </div>
+                        </button>
                       )}
                     </div>
                     {/* View Profile pill button overlapping bottom boundary */}
@@ -346,26 +382,26 @@ export default function DiscoverPage() {
                   <CardHeader className="p-0 border-0 flex flex-col gap-1">
                     {/* Name and Rating */}
                     <div className="flex items-start justify-between w-full gap-2">
-                      <CardTitle className="text-base sm:text-lg tracking-wide leading-snug">
+                      <CardTitle className="text-lg sm:text-xl font-bold tracking-wide leading-snug text-gray-800">
                         {t.firstName} {t.lastName}
                       </CardTitle>
-                      <div className="flex items-center gap-1 text-xs text-[#EAB308] font-bold shrink-0 ml-1">
-                        <Star className="w-3.5 h-3.5 fill-[#EAB308] text-[#EAB308]" />
+                      <div className="flex items-center gap-1 text-sm text-[#EAB308] font-bold shrink-0 ml-1">
+                        <Star className="w-4 h-4 fill-[#EAB308] text-[#EAB308]" />
                         <span>{Number(t.averageRating || 4.5).toFixed(1)}</span>
-                        <span className="underline text-gray-400 font-normal hover:text-[#214D3E] transition-colors cursor-pointer text-[10px] ml-0.5">
+                        <span className="underline text-gray-400 font-normal hover:text-[#214D3E] transition-colors cursor-pointer text-xs ml-0.5 pointer-events-auto">
                           ({t.totalReviews || Math.floor((t.yearsOfExperience || 5) * 6.5) + 3})
                         </span>
                       </div>
                     </div>
 
                     {/* Subtitle: Qualifications & Exp */}
-                    <CardDescription className="text-xs text-gray-400 font-medium">
+                    <CardDescription className="text-sm text-gray-500 font-medium">
                       {t.qualifications || "Clinical Psychologist"} ({t.yearsOfExperience || 4}+yrs exp)
                     </CardDescription>
                   </CardHeader>
 
                   {/* Languages */}
-                  <p className="text-xs text-gray-400 font-medium">
+                  <p className="text-sm text-gray-500 font-medium">
                     {t.languages?.join(", ") || "English"}
                   </p>
 
@@ -374,13 +410,13 @@ export default function DiscoverPage() {
                     {(t.specialities || []).slice(0, 3).map((tag: string) => (
                       <span
                         key={tag}
-                        className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded-md"
+                        className="px-2 py-0.5 bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider rounded-md"
                       >
                         {tag}
                       </span>
                     ))}
                     {(t.specialities || []).length > 3 && (
-                      <span className="text-[10px] font-semibold text-slate-400 self-center ml-0.5">
+                      <span className="text-xs font-semibold text-slate-400 self-center ml-0.5">
                         +{(t.specialities || []).length - 3} more
                       </span>
                     )}
@@ -389,17 +425,17 @@ export default function DiscoverPage() {
               </div>
 
               {/* Lower Section: Action & Price */}
-              <div className="flex items-center justify-between mt-4 w-full">
+              <div className="flex items-center justify-between mt-4 w-full relative z-10">
                 <div className="flex flex-col">
-                  <p className="text-xs text-gray-500 font-medium">
-                    <span className="text-base font-bold text-gray-800">₹{t.hourlyRate || "1,500"}</span>{" "}
-                    <span className="text-gray-400 font-normal text-[11px]">for 60 min consultation</span>
+                  <p className="text-sm text-gray-600 font-medium">
+                    <span className="text-lg sm:text-xl font-bold text-gray-800">₹ {t.hourlyRate || "1,500"}</span>{" "}
+                    <span className="text-gray-400 font-normal text-xm">for 60 min consultation</span>
                   </p>
                 </div>
                 <AlexButton
                   href={`/dashboard/sessions/book/${t.id}`}
                   size="sm"
-                  className="shrink-0 text-xs shadow-xs"
+                  className="shrink-0 text-sm shadow-xs relative z-10"
                 >
                   Book Session
                 </AlexButton>
@@ -444,6 +480,34 @@ export default function DiscoverPage() {
           </div>
         )}
       </div>
+
+      {/* Video Player Modal */}
+      {activeVideoUrl && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-opacity duration-300 animate-in fade-in"
+          onClick={() => setActiveVideoUrl(null)}
+        >
+          <div 
+            className="bg-surface rounded-2xl overflow-hidden w-full max-w-3xl aspect-video relative border border-outline-variant/20 shadow-2xl animate-in zoom-in duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setActiveVideoUrl(null)}
+              className="absolute top-4 right-4 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 hover:scale-105 active:scale-95 transition-all z-30 cursor-pointer"
+              title="Close video"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <iframe
+              src={getEmbedUrl(activeVideoUrl)}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

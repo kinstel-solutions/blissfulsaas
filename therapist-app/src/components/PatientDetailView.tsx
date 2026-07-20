@@ -74,15 +74,6 @@ export default function PatientDetailView({ patient, sessions, currentUserId }: 
             <h2 className="text-3xl font-extrabold text-slate-900 leading-none tracking-tight font-sans">
               {patient.firstName} {patient.lastName}
             </h2>
-            <div className="flex items-center gap-3">
-              <span className={`text-[9px] px-2.5 py-1 rounded-md font-extrabold uppercase tracking-widest shadow-3xs ${
-                patient.latestSession && new Date(patient.latestSession) > new Date()
-                  ? "bg-amber-50 text-amber-700 border border-amber-100"
-                  : "bg-slate-100 text-slate-600 border border-slate-200"
-              }`}>
-                {patient.latestSession && new Date(patient.latestSession) > new Date() ? "Upcoming Session" : "Last Session"}
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -95,9 +86,11 @@ export default function PatientDetailView({ patient, sessions, currentUserId }: 
             <Calendar className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date</div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              {patient.latestSession && new Date(patient.latestSession) > new Date() ? "Upcoming Session" : "Last Session"}
+            </div>
             <div className="text-sm font-bold text-slate-900 mt-0.5 truncate">
-              {patient.latestSession ? new Date(patient.latestSession).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never'}
+              {patient.latestSession ? new Date(patient.latestSession).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'Asia/Kolkata' }) : 'Never'}
             </div>
           </div>
         </div>

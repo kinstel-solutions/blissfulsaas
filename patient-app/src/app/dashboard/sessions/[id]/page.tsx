@@ -21,6 +21,7 @@ import { notFound } from "next/navigation";
 import CancelSessionButton from "@/components/CancelSessionButton";
 import SessionFeedbackButton from "@/components/SessionFeedbackButton";
 import JoinCallButton from "@/components/JoinCallButton";
+import OfflineCountdown from "@/components/OfflineCountdown";
 import { AlexButton } from "@/components/ui/AlexButton";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
@@ -54,15 +55,18 @@ export default async function SessionDetailPage({
     month: "long",
     day: "numeric",
     year: "numeric",
+    timeZone: "Asia/Kolkata",
   });
   const timeStr = scheduledAt.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "Asia/Kolkata",
   });
   const shortDate = scheduledAt.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
+    timeZone: "Asia/Kolkata",
   });
 
   const profileImage =
@@ -572,19 +576,11 @@ export default async function SessionDetailPage({
                     </div>
                   ) : (
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full px-6 py-5 bg-primary/5 text-primary rounded-2xl border border-primary/15 font-bold">
-                      <div className="flex items-center gap-3">
-                        <Building2 className="w-6 h-6 shrink-0" />
-                        <div>
-                          <p className="text-sm font-bold uppercase tracking-widest">
-                            In-Person Visit
-                          </p>
-                          {therapist?.clinicAddress && (
-                            <p className="text-base font-medium text-primary/70 mt-0.5">
-                              {therapist.clinicAddress}
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                      <OfflineCountdown
+                        scheduledAt={session.scheduledAt}
+                        status={session.status}
+                        clinicAddress={therapist?.clinicAddress}
+                      />
                       {therapist?.mapLink && (
                         <a
                           href={therapist.mapLink}

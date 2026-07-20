@@ -155,7 +155,7 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
                   <span className="text-[10px] font-bold uppercase tracking-wider">Last Seen</span>
                 </div>
                 <p className="text-sm font-medium text-slate-900">
-                  {patient.latestSession ? new Date(patient.latestSession).toLocaleDateString() : 'Never'}
+                  {patient.latestSession ? new Date(patient.latestSession).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' }) : 'Never'}
                 </p>
               </Card>
             </div>
@@ -274,7 +274,7 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
                             &quot;{patient.latestSessionNotes}&quot;
                           </p>
                           <div className="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last updated {new Date(patient.latestSession!).toLocaleDateString()}</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last updated {new Date(patient.latestSession!).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' })}</span>
                             <Button 
                               variant="link" 
                               onClick={() => {

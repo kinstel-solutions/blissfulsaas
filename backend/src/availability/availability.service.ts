@@ -209,7 +209,10 @@ export class AvailabilityService {
     }
   }
 
-  private async saveSingleOverride(therapistId: string, dto: CreateOverrideDto) {
+  private async saveSingleOverride(
+    therapistId: string,
+    dto: CreateOverrideDto,
+  ) {
     const dateMidnight = new Date(`${dto.date}T00:00:00.000Z`);
     const mode = (dto.mode as ConsultationMode) ?? null;
 

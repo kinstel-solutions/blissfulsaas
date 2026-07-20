@@ -68,13 +68,61 @@ export default async function TherapistProfilePage({ params }: { params: Promise
       <div className="flex flex-col lg:flex-row gap-16 relative">
         {/* Profile Image & Status */}
         <div className="w-full lg:w-2/5 flex flex-col items-center">
-          <div className="relative aspect-square w-full rounded-xl overflow-hidden border border-outline-variant/30 shadow-2xl group transition-transform duration-1000 rotate-2 hover:rotate-0">
-             <Image 
-              src={specialist.image} 
-              alt={specialist.name}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-1000"
-             />
+          {/* Illustration wrapper */}
+          <div className="relative aspect-square w-full max-w-[380px] flex items-center justify-center">
+
+            {/* Decorative SVG layer — behind image */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 380 380"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Soft glow ring */}
+              <circle cx="190" cy="190" r="175" stroke="#214D3E" strokeWidth="1" strokeDasharray="6 8" opacity="0.25" />
+              <circle cx="190" cy="190" r="155" stroke="#F4C7A1" strokeWidth="1.5" strokeDasharray="3 12" opacity="0.35" />
+
+              {/* Top-left leaf */}
+              <path d="M60 70 C40 30, 90 10, 100 50 C110 90, 70 110, 60 70Z" fill="#214D3E" opacity="0.12" />
+              <path d="M65 72 C50 45, 85 28, 95 55" stroke="#214D3E" strokeWidth="1" opacity="0.3" strokeLinecap="round"/>
+
+              {/* Top-right botanical petal */}
+              <path d="M290 55 C310 20, 355 40, 340 75 C325 110, 285 95, 290 55Z" fill="#214D3E" opacity="0.10" />
+              <path d="M292 58 C308 32, 340 48, 332 72" stroke="#214D3E" strokeWidth="1" opacity="0.28" strokeLinecap="round"/>
+
+              {/* Bottom-left petal */}
+              <path d="M55 295 C30 270, 55 230, 85 245 C115 260, 105 305, 55 295Z" fill="#F4C7A1" opacity="0.28" />
+              <path d="M58 292 C40 272, 60 245, 82 252" stroke="#F4C7A1" strokeWidth="1" opacity="0.5" strokeLinecap="round"/>
+
+              {/* Bottom-right accent */}
+              <path d="M310 310 C335 285, 365 305, 355 335 C345 365, 305 355, 310 310Z" fill="#214D3E" opacity="0.10" />
+
+              {/* Small accent dots */}
+              <circle cx="148" cy="35" r="3.5" fill="#F4C7A1" opacity="0.6" />
+              <circle cx="238" cy="28" r="2.5" fill="#214D3E" opacity="0.35" />
+              <circle cx="340" cy="155" r="3" fill="#F4C7A1" opacity="0.55" />
+              <circle cx="352" cy="240" r="2" fill="#214D3E" opacity="0.3" />
+              <circle cx="38" cy="185" r="3" fill="#214D3E" opacity="0.25" />
+              <circle cx="50" cy="145" r="2" fill="#F4C7A1" opacity="0.45" />
+              <circle cx="190" cy="358" r="3" fill="#F4C7A1" opacity="0.4" />
+              <circle cx="130" cy="350" r="2" fill="#214D3E" opacity="0.25" />
+
+              {/* Corner flourish lines */}
+              <path d="M85 35 Q60 55 40 85" stroke="#214D3E" strokeWidth="1.2" opacity="0.2" strokeLinecap="round" fill="none"/>
+              <path d="M295 35 Q320 55 340 85" stroke="#214D3E" strokeWidth="1.2" opacity="0.2" strokeLinecap="round" fill="none"/>
+              <path d="M85 345 Q60 325 40 295" stroke="#F4C7A1" strokeWidth="1.2" opacity="0.35" strokeLinecap="round" fill="none"/>
+              <path d="M295 345 Q320 325 340 295" stroke="#214D3E" strokeWidth="1.2" opacity="0.2" strokeLinecap="round" fill="none"/>
+            </svg>
+
+            {/* Profile image */}
+            <div className="relative aspect-square w-[78%] rounded-xl overflow-hidden border border-outline-variant/30 shadow-2xl group transition-transform duration-1000 rotate-2 hover:rotate-0 z-10">
+              <Image
+                src={specialist.image}
+                alt={specialist.name}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-1000"
+              />
+            </div>
           </div>
           <div className="mt-12 flex flex-col items-center text-center">
              {specialist.rating !== null ? (

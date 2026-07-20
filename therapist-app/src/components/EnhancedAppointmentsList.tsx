@@ -102,11 +102,11 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50 w-48">
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-base text-slate-700 font-medium">
-                          {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' })}
                         </div>
                         <div className="flex items-center gap-2 text-sm text-slate-400 font-bold uppercase">
                           <Clock className="w-3 h-3" />
-                          {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' })}
                         </div>
                       </div>
                     </td>
@@ -171,7 +171,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     </div>
                     <div className="text-right shrink-0">
                       <span className="text-sm font-semibold text-slate-900">
-                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' })}
                       </span>
                     </div>
                   </div>
@@ -186,7 +186,7 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     </div>
                     <div className="text-slate-500 font-medium flex items-center gap-1">
                       <Clock className="w-3 h-3 text-slate-400" />
-                      <span>{new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                      <span>{new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' })}</span>
                     </div>
                   </div>
 

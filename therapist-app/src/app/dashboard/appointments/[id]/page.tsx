@@ -33,11 +33,13 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
     weekday: 'long', 
     month: 'long', 
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
+    timeZone: 'Asia/Kolkata'
   });
   const timeStr = scheduledAt.toLocaleTimeString('en-US', { 
     hour: '2-digit', 
-    minute: '2-digit'
+    minute: '2-digit',
+    timeZone: 'Asia/Kolkata'
   });
 
   return (
@@ -118,7 +120,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
             </div>
             <div>
               <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Date</p>
-              <p className="text-[11px] font-semibold text-slate-900">{scheduledAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+              <p className="text-[11px] font-semibold text-slate-900">{scheduledAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'Asia/Kolkata' })}</p>
             </div>
           </div>
           

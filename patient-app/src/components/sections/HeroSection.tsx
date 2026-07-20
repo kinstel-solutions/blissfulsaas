@@ -10,8 +10,8 @@ export function HeroSection() {
       <div className="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-[radial-gradient(circle,rgba(33,77,62,0.03)_0%,rgba(252,250,255,0)_70%)] -z-10"></div>
 
       <div className="flex flex-col items-center justify-center text-center max-w-[800px] mx-auto animate-in fade-in slide-in-from-bottom duration-1000">
-        <div className="inline-flex items-center bg-[#E8F5E9] text-[var(--primary)] text-[10px] font-bold tracking-[1.2px] px-3 py-1 rounded-full uppercase mb-2 font-outfit">
-          Verified Specialist Marketplace
+        <div className="inline-flex items-center bg-[#E8F5E9] text-[var(--primary)] text-xs md:text-sm font-bold tracking-[1.5px] px-4 py-1.5 rounded-full uppercase mb-4 font-outfit">
+          Express. Connect. Transform.
         </div>
 
         <h1 className="text-4xl md:text-5xl lg:text-[64px] leading-[1.1] mb-4 md:mb-8 font-cormorant font-bold text-[var(--text-dark)] tracking-[-1.5px]">
