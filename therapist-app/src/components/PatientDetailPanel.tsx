@@ -12,7 +12,9 @@ import {
   Video,
   Send,
   Loader2,
-  ChevronRight
+  ChevronRight,
+  ExternalLink,
+  ImageIcon
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -20,6 +22,61 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+
+// Helper to clean up filenames
+const getFilename = (url: string) => {
+  try {
+    const parts = new URL(url).pathname.split("/");
+    const raw = parts[parts.length - 1] ?? "attachment";
+    const match = raw.match(/^\d+-[a-z0-9]+\.(.+)$/);
+    return match ? `attachment.${match[1]}` : raw;
+  } catch {
+    return "attachment";
+  }
+};
+
+// Lightbox component
+function Lightbox({ url, onClose }: { url: string; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <button
+        className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        <X className="w-5 h-5" />
+      </button>
+      <div
+        className="relative max-w-[90vw] max-h-[90vh] flex flex-col items-center gap-3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={url}
+          alt="Full size"
+          className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+        />
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 text-white/70 hover:text-white text-xs font-medium transition-colors"
+        >
+          <ExternalLink className="w-3.5 h-3.5" /> Open original
+        </a>
+      </div>
+    </div>
+  );
+}
 
 interface Patient {
   id: string;
@@ -47,6 +104,7 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [editNotesText, setEditNotesText] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (patient) {
@@ -332,8 +390,12 @@ export default function PatientDetailPanel({ patient, isOpen, onClose }: Patient
                  </div>
                </div>
             )}
-          </div>
         </div>
+
+        {/* Lightbox for Document Viewer */}
+        {lightboxUrl && (
+          <Lightbox url={lightboxUrl} onClose={() => setLightboxUrl(null)} />
+        )}
 
         {/* Footer Actions */}
         <footer className="p-6 border-t border-slate-100 bg-white shrink-0">

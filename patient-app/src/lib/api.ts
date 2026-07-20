@@ -86,6 +86,17 @@ export const api = {
     markRead: (appointmentId: string) => 
       fetchWithAuth(`/messages/${appointmentId}/read`, { method: 'POST' })
         .then(res => { window.dispatchEvent(new Event('refresh-unread-counts')); return res; }),
+    uploadAttachment: async (file: File, appointmentId: string): Promise<string> => {
+      const supabase = createClient();
+      const ext = file.name.split('.').pop() ?? 'bin';
+      const path = `${appointmentId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await supabase.storage
+        .from('chat-attachments')
+        .upload(path, file, { contentType: file.type, upsert: false });
+      if (error) throw new Error(error.message);
+      const { data } = supabase.storage.from('chat-attachments').getPublicUrl(path);
+      return data.publicUrl;
+    },
   },
   intake: {
     get: () => fetchWithAuth('/patients/intake'),

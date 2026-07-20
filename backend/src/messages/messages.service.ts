@@ -78,13 +78,18 @@ export class MessagesService {
       ? `${appointment.patient.firstName ?? 'Patient'}`
       : `${appointment.therapist.firstName ?? 'Therapist'}`;
 
+    const isAttachment = content.startsWith('[ATTACHMENT]');
+    const notifBody = isAttachment
+      ? `${senderName}: 📎 Sent an attachment`
+      : `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`;
+
     setImmediate(() => {
       this.notifications
         .create({
           userId: recipientUserId,
           type: NotificationType.NEW_MESSAGE,
           title: 'New Message',
-          body: `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`,
+          body: notifBody,
           metadata: { appointmentId, senderId: senderUserId, senderName },
         })
         .catch((err) => this.logger.error(err));

@@ -13,7 +13,9 @@ import {
   Loader2,
   ChevronLeft,
   Phone,
-  Activity
+  Activity,
+  ExternalLink,
+  X
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -25,6 +27,61 @@ import { useRouter } from "next/navigation";
 import PatientIntakeContent from "./PatientIntakeContent";
 import EnhancedAppointmentsList from "./EnhancedAppointmentsList";
 import MessageHistoryClient from "./MessageHistoryClient";
+
+// Helper to clean up filenames
+const getFilename = (url: string) => {
+  try {
+    const parts = new URL(url).pathname.split("/");
+    const raw = parts[parts.length - 1] ?? "attachment";
+    const match = raw.match(/^\d+-[a-z0-9]+\.(.+)$/);
+    return match ? `attachment.${match[1]}` : raw;
+  } catch {
+    return "attachment";
+  }
+};
+
+// Lightbox component
+function Lightbox({ url, onClose }: { url: string; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <button
+        className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        <X className="w-5 h-5" />
+      </button>
+      <div
+        className="relative max-w-[90vw] max-h-[90vh] flex flex-col items-center gap-3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={url}
+          alt="Full size"
+          className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+        />
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 text-white/70 hover:text-white text-xs font-medium transition-colors"
+        >
+          <ExternalLink className="w-3.5 h-3.5" /> Open original
+        </a>
+      </div>
+    </div>
+  );
+}
 
 interface Patient {
   id: string;
@@ -48,7 +105,25 @@ interface Patient {
 
 export default function PatientDetailView({ patient, sessions, currentUserId }: { patient: Patient; sessions: any[], currentUserId?: string }) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'profile' | 'sessions' | 'messages'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'sessions' | 'messages' | 'resources'>('profile');
+  const [patientDocs, setPatientDocs] = useState<any[]>([]);
+  const [docsLoading, setDocsLoading] = useState(false);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (patient?.id) {
+      setDocsLoading(true);
+      api.messages.patientHistory(patient.id)
+        .then((data: any[]) => {
+          const docs = (data || []).filter(
+            (msg: any) => msg.content.startsWith("[ATTACHMENT]") && msg.sender.role === "PATIENT"
+          );
+          setPatientDocs(docs);
+        })
+        .catch(console.error)
+        .finally(() => setDocsLoading(false));
+    }
+  }, [patient?.id]);
 
   if (!patient) return null;
 
@@ -130,13 +205,13 @@ export default function PatientDetailView({ patient, sessions, currentUserId }: 
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-slate-200 flex gap-8">
-        {(['profile', 'sessions', 'messages'] as const).map((tab) => (
+      <div className="border-b border-slate-200 flex gap-6 overflow-x-auto scrollbar-none whitespace-nowrap -mx-4 px-4 md:mx-0 md:px-0">
+        {(['profile', 'sessions', 'messages', 'resources'] as const).map((tab) => (
           <Button
             variant="ghost"
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-4 text-sm font-bold uppercase tracking-widest transition-all relative rounded-none hover:bg-transparent px-0 h-auto shadow-none ${
+            className={`pb-4 text-sm font-bold uppercase tracking-widest transition-all relative rounded-none hover:bg-transparent px-0 h-auto shadow-none shrink-0 ${
               activeTab === tab ? 'text-primary' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
@@ -173,7 +248,87 @@ export default function PatientDetailView({ patient, sessions, currentUserId }: 
              <MessageHistoryClient initialSessions={sessions} currentUserId={currentUserId || ""} />
            </div>
         )}
+
+        {activeTab === 'resources' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900">Patient Uploaded Resources</h3>
+            </div>
+
+            {docsLoading ? (
+              <Card className="p-16 text-center">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                <p className="text-sm text-slate-400 mt-4">Loading patient documents...</p>
+              </Card>
+            ) : patientDocs.length === 0 ? (
+              <Card className="p-16 text-center">
+                <FileText className="w-12 h-12 mx-auto text-slate-200 mb-4" />
+                <h4 className="text-base font-bold text-slate-900">No documents found</h4>
+                <p className="text-sm text-slate-400 mt-2 max-w-xs mx-auto">
+                  Any images or PDF files uploaded by this patient in the chat will show up here.
+                </p>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
+                {patientDocs.map((msg) => {
+                  const url = msg.content.slice("[ATTACHMENT]".length);
+                  const isPdfFile = url.toLowerCase().includes(".pdf");
+                  const filename = getFilename(url);
+
+                  return (
+                    <Card
+                      key={msg.id}
+                      className="p-2.5 bg-white border border-slate-200/60 rounded-xl hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+                      onClick={() => {
+                        if (isPdfFile) {
+                          window.open(url, "_blank", "noopener,noreferrer");
+                        } else {
+                          setLightboxUrl(url);
+                        }
+                      }}
+                    >
+                      {/* Compact Square Preview Box */}
+                      {isPdfFile ? (
+                        <div className="w-full aspect-square rounded-lg bg-red-50/70 flex flex-col items-center justify-center border border-red-100/30 gap-1.5 shrink-0 transition-colors group-hover:bg-red-50">
+                          <FileText className="w-8 h-8 text-red-500" />
+                          <span className="text-[9px] font-bold text-red-600/80 uppercase tracking-widest">PDF</span>
+                        </div>
+                      ) : (
+                        <div className="w-full aspect-square rounded-lg overflow-hidden border border-slate-100 shrink-0 bg-slate-50 relative">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={url}
+                            alt="preview"
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="bg-white/90 text-slate-800 text-[9px] font-bold px-2 py-1 rounded-md shadow-sm uppercase tracking-wider">Expand</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Info Footer inside card */}
+                      <div className="mt-2.5 min-w-0">
+                        <h4 className="text-[11px] font-bold text-slate-700 truncate leading-tight" title={filename}>
+                          {filename}
+                        </h4>
+                        <p className="text-[9px] text-slate-400 mt-1 font-medium leading-none">
+                          {new Date(msg.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                        </p>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Lightbox for full screen viewing */}
+      {lightboxUrl && (
+        <Lightbox url={lightboxUrl} onClose={() => setLightboxUrl(null)} />
+      )}
     </div>
   );
 }
