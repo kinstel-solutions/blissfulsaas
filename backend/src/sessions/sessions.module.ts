@@ -5,10 +5,12 @@ import { AuthModule } from '../auth/auth.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { EmailModule } from '../email/email.module';
 
+import { RoomPresenceService } from './presence.service';
+
 @Module({
   imports: [AuthModule, NotificationsModule, EmailModule],
   controllers: [SessionsController],
-  providers: [SessionsService],
-  exports: [SessionsService],
+  providers: [SessionsService, RoomPresenceService],
+  exports: [SessionsService, RoomPresenceService],
 })
 export class SessionsModule {}

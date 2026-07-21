@@ -11,10 +11,23 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { NotificationsService } from './notifications.service';
 
+import { WebPushService } from './webpush.service';
+import { Body, Post } from '@nestjs/common';
+
 @Controller('notifications')
 @UseGuards(AuthGuard('jwt'))
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(
+    private readonly notificationsService: NotificationsService,
+    private readonly webPushService: WebPushService,
+  ) {}
+
+  /** POST /notifications/push-subscription — save web push subscription */
+  @Post('push-subscription')
+  async savePushSubscription(@Request() req: any, @Body() subscription: any) {
+    await this.webPushService.saveSubscription(req.user.userId, subscription);
+    return { success: true };
+  }
 
   /** GET /notifications — list all notifications for the current user */
   @Get()

@@ -78,6 +78,24 @@ export class PaymentsService {
       );
     }
 
+    const existingPatient = await this.prisma.appointment.findFirst({
+      where: {
+        patientId: patient.id,
+        scheduledAt: {
+          gte: new Date(scheduledAt.getTime() - 59 * 60 * 1000),
+          lt: slotEnd,
+        },
+        status: {
+          in: [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED],
+        },
+      },
+    });
+    if (existingPatient) {
+      throw new BadRequestException(
+        'You already have a session booked for the selected date and time',
+      );
+    }
+
     const therapistName =
       `${therapist.firstName ?? ''} ${therapist.lastName ?? ''}`.trim();
     const amountInPaise = Math.round((therapist.hourlyRate ?? 1500) * 100);
@@ -206,6 +224,18 @@ export class PaymentsService {
       if (hasConflict) {
         throw new BadRequestException(
           'Therapist is already booked for this date and time',
+        );
+      }
+
+      const hasPatientConflict =
+        await this.sessionsService.checkPatientBookingConflict(
+          tx,
+          patient.id,
+          scheduledAt,
+        );
+      if (hasPatientConflict) {
+        throw new BadRequestException(
+          'You already have a session booked for this time slot',
         );
       }
 

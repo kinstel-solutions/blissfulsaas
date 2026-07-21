@@ -82,6 +82,7 @@ export default async function SessionsPage() {
                      weekday: "long",
                      month: "short",
                      day: "numeric",
+                     timeZone: "Asia/Kolkata",
                   })}
                 </span>
                 <span className="flex items-center gap-1.5">
@@ -89,6 +90,7 @@ export default async function SessionsPage() {
                   {new Date(session.scheduledAt).toLocaleTimeString("en-US", {
                     hour: "2-digit",
                     minute: "2-digit",
+                    timeZone: "Asia/Kolkata",
                   })}
                 </span>
               </div>
@@ -155,7 +157,7 @@ export default async function SessionsPage() {
           </span>
 
           {/* Countdown label for upcoming sessions */}
-          {(session.status === "PENDING" || session.status === "CONFIRMED") && !isClinic && (
+          {(session.status === "PENDING" || session.status === "CONFIRMED") && (
             <SessionCountdownLabel scheduledAt={session.scheduledAt} />
           )}
 

@@ -8,6 +8,8 @@ import DashboardSidebar from "@/components/DashboardSidebar";
 import MobileNav from "@/components/MobileNav";
 import NotificationBell from "@/components/NotificationBell";
 import RealtimeAutoUpdater from "@/components/RealtimeAutoUpdater";
+import { CallNotificationProvider } from "@/components/CallNotificationProvider";
+import PushNotificationSetup from "@/components/PushNotificationSetup";
 
 export default async function DashboardLayout({
   children,
@@ -50,6 +52,7 @@ export default async function DashboardLayout({
   ];
 
   return (
+    <CallNotificationProvider userId={user.id}>
     <div className="flex h-screen bg-surface font-sans text-foreground overflow-hidden relative">
       <RealtimeAutoUpdater currentUserId={user.id} />
       <MobileNav currentUserId={user.id} />
@@ -142,6 +145,8 @@ export default async function DashboardLayout({
           </div>
         </div>
       </main>
+      <PushNotificationSetup vapidPublicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''} />
     </div>
+    </CallNotificationProvider>
   );
 }

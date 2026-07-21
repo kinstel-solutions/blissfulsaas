@@ -172,7 +172,7 @@ export default function MiniCalendar({ sessions }: MiniCalendarProps) {
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Clock className="w-3.5 h-3.5" />
                       <span>
-                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' })}
                       </span>
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${
                         session.mode === 'IN_CLINIC' 

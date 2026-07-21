@@ -78,13 +78,18 @@ export class MessagesService {
       ? `${appointment.patient.firstName ?? 'Patient'}`
       : `${appointment.therapist.firstName ?? 'Therapist'}`;
 
+    const isAttachment = content.startsWith('[ATTACHMENT]');
+    const notifBody = isAttachment
+      ? `${senderName}: 📎 Sent an attachment`
+      : `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`;
+
     setImmediate(() => {
       this.notifications
         .create({
           userId: recipientUserId,
           type: NotificationType.NEW_MESSAGE,
           title: 'New Message',
-          body: `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`,
+          body: notifBody,
           metadata: { appointmentId, senderId: senderUserId, senderName },
         })
         .catch((err) => this.logger.error(err));
@@ -98,15 +103,15 @@ export class MessagesService {
           appointmentId,
           senderId: appointment.therapist.userId,
           content: { contains: '[This is an automated reply]' },
-          createdAt: { gte: oneDayAgo }
-        }
+          createdAt: { gte: oneDayAgo },
+        },
       });
 
       if (!recentAutoReply) {
         const clientName = appointment.patient.firstName || 'Client';
         const autoReplyContent = `Hello ${clientName}, I have received your message. Thank you for reaching out. I will get back to you as soon as possible.\nIf you are experiencing significant distress right now, please do not hesitate to reach out to a helpline before I respond.\n**[This is an automated reply]**`;
         const therapistName = appointment.therapist.firstName || 'Therapist';
-        
+
         setImmediate(async () => {
           try {
             await this.prisma.message.create({
@@ -116,13 +121,17 @@ export class MessagesService {
                 content: autoReplyContent,
               },
             });
-            
+
             await this.notifications.create({
               userId: senderUserId,
               type: NotificationType.NEW_MESSAGE,
               title: 'New Message',
               body: `${therapistName}: ${autoReplyContent.substring(0, 37)}...`,
-              metadata: { appointmentId, senderId: appointment.therapist.userId, senderName: therapistName },
+              metadata: {
+                appointmentId,
+                senderId: appointment.therapist.userId,
+                senderName: therapistName,
+              },
             });
           } catch (err) {
             this.logger.error(err);

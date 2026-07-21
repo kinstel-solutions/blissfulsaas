@@ -12,13 +12,17 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, RolesGuard } from '../auth/roles.guard';
 import { SessionsService } from './sessions.service';
+import { RoomPresenceService } from './presence.service';
 
 import { CreateBookingDto, UpdateNotesDto } from './dto/session.dto';
 
 @Controller('sessions')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class SessionsController {
-  constructor(private readonly sessionsService: SessionsService) {}
+  constructor(
+    private readonly sessionsService: SessionsService,
+    private readonly presenceService: RoomPresenceService,
+  ) {}
 
   @Post('book')
   @Roles('PATIENT')
@@ -84,6 +88,12 @@ export class SessionsController {
   @Get(':id/token')
   getToken(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
     return this.sessionsService.generateToken(req.user.userId, id);
+  }
+
+  @Post(':id/ping')
+  ping(@Request() req: any, @Param('id', ParseUUIDPipe) id: string) {
+    this.presenceService.ping(req.user.userId);
+    return { success: true };
   }
 
   @Get(':id/notes')

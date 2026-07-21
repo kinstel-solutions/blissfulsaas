@@ -34,7 +34,7 @@ async function bootstrap() {
   });
 
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
-  
+
   // Fix for Next.js 18+ undici fetch HeadersTimeoutError
   const server = app.getHttpServer();
   server.keepAliveTimeout = 65000;
@@ -47,4 +47,3 @@ async function bootstrap() {
 }
 bootstrap();
 // Trigger reload
-

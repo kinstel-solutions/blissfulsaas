@@ -182,10 +182,10 @@ export default async function AppointmentsPage() {
                         <Calendar className="w-3.5 h-3.5 text-muted-foreground/50 mt-0.5 shrink-0" />
                         <div>
                           <p className="text-xs font-medium text-foreground/80 whitespace-nowrap">
-                            {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            {new Date(appt.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'Asia/Kolkata' })}
                           </p>
                           <p className="text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap">
-                            {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} ({appt.duration}m)
+                            {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' })} ({appt.duration}m)
                           </p>
                         </div>
                       </div>

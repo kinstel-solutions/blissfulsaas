@@ -413,13 +413,13 @@ export default async function DashboardPage() {
                     <div className="flex items-center gap-2 text-slate-500">
                       <Calendar className="w-3.5 h-3.5 text-primary/40 shrink-0" />
                       <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
-                        {new Date(session.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        {new Date(session.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' })}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-slate-500">
                       <Clock className="w-3.5 h-3.5 text-primary/40 shrink-0" />
                       <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
-                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' })}
                       </span>
                     </div>
                   </div>
