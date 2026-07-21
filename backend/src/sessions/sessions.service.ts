@@ -15,7 +15,9 @@ import {
 } from '@prisma/client';
 import { RtcTokenBuilder, RtcRole } from 'agora-token';
 import { NotificationsService } from '../notifications/notifications.service';
+import { WebPushService } from '../notifications/webpush.service';
 import { EmailService } from '../email/email.service';
+import { RoomPresenceService } from './presence.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
@@ -23,9 +25,11 @@ export class SessionsService {
   private readonly logger = new Logger(SessionsService.name);
 
   constructor(
-    private prisma: PrismaService,
-    private notifications: NotificationsService,
-    private emailService: EmailService,
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+    private readonly webPush: WebPushService,
+    private readonly emailService: EmailService,
+    private readonly presenceService: RoomPresenceService,
   ) {}
 
   async checkBookingConflict(
@@ -817,12 +821,33 @@ export class SessionsService {
       tokenExpireSeconds,
     );
 
-    // Record actualStartedAt the first time a participant fetches a token (i.e. joins)
-    if (!appointment.actualStartedAt) {
-      await this.prisma.appointment.update({
-        where: { id: appointmentId },
-        data: { actualStartedAt: new Date() },
-      });
+    // Set actualStartedAt on first join and send push notification
+    if (!appointment.actualEndedAt) {
+      if (!appointment.actualStartedAt) {
+        await this.prisma.appointment.update({
+          where: { id: appointmentId },
+          data: { actualStartedAt: new Date() },
+        });
+      }
+
+      // Send push notification to the other participant
+      const targetUserId = userId === appointment.patient.userId
+        ? appointment.therapist.userId
+        : appointment.patient.userId;
+      
+      const isOtherUserInRoom = this.presenceService.isUserInRoom(targetUserId);
+
+      if (!isOtherUserInRoom) {
+        const callerName = userId === appointment.patient.userId
+          ? `${appointment.patient.firstName} ${appointment.patient.lastName || ''}`
+          : `Dr. ${appointment.therapist.firstName} ${appointment.therapist.lastName || ''}`;
+          
+        this.webPush.sendCallNotification(targetUserId, {
+          title: 'Incoming Session',
+          body: `${callerName} is in the video room and is waiting for you.`,
+          url: `/dashboard/sessions/${appointment.id}/call`,
+        }).catch(err => this.logger.error('Failed to send web push', err));
+      }
     }
 
     return {

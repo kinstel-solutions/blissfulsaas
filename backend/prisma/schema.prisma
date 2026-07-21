@@ -45,6 +45,7 @@ model User {
   adminProfile     Admin?
   messages         Message[]
   notifications    Notification[]
+  pushSubscriptions PushSubscription[]
 }
 
 model Patient {
@@ -245,4 +246,16 @@ model Notification {
 
   @@index([userId, createdAt])
   @@index([userId, isRead])
+}
+
+model PushSubscription {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }

@@ -16,6 +16,23 @@ const VideoRoom = dynamic(() => import("@/components/VideoRoom"), {
   )
 });
 
+import { useEffect } from "react";
+import { fetchWithAuth } from "@/lib/api";
+
 export default function VideoRoomWrapper(props: any) {
+  useEffect(() => {
+    if (!props.appointmentId) return;
+    
+    // Initial ping
+    fetchWithAuth(`/sessions/${props.appointmentId}/ping`, { method: "POST" }).catch(() => {});
+    
+    // Ping every 10 seconds to maintain presence
+    const interval = setInterval(() => {
+      fetchWithAuth(`/sessions/${props.appointmentId}/ping`, { method: "POST" }).catch(() => {});
+    }, 10000);
+    
+    return () => clearInterval(interval);
+  }, [props.appointmentId]);
+
   return <VideoRoom {...props} />;
 }
