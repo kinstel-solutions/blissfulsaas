@@ -588,7 +588,7 @@ Each app requires a `.env.local` file in its root:
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxx
 NEXT_PUBLIC_AGORA_APP_ID=your_agora_app_id
-NEXT_PUBLIC_API_URL=http://localhost:5000    # Backend API base URL
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000    # Backend API base URL
 ```
 
 ### Therapist App
@@ -596,7 +596,7 @@ NEXT_PUBLIC_API_URL=http://localhost:5000    # Backend API base URL
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxx
 NEXT_PUBLIC_AGORA_APP_ID=your_agora_app_id
-NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6...  # For profile creation (bypasses RLS)
 ```
 
@@ -604,7 +604,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6...  # For profile creatio
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_xxxxx
-NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6...  # For admin operations
 ```
 

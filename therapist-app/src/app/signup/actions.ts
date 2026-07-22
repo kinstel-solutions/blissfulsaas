@@ -62,7 +62,7 @@ export async function signUpTherapist(formData: any) {
 
   // 3. Trigger onboarding email via backend webhook
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
     await fetch(`${apiUrl}/public/therapists/onboard-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

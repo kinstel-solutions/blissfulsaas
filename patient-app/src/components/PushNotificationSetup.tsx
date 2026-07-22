@@ -51,7 +51,8 @@ export default function PushNotificationSetup({ vapidPublicKey }: { vapidPublicK
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.access_token) {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/notifications/push-subscription`, {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+        await fetch(`${backendUrl}/notifications/push-subscription`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
