@@ -161,7 +161,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
     if (localCameraTrack) {
       const config = getEncoderConfig(videoQuality, fps);
       await localCameraTrack.setEncoderConfiguration(config as any).catch(console.error);
-      
+
       const mediaStreamTrack = localCameraTrack.getMediaStreamTrack();
       if (mediaStreamTrack) {
         await mediaStreamTrack.applyConstraints({
@@ -216,7 +216,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
 
   return (
     <div className="h-full min-h-0 lg:h-[calc(100vh-220px)] flex flex-col lg:flex-row gap-4 lg:gap-8 pb-2 lg:pb-0 -mx-5 sm:mx-0 animate-in fade-in duration-1000">
-      <div className="flex flex-col relative gap-4 lg:gap-6 h-[44dvh] lg:h-auto lg:flex-[2] shrink-0">
+      <div className="flex flex-col relative gap-4 lg:gap-6 h-[44dvh] sm:h-[55vh] min-h-[450px] lg:h-auto lg:flex-[2] shrink-0">
         <div
           ref={containerRef}
           className={`flex-1 bg-slate-950 border border-white/5 overflow-hidden relative shadow-2xl flex flex-col group ${isFullscreen ? "rounded-none" : "rounded-xl"
@@ -258,7 +258,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
           </div>
 
           {/* Self-Feed PiP */}
-          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-36 sm:w-48 md:w-64 aspect-video rounded-xl md:rounded-2xl border border-white/20 shadow-2xl overflow-hidden z-30 hover:scale-105 transition-transform bg-slate-800">
+          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-44 sm:w-64 md:w-80 aspect-video rounded-xl md:rounded-2xl border border-white/20 shadow-2xl overflow-hidden z-30 hover:scale-105 transition-transform bg-slate-800">
             {localCameraTrack ? (
               <div className={`w-full h-full relative ${!cameraOn ? 'hidden' : 'block'}`}>
                 <LocalVideoTrack track={localCameraTrack} play style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -323,11 +323,10 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
                     <button
                       key={q}
                       onClick={() => handleQualityChange(q)}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors ${
-                        videoQuality === q
-                          ? "text-primary bg-primary/10"
-                          : "text-white hover:bg-white/10"
-                      }`}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors ${videoQuality === q
+                        ? "text-primary bg-primary/10"
+                        : "text-white hover:bg-white/10"
+                        }`}
                     >
                       {q === "720p" ? `${q} HD` : q === "1080p" ? `${q} FHD` : q}
                     </button>
@@ -337,11 +336,10 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
                     <button
                       key={fps}
                       onClick={() => handleFrameRateChange(fps)}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors ${
-                        frameRate === fps
-                          ? "text-primary bg-primary/10"
-                          : "text-white hover:bg-white/10"
-                      }`}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors ${frameRate === fps
+                        ? "text-primary bg-primary/10"
+                        : "text-white hover:bg-white/10"
+                        }`}
                     >
                       {fps} fps{fps === 30 ? " ★" : ""}
                     </button>
@@ -376,9 +374,9 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, currentUser
       </div>
 
       {/* Sidebar Chat (Separate Section) */}
-      <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 flex-1 min-h-0 lg:h-full lg:max-h-[calc(100vh-220px)]">
-        <Card className="p-4 md:p-6 flex flex-col lg:overflow-hidden min-h-0 h-full flex-1 gap-0">
-          <div className="flex-1 flex flex-col min-h-0">
+      <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 h-[480px] sm:h-[520px] lg:h-full min-h-[520px] lg:max-h-[calc(100vh-220px)]">
+        <Card className="p-4 md:p-6 flex flex-col overflow-hidden min-h-0 h-full flex-1 gap-0">
+          <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
             {currentUserId && (
               <ChatSidebar
                 appointmentId={appointmentId}

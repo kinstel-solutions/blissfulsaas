@@ -19,11 +19,13 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export default function PushNotificationSetup({ vapidPublicKey }: { vapidPublicKey: string }) {
-  const [permission, setPermission] = useState<string>('default');
+  const [permission, setPermission] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
       setPermission(Notification.permission);
+    } else {
+      setPermission('denied');
     }
   }, []);
 
@@ -66,7 +68,7 @@ export default function PushNotificationSetup({ vapidPublicKey }: { vapidPublicK
     }
   };
 
-  if (permission === 'granted' || permission === 'denied') return null;
+  if (!permission || permission === 'granted' || permission === 'denied') return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">

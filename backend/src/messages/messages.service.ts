@@ -80,8 +80,8 @@ export class MessagesService {
 
     const isAttachment = content.startsWith('[ATTACHMENT]');
     const notifBody = isAttachment
-      ? `${senderName}: 📎 Sent an attachment`
-      : `${senderName}: ${content.length > 40 ? content.substring(0, 37) + '...' : content}`;
+      ? `${senderName} sent you an attachment`
+      : `${senderName} sent you a message`;
 
     setImmediate(() => {
       this.notifications
@@ -126,7 +126,7 @@ export class MessagesService {
               userId: senderUserId,
               type: NotificationType.NEW_MESSAGE,
               title: 'New Message',
-              body: `${therapistName}: ${autoReplyContent.substring(0, 37)}...`,
+              body: `${therapistName} sent you a message`,
               metadata: {
                 appointmentId,
                 senderId: appointment.therapist.userId,

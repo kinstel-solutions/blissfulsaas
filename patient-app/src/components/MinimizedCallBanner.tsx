@@ -37,7 +37,7 @@ export default function MinimizedCallBanner({ callData, onMaximize, onAccept, on
   }, [callData]);
 
   return (
-    <div className="fixed top-6 right-6 z-[100] w-full max-w-sm bg-surface border border-primary/20 rounded-2xl shadow-2xl p-4 flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
+    <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 z-[100] w-[calc(100%-2rem)] max-w-sm bg-background text-foreground border border-border rounded-2xl shadow-2xl p-4 flex flex-col gap-4 animate-in slide-in-from-top-4 duration-300">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 relative">
@@ -56,7 +56,8 @@ export default function MinimizedCallBanner({ callData, onMaximize, onAccept, on
         
         <button 
           onClick={onMaximize}
-          className="p-2 -mr-2 -mt-2 text-muted-foreground hover:text-foreground hover:bg-surface-container rounded-lg transition-colors"
+          className="p-2 -mr-1 -mt-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+          title="Expand"
         >
           <Maximize2 className="w-4 h-4" />
         </button>
@@ -65,13 +66,13 @@ export default function MinimizedCallBanner({ callData, onMaximize, onAccept, on
       <div className="flex items-center gap-3 w-full">
         <button 
           onClick={onDecline}
-          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-error/10 text-error hover:bg-error hover:text-error-foreground transition-colors font-semibold text-sm"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 transition-colors font-semibold text-sm"
         >
           <PhoneOff className="w-4 h-4" /> Ignore
         </button>
         <button 
           onClick={onAccept}
-          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 font-semibold text-sm animate-pulse"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-md font-semibold text-sm animate-pulse"
         >
           <Phone className="w-4 h-4 fill-current" /> Answer
         </button>
