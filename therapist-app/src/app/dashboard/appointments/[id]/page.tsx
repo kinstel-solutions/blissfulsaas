@@ -43,7 +43,7 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
   });
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 lg:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 px-1">
+    <div className="max-w-6xl mx-auto space-y-6 lg:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 px-1 pb-12 lg:pb-16">
       {/* Navigation & Header */}
       <div className="flex flex-col gap-4 lg:gap-6">
         <Link 
@@ -80,40 +80,16 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
               </div>
             </div>
           </div>
-          
-          <div className="grid grid-cols-2 gap-2 w-full lg:flex lg:w-auto lg:items-center lg:gap-3">
-             {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && appointment.status !== 'EXPIRED' && appointment.mode === 'ONLINE' && (
-                <Link
-                   href={`/dashboard/sessions/${appointment.id}/call`}
-                   className={buttonVariants({
-                      variant: "default",
-                      className: "w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto py-2.5 px-4 lg:flex-none"
-                   })}
-                >
-                   <Video className="w-3.5 h-3.5 text-white shrink-0" />
-                   <span>Join Call</span>
-                </Link>
-             )}
-             <Link
-                href={`/dashboard/messages?sessionId=${appointment.id}`}
-                className={buttonVariants({
-                   variant: "secondary",
-                   className: "w-full lg:w-auto font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 h-auto py-2.5 px-4 lg:flex-none border-0 hover:bg-secondary/80"
-                })}
-             >
-                <MessageSquare className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span>Message</span>
-             </Link>
-             <div className="contents lg:block lg:flex-none">
-                <AppointmentActions id={appointment.id} status={appointment.status} />
-             </div>
+
+          <div className="flex items-center gap-2.5 shrink-0 w-full lg:w-auto">
+            <AppointmentActions id={appointment.id} status={appointment.status} />
           </div>
         </div>
       </div>
 
       {/* Session Metadata Bar */}
-      <Card className="rounded-3xl p-4 lg:p-3 grid grid-cols-2 gap-4 sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
-        <div className="contents sm:flex sm:flex-wrap sm:items-center gap-4 lg:gap-8 sm:px-4">
+      <Card className="rounded-3xl p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-4 lg:gap-8">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               <CalendarIcon className="w-4 h-4 text-primary" />
@@ -143,30 +119,53 @@ export default async function AppointmentDetailPage({ params }: { params: Promis
               <p className="text-[11px] font-semibold text-slate-900">{appointment.duration} Min</p>
             </div>
           </div>
+
+          {appointment.mode === 'IN_CLINIC' ? (
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-100/50 flex items-center justify-center shrink-0">
+                <Building2 className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Mode</p>
+                <p className="text-[11px] font-semibold text-slate-900">In-Clinic</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-blue-100/50 flex items-center justify-center shrink-0">
+                <Video className="w-4 h-4 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Mode</p>
+                <p className="text-[11px] font-semibold text-slate-900">Online</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center justify-start sm:justify-end gap-4 pr-0 sm:pr-4">
-           {appointment.mode === 'IN_CLINIC' ? (
-             <div className="flex items-center gap-3">
-               <div className="w-8 h-8 rounded-lg bg-emerald-100/50 flex items-center justify-center shrink-0">
-                 <Building2 className="w-4 h-4 text-emerald-600" />
-               </div>
-               <div>
-                 <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Mode</p>
-                 <p className="text-[11px] font-semibold text-slate-900">In-Clinic</p>
-               </div>
-             </div>
-           ) : (
-             <div className="flex items-center gap-3">
-               <div className="w-8 h-8 rounded-lg bg-blue-100/50 flex items-center justify-center shrink-0">
-                 <Video className="w-4 h-4 text-blue-600" />
-               </div>
-               <div>
-                 <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Mode</p>
-                 <p className="text-[11px] font-semibold text-slate-900">Online</p>
-               </div>
-             </div>
+        <div className="flex flex-row items-center gap-2.5 sm:gap-3 w-full lg:w-auto">
+           {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && appointment.status !== 'EXPIRED' && appointment.mode === 'ONLINE' && (
+              <Link
+                 href={`/dashboard/sessions/${appointment.id}/call`}
+                 className={`flex-1 lg:flex-initial ${buttonVariants({
+                    variant: "default",
+                    className: "w-full lg:w-auto font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 sm:gap-2.5 active:scale-95 h-auto py-3 px-3 sm:px-5 rounded-xl shadow-md hover:shadow-lg"
+                 })}`}
+              >
+                 <Video className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />
+                 <span>Join Call</span>
+              </Link>
            )}
+           <Link
+              href={`/dashboard/messages?sessionId=${appointment.id}`}
+              className={`flex-1 lg:flex-initial ${buttonVariants({
+                 variant: "secondary",
+                 className: "w-full lg:w-auto font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 sm:gap-2.5 active:scale-95 h-auto py-3 px-3 sm:px-5 rounded-xl border-0 hover:bg-secondary/80 shadow-xs"
+              })}`}
+           >
+              <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary shrink-0" />
+              <span>Message</span>
+           </Link>
         </div>
       </Card>
 

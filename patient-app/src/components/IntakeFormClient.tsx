@@ -263,14 +263,13 @@ export default function IntakeFormClient({ initialData, sessionId }: { initialDa
           )}
 
           {/* Navigation */}
-          <div className="mt-10 flex items-center justify-between gap-4">
+          <div className="mt-10 flex items-center justify-between gap-3 sm:gap-4">
             <div className="flex gap-2">
               <Button
                 type="button"
                 variant="outline"
-                size="lg"
                 onClick={() => setStep(prev => prev - 1)}
-                className={step === 1 ? 'invisible' : ''}
+                className={`h-10 px-3 sm:px-5 text-sm ${step === 1 ? 'hidden' : ''}`}
               >
                 <ChevronLeft className="w-4 h-4" /> Back
               </Button>
@@ -278,7 +277,6 @@ export default function IntakeFormClient({ initialData, sessionId }: { initialDa
               <Button
                 type="button"
                 variant="ghost"
-                size="lg"
                 onClick={() => {
                   if (sessionId) {
                     router.push(`/dashboard/sessions/${sessionId}`);
@@ -286,7 +284,7 @@ export default function IntakeFormClient({ initialData, sessionId }: { initialDa
                     router.push("/dashboard");
                   }
                 }}
-                className="text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 h-10 px-3 sm:px-5 text-sm"
               >
                 Skip
               </Button>
@@ -296,9 +294,8 @@ export default function IntakeFormClient({ initialData, sessionId }: { initialDa
               <Button
                 type="button"
                 variant="default"
-                size="lg"
                 onClick={nextStep}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 h-10 px-3 sm:px-5 text-sm"
               >
                 Continue <ChevronRight className="w-4 h-4" />
               </Button>
@@ -306,10 +303,9 @@ export default function IntakeFormClient({ initialData, sessionId }: { initialDa
               <Button
                 type="button"
                 variant="default"
-                size="lg"
                 onClick={handleSubmit(onSubmit)}
                 disabled={saving}
-                className="flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40"
+                className="flex items-center gap-2 bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 h-10 px-3 sm:px-5 text-sm"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                 {saving ? "Submitting..." : sessionId ? "Confirm Booking" : "Complete Intake"}

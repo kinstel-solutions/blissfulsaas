@@ -34,7 +34,7 @@ export default function IncomingCallScreen({ callData, onAccept, onDecline, onMi
   }, [callData]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-surface/90 backdrop-blur-xl animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background text-foreground animate-in fade-in duration-300">
       {/* Minimize Button */}
       <button 
         onClick={onMinimize}

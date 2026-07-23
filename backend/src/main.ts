@@ -18,14 +18,14 @@ async function bootstrap() {
   const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim())
     : [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:3002',
-        // Actual Production Vercel domains
-        'https://blissful-patient.vercel.app',
-        'https://blissful-therapist.vercel.app',
-        'https://blissful-admin.vercel.app',
-      ];
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      // Actual Production Vercel domains
+      'https://blissful-patient.vercel.app',
+      'https://blissful-therapist.vercel.app',
+      'https://blissful-admin.vercel.app',
+    ];
 
   app.enableCors({
     origin: allowedOrigins,

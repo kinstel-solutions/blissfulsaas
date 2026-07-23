@@ -61,7 +61,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
   const router = useRouter();
   const [micOn, setMic] = useState(true);
   const [cameraOn, setCamera] = useState(true);
-  const [activeTab, setActiveTab] = useState<'chat' | 'notes'>('notes');
+  const [activeTab, setActiveTab] = useState<'chat' | 'notes'>('chat');
   const [sessionEnded, setSessionEnded] = useState(false);
   const [showEndingWarning, setShowEndingWarning] = useState(false);
   const [videoQuality, setVideoQuality] = useState<"360p" | "480p" | "720p" | "1080p">("720p");
@@ -79,11 +79,11 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
     const handleSessionCompleting = () => {
       setSessionEnded(true);
     };
-    
+
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
     window.addEventListener("session-completing", handleSessionCompleting);
-    
+
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
       document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
@@ -179,7 +179,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
     if (localCameraTrack) {
       const config = getEncoderConfig(videoQuality, fps);
       await localCameraTrack.setEncoderConfiguration(config as any).catch(console.error);
-      
+
       const mediaStreamTrack = localCameraTrack.getMediaStreamTrack();
       if (mediaStreamTrack) {
         await mediaStreamTrack.applyConstraints({
@@ -253,8 +253,8 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
   };
 
   return (
-    <div className="h-full min-h-[600px] lg:h-[calc(100vh-220px)] flex flex-col lg:flex-row gap-4 lg:gap-8 pb-2 lg:pb-0 -mx-5 sm:mx-0 animate-in fade-in duration-1000">
-      <div className="flex flex-col flex-[2] relative gap-4 lg:gap-6 h-[60vh] min-h-[500px] lg:h-auto lg:min-h-0">
+    <div className="h-full min-h-0 lg:min-h-[600px] lg:h-[calc(100vh-220px)] flex flex-col lg:flex-row gap-4 lg:gap-8 pb-4 lg:pb-6 -mx-5 sm:mx-0 animate-in fade-in duration-1000">
+      <div className="flex flex-col flex-[2] relative gap-4 lg:gap-6 h-[45vh] sm:h-[55vh] min-h-[450px] lg:h-auto lg:min-h-0">
         <div
           ref={containerRef}
           className={`flex-1 bg-slate-950 border border-white/5 overflow-hidden relative shadow-2xl flex flex-col group ${isFullscreen ? "rounded-none" : "rounded-xl"
@@ -296,7 +296,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
           </div>
 
           {/* Self-Feed (Local Video) */}
-          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-36 sm:w-48 md:w-64 aspect-video rounded-xl border border-white/20 shadow-2xl overflow-hidden z-20 group/pip hover:scale-105 transition-transform bg-slate-800">
+          <div className="absolute top-4 right-4 md:top-5 md:right-5 w-44 sm:w-64 md:w-80 aspect-video rounded-xl border border-white/20 shadow-2xl overflow-hidden z-20 group/pip hover:scale-105 transition-transform bg-slate-800">
             {localCameraTrack ? (
               <div className={`w-full h-full relative ${!cameraOn ? 'hidden' : 'block'}`}>
                 <LocalVideoTrack track={localCameraTrack} play style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -333,7 +333,7 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
             >
               {micOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
             </Button>
-            
+
             <Button
               variant="ghost"
               onClick={() => setCamera(p => !p)}
@@ -364,11 +364,10 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
                       variant="ghost"
                       key={q}
                       onClick={() => handleQualityChange(q)}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors rounded-none h-auto justify-start border-none ${
-                        videoQuality === q
-                          ? "text-primary bg-primary/10"
-                          : "text-white hover:bg-white/10 hover:text-white"
-                      }`}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors rounded-none h-auto justify-start border-none ${videoQuality === q
+                        ? "text-primary bg-primary/10"
+                        : "text-white hover:bg-white/10 hover:text-white"
+                        }`}
                     >
                       {q === "720p" ? `${q} ★` : q}
                     </Button>
@@ -379,11 +378,10 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
                       variant="ghost"
                       key={fps}
                       onClick={() => handleFrameRateChange(fps)}
-                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors rounded-none h-auto justify-start border-none ${
-                        frameRate === fps
-                          ? "text-primary bg-primary/10"
-                          : "text-white hover:bg-white/10 hover:text-white"
-                      }`}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold tracking-wide transition-colors rounded-none h-auto justify-start border-none ${frameRate === fps
+                        ? "text-primary bg-primary/10"
+                        : "text-white hover:bg-white/10 hover:text-white"
+                        }`}
                     >
                       {fps} fps{fps === 30 ? " ★" : ""}
                     </Button>
@@ -417,18 +415,10 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
       </div>
 
       {/* Persistence / Sidebar (Integrated Chat & Notes) */}
-      <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 h-auto lg:h-full min-h-0 lg:max-h-[calc(100vh-220px)]">
-        <Card className="p-4 md:p-6 flex flex-col lg:overflow-hidden min-h-0">
+      <aside className="w-full lg:w-96 flex flex-col gap-4 lg:gap-8 h-[480px] sm:h-[520px] lg:h-full min-h-0 lg:max-h-[calc(100vh-220px)]">
+        <Card className="p-4 md:p-6 flex flex-col overflow-hidden min-h-0 h-full flex-1">
 
-          <div className="flex p-1 bg-slate-100 rounded-xl mb-6">
-            <Button
-              variant="ghost"
-              onClick={() => setActiveTab('notes')}
-              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-lg transition-all shadow-none h-auto ${activeTab === 'notes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
-                }`}
-            >
-              Clinical Notes
-            </Button>
+          <div className="flex p-1 bg-slate-100 rounded-xl mb-4 shrink-0">
             <Button
               variant="ghost"
               onClick={() => setActiveTab('chat')}
@@ -437,9 +427,17 @@ function VideoCallInner({ appId, channel, token, uid, appointmentId, patientName
             >
               Session Chat
             </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab('notes')}
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-lg transition-all shadow-none h-auto ${activeTab === 'notes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'
+                }`}
+            >
+              Clinical Notes
+            </Button>
           </div>
 
-          <div className="flex-1 flex flex-col min-h-[400px] lg:min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
             {activeTab === 'chat' ? (
               <ChatSidebar
                 appointmentId={appointmentId}

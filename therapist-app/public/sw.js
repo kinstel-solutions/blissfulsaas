@@ -1,9 +1,9 @@
-self.addEventListener('push', function(event) {
+self.addEventListener('push', function (event) {
   if (!event.data) return;
-  
+
   try {
     const data = event.data.json();
-    
+
     if (data.type === 'INCOMING_CALL') {
       // 1. Broadcast to any open React tabs
       const broadcast = new BroadcastChannel('call-notifications');
@@ -27,7 +27,7 @@ self.addEventListener('push', function(event) {
       };
 
       event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
           // Check if any open window is already on the video room URL
           for (let i = 0; i < clientList.length; i++) {
             if (clientList[i].url.includes(data.url) && clientList[i].visibilityState === 'visible') {
@@ -44,44 +44,46 @@ self.addEventListener('push', function(event) {
   }
 });
 
-self.addEventListener('notificationclick', function(event) {
+self.addEventListener('notificationclick', function (event) {
   event.notification.close();
-  
+
   if (event.action === 'answer' || !event.action) {
-    // Open the app window to the specific room URL
+    const relativeUrl = (event.notification.data && event.notification.data.url) ? event.notification.data.url : '/dashboard';
+    const fullUrl = new URL(relativeUrl, self.location.origin).href;
+
     event.waitUntil(
-      clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
-        let targetClient = null;
-        
+      clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
+        // 1. If a tab is already open on this room URL, bring it to focus
         for (let i = 0; i < clientList.length; i++) {
           const client = clientList[i];
-          // If the window is already exactly on the room URL, focus it
-          if (client.url.includes(event.notification.data.url)) {
-            if ('focus' in client) return client.focus();
-            return;
-          }
-          // Otherwise, save the first available window to navigate
-          if (!targetClient && 'navigate' in client) {
-            targetClient = client;
-          }
-        }
-        
-        // If we found an existing window, navigate it to the room URL
-        if (targetClient) {
-          return targetClient.navigate(event.notification.data.url).then(function(client) {
-            if (client && 'focus' in client) {
+          if (client.url === fullUrl || client.url.includes(relativeUrl)) {
+            if ('focus' in client) {
               return client.focus();
             }
-          });
+          }
         }
 
-        // If no windows are open, open a brand new window
+        // 2. Navigate an existing app tab to the call room URL
+        for (let i = 0; i < clientList.length; i++) {
+          const client = clientList[i];
+          if ('navigate' in client && typeof client.navigate === 'function') {
+            return client.navigate(fullUrl).then(function (targetClient) {
+              if (targetClient && 'focus' in targetClient) {
+                return targetClient.focus();
+              }
+            }).catch(function () {
+              if (clients.openWindow) return clients.openWindow(fullUrl);
+            });
+          }
+        }
+
+        // 3. Fallback: Open a brand new window with the full absolute URL
         if (clients.openWindow) {
-          return clients.openWindow(event.notification.data.url);
+          return clients.openWindow(fullUrl);
         }
       })
     );
   } else if (event.action === 'ignore') {
-    // Optional: Could send a fetch request to the backend to notify the caller
+    // Dismiss notification
   }
 });

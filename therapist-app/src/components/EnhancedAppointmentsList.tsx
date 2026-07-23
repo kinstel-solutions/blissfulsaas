@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   Calendar as CalendarIcon,
   Clock,
-  ChevronUp,
   FileText,
   MessageSquare,
   MapPin,
@@ -12,7 +11,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import AppointmentActions from "@/components/AppointmentActions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -122,10 +120,9 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                     </td>
                     <td className="px-4 md:px-8 py-6 border-b border-slate-50 text-right w-60">
                       <div className="flex items-center justify-end gap-3" onClick={e => e.stopPropagation()}>
-                        <AppointmentActions id={appt.id} status={appt.status} />
                         <Link href={`/dashboard/appointments/${appt.id}`}>
-                          <Button variant="ghost" className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-all w-auto h-auto">
-                            <ChevronUp className="w-5 h-5 rotate-90" />
+                          <Button className="px-4 py-2 bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all active:scale-95 h-auto">
+                            View session
                           </Button>
                         </Link>
                       </div>
@@ -211,7 +208,11 @@ export default function EnhancedAppointmentsList({ initialAppointments }: { init
                 {/* Actions Bar */}
                 <div className="px-5 pb-5 flex items-center border-t border-slate-50 pt-4">
                   <div className="flex gap-2 flex-1 min-w-0" onClick={e => e.stopPropagation()}>
-                    <AppointmentActions id={appt.id} status={appt.status} />
+                    <Link href={`/dashboard/appointments/${appt.id}`} className="w-full">
+                      <Button className="w-full bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-widest text-[10px] rounded-xl py-2.5 h-auto transition-all active:scale-95">
+                        View session
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </Card>
